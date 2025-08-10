@@ -1,0 +1,24 @@
+<nav class="navbar navbar-light navbar-expand-lg bg-white p-0 mr-5 justify-content-evenly justify-content-lg-end">
+  <div class="navbar-nav py-0">
+    <a [routerLink]="['/']" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact: true}" class="d-none d-lg-flex nav-item nav-link active">Inicio</a>
+    <a [routerLink]="['/productos-servicios']" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact: true}" class="d-none d-lg-flex nav-item nav-link">Productos y servicios</a>
+    <a [routerLink]="['/nosotros']" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact: true}" class="d-none d-lg-flex nav-item nav-link">Nosotros</a>
+    <a [routerLink]="['/contactanos-cliente']" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact: true}" class="d-none d-lg-flex nav-item nav-link">Contactanos</a>
+    <!--     <a href="contact.html" class="nav-item nav-link">Iniciar sesión</a>
+ -->
+    @if (!isAutenticado()) {
+    <a [routerLink]="['/login']" class="nav-item nav-link"><i class="bi bi-person-fill mr-2"></i>Iniciar sesión</a>
+    }
+  </div>
+  @if (!isAutenticado()) {
+  <button type="button" [routerLink]="['/crear-cuenta']" class="btn btn-primary">Crear
+    cuenta</button>
+  }
+
+  @if (isAutenticado()) {
+  <button type="button" (click)="sideNavToggle()" class="btn btn-primary"><i class="fa-solid fa-bars mr-2"></i>Menú</button>
+  }
+
+</nav>
+
+

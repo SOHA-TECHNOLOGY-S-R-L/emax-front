@@ -1,0 +1,55 @@
+<div class="container">
+
+  <mat-card class="card">
+    <form [formGroup]="formMov">
+      <mat-card-header class="card-header">
+        <mat-card-title>{{titulo}}</mat-card-title>
+        <div class="ms-auto">
+          <button type="submit" mat-fab extended color="primary" (click)="generarReporte()">
+            Descargar reporte
+            <mat-icon>download</mat-icon>
+          </button>
+        </div>
+      </mat-card-header>
+      <mat-card-content>
+
+
+        <mat-form-field>
+          <mat-label for="fchTimeDesde">Desde</mat-label>
+          <input matInput type="datetime-local" #fchTimeDesde name="fchTimeDesde" formControlName="fchTimeDesde">
+          <button (click)="fchTimeDesde.showPicker()" mat-icon-button matIconSuffix><mat-icon>today</mat-icon></button>
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>Hasta</mat-label>
+          <input matInput type="datetime-local" #fchTimeHasta name="fchTimeHasta" formControlName="fchTimeHasta">
+          <button (click)="fchTimeHasta.showPicker()" mat-icon-button matIconSuffix><mat-icon>today</mat-icon></button>
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>Cajas</mat-label>
+          <mat-select matNativeControl formControlName="cajasId" multiple>
+            <mat-option *ngFor="let e of cajaLst" value={{e.id}}>{{e.nombre}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <!--   <autocomplete-cliente></autocomplete-cliente>
+ -->
+        <mat-form-field>
+          <mat-label>Usuarios</mat-label>
+          <mat-select matNativeControl formControlName="usuariosId" multiple>
+            <mat-option *ngFor="let p of usuarioLst" value={{p.id}}>{{p.nomApellRz}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field>
+          <input matInput placeholder="Busca por cliente o proveedor" [formControl]="autocompleteControl"
+            aria-label="Number" [matAutocomplete]="auto">
+          <mat-autocomplete #auto="matAutocomplete" [displayWith]="mostrarApellidoCliente"
+            (optionSelected)="seleccionar($event)">
+            <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+              {{option.nomApellRz}}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+
+      </mat-card-content>
+    </form>
+  </mat-card>
+</div>

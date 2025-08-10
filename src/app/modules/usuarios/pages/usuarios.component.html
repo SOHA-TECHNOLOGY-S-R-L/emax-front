@@ -1,0 +1,50 @@
+<div class="container">
+  <mat-card class="card">
+    <mat-card-header class="card-header">
+      <mat-card-title>Listado de Usuarios</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <ng-container *ngIf="authService.hasRole('ROLE_SEARCH_USUARIO')">
+        <search-box-table (searchEvent)="searchEvent($event)"></search-box-table>
+      </ng-container>
+      <div class="mat-elevation-z8">
+        <table [ngClass]="{'d-none': !dataSource.length}" mat-table [dataSource]="dataSource" matSort
+          matSortActive="nomApellRz" matSortDisableClear matSortDirection="desc">
+          <ng-container matColumnDef="nomApellRz">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Usuario </th>
+            <td mat-cell *matCellDef="let element"> {{element.nomApellRz}} </td>
+          </ng-container>
+          <ng-container matColumnDef="email">
+            <th mat-header-cell *matHeaderCellDef> Email </th>
+            <td mat-cell *matCellDef="let element"> {{element.email}} </td>
+          </ng-container>
+          <!--       <ng-container matColumnDef="activo">
+        <th mat-header-cell *matHeaderCellDef> Activo </th>
+        <td mat-cell *matCellDef="let element"> {{element.activo}}  </td>
+      </ng-container>
+      <ng-container matColumnDef="bloqueado">
+        <th mat-header-cell *matHeaderCellDef> Bloqueado </th>
+        <td mat-cell *matCellDef="let element"> {{element.bloqueado}}  </td>
+      </ng-container> -->
+          <ng-container matColumnDef="acciones">
+            <th mat-header-cell *matHeaderCellDef> Acciones </th>
+            <td mat-cell *matCellDef="let element">
+              <div class="d-flex flex-row">
+                <button *ngIf="authService.hasRole('ROLE_ASIGNAR_ROL_USUARIO')" matMiniFab
+                  (click)="setUsuario(element)">
+                  <mat-icon>add_moderator</mat-icon>
+                </button>
+              </div>
+            </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+        <mat-paginator [length]="pageable.totalElements" class="table-paginator"
+          [ngClass]="{'d-none': !dataSource.length}" [pageSizeOptions]="[10, 20, 50]" showFirstLastButtons
+          [pageSize]="10" (page)="loadItems()"></mat-paginator>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+</div>

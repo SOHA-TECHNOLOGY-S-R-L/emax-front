@@ -1,0 +1,104 @@
+<div class="container">
+  <div class="card">
+    <form [formGroup]="formCategoria" autocomplete="off">
+
+      <div class="card-header">
+        <div class="card-title">{{ titulo }}</div>
+        <div class="ms-auto">
+          @if (!categoria.id && authService.hasRole('ROLE_REGISTER_CATEGORIA')) {
+          <button class="btn btn-primary" (click)='guardarCategoria()' [disabled]="!formCategoria.valid">Crear
+            producto</button>
+          }
+          @if (categoria.id && authService.hasRole('ROLE_UPDATE_CATEGORIA')) {
+          <button class="btn btn-primary" (click)='guardarCategoria()' [disabled]="!formCategoria.valid">Actualizar
+            categoria</button>
+          }
+          <button class="btn btn-secondary" [routerLink]="'/productos/categorias'">Cancelar</button>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="container">
+          <div class="row">
+            <div class="col-sm">
+              <div class="row mb-2">
+                <label for="nombre" class="col-form-label col-sm-4"><b>Nombre:</b><br>Visible menú de tienda</label>
+                <div class="input-group col-sm">
+                  <input formControlName="nombre" type="text" class="form-control" name="nombre" placeholder="Nombre">
+                  @if(formUtils.isValidField(formCategoria,'nombre')){
+                  <div class="alert alert-danger">
+                    {{formUtils.getFieldError(formCategoria,'nombre')}}
+                  </div>}
+                </div>
+              </div>
+              <div class="row mb-2">
+                <label for="descripcion" class="col-form-label col-sm-4"><b>Descripción:</b> <br>(visible en
+                  tienda):</label>
+                <div class="input-group col-sm">
+                  <textarea formControlName="descripcion" name="descripcion" class="form-control"
+                    [ngStyle]="{'resize': 'none'}" aria-label="With textarea" placeholder="Descripción" maxlength="250"
+                    rows="5"></textarea>
+                  @if(formUtils.isValidField(formCategoria,'descripcion')){
+                  <div class="alert alert-danger">
+                    {{formUtils.getFieldError(formCategoria,'descripcion')}}
+                  </div>}
+                </div>
+              </div>
+            </div>
+            <div class="col-sm">
+              <div class="row mb-2">
+
+                <div class="row mb-2">
+                  <!--                 <label for="formFile" class="form-label col-sm-4"><b>Imágen de categoria:</b><br>Visible en
+                  Home</label> -->
+                  <div class="input-group col-sm">
+                    <input #file (change)="this.isImage(file)" type="file" name="imagen" class="form-control"
+                      style="padding: 25px;" id="inputGroupFile04" aria-describedby="inputGroupFileAddon04">
+                    <button (click)="subirImagen(file)" class="btn btn-primary" type="button"
+                      [disabled]="!this.isImage(file)" id="inputGroupFileAddon04">Subir</button>
+                  </div>
+                </div>
+
+                <div class="row mb-2">
+                  <label for="activa" class="form-label col-sm-4"><b>Categoria activa</b></label>
+                  <div class="form-check form-switch col-sm-2">
+                    <input class="form-check-input" type="checkbox" formControlName="activa" name="activa"
+                      [checked]="categoria.activa">
+                    @if(formUtils.isValidField(formCategoria,'activa')){
+                    <div class="alert alert-danger">
+                      {{formUtils.getFieldError(formCategoria,'activa')}}
+                    </div>}
+                  </div>
+                </div>
+
+                <div class="row mb-2">
+                  <div class="col-sm">
+                    <img *ngIf="categoria?.imagen" [src]="verImagenCategoria" alt="{{categoria.imagen}}"
+                      class="img-fluid img-thumbnail rounded mx-auto d-block">
+                  </div>
+                </div>
+                <!--             <div class="row mb-2">
+              <div class="ol-sm-6">
+                <span>Valid:</span>
+                <pre>{{formProducto.valid | json}}</pre>
+                <span>pristine:</span>
+                <pre>{{formProducto.pristine| json}}</pre>
+                <span>touched:</span>
+                <pre>{{formProducto.touched| json}}</pre>
+                <span>value:</span>
+                <pre>{{formProducto.value| json}}</pre>
+                <span>errores</span>
+                <pre>{{formProducto.errors| json}}</pre>
+                <br>
+                <pre>{{margenesGanancia.controls[0].get('minCantidad')?.errors}}</pre>
+
+              </div>
+            </div> -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+
+  </div>
+</div>

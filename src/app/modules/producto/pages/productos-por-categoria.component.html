@@ -1,0 +1,32 @@
+<div class="row">
+  @for (producto of lstProductos; track $index) {
+  <div class="col-12 col-sm-6 col-lg-3">
+    <div class="card">
+      <a class="{{producto.estadoProducto.color}}" [routerLink]="['/tienda/item-producto-cliente-online',producto.id]">
+        <img *ngIf="producto?.imagen" [src]="API_URL_VER_IMAGEN+producto.imagen" alt="{{producto.imagen}}" class="card-img-top"></a>
+      <div class="card-body">
+        <p class="card-title"> {{producto.nombre}} ({{producto.codigo}})</p>
+        <p class="card-subtitle text-muted">{{producto.descripcion}}</p>
+        <div class="row">
+          <div class="col">
+            <span class="precio">{{producto.precioNetoStringShow}}</span>
+          </div>
+        </div>
+      </div>
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item"><i>Orden mín:</i> {{producto.minCantidadPedido}}, <i>Grupos de:</i>
+          {{producto.gruposDe}}</li>
+        <li class="list-group-item"><i>En stock:</i> {{producto.cantidadStock}}, <i>Vendidos:</i> {{producto.cantidadVendidos}}</li>
+      </ul>
+      <div class="card-body">
+        <div class="d-flex justify-content-evenly">
+          <button type="button" class="btn btn-primary"
+            [routerLink]="['/tienda/item-producto-cliente-online',producto.id]">Detalles</button>
+
+          <button type="button" class="btn btn-secondary" (click)="chatear(producto)"><i class="fa-brands fa-whatsapp  mr-1"></i>Chatear</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  }
+</div>

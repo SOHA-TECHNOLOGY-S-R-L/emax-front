@@ -1,0 +1,95 @@
+<div class="alert alert-info my-4" *ngIf="lstItemPedido.length == 0">
+    No hay líneas asignadas para adquirir del proveedor.
+</div>
+<form *ngIf="lstItemPedido.length > 0" #pedidoTiendaForm="ngForm" (ngSubmit)="crearPedidoTienda(pedidoTiendaForm)">
+    <div class="row">
+        <div class="col-12">
+            <table class="tabla-desktop table table-striped table-hover table-sm" cellspacing="1" cellpadding="1">
+                <thead>
+                    <tr>
+                        <th>Eliminar</th>
+                        <th>Imagen</th>
+                        <th>Producto</th>
+                        <th>Descripcion</th>
+                        <th>Stock</th>
+                        <th>C.U. Prom</th>
+                        <th>Cantidad</th>
+                        <th>Subtotal</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let item of lstItemPedido">
+                        <td><button mat-icon-button color="warn" (click)="eliminarItemPedido(item.producto.id)"
+                                matTooltip="Elimnar item"><mat-icon>delete</mat-icon></button></td>
+                        <td>
+                            <img [src]="item.imagen" width="86" alt={{item.imagen}} />
+                        </td>
+                        <td><a [routerLink]="['/tienda/item-producto',item.producto.id]">
+                                {{item.producto.nombre}}</a>
+                            <ul>
+                                <li><b>Medidas: </b>{{item.producto.medidas}}
+                                    <b>Color: </b>{{item.producto.color?.nombre}}
+                                </li>
+                                <li><b>Material: </b>{{item.producto.material?.nombre}}
+                                    <b>Peso: </b>{{item.producto.peso}}
+                                </li>
+                            </ul>
+                        </td>
+                        <td> <textarea name="descripcion" class="form-control" [ngStyle]="{'resize': 'none'}"
+                                maxlength="250" [value]="item.descripcion" rows="3"></textarea>
+                        </td>
+                        <td> {{item.producto.cantidadStock}}</td>
+
+
+                        <td>{{item.producto.costoUnitario| currency:'PEN'}}</td>
+
+                        <td>
+                            <input style="width:80px" type="number" name="cantidad" min="1" [value]="item.cantidad"
+                                (input)="actualizarCantidad(item.producto.id, $event);" />
+
+                        </td>
+                        <td>
+                            <input style="width:80px" type="number" name="importe" min="1" [value]="item.importe"
+                                (input)="actualizarImporte(item.producto.id, $event); calcularTotal()" />
+                        </td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="8">
+                            <textarea [(ngModel)]="pedido.observacion" class="form-control" name="observacion"
+                                #observacion="ngModel" minlength="2" maxlength="250" rows="2"
+                                placeholder="Coloca aquí datos adicionales al pedido..."></textarea>
+                            <div *ngIf="formUtils.isValidFieldFp(observacion)" class="alert alert-danger">
+                                {{formUtils.getFieldErrorFp(observacion)}}
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><b>Adquirido En:</b></td>
+                        <td colspan="2">
+                            <input type="datetime-local" [(ngModel)]="pedido.adquiridoEn" class="form-control"
+                                #adquiridoEn="ngModel" name="adquiridoEn" required>
+                            <div *ngIf="formUtils.isValidFieldFp(adquiridoEn)" class="alert alert-danger">
+                                {{formUtils.getFieldErrorFp(adquiridoEn)}}
+                            </div>
+                        </td>
+                        <td colspan="2" class="text-center fw-bold">TOTAL:</td>
+                        <td colspan="2" class="text-center fw-bold">{{total | currency:'PEN'}}</td>
+                    </tr>
+
+                </tfoot>
+            </table>
+        </div>
+    </div>
+    <div class="row mb-2">
+        @if(lstItemPedido.length > 0 && authService.hasRole('ROLE_CREATE_COMPRA')){
+        <button type="submit" class="btn btn-dark btn-lg" [disabled]="!pedidoTiendaForm.form.valid">Finalizar
+            pedido</button>
+
+        } @else {
+        <button type="submit" class="btn btn-dark btn-lg" disabled>Finalizar pedido</button>
+        }
+    </div>
+</form>

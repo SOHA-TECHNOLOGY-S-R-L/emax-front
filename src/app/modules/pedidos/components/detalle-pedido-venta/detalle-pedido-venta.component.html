@@ -1,0 +1,139 @@
+<div class="container">
+  <div class="row mt-2">
+    <div class="col-6">
+      <h3>{{titulo}}</h3>
+    </div>
+    <div class="col-6 d-flex flex-row justify-content-end">
+      <button type="button" class="btn btn-success" [routerLink]="['/pedidos/listado-ventas']">
+        Volver
+      </button>
+    </div>
+  </div>
+
+  <!-- <mat-card-content class="d-flex flex-column">
+ -->
+
+  <div class="row">
+    <div class="col-12 col-sm-6">
+      <ul class="list-group my-2">
+        <li class="list-group-item active">Items del pedido</li>
+        <li *ngFor="let item of pedido.items" class="list-group-item d-flex justify-content-between align-items-start">
+          <div class="ms-2 me-auto">
+            <span class="cabecera">Producto:</span> {{item.producto.nombre}}<br>
+            <span class="cabecera"></span> {{item.producto.color?.nombre}}<br>
+            <span class="cabecera"></span> {{item.producto.peso}}<br>
+            <span class="cabecera"></span> {{item.producto.material?.nombre}}<br>
+            <span class="cabecera">Cantidad:</span> {{item.cantidad}}<br>
+            <span class="cabecera">Sub total:</span> {{item.importe| currency: 'PEN'}}<br>
+            <span class="cabecera">Descripcion:</span> {{item.descripcion}}<br>
+          </div>
+        </li>
+      </ul>
+    </div>
+    <div class="col-12 col-sm-6">
+      <div class="row">
+        <div class="col-">
+          <ul class="list-group my-2">
+            <li class="list-group-item active">Datos del pedido</li>
+            <li class="list-group-item d-flex justify-content-between align-items-start">
+              <div class="ms-2 me-auto">
+                <span class="cabecera">Número:</span> {{pedido.id}}
+              </div>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-start">
+              <div class="ms-2 me-auto">
+                <span class="cabecera">Fecha emision:</span> {{pedido.createAt}}
+              </div>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-start">
+              <div class="ms-2 me-auto">
+                <span class="cabecera">Fecha entrega:</span> {{pedido.entregadoEn}}
+              </div>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-start">
+              <div class="ms-2 me-auto">
+                <span class="cabecera">Estado:</span> {{pedido.estadoPedido.estado}} :
+                {{pedido.estadoPedido.descripcion}}
+              </div>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-start">
+              <div class="ms-2 me-auto">
+                <span class="cabecera">Direccion de envio:</span> {{pedido.direccionEnvio}}
+              </div>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-start">
+              <div class="ms-2 me-auto">
+                <span class="cabecera">Celular de entrega:</span> {{pedido.celularEnvio}}
+              </div>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-start">
+              <div class="ms-2 me-auto">
+                <span class="cabecera">Nombres de entrega:</span> {{pedido.nomApellRzEnvio}}
+              </div>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-start">
+              <div class="ms-2 me-auto">
+                <span class="cabecera">Total:</span> {{pedido.precioNetoTotal| currency: 'PEN'}}
+              </div>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-start">
+              <div class="ms-2 me-auto">
+                <span class="cabecera">Pago:</span> {{pedido.pagoTotal | currency: 'PEN'}}
+              </div>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-start">
+              <div class="ms-2 me-auto">
+                <span class="cabecera">Vuelto:</span> {{pedido.vueltoTotal| currency: 'PEN'}}
+              </div>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-start">
+              <div class="ms-2 me-auto">
+                <span class="cabecera">Flujo efectivo:</span> {{pedido.flujoEfectivoTotal| currency: 'PEN'}}
+              </div>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-start">
+              <div class="ms-2 me-auto">
+                <span class="cabecera">Saldo:</span> {{pedido.saldoPedido| currency: 'PEN'}}
+              </div>
+            </li>
+          </ul>
+        </div>
+        <div class="col-">
+          <ul class="list-group my-2">
+            <li class="list-group-item active">Datos del cliente</li>
+            <li class="list-group-item d-flex justify-content-between align-items-start">
+              <div class="ms-2 me-auto">
+                <span class="cabecera">Cliente:</span>
+                {{pedido.cliente!.nomApellRz}}
+              </div>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-start">
+              <div class="ms-2 me-auto">
+                <span class="cabecera">Documento:</span>
+                {{pedido.cliente!.tipoDocumento.acronimo}} : {{pedido.cliente!.numeroDocumento}}
+              </div>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-start">
+              <div class="ms-2 me-auto">
+                <span class="cabecera">Celular:</span>
+                {{pedido.cliente!.celular}}
+              </div>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-start">
+              <div class="ms-2 me-auto">
+                <span class="cabecera">Dirección:</span>
+                {{pedido.cliente!.direccion}}
+              </div>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-start">
+              <div class="ms-2 me-auto">
+                <span class="cabecera">Email:</span>
+                {{pedido.cliente!.email}}
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

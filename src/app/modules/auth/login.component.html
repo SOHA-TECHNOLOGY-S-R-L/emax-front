@@ -1,0 +1,46 @@
+<div class="d-flex justify-content-center align-item-center">
+  <div class="card border-primary text-center">
+    <div class="card-header">{{titulo}}</div>
+    <div class="card-body">
+
+      <form method="post">
+        <!--         <div class="form-group col-sm-6">
+          <input [(ngModel)]="usuario.username" type="text" class="form-control"
+          name="username" id="username" placeholder="Username" autofocus required>
+        </div> -->
+
+<!--         <mat-form-field>
+          <mat-label>Ingrese usuario</mat-label>
+          <input matInput [(ngModel)]="usuario.username" name="username" id="username" autofocus required>
+        </mat-form-field> -->
+
+        <div class="form-group">
+          <label for="username" class="form-label"><b>Ingrese usuario:</b></label>
+          <input type="text" [(ngModel)]="usuario.username" name="username" class="form-control" id="username" required />
+        </div>
+
+        <!--         <div class="form-group col-sm-6">
+          <input [(ngModel)]="usuario.password" type="password" class="form-control"
+          name="password" id="password" placeholder="Password" required>
+        </div> -->
+
+
+<!--         <div class="input-group col-sm">
+          <input formControlName="nombre" type="text" class="form-control" name="nombre" placeholder="Nombre">
+          @if(formUtils.isValidField(formProducto,'nombre')){
+          <div class="alert alert-danger">
+            {{formUtils.getFieldError(formProducto,'nombre')}}
+          </div>}
+        </div> -->
+
+        <div class="form-group">
+          <label for="password" class="form-label"><b>Ingresa clave:</b></label>
+          <input type="password" [(ngModel)]="usuario.password" name="password" class="form-control" id="password" required />
+        </div>
+
+        <button (click)='login()' type="submit" class="btn btn-primary">Iniciar sesión</button>
+
+      </form>
+    </div>
+  </div>
+</div>

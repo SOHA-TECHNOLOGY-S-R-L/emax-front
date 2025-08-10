@@ -1,0 +1,72 @@
+@use 'variables' as var;
+
+modal-dialog-alert {
+  .header-text {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 20px 0;
+    .mat-icon {
+      height: 45px;
+      width: 45px;
+      font-size: 45px;
+    }
+    h2 {
+      margin: 0;
+      font-weight: bold;
+    }
+  }
+  .content {
+    padding: 20px 0;
+  }
+}
+
+.dialog-error {
+  .mat-icon {
+    color: var.$emax-pink;
+  }
+}
+
+.dialog-success {
+  .mat-icon {
+    color: var.$emax-green;
+  }
+}
+
+.dialog-warning {
+  .mat-icon {
+    color: var.$emax-yellow;
+  }
+}
+
+.dialog-info {
+  .mat-icon {
+    color: var.$emax-blue;
+  }
+}
+
+.alert-box {
+  color:#555;
+  border-radius: 5px;
+  padding: 10px 16px;
+  margin: 15px auto;
+}
+.alert-box span {
+  text-transform: uppercase;
+}
+.error {
+  background: #ffecec;
+  border:1px solid var.$emax-pink;
+}
+.success {
+  background: #e9ffd9;
+  border:1px solid var.$emax-green;
+}
+.warning {
+  background: #fff8c4;
+  border:1px solid var.$emax-yellow;
+}
+.notice {
+  background: #e3f7fc;
+  border:1px solid var.$emax-blue;
+}

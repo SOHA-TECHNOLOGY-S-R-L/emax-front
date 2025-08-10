@@ -1,0 +1,20 @@
+<div class="example-container" [class.example-is-mobile]="mobileQuery.matches">
+  <mat-sidenav-container class="example-sidenav-container" [style.marginTop.px]="mobileQuery.matches ? 56 : 0">
+    <mat-sidenav class="main-sidenav" #sidenavLeft [mode]="mobileQuery.matches ? 'over' : 'side'"
+      [fixedInViewport]="mobileQuery.matches" fixedTopGap="56">
+      <menu-app (clickMenuEvent)="sidenavLeft.toggle()"></menu-app>
+    </mat-sidenav>
+    <mat-sidenav-content class="main-sidenav-content">
+      <cabecera (clickMenuEvent)="sidenavLeft.toggle()" />
+      <!--       <menu-tienda></menu-tienda>
+ -->
+      <!--       <div class="container-fluid">
+ -->
+      <router-outlet></router-outlet>
+
+
+      <!--       </div>
+ --> <app-pie></app-pie>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+</div>

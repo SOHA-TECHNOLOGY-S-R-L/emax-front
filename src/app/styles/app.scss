@@ -1,0 +1,27 @@
+/* @import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+@import "skeleton";*/
+@forward "sidenav";
+/*@import "toolbar";
+@import "utils";
+@import "auth";
+@import "buttons";
+@import "icons";
+@import "dropdwons";
+@import "tooltips";
+@import "pages";
+@import "tables"; */
+@forward "alerts";
+@forward "layouts";
+
+/* @import "splash-screen";
+@import "inputs";
+@import "check-list-profile";
+@import "dialogs";
+@import "components";
+@import "page-not-found";
+
+@import "material";
+@import "simpleform.scss" */

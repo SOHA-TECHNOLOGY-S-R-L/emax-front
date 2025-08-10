@@ -1,0 +1,140 @@
+<ul class="alert alert-danger" *ngIf="errores.length > 0">
+  <li *ngFor="let err of errores">
+    {{ err }}
+  </li>
+</ul>
+
+<mat-card class="card">
+  <form class="d-flex flex-column" #ProductoForm="ngForm">
+    <mat-card-header class="card-header">
+      <mat-card-title>{{ titulo }}</mat-card-title>
+      <div class="ms-auto">
+        <button *ngIf="!producto.id && authService.hasRole('ROLE_REGISTER_PRODUCTO') else elseBlock" color="primary"
+          mat-raised-button (click)='create()' [disabled]="!ProductoForm.form.valid">Crear producto</button>
+        <ng-template #elseBlock>
+          <button *ngIf="authService.hasRole('ROLE_UPDATE_PRODUCTO') " color="primary" mat-raised-button
+            (click)='update()' [disabled]="!ProductoForm.form.valid">Actualizar producto</button>
+        </ng-template>
+        <button color="primary" mat-raised-button [routerLink]="'/productos'">Cancelar</button>
+      </div>
+    </mat-card-header>
+    <!--   <img mat-card-image src="https://material.angular.io/assets/img/examples/shiba2.jpg" alt="Photo of a Shiba Inu"> -->
+    <mat-card-content class="d-flex flex-column">
+      <!--       <div class="form-group row">
+          <label for="nombre" class="col-form-label col-sm-2">Nombre</label>
+          <div class="col-sm-6">
+            <input type="text" class="form-control" [(ngModel)]="cliente.nombre" name="nombre" #nombre="ngModel">
+            <div class="alert alert-danger" *ngIf="nombre.invalid && (nombre.dirty || nombre.touched)">
+              <div *ngIf="nombre?.errors?.['required']">
+                Nombre es requerido
+              </div>
+              <div *ngIf="nombre.errors?.['minlength']">
+                Nombre debe tener al menos 4 caracteres
+              </div>
+            </div>
+          </div>
+        </div> -->
+
+      <mat-form-field class="example-full-width">
+        <mat-label>Nombre producto</mat-label>
+        <input matInput type="text" class="form-control" [(ngModel)]="producto.nombre" name="nombre" #nombre="ngModel">
+        <div *ngIf="nombre.invalid && (nombre.dirty || nombre.touched)">
+          <mat-error *ngIf="nombre?.errors?.['required']">
+            Nombre es requerido
+          </mat-error>
+          <mat-error *ngIf="nombre.errors?.['minlength']">
+            Nombre debe tener al menos 4 caracteres
+          </mat-error>
+        </div>
+      </mat-form-field>
+
+      <mat-form-field class="example-full-width">
+        <mat-label>Medidas</mat-label>
+        <input matInput type="text" class="form-control" [(ngModel)]="producto.medidas" name="medidas"
+          #medidas="ngModel" minlength="2"
+          pattern="^[0-9]{1,3}([\\.][0-9]{2})?(x|X)?([0-9]{1,3}([\\.][0-9]{2})?)?(x|X)?([0-9]{1,3}([\\.][0-9]{2})?)?\s(cm|CM|mt|MT)$">
+        <mat-hint>(cm:centimetros, mt:metros) Ej: 47x45x3 cm / 32.50x20.5x3 cm </mat-hint>
+        <div *ngIf="medidas.invalid && (medidas.dirty || medidas.touched)">
+          <mat-error *ngIf="medidas?.errors?.['pattern']">
+            Patron es requerido
+          </mat-error>
+          <mat-error *ngIf="medidas?.errors?.['required']">
+            Medidas es requerido
+          </mat-error>
+          <mat-error *ngIf="medidas.errors?.['minlength']">
+            Medidas debe tener al menos 2 caracteres
+          </mat-error>
+        </div>
+      </mat-form-field>
+      <mat-form-field class="example-full-width">
+        <mat-label>Peso</mat-label>
+        <input matInput type="text" class="form-control" [(ngModel)]="producto.peso" name="peso" #peso="ngModel" min="1"
+          pattern="^[0-9]{1,3}([(\\.)][0-9]{2})?\s(kg|KG)$">
+        <mat-hint>(kg:kilogramos) Ej: 0.24 kg / 1 kg / 1.50 kg</mat-hint>
+        <div *ngIf="peso.invalid && (peso.dirty || peso.touched)">
+          <mat-error *ngIf="peso?.errors?.['pattern']">
+            Patron es requerido
+          </mat-error>
+          <mat-error *ngIf="peso?.errors?.['required']">
+            Medidas es requerido
+          </mat-error>
+          <mat-error *ngIf="peso.errors?.['minlength']">
+            Medidas debe tener al menos 2 caracteres
+          </mat-error>
+        </div>
+      </mat-form-field>
+      <!--         <mat-form-field class="example-full-width">
+          <mat-label>Marca</mat-label>
+          <input matInput  type="text" class="form-control" [(ngModel)]="producto.marca" name="marca" #marca="ngModel">
+          <mat-hint>Ej: Nike/Philips/...</mat-hint>
+        </mat-form-field> -->
+      <!--         <mat-form-field class="example-full-width">
+          <mat-label>Modelo</mat-label>
+          <input matInput  type="text" class="form-control" [(ngModel)]="producto.modelo" name="modelo" #modelo="ngModel">
+        </mat-form-field> -->
+      <mat-form-field appearance="fill">
+        <mat-label>Color</mat-label>
+        <mat-select [compareWith]="compareValueWithOptions" [(ngModel)]="producto.color" name="color">
+          <mat-option *ngFor="let color of colores" [value]="color">{{color.nombre}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Material</mat-label>
+        <mat-select [compareWith]="compareValueWithOptions" [(ngModel)]="producto.material" name="material">
+          <mat-option *ngFor="let material of materiales" [value]="material">{{material.nombre}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <!--         <mat-form-field appearance="fill">
+          <mat-label>Origen</mat-label>
+            <mat-select [compareWith]="compareValueWithOptions" [(ngModel)]="producto.origen" name="origen">
+              <mat-option *ngFor="let origen of origenes" [value]="origen">{{origen.nombre}}</mat-option>
+            </mat-select>
+        </mat-form-field> -->
+      <!--         <mat-form-field appearance="fill">
+          <mat-label>Empaque</mat-label>
+            <mat-select [compareWith]="compareValueWithOptions" [(ngModel)]="producto.empaque" name="empaque">
+              <mat-option *ngFor="let empaque of empaques" [value]="empaque">{{empaque.nombre}}</mat-option>
+            </mat-select>
+        </mat-form-field> -->
+      <mat-form-field appearance="fill">
+        <mat-label>Categoria</mat-label>
+        <mat-select [compareWith]="compareValueWithOptions" [(ngModel)]="producto.categoria" name="categoria">
+          <mat-option *ngFor="let categoria of categorias" [value]="categoria">{{categoria.nombre}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Uso interno</mat-label>
+        <mat-select [compareWith]="compareValueWithOptions" [(ngModel)]="producto.uso" name="uso">
+          <mat-option *ngFor="let uso of usos" [value]="uso">{{uso.nombre}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <div class="input-group mb-3">
+        <label (change)="seleccionarImagen($event)" class="input-group-text" for="inputGroupFile01">Upload</label>
+      </div>
+    </mat-card-content>
+    <!--   <mat-card-actions>
+        <button mat-button>LIKE</button>
+        <button mat-button>SHARE</button>
+      </mat-card-actions> -->
+  </form>
+</mat-card>

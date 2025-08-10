@@ -1,0 +1,16 @@
+.card {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.card-header {
+    padding-bottom: 16px !important;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    button{
+      margin-left: 5px;
+      border-radius: 60px;
+    }
+}
+

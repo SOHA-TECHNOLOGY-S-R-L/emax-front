@@ -1,0 +1,27 @@
+/* .contenedor-img {
+    position: relative;
+    img {
+        border-radius: 0 10px 10px 10px;
+    }
+    &::before {
+        content: 'PRÓXIMO';
+        display: block;
+        width: 30%;
+        background-color: red;
+        height: auto;
+        position: absolute;
+        font-weight: bolder;
+        font-style: italic;
+        color: white;
+        text-align: center;
+        padding: 3px 5px;
+    }
+} */
+
+
+.precio {
+/*   display: inline-block;
+  width: 120px; */
+  font-size: x-large;
+  font-weight: bold;
+}

@@ -1,0 +1,82 @@
+@use 'variables' as var;
+
+.main-sidenav {
+  background-color: var.$emax-dark !important;
+  color: white !important;
+
+  .mat-toolbar {
+    background-color: inherit;
+    color: var.$emax-pink;
+  }
+
+  .mat-mdc-subheader {
+    display: flex;
+    align-items: center;
+    text-transform: uppercase;
+    font-size: 14px;
+    font-weight: 500;
+    margin: 12px 6px;
+    color: var.$emax-warning !important;
+
+    .mat-icon {
+      margin: 0px 2px;
+    }
+  }
+
+  .mat-expansion-panel,
+  .mat-expansion-panel-header-title {
+    background-color: inherit;
+    color: white;
+  }
+
+  .headers-align .mat-expansion-panel-header-description {
+    justify-content: end;
+    align-items: center;
+    margin-left: 2px;
+    color: white;
+
+  }
+
+  /*   .headers-align .mat-mdc-form-field + .mat-mdc-form-field {
+    margin-left: 8px;
+  } */
+
+
+
+  /*   .mat-expansion-panel-header{
+    background-color:inherit;
+    color: var.$emax-pink;
+  } */
+
+  * .mat-icon,
+  .mat-subheader {
+    color: var.$emax-warning !important;
+  }
+
+  .mat-divider {
+    border-top-color: var.$emax-gray8;
+  }
+
+  .mdc-list-item {
+    padding: 0px 4px;
+  }
+
+  .mdc-list-item__primary-text {
+    color: var.$emax-gray1;
+  }
+
+  .mdc-list-item:hover,
+  .mdc-list-item.active {
+/*     background-color: var.$emax-pink;
+ */        background-color: var.$emax-warning;
+
+  }
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+/* .main-sidenav-content {
+  height: 1000px;
+} */

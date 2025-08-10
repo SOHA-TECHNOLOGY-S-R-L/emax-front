@@ -1,0 +1,20 @@
+<section class="example-section">
+  <span class="example-list-section">
+    <mat-checkbox class="example-margin"
+                  [checked]="allComplete"
+                  [indeterminate]="someComplete()"
+                  (change)="setAll($event.checked)">
+      {{checkboxModul.nombre}}
+    </mat-checkbox>
+  </span>
+  <span class="example-list-section">
+    <ul  [ngStyle]="{'list-style':'none'}">
+      <li *ngFor="let roles of checkboxModul.checkboxRoles">
+        <mat-checkbox [(ngModel)]="roles.activated"
+                      (ngModelChange)="updateAllComplete()">
+          {{roles.descripcion}}
+        </mat-checkbox>
+      </li>
+    </ul>
+  </span>
+</section>

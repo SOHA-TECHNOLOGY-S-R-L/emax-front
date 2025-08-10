@@ -1,0 +1,7 @@
+<mat-form-field>
+  <mat-icon matPrefix>search</mat-icon>
+  <input matInput type="search" [(ngModel)]="query" autocomplete="off" (search)="search()" placeholder="Buscar">
+  <button *ngIf="query" matSuffix mat-icon-button aria-label="Clear" (click)="query= ''; search()">
+    <mat-icon class="material-icons-outlined">close</mat-icon>
+  </button>
+</mat-form-field>

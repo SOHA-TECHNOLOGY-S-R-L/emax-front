@@ -1,0 +1,152 @@
+<div class="container">
+    <div class="row">
+        <h3 class="text-center fw-bold"> Registrate para poder realizar pedidos y obtener promociones </h3>
+    </div>
+    @if(isCliente && !isUsuario){
+    <div class="row mt-2">
+        <div class="col-12 alert alert-info">
+            Hola <b>{{cliente.nomApellRz}}</b>, ya tenemos algunos datos, tu usuario de sesión es
+            <b>{{cliente.numeroDocumento}}</b> colocalé una clave.
+        </div>
+    </div>
+    }
+
+    @if(isCliente && isUsuario){
+    <div class="row mt-2">
+        <div class="col-12 alert alert-info">
+            Hola <b>{{cliente.nomApellRz}}</b>, ya tienes una cuenta registrada, si no la recuerdas busca en el correo o comunicate con el
+            administrador.
+        </div>
+    </div>
+    }
+    <form [formGroup]="formNewCuenta" (ngSubmit)="crearCuenta()" autocomplete="false">
+        <div class="row">
+            <div class="col-12 col-md-6">
+                <div class="row mb-2">
+                    <label for="tipoDocumentoId" class="form-label col-12">Tipo documento:</label>
+                    <div class="col-12">
+                        <select formControlName="tipoDocumentoId" name="tipoDocumentoId" class="form-control">
+                            <option *ngFor="let tipoDocumento of tipoDocumentos" [value]="tipoDocumento.id">
+                                {{tipoDocumento.nombre}}</option>
+                        </select>
+                        @if(formUtils.isValidField(formNewCuenta,'tipoDocumentoId')){
+                        <div class="alert alert-danger">
+                            {{formUtils.getFieldError(formNewCuenta,"tipoDocumentoId")}}
+                        </div>}
+                    </div>
+                </div>
+                <div class="row mb-2">
+                    <label for="numeroDocumento" class="form-label col-12"><b>Número de documento (Inicio de sesión para
+                            ingresar)</b></label>
+                    <div class="col-12">
+                        <input formControlName="numeroDocumento" type="text" class="form-control" name="numeroDocumento"
+                            (change)="findByNumDocumento($event)">
+                        @if(formUtils.isValidField(formNewCuenta,'numeroDocumento')){
+                        <div class="alert alert-danger">
+                            {{formUtils.getFieldError(formNewCuenta,"numeroDocumento")}}
+                        </div>}
+                    </div>
+                </div>
+                <div class="row mb-2">
+                    <label for="nomApellRz" class="form-label col-12">Nombres y
+                        apellidos (P. Natural) o Razón social (P. Jurídica) :</label>
+                    <div class="col-12">
+                        <input formControlName="nomApellRz" type="text" class="form-control" name="nomApellRz">
+                        @if(formUtils.isValidField(formNewCuenta,'nomApellRz')){
+                        <div class="alert alert-danger">
+                            {{formUtils.getFieldError(formNewCuenta,'nomApellRz')}}
+                        </div>}
+                    </div>
+                </div>
+                <div class="row mb-2">
+                    <label for="correo" class="form-label col-12">Correo electrónico :</label>
+                    <div class="col-12">
+                        <input formControlName="correo" type="text" class="form-control" name="correo">
+                        @if(formUtils.isValidField(formNewCuenta,'correo')){
+                        <div class="alert alert-danger">
+                            {{formUtils.getFieldError(formNewCuenta,'correo')}}
+                        </div>}
+                    </div>
+                </div>
+                <!--                 <div class="row mb-2">
+                    <label for="celular" class="form-label col-12">Celular</label>
+                    <div class="col-12">
+                        <input formControlName="celular" type="text" class="form-control" name="celular"
+                            (change)="findByCelular($event)">
+                        @if(formUtils.isValidField(formNewCuenta,'celular')){
+                        <div class="alert alert-danger">
+                            {{formUtils.getFieldError(formNewCuenta,'celular')}}
+                        </div>}
+                    </div>
+                </div> -->
+                <div class="row mb-2">
+                    <label for="clave" class="form-label col-12"><b>Clave:</b></label>
+                    <div class="col-12">
+                        <input formControlName="clave" type="password" class="form-control" name="clave"
+                            placeholder="Clave">
+                        @if(formUtils.isValidField(formNewCuenta,'clave')){
+                        <div class="alert alert-danger">
+                            {{formUtils.getFieldError(formNewCuenta,'clave')}}
+                        </div>}
+                    </div>
+                </div>
+                <div class="row mb-2">
+                    <label for="confirmaClave" class="form-label col-12"><b>Confirmar
+                            clave:</b></label>
+                    <div class="col-12">
+                        <input formControlName="confirmaClave" type="password" class="form-control" name="confirmaClave"
+                            placeholder="Confirmar clave">
+                        @if(formUtils.isValidField(formNewCuenta,'confirmaClave')){
+                        <div class="alert alert-danger">
+                            {{formUtils.getFieldError(formNewCuenta,'confirmaClave')}}
+                        </div>}
+                    </div>
+                </div>
+
+
+                <!--                 <div class="row mb-2">
+                    <label for="direccion" class="form-label col-12">Dirección:</label>
+                    <div class="col-12">
+                        <input formControlName="direccion" type="text" class="form-control" name="direccion">
+                        @if(formUtils.isValidField(formNewCuenta,'direccion')){
+                        <div class="alert alert-danger">
+                            {{formUtils.getFieldError(formNewCuenta,'direccion')}}
+                        </div>}
+                    </div>
+                </div> -->
+
+            </div>
+            <div class="col-12 col-md-6">
+                <mat-list>
+                    <div mat-subheader><b>Requerimientos para una clave segura:</b></div>
+                    <mat-list-item>
+                        <mat-icon matListItemIcon>east</mat-icon>
+                        <div matListItemTitle>Al menos 8 caracteres de longitud.</div>
+                    </mat-list-item>
+                    <mat-list-item>
+                        <mat-icon matListItemIcon>east</mat-icon>
+                        <div matListItemTitle>Contiene al menos una letra minúscula.</div>
+                    </mat-list-item>
+                    <mat-list-item>
+                        <mat-icon matListItemIcon>east</mat-icon>
+                        <div matListItemTitle>Contiene al menos una letra mayúscula.</div>
+                    </mat-list-item>
+                    <mat-list-item>
+                        <mat-icon matListItemIcon>east</mat-icon>
+                        <div matListItemTitle>Contiene al menos un dígito.</div>
+                    </mat-list-item>
+                    <mat-list-item>
+                        <mat-icon matListItemIcon>east</mat-icon>
+                        <div matListItemTitle>Contiene al menos un carácter especial de un conjunto predefinido
+                        </div>
+                    </mat-list-item>
+                </mat-list>
+                <div class="d-flex justify-content-center">
+                    <button type="button" class="btn btn-secondary me-2" [routerLink]="['/']">Cancelar
+                        registro</button>
+                    <button type="submit" class="btn btn-primary">Aceptación y registro</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

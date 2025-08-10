@@ -1,0 +1,31 @@
+$emax-blue: #00A9E0;
+$emax-blue-rgb: rgba(0,169,224);
+$emax-dark: #0a1026;
+
+$emax-green: #5BC500;
+$emax-purple: #954B97;
+$emax-pink: #E9426D;
+$emax-orange: #EC6839;
+$emax-yellow: #F59C00;
+$emax-warning: #FFC107;
+
+$emax-gray1: #E9EAE8;
+$emax-gray3: #D3D4D3;
+$emax-gray5: #B6B7B7;
+$emax-gray8: #86888C;
+$emax-gray10: #50535A;
+
+
+// DARK
+$dark-background: #212121;
+$dark-appbar: #242526;
+
+$height-toolbar-default: 64px;
+$height-toolbar-mobile: 56px;
+
+$sidenav-width: 300px;
+$text-secondary: hsl(0deg 0% 0% / 54%);
+
+body.theme-brand {
+  --movistar-primary-rgb: #{$emax-blue-rgb};
+}

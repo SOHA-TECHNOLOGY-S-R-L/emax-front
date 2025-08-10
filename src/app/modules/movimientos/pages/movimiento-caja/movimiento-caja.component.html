@@ -1,0 +1,103 @@
+<div class="container">
+
+  <mat-card class="card">
+    <form #myForm="ngForm" (ngSubmit)="onSubmitForm()">
+      <mat-card-header class="card-header">
+        <mat-card-title>{{titulo}}</mat-card-title>
+        <div class="ms-auto">
+          <button type="submit" color="primary" mat-raised-button cdkFocusInitial [disabled]="!myForm.form.valid">
+            Realizar</button>
+          <button color="primary" mat-raised-button [routerLink]="['/']">
+            Cancelar
+          </button>
+        </div>
+      </mat-card-header>
+      <mat-card-content class="d-flex flex-column">
+        <ul class="list-group">
+          <li class="list-group-item list-group-item-primary">Caja Usuario</li>
+          <li class="list-group-item">Caja: {{cajaUsuario.caja.nombre}}</li>
+          <li class="list-group-item">Ubicacion: {{cajaUsuario.caja.ubicacion}}</li>
+          <li class="list-group-item">Fecha apertura: {{cajaUsuario.fechaApertura}}</li>
+          <li class="list-group-item">Fecha actualización: {{cajaUsuario.fechaActualizacion}}</li>
+          <li class="list-group-item"><span class="celda-estado {{cajaUsuario.color}}">{{cajaUsuario.activa + '' |
+              i18nSelect: estadoCajaUsuarioMap }}</span></li>
+
+
+        </ul>
+        <ul class="list-group">
+          <li class="list-group-item list-group-item-primary">Movimiento</li>
+        </ul>
+        <mat-radio-group class="example-full-width" name="iMovimiento" [(ngModel)]="iMovimiento"
+          (change)="changeTipoMovimiento($event.value)">
+          <mat-radio-button value="I">Ingreso</mat-radio-button>
+          <mat-radio-button value="E">Egreso</mat-radio-button>
+        </mat-radio-group>
+        <mat-form-field class="example-full-width">
+          <mat-label>Tipo movimiento</mat-label>
+          <mat-select name="tipoMovimientoCaja" [(ngModel)]="movimientoCaja.tipoMovimientoCaja" required>
+            <mat-option *ngFor="let tipoMovimientoCaja of tipoMovimientosCajaLst" [value]="tipoMovimientoCaja">
+              {{tipoMovimientoCaja.movimiento}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field class="example-full-width">
+          <mat-label>Tipo pago</mat-label>
+          <mat-select name="tipoPago" [(ngModel)]="movimientoCaja.tipoPago" required>
+            <mat-option *ngFor="let tipoPago of tipoPagos" [value]="tipoPago">
+              {{tipoPago.nombre}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <ng-container *ngIf="iMovimiento=='I'">
+          <mat-form-field>
+            <mat-label>INGRESO DINERO</mat-label>
+            <input matInput type="number" name="ingresoDinero" #ingresoDinero="ngModel"
+              [(ngModel)]="movimientoCaja.ingresoDinero" min="0" required>
+            <div *ngIf="ingresoDinero.invalid && (ingresoDinero.dirty || ingresoDinero.touched)">
+              <mat-error *ngIf="ingresoDinero?.errors?.['required']">
+                Pago es requerido
+              </mat-error>
+            </div>
+          </mat-form-field>
+        </ng-container>
+        <ng-container *ngIf="iMovimiento=='E'">
+          <mat-form-field>
+            <mat-label>EGRESO DINERO</mat-label>
+            <input matInput type="number" name="egresoDinero" #egresoDinero="ngModel"
+              [(ngModel)]="movimientoCaja.egresoDinero" min="0" required>
+            <div *ngIf="egresoDinero.invalid && (egresoDinero.dirty || egresoDinero.touched)">
+              <mat-error *ngIf="egresoDinero?.errors?.['required']">
+                Pago es requerido
+              </mat-error>
+            </div>
+          </mat-form-field>
+        </ng-container>
+
+        <!--       <mat-form-field class="example-full-width">
+        <input matInput #message [(ngModel)]="movimiento.descripcion" name="descripcion" #descripcion=ngModel maxlength="256" placeholder="Detalle el producto...">
+        <mat-hint align="end">{{message.value.length}} / 256</mat-hint>
+      </mat-form-field> -->
+      </mat-card-content>
+    </form>
+    <div class="d-flex flex-row justify-content-center">
+      <div class="card border-info" style="margin-right: 5px;">
+        <div class="card card-header">SALDO CAJA</div>
+        <div class="card card-body">
+          <p class="black">{{cajaUsuario.saldoCaja| currency: 'PEN'}}</p>
+        </div>
+      </div>
+      <div class="card border-info" style="margin-right: 5px;">
+        <div class="card card-header">INGRESO</div>
+        <div class="card card-body">
+          <p class="blue">{{movimientoCaja.ingresoDinero| currency: 'PEN'}}</p>
+        </div>
+      </div>
+      <div class="card border-info">
+        <div class="card card-header">EGRESO</div>
+        <div class="card card-body">
+          <p class="red">{{movimientoCaja.egresoDinero| currency: 'PEN'}}</p>
+        </div>
+      </div>
+    </div>
+  </mat-card>
+</div>

@@ -1,0 +1,111 @@
+<div class="container">
+<div class="card">
+  <form class="d-flex flex-column" #clienteForm="ngForm" autocomplete="off">
+    <div class="card-header">
+      <h6 class="card-title">{{ titulo }}</h6>
+      <div class="ms-auto">
+        <button *ngIf="!cliente.id && authService.hasRole('ROLE_REGISTER_CLIENTE') else elseBlock" color="primary"
+          mat-raised-button (click)='create()' [disabled]="!clienteForm.form.valid">Crear cliente o proveedor</button>
+        <ng-template #elseBlock>
+          <button *ngIf="authService.hasRole('ROLE_UPDATE_CLIENTE')" color="primary" mat-raised-button
+            (click)='update()' [disabled]="!clienteForm.form.valid">Actualizar cliente o proveedor</button>
+        </ng-template>
+
+        <button color="primary" mat-raised-button [routerLink]="'/clientes'">Cancelar</button>
+      </div>
+    </div>
+    <div class="card-body d-flex flex-column">
+      <mat-form-field appearance="fill">
+        <mat-label>Tipo documento</mat-label>
+        <mat-select [compareWith]="compararDocumento" [(ngModel)]="tipoDocumentoSelected" name="tipoDocumento">
+          <mat-option [value]="undefined">--- selecionar documento ---</mat-option>
+          <mat-option *ngFor="let documento of tipoDocumentos" [value]="documento">{{documento.nombre}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field class="fill">
+        <mat-label>Número documento</mat-label>
+        <input type="text" matInput [(ngModel)]="cliente.numeroDocumento" name="numeroDocumento"
+          #numeroDocumento="ngModel" minlength="8" maxlength="11" pattern="^\d+$">
+        <div *ngIf="formUtils.isValidFieldFp(numeroDocumento)" class="text-danger">
+          {{formUtils.getFieldErrorFp(numeroDocumento)}}
+        </div>
+      </mat-form-field>
+      <mat-form-field class="example-full-width">
+        <mat-label>Celular</mat-label>
+        <input matInput [(ngModel)]="cliente.celular" name="celular" #celular="ngModel" minlength="6" required>
+        <div *ngIf="formUtils.isValidFieldFp(celular)" class="text-danger">
+          {{formUtils.getFieldErrorFp(celular)}}
+        </div>
+      </mat-form-field>
+      <mat-form-field class="example-full-width">
+        <mat-label>Nombres y apellidos o Razón Social</mat-label>
+        <input matInput type="text" class="form-control" [(ngModel)]="cliente.nomApellRz" name="nomApellRz"
+          #nomApellRz="ngModel" minlength="2">
+        <div *ngIf="formUtils.isValidFieldFp(nomApellRz)" class="text-danger">
+          {{formUtils.getFieldErrorFp(nomApellRz)}}
+        </div>
+      </mat-form-field>
+
+
+
+      <!--       <div class="form-group row">
+          <label for="email" class="col-form-label col-sm-2">Email</label>
+          <div class="col-sm-6">
+            <input type="email" class="form-control" [(ngModel)]="cliente.email" name="email" #email="ngModel">
+            <div class="alert alert-danger" *ngIf="email.invalid && (email.dirty || email.touched)">
+              <div *ngIf="email.errors?.['required']">
+                Email es requerido
+              </div>
+              <div *ngIf="email.errors?.['email']">
+                Email debe tener un formato válido
+              </div>
+            </div>
+          </div>
+          </div> -->
+
+
+      <mat-form-field class="example-full-width">
+        <mat-label>Direccion</mat-label>
+        <input matInput [(ngModel)]="cliente.direccion" name="direccion" #direccion="ngModel" minlength="4">
+        <div *ngIf="formUtils.isValidFieldFp(direccion)" class="text-danger">
+          {{formUtils.getFieldErrorFp(direccion)}}
+        </div>
+      </mat-form-field>
+
+
+      <!--       <div class="form-group row">
+          <label for="createAt" class="col-form-label col-sm-2">Fecha</label>
+          <div class="col-sm-6">
+            <input [matDatepicker]="miDatepicker" class="form-control" [(ngModel)]="cliente.createAt" name="createAt" style="display:inline; width:300px;">
+            <mat-datepicker-toggle [for]="miDatepicker"></mat-datepicker-toggle>
+            <mat-datepicker #miDatepicker></mat-datepicker>
+          </div>
+          </div>
+          -->
+      <!--         <mat-form-field appearance="fill">
+          <mat-label>Fecha</mat-label>
+          <input matInput [matDatepicker]="miDatepicker" [(ngModel)]="cliente.createAt" name="createAt">
+            <mat-datepicker-toggle matIconSuffix [for]="miDatepicker"></mat-datepicker-toggle>
+            <mat-datepicker #miDatepicker></mat-datepicker>
+        </mat-form-field> -->
+
+      <!--       <div class="form-group row">
+            <label for="region" class="col-form-label col-sm-2">Región</label>
+            <div class="col-sm-6">
+              <select [compareWith]="compararDocumento" class="form-control" [(ngModel)]="cliente.tipoDocumento" name="tipoDocumento" style="width:500px;">
+                <option [ngValue]="undefined">--- selecionar documento ---</option>
+                <option *ngFor="let documento of tipoDocumentos" [ngValue]="documento">{{documento.nombre}}</option>
+              </select>
+            </div>
+          </div> -->
+
+
+    </div>
+    <!--   <mat-card-actions>
+        <button mat-button>LIKE</button>
+        <button mat-button>SHARE</button>
+      </mat-card-actions> -->
+  </form>
+</div>
+
+</div>

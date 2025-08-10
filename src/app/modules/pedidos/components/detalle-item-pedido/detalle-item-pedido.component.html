@@ -1,0 +1,20 @@
+<div mat-dialog-content>
+  <mat-form-field>
+    <textarea [ngStyle]="{'width': '100%', 'height': '250px'}" matInput  
+    #message 
+    [(ngModel)]="detalle" 
+    name="descripcion" 
+    #descripcion=ngModel 
+    maxlength="250"
+    placeholder="Detalle el producto..."></textarea>
+    <mat-hint align="end">{{message.value.length}} / 250</mat-hint>
+
+<!--     <input matInput #message [(ngModel)]="detalle" name="descripcion" #descripcion=ngModel maxlength="500"
+      placeholder="Detalle el producto...">
+    <mat-hint align="end">{{message.value.length}} / 500</mat-hint> -->
+  </mat-form-field>
+</div>
+<div mat-dialog-actions align=center>
+  <button mat-raised-button color="warn" (click)="cancelar()">Cancelar</button>
+  <button mat-raised-button color="primary" [mat-dialog-close]="detalle" cdkFocusInitial>Adicionar</button>
+</div>

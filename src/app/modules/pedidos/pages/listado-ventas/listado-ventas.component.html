@@ -1,0 +1,138 @@
+<mat-card class="card">
+  <mat-card-header class="card-header">
+    <mat-card-title>Listado ventas</mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content>
+
+    <div *ngIf="pedidos?.length == 0" class="alert alert-info">
+      No hay registros en la base de datos!
+    </div>
+
+    <ng-container *ngIf="authService.hasRole('ROLE_SEARCH_VENTA')">
+      <search-box-table *ngIf="pedidos?.length !== 0" (searchEvent)="searchEvent($event)"></search-box-table>
+    </ng-container>
+
+    @if (authService.hasRole('ROLE_LIST_VENTAS')) {
+    <div class="mat-elevation-z8">
+      <table [ngClass]="{'d-none': !dataSource.length}" mat-table [dataSource]="dataSource" matSort
+        matSortActive="entregadoEn" matSortDisableClear matSortDirection="desc">
+
+        <ng-container matColumnDef="nomApellRz">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Cliente </th>
+          <td mat-cell *matCellDef="let element"> {{element.cliente.nomApellRz}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="createAt">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Fecha Creacion </th>
+          <td mat-cell *matCellDef="let element"> {{element.createAt}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="entregadoEn">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Fecha Entrega </th>
+          <td mat-cell *matCellDef="let element"> {{element.entregadoEn}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="precioNetoTotal">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Precio Total S/.</th>
+          <td mat-cell *matCellDef="let element"> {{element.precioNetoTotal | currency: 'PEN'}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="pagoTotal">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Pago Total S/.</th>
+          <td mat-cell *matCellDef="let element"> {{element.pagoTotal | currency: 'PEN'}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="vueltoTotal">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Vuelto Total S/.</th>
+          <td mat-cell *matCellDef="let element"> {{element.vueltoTotal | currency: 'PEN'}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="saldoPedido">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Saldo con IGV</th>
+          <td mat-cell *matCellDef="let element"> {{element.saldoPedido | currency: 'PEN'}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="estado">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Estado </th>
+          <td mat-cell *matCellDef="let element">
+            <span class="celda-estado {{element.estadoPedido.color}}">{{element.estadoPedido.estado}} </span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="acciones">
+          <th mat-header-cell *matHeaderCellDef> Acciones </th>
+          <td mat-cell *matCellDef="let element">
+            <div class="d-flex flex-row">
+              <button *ngIf="authService.hasRole('ROLE_REGISTER_PAGO_PEDIDO')" mat-icon-button color="warn"
+                (click)="setPedido(element)" matTooltip="Pagar">
+                <mat-icon>price_change</mat-icon>
+              </button>
+              <button *ngIf="authService.hasRole('ROLE_VIEW_DETAILS_PEDIDO')" mat-icon-button color="primary"
+                [routerLink]="['/pedidos/detalle-venta', element.id]" matTooltip="Ver Detalle">
+                <mat-icon>visibility</mat-icon>
+              </button>
+            </div>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumnsLarge"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumnsLarge;"></tr>
+      </table>
+      <mat-paginator [length]="pageable.totalElements" [ngClass]="{'d-none': !dataSource.length}"
+        [pageSizeOptions]="[10, 20, 40]" [pageSize]="10" (page)="loadItems()" showFirstLastButtons
+        class="table-paginator">
+      </mat-paginator>
+    </div>
+    } @else if (authService.hasRole('ROLE_LIST_MY_ORDERS')) {
+
+    <div class="mat-elevation-z8">
+      <table [ngClass]="{'d-none': !dataSource.length}" mat-table [dataSource]="dataSource" matSort
+        matSortActive="entregadoEn" matSortDisableClear matSortDirection="desc">
+
+
+        <ng-container matColumnDef="entregadoEn">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Entrega </th>
+          <td mat-cell *matCellDef="let element"> {{element.entregadoEn}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="precioNetoTotal">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Precio S/.</th>
+          <td mat-cell *matCellDef="let element"> {{element.precioNetoTotal | currency: 'PEN'}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="pagoTotal">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Pago S/.</th>
+          <td mat-cell *matCellDef="let element"> {{element.pagoTotal | currency: 'PEN'}} </td>
+        </ng-container>
+
+        <!--         <ng-container matColumnDef="estado">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Estado </th>
+          <td mat-cell *matCellDef="let element">
+            <span class="celda-estado {{element.estadoPedido.color}}">{{element.estadoPedido.estado}} </span>
+          </td>
+        </ng-container> -->
+
+        <ng-container matColumnDef="acciones">
+          <th mat-header-cell *matHeaderCellDef>Ver</th>
+          <td mat-cell *matCellDef="let element">
+            <div class="d-flex flex-row">
+              <button *ngIf="authService.hasRole('ROLE_VIEW_DETAILS_PEDIDO')" mat-icon-button color="primary"
+                [routerLink]="['/pedidos/detalle-venta', element.id]" matTooltip="Ver Detalle">
+                <mat-icon>visibility</mat-icon>
+              </button>
+            </div>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumnsShort"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumnsShort;"></tr>
+      </table>
+      <mat-paginator [length]="pageable.totalElements" [ngClass]="{'d-none': !dataSource.length}"
+        [pageSizeOptions]="[10, 20, 40]" [pageSize]="10" (page)="loadItems()" showFirstLastButtons
+        class="table-paginator">
+      </mat-paginator>
+    </div>
+    }
+  </mat-card-content>
+</mat-card>

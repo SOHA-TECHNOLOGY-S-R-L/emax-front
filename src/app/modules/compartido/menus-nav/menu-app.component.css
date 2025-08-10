@@ -1,0 +1,16 @@
+/* .elemento-encima {
+  position: absolute;
+  top: 50px;
+  left: 50px;
+  z-index: 2; 
+  width: 100px;
+  height: 30px;
+  background-color: lightgreen;
+}
+ */
+.elemento-encima {
+  position: absolute;
+
+  z-index: 2; /* Mayor z-index para superponer */
+
+}

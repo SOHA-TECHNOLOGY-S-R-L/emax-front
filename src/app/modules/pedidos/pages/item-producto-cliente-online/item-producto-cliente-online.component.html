@@ -1,0 +1,17 @@
+<div *ngIf="!isAuthenticated()" class="row mt-2">
+    <div class="col-12 alert alert-dark">
+        Para terminar de realizar el pedido  debe
+        <a [routerLink]="['/login']"><b>INICIAR SESIÓN</b></a>
+    </div>
+</div>
+<div class="row mt-2">
+    @if (producto != undefined && producto.id) {
+    <div class="col-12 col-md-9">
+        <customize-item-producto-to-client [producto]="producto" />
+    </div>
+    <div class="col-12 col-md-3">
+        <h5>Carrito</h5>
+        <carrito-item-producto [clienteId]=0/>
+    </div>
+    }
+</div>

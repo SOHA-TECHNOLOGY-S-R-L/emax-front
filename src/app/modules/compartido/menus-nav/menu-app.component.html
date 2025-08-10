@@ -1,0 +1,119 @@
+<mat-nav-list>
+  <!--   <div mat-subheader><mat-icon>home</mat-icon>
+    <a mat-list-item [routerLink]="['principal']" [routerLinkActive]="['active']"
+      [routerLinkActiveOptions]="{exact: true}">
+      INICIO</a>
+  </div> -->
+  <!----------------------1-------------------->
+  <div mat-subheader *ngIf="authService.hasRole('ROLE_LIST_CLIENTES') || authService.hasRole('ROLE_REGISTER_CLIENTE')">
+    <mat-icon>diversity_3</mat-icon>CLIENTES/PROVEEDORES
+  </div>
+  <ng-container *ngIf="authService.hasRole('ROLE_LIST_CLIENTES')">
+    <a mat-list-item [routerLink]="['clientes']" [routerLinkActive]="['active']"
+      [routerLinkActiveOptions]="{exact: true}">
+      Listado clientes o proveedores</a>
+  </ng-container>
+  <ng-container *ngIf="authService.hasRole('ROLE_REGISTER_CLIENTE')">
+    <a mat-list-item [routerLink]="['clientes/form']" [routerLinkActive]="['active']"
+      [routerLinkActiveOptions]="{exact: true}">
+      Registro cliente</a>
+  </ng-container>
+  <!----------------------2-------------------->
+  <div mat-subheader
+    *ngIf="authService.hasRole('ROLE_LIST_VENTAS') || authService.hasRole('ROLE_REPORT_VENTA') || authService.hasRole('ROLE_LIST_MY_ORDERS')">
+    <mat-icon>insert_chart</mat-icon>PEDIDOS VENTA
+  </div>
+  <ng-container *ngIf="authService.hasRole('ROLE_LIST_VENTAS') || authService.hasRole('ROLE_LIST_MY_ORDERS')">
+    <a mat-list-item [routerLink]="['pedidos/listado-ventas']" [routerLinkActive]="['active']"
+      [routerLinkActiveOptions]="{exact: true}">
+      Listado de pedidos</a>
+  </ng-container>
+  <ng-container *ngIf="authService.hasRole('ROLE_REPORT_VENTA')">
+    <a mat-list-item [routerLink]="['pedidos/rpte-pedidos',1]" [routerLinkActive]="['active']">
+      Reporte Ventas</a>
+  </ng-container>
+
+  <div mat-subheader *ngIf="authService.hasRole('ROLE_LIST_COMPRAS') || authService.hasRole('ROLE_REPORT_COMPRA')">
+    <mat-icon>insert_chart</mat-icon>PEDIDOS COMPRA
+  </div>
+  <ng-container *ngIf="authService.hasRole('ROLE_LIST_COMPRAS')">
+    <a mat-list-item [routerLink]="['pedidos/listado-compras']" [routerLinkActive]="['active']"
+      [routerLinkActiveOptions]="{exact: true}">
+      Listado de compras</a>
+  </ng-container>
+  <ng-container *ngIf="authService.hasRole('ROLE_REPORT_COMPRA')">
+    <a mat-list-item [routerLink]="['pedidos/rpte-pedidos',2]" [routerLinkActive]="['active']">
+      Reporte Compras</a>
+  </ng-container>
+  <!----------------------3-------------------->
+  <div mat-subheader
+    *ngIf="authService.hasRole('ROLE_REGISTER_MOVCAJA') || authService.hasRole('ROLE_REPORT_MOVCAJA') || authService.hasRole('ROLE_RPTE_MOVCAJA_USUARIO')">
+    <mat-icon>currency_exchange</mat-icon>MOVIMIENTOS CAJA
+  </div>
+  <ng-container *ngIf="authService.hasRole('ROLE_REGISTER_MOVCAJA')">
+    <a mat-list-item [routerLink]="['movimientos/caja']" [routerLinkActive]="['active']">Registro Ingreso/Egreso
+      caja chica</a>
+  </ng-container>
+  <ng-container *ngIf="authService.hasRole('ROLE_REPORT_MOVCAJA')">
+    <a mat-list-item [routerLink]="['movimientos/rpte-mov-en-caja']" [routerLinkActive]="['active']">Reporte
+      movimientos</a>
+  </ng-container>
+  <ng-container *ngIf="authService.hasRole('ROLE_RPTE_MOVCAJA_USUARIO')">
+    <a mat-list-item [routerLink]="['movimientos/rpte-mov-en-caja-por-usuario']" [routerLinkActive]="['active']">Reporte
+      movimientos por cajero</a>
+  </ng-container>
+  <!----------------------4-------------------->
+  <div mat-subheader
+    *ngIf="authService.hasRole('ROLE_OPEN_CJU') || authService.hasRole('ROLE_CLOSE_CJU') || authService.hasRole('ROLE_REPORT_USUARIO_CJU') || authService.hasRole('ROLE_REPORT_CJU')">
+    <mat-icon>assignment_ind</mat-icon>CAJA USUARIO
+  </div>
+  <ng-container *ngIf="authService.hasRole('ROLE_OPEN_CJU') || authService.hasRole('ROLE_CLOSE_CJU')">
+    <a mat-list-item [routerLink]="['cajas']" [routerLinkActive]="['active']"
+      [routerLinkActiveOptions]="{exact: true}">Apertura/Cierre caja</a>
+  </ng-container>
+  <ng-container *ngIf="authService.hasRole('ROLE_REPORT_USUARIO_CJU')">
+    <a mat-list-item [routerLink]="['cajas/rpte-caja-por-usuario']" [routerLinkActive]="['active']">Reporte caja por
+      cajero</a>
+  </ng-container>
+  <ng-container *ngIf="authService.hasRole('ROLE_REPORT_CJU')">
+    <a mat-list-item [routerLink]="['cajas/rpte-caja']" [routerLinkActive]="['active']">Reporte caja</a>
+  </ng-container>
+  <!----------------------5-------------------->
+  <div mat-subheader
+    *ngIf="authService.hasRole('ROLE_LIST_PRODUCTOS') || authService.hasRole('ROLE_REGISTER_PRODUCTO')">
+    <mat-icon>list_alt_check</mat-icon>PRODUCTOS
+  </div>
+  <ng-container *ngIf="authService.hasRole('ROLE_LIST_PRODUCTOS')">
+    <a mat-list-item [routerLink]="['productos']" [routerLinkActive]="['active']"
+      [routerLinkActiveOptions]="{exact: true}">
+      Listado de productos</a>
+  </ng-container>
+  <ng-container *ngIf="authService.hasRole('ROLE_REGISTER_PRODUCTO')">
+    <a mat-list-item [routerLink]="['productos/mantenimiento-producto']" [routerLinkActive]="['active']"
+      [routerLinkActiveOptions]="{exact: true}">
+      Registro de productos</a>
+  </ng-container>
+  <ng-container *ngIf="authService.hasRole('ROLE_LIST_CATEGORIAS')">
+    <a mat-list-item [routerLink]="['productos/categorias']" [routerLinkActive]="['active']"
+      [routerLinkActiveOptions]="{exact: true}">
+      Listado de categorias</a>
+  </ng-container>
+  <ng-container *ngIf="authService.hasRole('ROLE_REGISTER_CATEGORIA')">
+    <a mat-list-item [routerLink]="['productos/mantenimiento-categoria']" [routerLinkActive]="['active']"
+      [routerLinkActiveOptions]="{exact: true}">
+      Registrar categoria</a>
+  </ng-container>
+  <!----------------------6-------------------->
+  <div mat-subheader><mat-icon>list_alt_check</mat-icon>USUARIOS
+  </div>
+  <ng-container *ngIf="authService.hasRole('ROLE_LIST_USUARIOS')">
+    <a mat-list-item [routerLink]="['usuarios']" [routerLinkActive]="['active']"
+      [routerLinkActiveOptions]="{exact: true}">
+      Listado de usuarios</a>
+  </ng-container>
+  <ng-container *ngIf="this.authService.isAuthenticated()">
+    <a (click)="logout()" mat-list-item [routerLink]="['/tienda/productos-categoria',0]" [routerLinkActive]="['active']"
+      [routerLinkActiveOptions]="{exact: true}">
+      Cerrar sesión</a>
+  </ng-container>
+</mat-nav-list>
