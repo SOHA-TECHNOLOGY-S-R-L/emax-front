@@ -31,7 +31,6 @@ export class PrincipalComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     //navegara al boton INICIO o HOME
-    //this.router.navigate(["/productos/productos-categoria", 0])
   }
 
 

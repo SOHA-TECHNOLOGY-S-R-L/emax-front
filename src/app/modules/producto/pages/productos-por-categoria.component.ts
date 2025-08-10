@@ -40,12 +40,12 @@ export class ProductosPorCategoriaComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     const categoriaId = + this.activatedRoute.snapshot.params['categoriaId'];
-    console.log("ngOnInit.categoriaId", categoriaId);
+    //console.log("ngOnInit.categoriaId", categoriaId);
     this.loadPorductosPorCategoria(categoriaId );
   }
 
   loadPorductosPorCategoria(categoriaId: number, categoriaName: string ='tienda') {
-    console.log("this.loadPorductosPorCategoria.categoriaId()", categoriaName);
+    //console.log("this.loadPorductosPorCategoria.categoriaId()", categoriaName);
     this.productoService.productosPorCategoria(categoriaId)
       .subscribe(resp => {
         this.lstProductos = resp.map(prd => {
