@@ -26,33 +26,7 @@ export class CategoriaService {
     private authService: AuthService,
     private alertService: AlertService) { }
 
-  /*   private agregarAuthorizationHeader(){
-        let token = this.authService.token;
-        if(token != null){
-          return this.httpHeaders.append('Authorization', 'Bearer ' + token)
-        }
-        return this.httpHeaders
-      } */
 
-  /*   setProducto(producto: Producto) {
-      this._producto = producto;
-    }
-
-    get producto() {
-      return { ...this._producto }
-    } */
-
-  /*   setProductoToSeo(producto: Producto) {
-      this.title.setTitle(`${producto.codigo} - ${producto.nombre} `)
-      this.meta.updateTag({ name: "description", content: `${producto.descripcion}` })
-      this.meta.updateTag({ name: "og:description", content: `${producto.descripcion}` })
-      this.meta.updateTag({ name: "keywords", content: `${producto.categoria?.nombre}` })
-      this.meta.updateTag({ name: "og:url", content: `${environment.apiFront}/pedidos/item-producto-cliente-online/${producto.id}` })
-      this.meta.updateTag({ name: "og:title", content: `${producto.codigo} - ${producto.nombre}` })
-      this.meta.updateTag({ name: "og:image", content: `${environment.API_URL_VER_IMAGEN}${producto.imagen}` })
-      this.meta.updateTag({ name: "robots", content: "index, follow" })
-
-    } */
 
 
   setCategoriaSubject(categoria: Categoria) {
