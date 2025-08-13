@@ -33,7 +33,7 @@ jobs:
         with:
           host: ${{ secrets.EMAX_WEB_HOST }}
           username: ${{ secrets.EMAX_WEB_USER }}
-          key: ${{ secrets.EMAX_WEB_USER }}
+          key: ${{ secrets.EMAX_PRIVATE_KEY }}
           port: ${{ secrets.EMAX_PORT_SSH }}
           #password: ${{ secrets.SSH_PASSWORD   }} # Get the server password from Secrets
           script: rm -rf ${{ secrets.WORK_DIR }}* # Specify the path of the target folder on the server (e.g., /var/www/html/front/*)
@@ -43,7 +43,7 @@ jobs:
         with:
           host: ${{ secrets.EMAX_WEB_HOST }}
           username: ${{ secrets.EMAX_WEB_USER }}
-          key: ${{ secrets.EMAX_WEB_USER }}
+          key: ${{ secrets.EMAX_PRIVATE_KEY }}
           port: ${{ secrets.EMAX_PORT_SSH }}
           #password: ${{ secrets.SSH_PASSWORD }}
           source: ${{ github.workspace }}/dist
