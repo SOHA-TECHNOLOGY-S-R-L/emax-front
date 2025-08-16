@@ -72,7 +72,7 @@ export class ProductosPorCategoriaComponent implements OnInit, OnDestroy {
     this.seo.meta.updateTag({ property: "og:url", content: `${environment.apiFront}/tienda/productos-categoria/${categoriaId}` })
     this.seo.meta.updateTag({ property: "og:title", content: tittle })
     //this.seo.meta.updateTag({ property: "og:image", content: `${environment.API_URL_VER_IMAGEN}${categoria.imagen}` })
-    this.seo.serCanonicalURL(`${environment.apiFront}/tienda/productos-categoria`)
+    //this.seo.serCanonicalURL(`${environment.apiFront}/tienda/productos-categoria`)
     this.seo.setIndexFollow(true);
   }
 

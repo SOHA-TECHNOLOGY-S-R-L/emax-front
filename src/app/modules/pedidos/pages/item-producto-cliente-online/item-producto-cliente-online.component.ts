@@ -59,7 +59,7 @@ export class ItemProductoClienteOnlineComponent implements OnInit {
     this.seo.meta.updateTag({ property: "og:url", content: `${environment.apiFront}/tienda/item-producto-cliente-online/${productoId}` })
     this.seo.meta.updateTag({ property: "og:title", content: tittle })
     this.seo.meta.updateTag({ property: "og:image", content: `${environment.API_URL_VER_IMAGEN}${producto.imagen}` })
-    this.seo.serCanonicalURL(`${environment.apiFront}/tienda/item-producto-cliente-online`)
+    //this.seo.serCanonicalURL(`${environment.apiFront}/tienda/item-producto-cliente-online`)
     this.seo.setIndexFollow(true);
   }
 
