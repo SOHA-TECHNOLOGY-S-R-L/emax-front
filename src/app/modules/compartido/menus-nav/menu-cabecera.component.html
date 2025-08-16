@@ -11,8 +11,12 @@
     }
   </div>
   @if (!isAutenticado()) {
-  <button type="button" [routerLink]="['/crear-cuenta']" class="btn btn-primary">Crear
-    cuenta</button>
+
+        <a [routerLink]="['/crear-cuenta']" class="nav-item nav-link"><i class="bi bi-person-lines-fill mr-2"></i>Crear cuenta</a>
+
+
+<!--   <button type="button" [routerLink]="['/crear-cuenta']" class="btn btn-primary">Crear
+    cuenta</button> -->
   }
 
   @if (isAutenticado()) {
