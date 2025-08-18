@@ -1,46 +1,53 @@
-<!--SECCION PARA MOBILE-->
+@if(!isAuthenticated() ) {
+<div class="row col-12 alert alert-danger mt-2 ">
+  INICIAR SESIÓN! y seguir.
+</div>
+}
+<h5>Carrito</h5>
 @for (item of lstItemPedido; track $index) {
 <div class="p-1" style="border-bottom: 1px solid #ccc;">
-    <div class="d-flex d-flex-inline">
-          <p-button severity="danger"  icon="pi pi-trash" (click)="eliminarItemPedido(item.producto.id)" />
-        <p class="mx-2 my-0">{{item.producto.nombre}}</p>
-         <img [src]="item.imagenUri" alt={{item.imagen}} width="75px"/>
+  <div class="d-flex d-flex-inline">
+    <p-button severity="danger" icon="pi pi-trash" (click)="eliminarItemPedido(item.producto.id)" />
+    <p class="mx-2 my-0">{{item.producto.nombre}}</p>
+    <img [src]="item.imagenUri" alt={{item.imagen}} width="75px" />
+  </div>
+  <div class="row">
+    <div class="col-3 d-flex align-items-center">
+      {{item.producto.precioNetoNumberShow | currency: 'PEN'}}
     </div>
-    <div class="row">
-         <div class="col-3 d-flex align-items-center">
-            {{item.producto.precioNetoNumberShow | currency: 'PEN'}}
-        </div>
-        <div class="col-4 d-flex align-items-center">
-            <span id="cantidad">#</span>
-            <input type="number" name="cantidad" aria-describedby="cantidad" [step]="item.producto.gruposDe.toString()"
-                [min]="item.producto.minCantidadPedido.toString()" [max]="item.producto.maxCantidadPedido.toString()"
-                [value]="item.cantidad" (input)="actualizarCantidad(item.producto.id, $event);calcularTotal() " />
-        </div>
-        <div class="col-5 d-flex align-items-center">
-            {{item.importe| currency:'PEN'}}
-        </div>
+    <div class="col-4 d-flex align-items-center">
+      <span id="cantidad">#</span>
+      <input type="number" name="cantidad" aria-describedby="cantidad" [step]="item.producto.gruposDe.toString()"
+        [min]="item.producto.minCantidadPedido.toString()" [max]="item.producto.maxCantidadPedido.toString()"
+        [value]="item.cantidad" (input)="actualizarCantidad(item.producto.id, $event);calcularTotal() " />
 
+   <!--    <input type="number" formControlName="cantidad" class="form-control" name="cantidad" [step]="gruposDe.toString()"
+        [min]="minCantidadPedido.toString()" [max]="maxCantidadPedido.toString()" /> -->
     </div>
+    <div class="col-5 d-flex align-items-center">
+      {{item.importe| currency:'PEN'}}
+    </div>
+
+  </div>
 </div>
 }
 
 <div class="row">
-    <div class="col-6">
-        <p class="text-end fw-bold">TOTAL</p>
-    </div>
-    <div class="col-6">
-        <p class="text-center fw-bold">{{total | currency:'PEN'}}</p>
-    </div>
+  <div class="col-6">
+    <p class="text-end fw-bold">TOTAL</p>
+  </div>
+  <div class="col-6">
+    <p class="text-center fw-bold">{{total | currency:'PEN'}}</p>
+  </div>
 </div>
 
 <div class="row">
-    <div class="col-12 d-flex justify-content-center">
-        @if(lstItemPedido.length > 0 && authService.hasRole('ROLE_CREATE_VENTA') &&
-        authService.isAuthenticated()){
-        <button (click)="irRealizarPedido()" class="btn btn-primary">Realizar el pedido</button>
-        } @else {
-        <button (click)="irRealizarPedido()" class="btn btn-primary" disabled>Realizar el pedido</button>
-        }
-    </div>
+  <div class="col-12 d-flex justify-content-center">
+    @if(lstItemPedido.length > 0 && authService.hasRole('ROLE_CREATE_VENTA') &&
+    authService.isAuthenticated()){
+    <button (click)="irRealizarPedido()" class="btn btn-primary">Realizar el pedido</button>
+    } @else {
+    <button (click)="irRealizarPedido()" class="btn btn-primary" disabled>Realizar el pedido</button>
+    }
+  </div>
 </div>
-

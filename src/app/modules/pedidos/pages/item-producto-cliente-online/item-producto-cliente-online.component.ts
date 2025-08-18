@@ -4,16 +4,15 @@ import { CustomizeItemProductoToClientComponent } from './../../components/custo
 
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterModule } from '@angular/router';
-import { Producto } from '../../../../models/producto';
-import { AuthService } from '../../../../services/auth.service';
-import { ProductoService } from '../../../../services/producto.service';
-import { AngularMaterialModule } from '../../../compartido/angular-material.module';
-import { map, Subscription, tap } from 'rxjs';
+import { map } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
+import { Producto } from '../../../../models/producto';
+import { ProductoService } from '../../../../services/producto.service';
 import { SeoService } from '../../../../services/seo.service';
-import { toSignal } from '@angular/core/rxjs-interop'
+import { AngularMaterialModule } from '../../../compartido/angular-material.module';
 
 
 @Component({
@@ -28,7 +27,7 @@ export class ItemProductoClienteOnlineComponent implements OnInit {
   private activatedRoute = inject(ActivatedRoute);
   private productoService = inject(ProductoService);
   private seo = inject(SeoService);
-  public authService = inject(AuthService);
+  //public authService = inject(AuthService);
   public productoId = toSignal<number>(this.activatedRoute.paramMap.pipe(map(r => + (r.get('productoId')!))));
   producto!: Producto;
   constructor() {
@@ -63,9 +62,7 @@ export class ItemProductoClienteOnlineComponent implements OnInit {
     this.seo.setIndexFollow(true);
   }
 
-  isAuthenticated(): boolean {
-    return this.authService.isAuthenticated();
-  }
+
 
 
 }

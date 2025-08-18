@@ -15,7 +15,7 @@
         </mat-form-field> -->
 
         <div class="form-group">
-          <label for="username" class="form-label"><b>Ingrese usuario:</b></label>
+          <label for="username" class="form-label"><b>Número documento (usuario):</b></label>
           <input type="text" [(ngModel)]="usuario.username" name="username" class="form-control" id="username" required />
         </div>
 
@@ -34,12 +34,12 @@
         </div> -->
 
         <div class="form-group">
-          <label for="password" class="form-label"><b>Ingresa clave:</b></label>
+          <label for="password" class="form-label"><b>Clave:</b></label>
           <input type="password" [(ngModel)]="usuario.password" name="password" class="form-control" id="password" required />
         </div>
 
         <button (click)='login()' type="submit" class="btn btn-primary">Iniciar sesión</button>
-        <p><a [routerLink]="['/crear-cuenta']" class="text-secondary">Crear cuenta</a> en <a [routerLink]="['/']" class="text-secondary">Grafiya </a> o <a [routerLink]="['/tienda']" class="text-secondary">ir a tienda</a></p>
+        <p><a [routerLink]="['/crear-cuenta']" class="text-secondary">Crear cuenta</a> en <a [routerLink]="['/']" class="text-secondary">Grafiya </a> o <a [routerLink]="['/tienda']" class="text-secondary">Ir a tienda virtual</a></p>
 
       </form>
     </div>

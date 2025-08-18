@@ -11,20 +11,20 @@ import { RouterModule } from '@angular/router';
 import { environment } from '../../../../environments/environment';
 import { PieComponent } from "../../compartido/pie/pie.component";
 import { CabeceraComponent } from "../../compartido/cabecera/cabecera.component";
-import { TrabajadoresComponent } from "../components/trabajadores/trabajadores.component";
 import { ExperienciaComponent } from '../components/experiencia/experiencia.component';
 import { EmpresaComponent } from '../components/empresa/empresa.component';
 import { ServiciosClienteComponent } from '../components/servicios-cliente/servicios-cliente.component';
 import { ProductoClienteComponent } from '../components/producto-cliente/producto-cliente.component';
 import { CategoriasProductoClienteComponent } from "../components/categorias-producto-cliente/categorias-producto-cliente.component";
 import { SeoService } from '../../../services/seo.service';
+import { QuienesSomosComponent } from "../components/quienes-somos/quienes-somos.component";
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrl: './home.component.css',
   standalone: true,
-  imports: [ServiciosClienteComponent, CommonModule, FormsModule, CarruselEmpresaComponent, RouterModule, TrabajadoresComponent, ExperienciaComponent, EmpresaComponent, ProductoClienteComponent, CategoriasProductoClienteComponent]
+  imports: [ServiciosClienteComponent, CommonModule, FormsModule, CarruselEmpresaComponent, RouterModule, ExperienciaComponent, EmpresaComponent, ProductoClienteComponent, CategoriasProductoClienteComponent, QuienesSomosComponent]
 })
 export class HomeComponent implements OnInit {
 

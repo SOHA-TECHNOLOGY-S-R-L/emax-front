@@ -5,17 +5,17 @@
       <div class="mb-4">
         <div class="relative mx-auto">
           <a class="{{product.estadoProducto.color}}"
-            [routerLink]="['/pedidos/item-producto-cliente-online',product.id]">
+            [routerLink]="['/tienda/productos-categoria',product.categoria.id]">
             <img [src]="API_URL_VER_IMAGEN+product.imagen" [alt]="product.nombre" class="w-full rounded-border" width="200px" /></a>
         </div>
       </div>
       <div class="mb-4 font-medium">{{ product.nombre }}</div>
       <div class="flex justify-content-between items-center">
         <div class="mt-0 font-semibold text-xl">
-          {{ product.precioNetoStringShow }}
+          {{ product.precioNetoNumberShow | currency: 'PEN' }}
         </div>
         <div>
-          <p-button icon="pi pi-shopping-cart" [routerLink]="['/pedidos/item-producto-cliente-online',product.id]" />
+          <p-button icon="pi pi-shopping-cart" [routerLink]="['/tienda/productos-categoria',product.categoria.id]" />
         </div>
       </div>
     </div>

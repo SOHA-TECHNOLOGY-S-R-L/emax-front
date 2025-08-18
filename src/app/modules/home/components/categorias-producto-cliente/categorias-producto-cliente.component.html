@@ -4,12 +4,13 @@
       <div class="col-lg-3 col-md-6 col-sm-12 p-0 portfolio-item">
         <div class="position-relative overflow-hidden">
           <div class="portfolio-img">
-            <img class="img-fluid w-100" [src]="API_URL_VER_IMAGEN+categoria.imagen" alt="">
+            <img class="img-fluid w-100" [src]="API_URL_VER_IMAGEN+categoria.imagen" [alt]="categoria.descripcion">
           </div>
           <div class="portfolio-text bg-primary">
             <h4 class="font-weight-bold mb-4">{{categoria.nombre}}</h4>
             <div class="d-flex align-items-center justify-content-center">
-              <a class="btn btn-sm btn-secondary m-1" [routerLink]="['/productos/productos-categoria',categoria.id]"
+              <a class="btn btn-sm btn-secondary m-1" [routerLink]="['/tienda/productos-categoria' ,categoria.id]"
+              [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact: true}"
                 data-lightbox="portfolio">
                 <i class="fa fa-eye"></i>
               </a>

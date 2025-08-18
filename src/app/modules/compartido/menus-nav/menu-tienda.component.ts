@@ -23,21 +23,11 @@ export class MenuTiendaComponent {
   }
 
   ngOnInit(): void {
-    //this.productoService.getAllProducto().subscribe(resp => this.lstProductos = resp);
     this.categoriaService.getCategoriasActivas().subscribe(
       resp => {
         this.lstCategoria = resp.sort((a, b) => a.orden - b.orden)
-        //const nombresCategorias = this.lstCategoria.map(cat => cat.nombre)
-        //this.seoCategoria(nombresCategorias.toString());
-        /*       console.log("lstCategoria1", resp)
-                    console.log("lstCategoria2", this.lstCategoria) */
-        //const inicialCategoria = this.lstCategoria.filter(cat => cat.id == 0)[0];
-        //this.outCategoria(inicialCategoria);
       }, err => { },
       () => {
-        //la primera ves cargara el init de productos por categoria
-        //const inicialCategoria = this.lstCategoria.filter(cat => cat.id == 1)[0];
-        //this.emitCategoriaSubject(inicialCategoria);
         this.router.navigate(["/tienda/productos-categoria", 1]);
       }
       );

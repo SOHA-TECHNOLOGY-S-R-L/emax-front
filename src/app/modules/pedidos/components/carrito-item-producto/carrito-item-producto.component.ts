@@ -17,7 +17,7 @@ import { PrimeNgModule } from '../../../compartido/prime-ng.module';
   templateUrl: './carrito-item-producto.component.html',
   styleUrl: './carrito-item-producto.component.css',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, ReactiveFormsModule, PrimeNgModule ]
+  imports: [CommonModule, RouterModule, FormsModule, ReactiveFormsModule, PrimeNgModule]
 
 })
 export class CarritoItemProductoComponent implements OnInit, OnDestroy {
@@ -54,7 +54,7 @@ export class CarritoItemProductoComponent implements OnInit, OnDestroy {
     console.log("CarritoComprasComponent.ngOnInit", this.lstItemPedido);
     //if (this.lstItemPedido.length === 0) {
     //  this.lstItemPedido = this.itemService.importePorMargenCantidad(this.itemService.getLocalStorageItems());
-      this.calcularTotal();
+    this.calcularTotal();
     //}
     /*     this.lstItemPedido.map(item => {
           item.imagen = environment.API_URL_VER_IMAGEN + item.imagen ;
@@ -100,13 +100,17 @@ export class CarritoItemProductoComponent implements OnInit, OnDestroy {
         this.usuarioService.getUsuarioByUsername(this.authService.usuario.username)
           .subscribe(usr => {
             this.clienteService.getClienteByUsuarioId(usr.id).subscribe(cli => {
-              this.router.navigate(['/tienda/pedido-cliente-online-finalizado', cli.id] )
+              this.router.navigate(['/tienda/pedido-cliente-online-finalizado', cli.id])
             })
           });
       } else {
         this.router.navigate(['/pedidos/pedido-cliente-tienda-finalizado', this.clienteId])
       }
     }
+  }
+
+  isAuthenticated(): boolean {
+    return this.authService.isAuthenticated();
   }
 
   ngOnDestroy(): void {

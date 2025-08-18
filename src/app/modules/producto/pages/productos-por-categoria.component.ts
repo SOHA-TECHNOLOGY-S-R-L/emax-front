@@ -41,17 +41,22 @@ export class ProductosPorCategoriaComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     const categoriaId = + this.activatedRoute.snapshot.params['categoriaId'];
     //console.log("ngOnInit.categoriaId", categoriaId);
-    this.loadPorductosPorCategoria(categoriaId );
+    this.loadPorductosPorCategoria(categoriaId);
   }
 
-  loadPorductosPorCategoria(categoriaId: number, categoriaName: string ='tienda') {
+  loadPorductosPorCategoria(categoriaId: number, categoriaName: string = 'tienda') {
     //console.log("this.loadPorductosPorCategoria.categoriaId()", categoriaName);
     this.productoService.productosPorCategoria(categoriaId)
       .subscribe(resp => {
         this.lstProductos = resp.map(prd => {
           prd.estadoProducto.color = COLOR_ESTADO_PRODUCTO[('' + prd.estadoProducto.id) as keyof typeof COLOR_ESTADO_PRODUCTO];
-          //prd.imagen = environment.API_URL_VER_IMAGEN + prd.imagen;
-          prd.precioNetoStringShow = "S/ ".concat(prd.margenesProducto.map(m => m.precioNeto).toString().replaceAll(',', ' - '));
+          //muestar todos los productos en formato string
+          //prd.precioNetoStringShow = "S/ ".concat(prd.margenesProducto.map(m => m.precioNeto).toString().replaceAll(',', ' - '));
+          //muestra el valor mínimo de un array de números
+          prd.precioNetoNumberShow = 0;
+          if (prd.margenesProducto.length > 0) {
+            prd.precioNetoNumberShow = prd.margenesProducto.reduce((previous, current) => current.precioNeto < previous.precioNeto ? current : previous).precioNeto;
+          }
           return prd;
         })
         this.seoProductosPorCategoria(categoriaId.toString(), categoriaName, this.lstProductos);

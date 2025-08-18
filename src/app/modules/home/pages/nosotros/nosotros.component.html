@@ -1,15 +1,14 @@
-
-<div class="container-fluid bg-primary py-5 mb-5">
+<div class="container-fluid bg-secondary py-5 mb-5">
   <div class="container py-5">
     <div class="row align-items-center py-4">
       <div class="col-md-6 text-center text-md-left">
-        <h1 class="display-4 mb-4 mb-md-0 text-secondary text-uppercase">Nosotros</h1>
+        <h1 class="display-4 mb-4 mb-md-0 text-primary text-uppercase">Nosotros</h1>
       </div>
       <div class="col-md-6 text-center text-md-right">
         <div class="d-inline-flex align-items-center">
           <a class="btn btn-sm btn-outline-light disabled" href="">Nosotros</a>
           <i class="fas fa-angle-double-right text-light mx-2"></i>
-          <a [routerLink]="['/tienda']" class="btn btn-sm btn-outline-light" href="">Ir a tienda</a>
+          <a [routerLink]="['/tienda']" class="btn btn-sm btn-outline-light" href="">Ir a tienda virtual</a>
 
         </div>
       </div>
@@ -19,17 +18,19 @@
 <!-- Page Header End -->
 
 
-<!-- About Start -->
-<div class="container-fluid py-5 mb-5">
+<div class="container-fluid">
   <div class="container">
-    <trabajadores />
+    <historia />
   </div>
 </div>
-<!-- About End -->
 
-
+<div class="container-fluid mb-5">
+  <div class="container">
+    <quienes-somos />
+  </div>
+</div>
 <!-- Video Modal Start -->
-<div class="modal fade" id="videoModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+<!-- <div class="modal fade" id="videoModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
   aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -37,14 +38,13 @@
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
-        <!-- 16:9 aspect ratio -->
         <div class="embed-responsive embed-responsive-16by9">
           <iframe class="embed-responsive-item" src="" id="video" allowscriptaccess="always" allow="autoplay"></iframe>
         </div>
       </div>
     </div>
   </div>
-</div>
+</div> -->
 <!-- Video Modal End -->
 
 <!-- La empresa -->
@@ -59,7 +59,3 @@
   </div>
 </div>
 <!-- Features End -->
-
-
-
-

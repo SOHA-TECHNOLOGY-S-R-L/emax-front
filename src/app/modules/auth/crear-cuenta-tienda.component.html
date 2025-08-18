@@ -36,8 +36,7 @@
                     </div>
                 </div>
                 <div class="row mb-2">
-                    <label for="numeroDocumento" class="form-label col-12"><b>Número de documento (Inicio de sesión para
-                            ingresar)</b></label>
+                    <label for="numeroDocumento:" class="form-label col-12">Número de documento</label>
                     <div class="col-12">
                         <input formControlName="numeroDocumento" type="text" class="form-control" name="numeroDocumento"
                             (change)="findByNumDocumento($event)">
@@ -49,7 +48,7 @@
                 </div>
                 <div class="row mb-2">
                     <label for="nomApellRz" class="form-label col-12">Nombres y
-                        apellidos (P. Natural) o Razón social (P. Jurídica) :</label>
+                        apellidos o Razón social:</label>
                     <div class="col-12">
                         <input formControlName="nomApellRz" type="text" class="form-control" name="nomApellRz">
                         @if(formUtils.isValidField(formNewCuenta,'nomApellRz')){

@@ -48,7 +48,7 @@ export class Producto {
   estadoProducto!: EstadoProducto;
   margenesProducto: MargenProducto[] = [];
   precioNetoNumberShow?: number;
-  precioNetoStringShow?: string;
+  //precioNetoStringShow?: string;
 }
 
 

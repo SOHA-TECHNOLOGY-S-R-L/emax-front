@@ -31,8 +31,11 @@ export class CarruselProductosComponent {
         prd.estadoProducto.color = COLOR_ESTADO_PRODUCTO[('' + prd.estadoProducto.id) as keyof typeof COLOR_ESTADO_PRODUCTO];
         //prd.imagen = environment.API_URL_VER_IMAGEN + prd.imagen;
         //console.log(prd.margenesProducto.map(margen => margen.precioNeto.toString()).toString());
-        prd.precioNetoStringShow = "S/ ".concat(prd.margenesProducto.map(m => m.precioNeto).toString().replaceAll(',', ' - '));
-
+        //prd.precioNetoStringShow = "S/ ".concat(prd.margenesProducto.map(m => m.precioNeto).toString().replaceAll(',', ' - '));
+        prd.precioNetoNumberShow = 0;
+        if (prd.margenesProducto.length > 0) {
+          prd.precioNetoNumberShow = prd.margenesProducto.reduce((previous, current) => current.precioNeto < previous.precioNeto ? current : previous).precioNeto;
+        }
         return prd;
       })
     });

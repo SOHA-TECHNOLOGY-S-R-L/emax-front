@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 
 @Component({
-  selector: 'experiencia',
+  selector: 'quienes-somos',
   standalone: true,
-  templateUrl: './experiencia.component.html',
-  styleUrl: './experiencia.component.css'
+  templateUrl: './quienes-somos.component.html',
+  styleUrl: './quienes-somos.component.css'
 })
-export class ExperienciaComponent implements OnInit {
+export class QuienesSomosComponent implements OnInit {
 
     iniciaExperiencia: number = 0;
     terminaExperiencia: number = 40;
