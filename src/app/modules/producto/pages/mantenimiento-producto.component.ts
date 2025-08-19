@@ -30,8 +30,8 @@ import { CategoriaService } from '../../../services/categoria.service';
 export class MantenimientoProductoComponent implements OnInit, AfterViewInit {
 
   public mediosUtilsService = inject(MediosUtilsService);
-  private productoService = inject( ProductoService);
-  private categoriaService = inject( CategoriaService);
+  private productoService = inject(ProductoService);
+  private categoriaService = inject(CategoriaService);
 
   producto: Producto = new Producto();
   formProducto!: FormGroup;
@@ -104,7 +104,10 @@ export class MantenimientoProductoComponent implements OnInit, AfterViewInit {
       nombre: [this.producto?.nombre, Validators.required],
       codigo: [this.producto?.codigo,
       //Pateon letras, números y guion . Al menos un número o letra en la cadena.
-      { validators: [Validators.required, Validators.minLength(2), Validators.pattern('^[A-Z0-9-]*[A-Z0-9][A-Z0-9-]*$')] }
+      { validators: [Validators.required, Validators.minLength(2)] }
+
+/*       { validators: [Validators.required, Validators.minLength(2), Validators.pattern('^[A-Z0-9-]*[A-Z0-9][A-Z0-9-]*$')] }
+ */
       ],
       descripcion: [this.producto?.descripcion, Validators.required],
       medidas: [this.producto?.medidas,
