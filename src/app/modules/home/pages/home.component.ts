@@ -1,23 +1,17 @@
-import { CarruselProductosComponent } from '../components/carrusel-productos/carrusel-productos.component';
-import { Component, inject, Inject, OnInit } from '@angular/core';
-import { LoadJavascriptService } from '../../../services/load-javascript.service';
-import { CarruselServiciosComponent } from '../components/carrusel-servicios/carrusel-servicios.component';
 import { CommonModule } from '@angular/common';
+import { Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { CarruselEmpresaComponent } from "../components/carrusel-empresa/carrusel-empresa.component";
-import { Categoria } from '../../../models/categoria';
-import { ProductoService } from '../../../services/producto.service';
 import { RouterModule } from '@angular/router';
 import { environment } from '../../../../environments/environment';
-import { PieComponent } from "../../compartido/pie/pie.component";
-import { CabeceraComponent } from "../../compartido/cabecera/cabecera.component";
-import { ExperienciaComponent } from '../components/experiencia/experiencia.component';
-import { EmpresaComponent } from '../components/empresa/empresa.component';
-import { ServiciosClienteComponent } from '../components/servicios-cliente/servicios-cliente.component';
-import { ProductoClienteComponent } from '../components/producto-cliente/producto-cliente.component';
-import { CategoriasProductoClienteComponent } from "../components/categorias-producto-cliente/categorias-producto-cliente.component";
 import { SeoService } from '../../../services/seo.service';
+import { CarruselEmpresaComponent } from "../components/carrusel-empresa/carrusel-empresa.component";
+import { CategoriasProductoClienteComponent } from "../components/categorias-producto-cliente/categorias-producto-cliente.component";
+import { EmpresaComponent } from '../components/empresa/empresa.component';
+import { ExperienciaComponent } from '../components/experiencia/experiencia.component';
+import { ProductoClienteComponent } from '../components/producto-cliente/producto-cliente.component';
 import { QuienesSomosComponent } from "../components/quienes-somos/quienes-somos.component";
+import { ServiciosClienteComponent } from '../components/servicios-cliente/servicios-cliente.component';
+import { GenericosService } from '../../../services/genericos.service';
 
 @Component({
   selector: 'app-home',
@@ -29,8 +23,15 @@ import { QuienesSomosComponent } from "../components/quienes-somos/quienes-somos
 export class HomeComponent implements OnInit {
 
   private seoService = inject(SeoService);
+  private genericosService = inject(GenericosService);
+  public whatsapp!: string;
 
   ngOnInit(): void {
+
+    this.genericosService.getGenericos().subscribe(resp => {
+      this.whatsapp = "tel:".concat( resp.filter(g => g.codigo === "WHATSAPP")[0].valor1);
+    });
+
     this.seoService.title.setTitle("Grafiya — Productos publicitarios, merchandising y branding")
     this.seoService.meta.updateTag({ name: "keywords", content: "merchandising, publicidad, branding" })
     this.seoService.meta.updateTag({ name: "description", content: "Ofrecemos una amplia variedad de productos para publicidad, merchandising y branding" })

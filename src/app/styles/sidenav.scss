@@ -16,7 +16,7 @@
     font-size: 14px;
     font-weight: 500;
     margin: 12px 6px;
-    color: var.$emax-warning !important;
+    color: var.$emax-primary !important;
 
     .mat-icon {
       margin: 0px 2px;
@@ -50,7 +50,7 @@
 
   * .mat-icon,
   .mat-subheader {
-    color: var.$emax-warning !important;
+    color: var.$emax-primary !important;
   }
 
   .mat-divider {
@@ -68,7 +68,7 @@
   .mdc-list-item:hover,
   .mdc-list-item.active {
 /*     background-color: var.$emax-pink;
- */        background-color: var.$emax-warning;
+ */        background-color:  rgba(255, 242, 18, 0.6);
 
   }
 }

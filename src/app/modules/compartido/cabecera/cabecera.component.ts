@@ -2,6 +2,7 @@ import { Component, EventEmitter, inject, OnInit, Output, ViewChild } from '@ang
 import { AuthService } from '../../../services/auth.service';
 import { MenuCabeceraComponent } from '../menus-nav/menu-cabecera.component';
 import { ActivatedRoute, RouterModule } from '@angular/router';
+import { GenericosService } from '../../../services/genericos.service';
 
 @Component({
   selector: 'cabecera',
@@ -11,13 +12,14 @@ import { ActivatedRoute, RouterModule } from '@angular/router';
   imports: [MenuCabeceraComponent, RouterModule]
 })
 export class CabeceraComponent implements OnInit {
+  private genericosService = inject(GenericosService)
 
   @Output()
   clickMenuEvent = new EventEmitter<any>();
 
   private activateRoute = inject(ActivatedRoute)
   public authService = inject(AuthService)
-
+  public whatsapp!: string;
   modoTienda!: boolean;
 
   constructor() { }
@@ -31,12 +33,9 @@ export class CabeceraComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    /*     this.activateRoute.queryParams.subscribe(qp => {
-          console.log(qp['modoTienda']);
-          console.log(!qp['modoTienda']);
-          console.log(!!qp['modoTienda']);
-          this.modoTienda = !!qp['modoTienda']
-        }); */
+    this.genericosService.getGenericos().subscribe(resp => {
+      this.whatsapp = resp.filter( g => g.codigo === "WHATSAPP")[0].valor1;
+    })
   }
 
 }
