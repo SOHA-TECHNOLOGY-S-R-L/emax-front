@@ -14,7 +14,7 @@
       </mat-card-header>
       <mat-card-content class="d-flex flex-column">
         <ul class="list-group">
-          <li class="list-group-item list-group-item-primary">Caja Usuario</li>
+          <li class="list-group-item active">Caja Usuario</li>
           <li class="list-group-item">Caja: {{cajaUsuario.caja.nombre}}</li>
           <li class="list-group-item">Ubicacion: {{cajaUsuario.caja.ubicacion}}</li>
           <li class="list-group-item">Fecha apertura: {{cajaUsuario.fechaApertura}}</li>
@@ -24,7 +24,7 @@
               i18nSelect: estadoCajaUsuarioMap }}</span></li>
         </ul>
         <ul class="list-group">
-          <li class="list-group-item list-group-item-primary">Movimiento</li>
+          <li class="list-group-item active">Movimiento</li>
         </ul>
         <mat-radio-group class="example-full-width" name="iMovimiento" [(ngModel)]="iMovimiento"
           (change)="changeTipoMovimiento($event.value)">
