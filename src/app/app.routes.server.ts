@@ -113,8 +113,8 @@ export const serverRoutes: ServerRoute[] = [
   },*/
   {
     path: 'tienda/productos-categoria/:nombre',
-    renderMode: RenderMode.Server,
-    /*getPrerenderParams: async () => {
+    renderMode: RenderMode.Prerender,
+    getPrerenderParams: async () => {
       return [{ nombre: 'Tienda' },
       { nombre: 'Tazas publicitarias' },
       { nombre: 'Tomatodos publicitarios' },
@@ -125,12 +125,12 @@ export const serverRoutes: ServerRoute[] = [
       { nombre: 'Antiestres' },
       ];
 
-    },*/
+    },
   },
   {
     path: 'tienda/productos-categoria/:nombre/item-producto-cliente-online/:productoCodigo',
-    renderMode: RenderMode.Server,
-    /*getPrerenderParams: async () => {
+    renderMode: RenderMode.Prerender,
+    getPrerenderParams: async () => {
       return [
         {
           nombre: 'Antiestres',
@@ -499,7 +499,7 @@ export const serverRoutes: ServerRoute[] = [
       ]
 
 
-    },*/
+    },
 
   },
   /*{
