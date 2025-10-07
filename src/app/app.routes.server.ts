@@ -89,8 +89,8 @@ export const serverRoutes: ServerRoute[] = [
   },
   {
     path: 'tienda/productos-categoria/:nombre',
-    renderMode: RenderMode.Prerender,
-    getPrerenderParams: async () => {
+    renderMode: RenderMode.Server,
+    //getPrerenderParams: async () => {
       /*const productoService = inject(ProductoService);
       const seoService = inject(SeoService);
 
@@ -98,7 +98,7 @@ export const serverRoutes: ServerRoute[] = [
       console.log("IDSSSS", ids);
       return ids.map(id => ({ productoId: id.toString() }));*/
 
-      return [{ nombre: 'Tienda' },
+      /*return [{ nombre: 'Tienda' },
       { nombre: 'Tazas publicitarias' },
       { nombre: 'Tomatodos publicitarios' },
       { nombre: 'Vasos publicitarios' },
@@ -106,20 +106,21 @@ export const serverRoutes: ServerRoute[] = [
       { nombre: 'Lapiceros publicitarios' },
       { nombre: 'Máquinas e insumos' },
       { nombre: 'Antiestres' },
-      ];
+      ];*/
 
-    },
+    //},
   },
   {
     path: 'tienda/productos-categoria/:nombre/item-producto-cliente-online/:productoCodigo',
-    renderMode: RenderMode.Prerender,
-    getPrerenderParams: async () => {
+    renderMode: RenderMode.Server,
+    //getPrerenderParams: async () => {
       /*const productoService = inject(ProductoService);
       const seoService = inject(SeoService);
 
       const ids = await productoService.getIdsProductosActivosHowPromise();
       console.log("IDSSSS", ids);
       return ids.map(id => ({ productoId: id.toString() }));*/
+      /*
       return [
         {
           nombre: 'Antiestres',
@@ -485,10 +486,10 @@ export const serverRoutes: ServerRoute[] = [
           nombre: 'Tazas publicitarias',
           productoCodigo: 'TZ4'
         }
-      ]
+      ]*/
 
 
-    },
+    //},
 
 
   },
