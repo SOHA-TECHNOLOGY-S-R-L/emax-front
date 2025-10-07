@@ -17,12 +17,12 @@ export class isAuthenticatedGuard implements CanActivate {
     if (this.authService.isAuthenticated()) {
       if (this.isTokenExpirado()) {
         this.authService.logout();
-        this.router.navigate(['/tienda']);
+        this.router.navigate(['/tienda/productos-categoria', 'Tienda']);
         return false;
       }
       return true;
     }
-    this.router.navigate(['/tienda']);
+    this.router.navigate(['/tienda/productos-categoria', 'Tienda']);
     return false;
   }
 
@@ -35,4 +35,4 @@ export class isAuthenticatedGuard implements CanActivate {
     }
     return false;
   }
-} 
+}

@@ -34,7 +34,7 @@ export class Producto {
   //fechaPrecioRebajadoHasta!:string;
   //productosRelacionados!:string; //ventas dirigidas(prod sustituto por la calidad, mas caros)
   //productosPromocion!:string;
-  imagen: string = 'no-imagen.jpg';
+  imagen: string = 'no-imagen.png';
   visibleEnTienda: boolean = false;
   activo: boolean = true;
   color?: Color;

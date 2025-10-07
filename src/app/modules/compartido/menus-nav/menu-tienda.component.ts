@@ -28,7 +28,8 @@ export class MenuTiendaComponent {
         this.lstCategoria = resp.sort((a, b) => a.orden - b.orden)
       }, err => { },
       () => {
-        this.router.navigate(["/tienda/productos-categoria", 1]);
+        //this.router.navigate(["/tienda/productos-categoria", 1]);
+        //this.router.navigate(["/tienda/productos-categoria", "Tienda"]);
       }
       );
   }

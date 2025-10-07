@@ -324,8 +324,30 @@ export class ProductoService {
     )
   }
 
-  productosPorCategoria(id: number): Observable<Producto[]> {
+  productosPorCategoriaId(id: number): Observable<Producto[]> {
     return this.http.get<Producto[]>(`${environment.apiUrl}/productos/categoria/${id}`).pipe(
+      catchError(e => {
+        if (e.error.mensaje) {
+          this.alertService.error(e.error.mensaje, e.error.err);
+        }
+        return throwError(e);
+      })
+    )
+  }
+
+    productosPorCategoriaNombre(categoriaNombre: string): Observable<Producto[]> {
+    return this.http.get<Producto[]>(`${environment.apiUrl}/productos/categoria/${categoriaNombre}`).pipe(
+      catchError(e => {
+        if (e.error.mensaje) {
+          this.alertService.error(e.error.mensaje, e.error.err);
+        }
+        return throwError(e);
+      })
+    )
+  }
+
+    productoCategoria(productoCodigo: string, categoriaNombre: string): Observable<Producto> {
+    return this.http.get<Producto>(`${environment.apiUrl}/producto/${productoCodigo}/categoria/${categoriaNombre}`).pipe(
       catchError(e => {
         if (e.error.mensaje) {
           this.alertService.error(e.error.mensaje, e.error.err);

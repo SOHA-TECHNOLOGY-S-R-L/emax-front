@@ -1,11 +1,11 @@
-<p-carousel [value]="lstProductos" [numVisible]="4" [numScroll]="1" [circular]="true"
+<p-carousel [value]="lstProductos" [numVisible]="4" [numScroll]="1" [circular]="true" [showNavigators]="true" [showIndicators]="false"
   [responsiveOptions]="responsiveOptions" autoplayInterval="4000">
   <ng-template let-product #item>
     <div class="border border-surface-200 dark:border-surface-700 rounded m-2 p-2">
       <div class="mb-4">
         <div class="relative mx-auto">
           <a class="{{product.estadoProducto.color}}"
-            [routerLink]="['/tienda/productos-categoria',product.categoria.id]">
+            [routerLink]="['/tienda/productos-categoria',product.categoria.nombre, 'item-producto-cliente-online', product.codigo]">
             <img [src]="API_URL_VER_IMAGEN+product.imagen" [alt]="product.nombre" class="w-full rounded-border" width="200px" /></a>
         </div>
       </div>
@@ -15,7 +15,7 @@
           {{ product.precioNetoNumberShow | currency: 'PEN' }}
         </div>
         <div>
-          <p-button icon="pi pi-shopping-cart" [routerLink]="['/tienda/productos-categoria',product.categoria.id]" />
+          <p-button icon="pi pi-shopping-cart" [routerLink]="['/tienda/productos-categoria',product.categoria.nombre, 'item-producto-cliente-online', product.codigo]" />
         </div>
       </div>
     </div>

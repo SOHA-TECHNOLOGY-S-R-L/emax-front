@@ -87,6 +87,7 @@ export class CustomizeItemProductoToClientComponent implements OnInit, OnChanges
       this.verImagenProducto = environment.API_URL_VER_IMAGEN + this.producto.imagen;
       this.frm.get('cantidad')?.setValue(this.minCantidadPedido);
       this.verImagenItem = environment.API_URL_VER_IMAGEN + this.item.imagen;
+      console.log("this.verImagenItem", this.verImagenItem);
     }
   }
 

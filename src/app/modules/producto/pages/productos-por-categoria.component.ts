@@ -33,20 +33,20 @@ export class ProductosPorCategoriaComponent implements OnInit, OnDestroy {
   API_URL_VER_IMAGEN = environment.API_URL_VER_IMAGEN;
   constructor(private cdr: ChangeDetectorRef) {
     this.categoriaSuscription$ = this.categoriaService.getCategoriaSubject().subscribe(
-      resp => {
-        this.loadPorductosPorCategoria(resp.id, resp.nombre);
+      categoria => {
+        this.loadPorductosPorCategoria( categoria.nombre);
       })
   }
 
   ngOnInit(): void {
-    const categoriaId = + this.activatedRoute.snapshot.params['categoriaId'];
+    const categoriaNombre =  this.activatedRoute.snapshot.params['nombre'];
     //console.log("ngOnInit.categoriaId", categoriaId);
-    this.loadPorductosPorCategoria(categoriaId);
+    this.loadPorductosPorCategoria(categoriaNombre);
   }
 
-  loadPorductosPorCategoria(categoriaId: number, categoriaName: string = 'tienda') {
+  loadPorductosPorCategoria(categoriaName:string) {
     //console.log("this.loadPorductosPorCategoria.categoriaId()", categoriaName);
-    this.productoService.productosPorCategoria(categoriaId)
+    this.productoService.productosPorCategoriaNombre(categoriaName)
       .subscribe(resp => {
         this.lstProductos = resp.map(prd => {
           prd.estadoProducto.color = COLOR_ESTADO_PRODUCTO[('' + prd.estadoProducto.id) as keyof typeof COLOR_ESTADO_PRODUCTO];
@@ -59,22 +59,23 @@ export class ProductosPorCategoriaComponent implements OnInit, OnDestroy {
           }
           return prd;
         })
-        this.seoProductosPorCategoria(categoriaId.toString(), categoriaName, this.lstProductos);
+        this.seoProductosPorCategoria(categoriaName, this.lstProductos);
         this.cdr.detectChanges();
 
       })
   }
 
-  seoProductosPorCategoria(categoriaId: string, categoriaName: string, lstProductos: Producto[]) {
+  seoProductosPorCategoria( categoriaName: string, lstProductos: Producto[]) {
     const productos = lstProductos.map(pr => pr.nombre).toString();
-    const tittle = `${categoriaId} - ${categoriaName}`;
+    //const tittle = `${categoriaId} - ${categoriaName}`;
+    const tittle = categoriaName;
     const descripcion = `En la categoria ${categoriaName} estan ${productos}`
     this.seo.title.setTitle(tittle)
     this.seo.meta.updateTag({ name: "description", content: descripcion })
     this.seo.meta.updateTag({ name: "keywords", content: `${productos}` })
     this.seo.meta.updateTag({ property: "og:type", content: "website" })
     this.seo.meta.updateTag({ property: "og:description", content: descripcion })
-    this.seo.meta.updateTag({ property: "og:url", content: `${environment.apiFront}/tienda/productos-categoria/${categoriaId}` })
+    this.seo.meta.updateTag({ property: "og:url", content: `${environment.apiFront}/tienda/productos-categoria/${categoriaName}` })
     this.seo.meta.updateTag({ property: "og:title", content: tittle })
     //this.seo.meta.updateTag({ property: "og:image", content: `${environment.API_URL_VER_IMAGEN}${categoria.imagen}` })
     //this.seo.serCanonicalURL(`${environment.apiFront}/tienda/productos-categoria`)

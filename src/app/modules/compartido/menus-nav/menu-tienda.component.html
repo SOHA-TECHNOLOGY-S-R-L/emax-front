@@ -8,7 +8,7 @@
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <div class="navbar-nav mx-auto">
           @for (categoria of lstCategoria; track $index) {
-          <a class="nav-link" [routerLink]="['/tienda/productos-categoria',categoria.id]"
+          <a class="nav-link" [routerLink]="['/tienda/productos-categoria',categoria.nombre]"
             [routerLinkActive]="['active']" (click)="emitCategoriaSubject(categoria)">
             {{categoria.nombre | uppercase}}</a>
 

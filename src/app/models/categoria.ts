@@ -4,7 +4,7 @@ export class Categoria {
   id!: number;
   nombre!: string;
   descripcion!:string;
-  imagen: string = 'no-imagen.jpg';
+  imagen: string = 'no-imagen.png';
   activa!:boolean
   colorActiva!:string;
   orden!: number;

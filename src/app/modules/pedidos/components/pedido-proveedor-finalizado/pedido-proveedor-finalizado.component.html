@@ -25,7 +25,10 @@
                         <td>
                             <img [src]="item.imagen" width="86" alt={{item.imagen}} />
                         </td>
-                        <td><a [routerLink]="['/tienda/item-producto',item.producto.id]">
+                        <td><a
+                          [routerLink]="['/tienda/productos-categoria', item.producto.categoria?.nombre, 'item-producto-cliente-online',item.producto.codigo]"
+
+                          >
                                 {{item.producto.nombre}}</a>
                             <ul>
                                 <li><b>Medidas: </b>{{item.producto.medidas}}

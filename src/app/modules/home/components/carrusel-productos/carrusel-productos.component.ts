@@ -26,7 +26,7 @@ export class CarruselProductosComponent {
   constructor() { }
 
   ngOnInit() {
-    this.productService.productosPorCategoria(0).subscribe(resp => {
+    this.productService.productosPorCategoriaNombre('Tienda').subscribe(resp => {
       this.lstProductos = resp.map(prd => {
         prd.estadoProducto.color = COLOR_ESTADO_PRODUCTO[('' + prd.estadoProducto.id) as keyof typeof COLOR_ESTADO_PRODUCTO];
         //prd.imagen = environment.API_URL_VER_IMAGEN + prd.imagen;

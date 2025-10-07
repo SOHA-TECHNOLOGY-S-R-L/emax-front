@@ -11,7 +11,7 @@ export class AuthInterceptor implements HttpInterceptor {
 
   constructor(private authService: AuthService,
     private alertsService: AlertService,
-    private router: Router) { } 
+    private router: Router) { }
 
   intercept(req: HttpRequest<any>, next: HttpHandler):
     Observable<HttpEvent<any>> {
@@ -36,7 +36,7 @@ export class AuthInterceptor implements HttpInterceptor {
           if (this.authService.isAuthenticated()) {
             this.authService.logout();
           }
-          this.router.navigate(['/tienda']);
+          this.router.navigate(['/tienda/productos-categoria', 'Tienda']);
         }
 
         if (e.status == 403) {

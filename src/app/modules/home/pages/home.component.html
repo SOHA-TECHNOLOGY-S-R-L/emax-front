@@ -28,20 +28,19 @@
         class="contact-info-item d-flex align-items-center justify-content-center bg-primary text-black py-4 py-lg-0">
         <i class="fa fa-3x fa-solid fa-store text-secondary mr-4"></i>
         <div class="">
-          <h5 class="mb-2"><a [routerLink]="['/tienda']">Tienda Virtual</a></h5>
+          <h5 class="mb-2"><a [routerLink]="['/tienda/productos-categoria','Tienda']">Tienda Virtual</a></h5>
         </div>
       </div>
     </div>
   </div>
 </div>
-<!-- Contact Info End -->
+<div class="container-fluid bg-portfolio py-5">
+  <categorias-producto-cliente />
+</div>
 
 <div class="container-fluid py-5">
   <producto-cliente />
 </div>
-
-
-<!-- About End -->
 
 
 <!-- Video Modal Start -->
@@ -64,43 +63,19 @@
 <!-- Video Modal End -->
 
 
-<!-- Services Start -->
 <div class="container-fluid bg-service py-5">
   <servicios-cliente></servicios-cliente>>
 </div>
-<!-- Services End -->
-
-
-<!-- Features Start -->
-<div class="container-fluid py-5">
-  <experiencia />
-</div>
-<!-- Features End -->
-
-
-<!-- Portfolio Start -->
-<div class="container-fluid bg-portfolio py-5">
-  <categorias-producto-cliente />
-</div>
-<!-- Portfolio End -->
-
-
-<!-- Team Start -->
-<!-- <div class="container-fluid py-5">
-  <producto-cliente />
-</div>
- -->
 <div class="container-fluid py-5">
   <quienes-somos />
 </div>
-<!-- Team End -->
-
-
-<!-- La empresa -->
 <div class="container-fluid bg-testimonial py-5">
   <empresa />
 </div>
-<!-- Testimonial End -->
+<div class="container-fluid py-5">
+  <experiencia />
+</div>
+
 
 
 <!-- Blog Start -->

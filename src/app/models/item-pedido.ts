@@ -6,8 +6,8 @@ export class ItemPedido {
   costoUnitarioItem : number=0;
   importe: number=0;
   descripcion!: string;
-  imagen:string = 'no-imagen.jpg';
-  imagenUri:string = 'no-imagen.jpg'; 
+  imagen:string = 'no-imagen.png';
+  imagenUri:string = 'no-imagen.png';
 
   /*
   public calcularImporteVentaCliente(): number {

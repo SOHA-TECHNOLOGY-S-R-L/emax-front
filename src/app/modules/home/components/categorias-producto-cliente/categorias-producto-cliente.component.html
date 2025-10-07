@@ -9,7 +9,7 @@
           <div class="portfolio-text bg-primary">
             <h4 class="font-weight-bold mb-4">{{categoria.nombre}}</h4>
             <div class="d-flex align-items-center justify-content-center">
-              <a class="btn btn-sm btn-secondary m-1" [routerLink]="['/tienda/productos-categoria' ,categoria.id]"
+              <a class="btn btn-sm btn-secondary m-1" [routerLink]="['/tienda/productos-categoria' ,categoria.nombre]"
               [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact: true}"
                 data-lightbox="portfolio">
                 <i class="fa fa-eye"></i>

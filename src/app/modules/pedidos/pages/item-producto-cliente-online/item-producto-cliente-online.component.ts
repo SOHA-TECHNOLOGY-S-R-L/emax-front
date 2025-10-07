@@ -28,34 +28,36 @@ export class ItemProductoClienteOnlineComponent implements OnInit {
   private productoService = inject(ProductoService);
   private seo = inject(SeoService);
   //public authService = inject(AuthService);
-  public productoId = toSignal<number>(this.activatedRoute.paramMap.pipe(map(r => + (r.get('productoId')!))));
+  public categoriaNombre = toSignal<string>(this.activatedRoute.paramMap.pipe(map(r =>  (r.get('nombre')!))));
+  public productoCodigo = toSignal<string>(this.activatedRoute.paramMap.pipe(map(r => (r.get('productoCodigo')!))));
+  //public productoId = toSignal<number>(this.activatedRoute.paramMap.pipe(map(r => + (r.get('productoId')!))));
   producto!: Producto;
   constructor() {
   }
 
   ngOnInit(): void {
-    console.log("productoId()", this.productoId())
-    this.loadProducto(Number(this.productoId()));
+    console.log("productoId()", this.categoriaNombre())
+    this.loadProducto( this.productoCodigo()! , this.categoriaNombre()!);
   }
 
-  loadProducto(productoId: number) {
-    this.productoService.getProducto(productoId)
+  loadProducto(productoCodigo: string ,categoriaNombre: string) {
+
+    this.productoService.productoCategoria(productoCodigo,categoriaNombre)
       .subscribe(prd => {
         this.producto = prd;
-        //this.producto.imagen = environment.API_URL_VER_IMAGEN + prd.imagen;
-        this.seoProducto(this.producto.id, this.producto)
+        this.seoProducto(this.producto, categoriaNombre )
       })
   }
 
-  seoProducto(productoId: number, producto: Producto) {
-    const tittle = `${productoId} - ${producto.nombre}`;
+  seoProducto(producto: Producto, categoriaNombre: string) {
+    const tittle = `${producto.nombre}(${producto.codigo}) ${categoriaNombre}`;
     const descripcion = `${producto.descripcion} `
     this.seo.title.setTitle(tittle)
     this.seo.meta.updateTag({ name: "description", content: descripcion })
     this.seo.meta.updateTag({ name: "keywords", content: `${producto.nombre}` })
     this.seo.meta.updateTag({ property: "og:type", content: "website" })
     this.seo.meta.updateTag({ property: "og:description", content: descripcion })
-    this.seo.meta.updateTag({ property: "og:url", content: `${environment.apiFront}/tienda/item-producto-cliente-online/${productoId}` })
+    this.seo.meta.updateTag({ property: "og:url", content: `${environment.apiFront}/tienda/productos-categoria/${categoriaNombre}/item-producto-cliente-online/${producto.codigo}` })
     this.seo.meta.updateTag({ property: "og:title", content: tittle })
     this.seo.meta.updateTag({ property: "og:image", content: `${environment.API_URL_VER_IMAGEN}${producto.imagen}` })
     //this.seo.serCanonicalURL(`${environment.apiFront}/tienda/item-producto-cliente-online`)

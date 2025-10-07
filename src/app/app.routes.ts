@@ -50,14 +50,14 @@ export const routes: Routes = [
         path: 'tienda', component: TiendaComponent,
         children: [
           {
-            path: 'productos-categoria/:categoriaId', component: ProductosPorCategoriaComponent,
+            path: 'productos-categoria/:nombre', component: ProductosPorCategoriaComponent,
           },
           {
-            path: 'item-producto-cliente-online/:productoId', component: ItemProductoClienteOnlineComponent,
+            path: 'productos-categoria/:nombre/item-producto-cliente-online/:productoCodigo', component: ItemProductoClienteOnlineComponent,
           },
-          {
+         /*  {
             path: 'item-producto-cliente-online/:productoId', component: ItemProductoClienteOnlineComponent,
-          },
+          }, */
           {
             path: 'pedido-cliente-online-finalizado/:clienteId', component: PedidoClienteOnlineFinalizadoComponent,
           },

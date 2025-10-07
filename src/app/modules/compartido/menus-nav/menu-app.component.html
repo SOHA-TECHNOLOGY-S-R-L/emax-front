@@ -112,7 +112,7 @@
       Listado de usuarios</a>
   </ng-container>
   <ng-container *ngIf="this.authService.isAuthenticated()">
-    <a (click)="logout()" mat-list-item [routerLink]="['/tienda/productos-categoria',0]" [routerLinkActive]="['active']"
+    <a (click)="logout()" mat-list-item [routerLink]="['/tienda/productos-categoria','Tienda']" [routerLinkActive]="['active']"
       [routerLinkActiveOptions]="{exact: true}">
       Cerrar sesión</a>
   </ng-container>
