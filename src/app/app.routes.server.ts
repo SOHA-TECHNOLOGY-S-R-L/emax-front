@@ -122,80 +122,36 @@ export const serverRoutes: ServerRoute[] = [
       return ids.map(id => ({ productoId: id.toString() }));*/
       return [
         {
-          nombre: 'Tazas publicitarias',
-          productoCodigo: 'TZ1'
+          nombre: 'Antiestres',
+          productoCodigo: 'ANT-COR'
         },
         {
-          nombre: 'Tazas publicitarias',
-          productoCodigo: 'TZ2'
+          nombre: 'Antiestres',
+          productoCodigo: 'ANT-MED'
         },
         {
-          nombre: 'Tazas publicitarias',
-          productoCodigo: 'TZ3'
+          nombre: 'Antiestres',
+          productoCodigo: 'ANT-MIN'
         },
         {
-          nombre: 'Tazas publicitarias',
-          productoCodigo: 'TZ4'
+          nombre: 'Antiestres',
+          productoCodigo: 'ANT-MU'
         },
         {
-          nombre: 'Tazas publicitarias',
-          productoCodigo: 'TZ-C'
+          nombre: 'Antiestres',
+          productoCodigo: 'ANT-PE'
         },
         {
-          nombre: 'Tazas publicitarias',
-          productoCodigo: 'TZ-A'
-        },
-        {
-          nombre: 'Tazas publicitarias',
-          productoCodigo: 'TZ-R'
-        },
-        {
-          nombre: 'Tazas publicitarias',
-          productoCodigo: 'TZ-N'
-        },
-        {
-          nombre: 'Tomatodos publicitarios',
-          productoCodigo: 'SR1'
-        },
-        {
-          nombre: 'Tomatodos publicitarios',
-          productoCodigo: 'SR3'
-        },
-        {
-          nombre: 'Tomatodos publicitarios',
-          productoCodigo: 'TM-I'
-        },
-        {
-          nombre: 'Tomatodos publicitarios',
-          productoCodigo: 'MG-1'
-        },
-        {
-          nombre: 'Tomatodos publicitarios',
-          productoCodigo: 'TRM-1'
-        },
-        {
-          nombre: 'Tomatodos publicitarios',
-          productoCodigo: 'TRM-2'
-        },
-        {
-          nombre: 'Vasos publicitarios',
-          productoCodigo: 'TA-1'
-        },
-        {
-          nombre: 'Vasos publicitarios',
-          productoCodigo: 'TM-2'
+          nombre: 'Máquinas e insumos',
+          productoCodigo: 'C-1'
         },
         {
           nombre: 'Vasos publicitarios',
           productoCodigo: 'CH-1'
         },
         {
-          nombre: 'Libretas publicitarias',
+          nombre: 'Lapiceros publicitarios',
           productoCodigo: 'LA-1'
-        },
-        {
-          nombre: 'Libretas publicitarias',
-          productoCodigo: 'LA-2'
         },
         {
           nombre: 'Libretas publicitarias',
@@ -204,6 +160,94 @@ export const serverRoutes: ServerRoute[] = [
         {
           nombre: 'Libretas publicitarias',
           productoCodigo: 'LA-4'
+        },
+        {
+          nombre: 'Lapiceros publicitarios',
+          productoCodigo: 'LA-ECO1'
+        },
+        {
+          nombre: 'Lapiceros publicitarios',
+          productoCodigo: 'LA-ECO2'
+        },
+        {
+          nombre: 'Lapiceros publicitarios',
+          productoCodigo: 'LA-ECO3'
+        },
+        {
+          nombre: 'Lapiceros publicitarios',
+          productoCodigo: 'LA-ECO4'
+        },
+        {
+          nombre: 'Lapiceros publicitarios',
+          productoCodigo: 'LA-ME1'
+        },
+        {
+          nombre: 'Lapiceros publicitarios',
+          productoCodigo: 'LA-ME2'
+        },
+        {
+          nombre: 'Lapiceros publicitarios',
+          productoCodigo: 'LA-ME3'
+        },
+        {
+          nombre: 'Lapiceros publicitarios',
+          productoCodigo: 'LA-ME4'
+        },
+        {
+          nombre: 'Lapiceros publicitarios',
+          productoCodigo: 'LAP-AZ1'
+        },
+        {
+          nombre: 'Lapiceros publicitarios',
+          productoCodigo: 'LAP-BA'
+        },
+        {
+          nombre: 'Lapiceros publicitarios',
+          productoCodigo: 'LAP-GM'
+        },
+        {
+          nombre: 'Lapiceros publicitarios',
+          productoCodigo: 'LAP-GM2'
+        },
+        {
+          nombre: 'Lapiceros publicitarios',
+          productoCodigo: 'LAP-GM3'
+        },
+        {
+          nombre: 'Lapiceros publicitarios',
+          productoCodigo: 'LAP-GM4'
+        },
+        {
+          nombre: 'Lapiceros publicitarios',
+          productoCodigo: 'LAP-GM5'
+        },
+        {
+          nombre: 'Lapiceros publicitarios',
+          productoCodigo: 'LAP-GR4'
+        },
+        {
+          nombre: 'Lapiceros publicitarios',
+          productoCodigo: 'LAP-PR1'
+        },
+        {
+          nombre: 'Lapiceros publicitarios',
+          productoCodigo: 'LAP-TR1'
+        },
+        {
+          nombre: 'Lapiceros publicitarios',
+          productoCodigo: 'LAP-TR2'
+        },
+        {
+          nombre: 'Lapiceros publicitarios',
+          productoCodigo: 'LAP-TR3'
+        },
+        {
+          nombre: 'Lapiceros publicitarios',
+          productoCodigo: 'LAP-TR4'
+        },
+        {
+          nombre: 'Lapiceros publicitarios',
+          productoCodigo: 'LAP-VDA'
         },
         {
           nombre: 'Libretas publicitarias',
@@ -239,26 +283,6 @@ export const serverRoutes: ServerRoute[] = [
         },
         {
           nombre: 'Libretas publicitarias',
-          productoCodigo: 'LIB-IM1'
-        },
-        {
-          nombre: 'Libretas publicitarias',
-          productoCodigo: 'LIB-IM-02'
-        },
-        {
-          nombre: 'Libretas publicitarias',
-          productoCodigo: 'LIB-IM3'
-        },
-        {
-          nombre: 'Libretas publicitarias',
-          productoCodigo: 'LIB-IM4'
-        },
-        {
-          nombre: 'Libretas publicitarias',
-          productoCodigo: 'LIB-PU1'
-        },
-        {
-          nombre: 'Libretas publicitarias',
           productoCodigo: 'LI-PU2'
         },
         {
@@ -268,22 +292,6 @@ export const serverRoutes: ServerRoute[] = [
         {
           nombre: 'Libretas publicitarias',
           productoCodigo: 'LI-PU4'
-        },
-        {
-          nombre: 'Libretas publicitarias',
-          productoCodigo: 'LIB-ECO1'
-        },
-        {
-          nombre: 'Libretas publicitarias',
-          productoCodigo: 'LIB-ECO2'
-        },
-        {
-          nombre: 'Libretas publicitarias',
-          productoCodigo: 'LIB-ECO3'
-        },
-        {
-          nombre: 'Libretas publicitarias',
-          productoCodigo: 'LIB-ECO4'
         },
         {
           nombre: 'Libretas publicitarias',
@@ -303,19 +311,55 @@ export const serverRoutes: ServerRoute[] = [
         },
         {
           nombre: 'Libretas publicitarias',
-          productoCodigo: 'LIB-TR-1'
+          productoCodigo: 'LIB-CP1'
         },
         {
           nombre: 'Libretas publicitarias',
-          productoCodigo: 'LIB-TR-2'
+          productoCodigo: 'LIB-CP2'
         },
         {
           nombre: 'Libretas publicitarias',
-          productoCodigo: 'LIB-TR-3'
+          productoCodigo: 'LIB-CP3'
         },
         {
           nombre: 'Libretas publicitarias',
-          productoCodigo: 'LIB-TR-4'
+          productoCodigo: 'LIB-ECO1'
+        },
+        {
+          nombre: 'Libretas publicitarias',
+          productoCodigo: 'LIB-ECO2'
+        },
+        {
+          nombre: 'Libretas publicitarias',
+          productoCodigo: 'LIB-ECO3'
+        },
+        {
+          nombre: 'Libretas publicitarias',
+          productoCodigo: 'LIB-ECO4'
+        },
+        {
+          nombre: 'Libretas publicitarias',
+          productoCodigo: 'LIB-IM-02'
+        },
+        {
+          nombre: 'Libretas publicitarias',
+          productoCodigo: 'LIB-IM1'
+        },
+        {
+          nombre: 'Libretas publicitarias',
+          productoCodigo: 'LIB-IM3'
+        },
+        {
+          nombre: 'Libretas publicitarias',
+          productoCodigo: 'LIB-IM4'
+        },
+        {
+          nombre: 'Libretas publicitarias',
+          productoCodigo: 'LIB-PS'
+        },
+        {
+          nombre: 'Libretas publicitarias',
+          productoCodigo: 'LIB-PU1'
         },
         {
           nombre: 'Libretas publicitarias',
@@ -335,115 +379,35 @@ export const serverRoutes: ServerRoute[] = [
         },
         {
           nombre: 'Libretas publicitarias',
-          productoCodigo: 'LIB-CP1'
+          productoCodigo: 'LIB-TR-1'
         },
         {
           nombre: 'Libretas publicitarias',
-          productoCodigo: 'LIB-CP2'
+          productoCodigo: 'LIB-TR-2'
         },
         {
           nombre: 'Libretas publicitarias',
-          productoCodigo: 'LIB-CP3'
+          productoCodigo: 'LIB-TR-3'
         },
         {
           nombre: 'Libretas publicitarias',
-          productoCodigo: 'LIB-PS'
+          productoCodigo: 'LIB-TR-4'
         },
         {
-          nombre: 'Lapiceros publicitarios',
-          productoCodigo: 'LA-1'
+          nombre: 'Libretas publicitarias',
+          productoCodigo: 'LN-1'
         },
         {
-          nombre: 'Lapiceros publicitarios',
-          productoCodigo: 'LA-ECO2'
-        },
-        {
-          nombre: 'Lapiceros publicitarios',
-          productoCodigo: 'LA-ECO3'
-        },
-        {
-          nombre: 'Lapiceros publicitarios',
-          productoCodigo: 'LA-ECO1'
-        },
-        {
-          nombre: 'Lapiceros publicitarios',
-          productoCodigo: 'LA-ECO4'
-        },
-        {
-          nombre: 'Lapiceros publicitarios',
-          productoCodigo: 'LA-ME2'
-        },
-        {
-          nombre: 'Lapiceros publicitarios',
-          productoCodigo: 'LA-ME3'
-        },
-        {
-          nombre: 'Lapiceros publicitarios',
-          productoCodigo: 'LA-ME4'
-        },
-        {
-          nombre: 'Lapiceros publicitarios',
-          productoCodigo: 'LA-ME1'
-        },
-        {
-          nombre: 'Lapiceros publicitarios',
-          productoCodigo: 'LAP-BA'
-        },
-        {
-          nombre: 'Lapiceros publicitarios',
-          productoCodigo: 'LAP-GM'
-        },
-        {
-          nombre: 'Lapiceros publicitarios',
-          productoCodigo: 'LAP-GM2'
-        },
-        {
-          nombre: 'Lapiceros publicitarios',
-          productoCodigo: 'LAP-GM3'
-        },
-        {
-          nombre: 'Lapiceros publicitarios',
-          productoCodigo: 'LAP-GM4'
-        },
-        {
-          nombre: 'Lapiceros publicitarios',
-          productoCodigo: 'LAP-GM4'
-        },
-        {
-          nombre: 'Lapiceros publicitarios',
-          productoCodigo: 'LAP-GM5'
-        },
-        {
-          nombre: 'Lapiceros publicitarios',
-          productoCodigo: 'LAP-PR1'
-        },
-        {
-          nombre: 'Lapiceros publicitarios',
-          productoCodigo: 'LAP-TR1'
-        },
-        {
-          nombre: 'Lapiceros publicitarios',
-          productoCodigo: 'LAP-TR2'
-        },
-        {
-          nombre: 'Lapiceros publicitarios',
-          productoCodigo: '(LAP-TR2'
-        },
-        {
-          nombre: 'Lapiceros publicitarios',
-          productoCodigo: '(LAP-TR4'
-        },
-        {
-          nombre: 'Lapiceros publicitarios',
-          productoCodigo: 'LAP-GOR1'
-        },
-        {
-          nombre: 'Lapiceros publicitarios',
-          productoCodigo: 'LAP-GOR1'
+          nombre: 'Libretas publicitarias',
+          productoCodigo: 'LR-2'
         },
         {
           nombre: 'Máquinas e insumos',
           productoCodigo: 'MAQ-1'
+        },
+        {
+          nombre: 'Tomatodos publicitarios',
+          productoCodigo: 'MG-1'
         },
         {
           nombre: 'Máquinas e insumos',
@@ -454,36 +418,72 @@ export const serverRoutes: ServerRoute[] = [
           productoCodigo: 'PL-1'
         },
         {
-          nombre: 'Máquinas e insumos',
-          productoCodigo: 'C-1'
+          nombre: 'Tomatodos publicitarios',
+          productoCodigo: 'SR1'
         },
         {
           nombre: 'Antiestres',
           productoCodigo: 'SR2'
         },
         {
+          nombre: 'Tomatodos publicitarios',
+          productoCodigo: 'SR3'
+        },
+        {
           nombre: 'Antiestres',
           productoCodigo: 'SR4'
         },
         {
-          nombre: 'Antiestres',
-          productoCodigo: 'ANT-PE'
+          nombre: 'Vasos publicitarios',
+          productoCodigo: 'TA-1'
         },
         {
-          nombre: 'Antiestres',
-          productoCodigo: 'ANT-MU'
+          nombre: 'Vasos publicitarios',
+          productoCodigo: 'TM-2'
         },
         {
-          nombre: 'Antiestres',
-          productoCodigo: 'ANT-COR'
+          nombre: 'Tomatodos publicitarios',
+          productoCodigo: 'TM-I'
         },
         {
-          nombre: 'Antiestres',
-          productoCodigo: 'ANT-MED'
+          nombre: 'Tomatodos publicitarios',
+          productoCodigo: 'TRM-1'
         },
         {
-          nombre: 'Antiestres',
-          productoCodigo: 'ANT-MED'
+          nombre: 'Tomatodos publicitarios',
+          productoCodigo: 'TRM-2'
+        },
+        {
+          nombre: 'Tazas publicitarias',
+          productoCodigo: 'TZ-A'
+        },
+        {
+          nombre: 'Tazas publicitarias',
+          productoCodigo: 'TZ-C'
+        },
+        {
+          nombre: 'Tazas publicitarias',
+          productoCodigo: 'TZ-N'
+        },
+        {
+          nombre: 'Tazas publicitarias',
+          productoCodigo: 'TZ-R'
+        },
+        {
+          nombre: 'Tazas publicitarias',
+          productoCodigo: 'TZ1'
+        },
+        {
+          nombre: 'Tazas publicitarias',
+          productoCodigo: 'TZ2'
+        },
+        {
+          nombre: 'Tazas publicitarias',
+          productoCodigo: 'TZ3'
+        },
+        {
+          nombre: 'Tazas publicitarias',
+          productoCodigo: 'TZ4'
         }
       ]
 
