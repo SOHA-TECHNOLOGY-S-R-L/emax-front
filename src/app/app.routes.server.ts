@@ -170,6 +170,14 @@ export const serverRoutes: ServerRoute[] = [
           productoCodigo: 'MG-1'
         },
         {
+          nombre: 'Tomatodos publicitarios',
+          productoCodigo: 'TRM-1'
+        },
+        {
+          nombre: 'Tomatodos publicitarios',
+          productoCodigo: 'TRM-2'
+        },
+        {
           nombre: 'Vasos publicitarios',
           productoCodigo: 'TA-1'
         },
@@ -343,6 +351,10 @@ export const serverRoutes: ServerRoute[] = [
         },
         {
           nombre: 'Lapiceros publicitarios',
+          productoCodigo: 'LA-1'
+        },
+        {
+          nombre: 'Lapiceros publicitarios',
           productoCodigo: 'LA-ECO2'
         },
         {
@@ -464,8 +476,17 @@ export const serverRoutes: ServerRoute[] = [
         {
           nombre: 'Antiestres',
           productoCodigo: 'ANT-COR'
+        },
+        {
+          nombre: 'Antiestres',
+          productoCodigo: 'ANT-MED'
+        },
+        {
+          nombre: 'Antiestres',
+          productoCodigo: 'ANT-MED'
         }
       ]
+
 
     },
 
