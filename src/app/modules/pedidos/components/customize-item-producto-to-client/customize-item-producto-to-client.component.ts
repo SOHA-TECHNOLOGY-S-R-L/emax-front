@@ -182,7 +182,8 @@ export class CustomizeItemProductoToClientComponent implements OnInit, OnChanges
   }
 
   chatear(producto: Producto) {
-    this.chatUtils.infoProduct(producto);
+    const url = encodeURI( `${environment.apiFront}/tienda/productos-categoria/${producto.categoria?.nombre}/item-producto-cliente-online/${producto.codigo}`);
+    this.chatUtils.infoString(url);
   }
 
   ngOnDestroy(): void {

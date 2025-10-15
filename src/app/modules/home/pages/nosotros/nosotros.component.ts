@@ -19,15 +19,14 @@ export class NosotrosComponent implements OnInit {
   private seoService = inject(SeoService);
 
   ngOnInit(): void {
-    this.seoService.title.setTitle("Somos importadores directos y comerciantes")
-    this.seoService.meta.updateTag({ name: "description", content: "Importadores y comerciantes de productos para publicidad, merchandising y branding" })
-    this.seoService.meta.updateTag({ property: "og:description", content: "Importadores y comerciantes de productos para publicidad, merchandising y branding" })
-    this.seoService.meta.updateTag({ name: "keywords", content: "Importadores, comerciantes, publicidad,  mercahndising, branding" })
-    this.seoService.meta.updateTag({ property: "og:url", content: `${environment.apiFront}/home/nosotros` })
-    this.seoService.meta.updateTag({ property: "og:title", content: `Somos importadores directos y comerciantes` })
+    this.seoService.title.setTitle("Grafiya — Productos para merchandising, publicidad y branding")
+    this.seoService.meta.updateTag({ name: "keywords", content: "merchandising, publicidad, branding, marca" })
+    this.seoService.meta.updateTag({ name: "description", content: "Productos de merchandising para campañas publicitarias, posicionamiento de marca, regalos empresariales" })
+    this.seoService.meta.updateTag({ property: "og:description", content: "Productos de merchandising para campañas publicitarias, posicionamiento de marca, regalos empresariales" })
+    this.seoService.meta.updateTag({ property: "og:url", content: `${environment.apiFront}/home` })
+    this.seoService.meta.updateTag({ property: "og:title", content: `Grafiya — Productos para merchandising, publicidad y branding` })
+    this.seoService.meta.updateTag({ property: "og:type", content: "website" });
     this.seoService.setIndexFollow(true);
-
-
 
 
   }

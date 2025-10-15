@@ -3,14 +3,14 @@
     justify-content: center;
     align-items: center;
     position: fixed;
-    width: 60px;
-    height: 60px;
-    bottom:20px;
+    width: 40px;
+    height: 40px;
+    bottom:10px;
     right: 20px;
     background-color: #25d366;
     color:white;
     text-align:center;
-    font-size:36px;
+    font-size:30px;
      border-radius:50px;
      align-items: center;
     z-index:100;
@@ -19,5 +19,5 @@
 .whatsapp:hover{
     color:white;
     transition: 0.3s;
-    font-size:37px;
+    font-size:32px;
 }

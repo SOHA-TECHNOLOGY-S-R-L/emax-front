@@ -29,19 +29,16 @@ export class HomeComponent implements OnInit {
   ngOnInit(): void {
 
     this.genericosService.getGenericos().subscribe(resp => {
-      this.whatsapp = "tel:".concat( resp.filter(g => g.codigo === "WHATSAPP")[0].valor1);
+      this.whatsapp = "tel:".concat(resp.filter(g => g.codigo === "WHATSAPP")[0].valor1);
     });
 
-    this.seoService.title.setTitle("Grafiya — Productos publicitarios, merchandising y branding")
-    this.seoService.meta.updateTag({ name: "keywords", content: "merchandising, publicidad, branding" })
-    this.seoService.meta.updateTag({ name: "description", content: "Ofrecemos una amplia variedad de productos para publicidad, merchandising y branding" })
-    this.seoService.meta.updateTag({ property: "og:description", content: "Ofrecemos una amplia variedad de productos para publicidad, merchandising y branding" })
+    this.seoService.title.setTitle("Grafiya — Productos para merchandising, publicidad y branding")
+    this.seoService.meta.updateTag({ name: "keywords", content: "merchandising, publicidad, branding, marca" })
+    this.seoService.meta.updateTag({ name: "description", content: "Productos de merchandising para campañas publicitarias, posicionamiento de marca, regalos empresariales" })
+    this.seoService.meta.updateTag({ property: "og:description", content: "Productos de merchandising para campañas publicitarias, posicionamiento de marca, regalos empresariales" })
     this.seoService.meta.updateTag({ property: "og:url", content: `${environment.apiFront}/home` })
-    this.seoService.meta.updateTag({ property: "og:title", content: `Grafiya — Productos publicitarios, merchandising y branding` })
+    this.seoService.meta.updateTag({ property: "og:title", content: `Grafiya — Productos para merchandising, publicidad y branding` })
     this.seoService.meta.updateTag({ property: "og:type", content: "website" });
-
-    /*       <meta property="og:image" content="https://grafiya.com.pe/images/meta-tags.png" /> */
-
     this.seoService.setIndexFollow(true);
 
 

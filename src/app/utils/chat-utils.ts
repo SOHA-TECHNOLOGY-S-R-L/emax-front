@@ -2,6 +2,7 @@ import { FormControl, FormGroup, NgModel } from '@angular/forms';
 import { Producto } from '../models/producto';
 import { environment } from '../../environments/environment';
 import { Pedido } from '../models/pedido';
+import { Categoria } from '../models/categoria';
 export class ChatUtils {
 
   static defaultMesage() {
@@ -9,6 +10,18 @@ export class ChatUtils {
     const link = environment.API_URL_WHATSAPP + encodeURI(mensaje);
     window.open(link, "_blank")
   }
+
+  static infoString(texto: string) {
+    const mensaje = `Hola!, quiero saber mas de ${texto}`
+    const link = environment.API_URL_WHATSAPP + encodeURI(mensaje);
+    window.open(link, "_blank")
+  }
+
+ /*  static infoUrl(url: string) {
+    const mensaje = `Hola!, quiero saber mas de ${url}`
+    const link = environment.API_URL_WHATSAPP + encodeURI(mensaje);
+    window.open(link, "_blank")
+  } */
 
   static infoProduct(producto: Producto) {
     const mensaje = `Hola!, quiero saber mas de ${producto.codigo} - ${producto.nombre}`

@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { COLOR_ESTADO_PRODUCTO } from '../../../constants/color-estado-producto';
@@ -23,6 +23,7 @@ import { SeoService } from './../../../services/seo.service';
 })
 export class ProductosPorCategoriaComponent implements OnInit, OnDestroy {
   private activatedRoute = inject(ActivatedRoute);
+  private router = inject(Router);
   private productoService = inject(ProductoService);
   private categoriaService = inject(CategoriaService);
   private seo = inject(SeoService);
@@ -66,25 +67,27 @@ export class ProductosPorCategoriaComponent implements OnInit, OnDestroy {
   }
 
   seoProductosPorCategoria( categoriaName: string, lstProductos: Producto[]) {
-    const productos = lstProductos.map(pr => pr.nombre).toString();
-    //const tittle = `${categoriaId} - ${categoriaName}`;
+    //const productos = lstProductos.map(pr => pr.nombre).toString();
+    const imagenCategoria = lstProductos.length > 0 ? lstProductos[0].categoria!.imagen : 'no-imagen.png';
     const tittle = categoriaName;
-    const descripcion = `En la categoria ${categoriaName} estan ${productos}`
+    const descripcion = `Categoria ${categoriaName}`
     this.seo.title.setTitle(tittle)
     this.seo.meta.updateTag({ name: "description", content: descripcion })
-    this.seo.meta.updateTag({ name: "keywords", content: `${productos}` })
+    //this.seo.meta.updateTag({ name: "keywords", content: `${productos}` })
     this.seo.meta.updateTag({ property: "og:type", content: "website" })
     this.seo.meta.updateTag({ property: "og:description", content: descripcion })
     this.seo.meta.updateTag({ property: "og:url", content: `${environment.apiFront}/tienda/productos-categoria/${categoriaName}` })
     this.seo.meta.updateTag({ property: "og:title", content: tittle })
-    //this.seo.meta.updateTag({ property: "og:image", content: `${environment.API_URL_VER_IMAGEN}${categoria.imagen}` })
+    this.seo.meta.updateTag({ property: "og:image", content: `${environment.API_URL_VER_IMAGEN}${imagenCategoria}` })
     //this.seo.serCanonicalURL(`${environment.apiFront}/tienda/productos-categoria`)
     this.seo.setIndexFollow(true);
   }
 
 
-  chatear(producto: Producto) {
-    this.chatUtils.infoProduct(producto);
+  chatear(categoriaNombre: string, productoCodigo: string) {
+    const url = encodeURI( `${environment.apiFront}/tienda/productos-categoria/${categoriaNombre}/item-producto-cliente-online/${productoCodigo}`);
+    this.chatUtils.infoString(url);
+    this.router.navigate(['/tienda/productos-categoria', categoriaNombre, 'item-producto-cliente-online',productoCodigo]);
   }
 
   ngOnDestroy(): void {
