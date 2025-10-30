@@ -8,13 +8,12 @@ import { PrincipalComponent } from './modules/compartido/principal.component';
 import { ProductosPorCategoriaComponent } from './modules/producto/pages/productos-por-categoria.component';
 import { ItemProductoClienteOnlineComponent } from './modules/pedidos/pages/item-producto-cliente-online/item-producto-cliente-online.component';
 import { PedidoClienteOnlineFinalizadoComponent } from './modules/pedidos/components/pedido-cliente-online-finalizado/pedido-cliente-online-finalizado.component';
+import { RecuperarClaveComponent } from './modules/auth/recuperar-clave.component';
 
 export const routes: Routes = [
 
   /*    { path: '', redirectTo: 'a', pathMatch: 'full' },
    */
-  { path: 'login', component: LoginComponent },
-  { path: 'crear-cuenta', component: CrearCuentaTiendaComponent },
   {
     path: '', component: PrincipalComponent,
     children: [
@@ -55,14 +54,26 @@ export const routes: Routes = [
           {
             path: 'productos-categoria/:nombre/item-producto-cliente-online/:productoCodigo', component: ItemProductoClienteOnlineComponent,
           },
-         /*  {
-            path: 'item-producto-cliente-online/:productoId', component: ItemProductoClienteOnlineComponent,
-          }, */
+          /*  {
+             path: 'item-producto-cliente-online/:productoId', component: ItemProductoClienteOnlineComponent,
+           }, */
           {
             path: 'pedido-cliente-online-finalizado/:clienteId', component: PedidoClienteOnlineFinalizadoComponent,
           },
         ]
 
+      },
+      {
+        path: 'crear-cuenta',
+        component: CrearCuentaTiendaComponent
+      },
+      {
+        path: 'recuperar-clave',
+        component: RecuperarClaveComponent
+      },
+      {
+        path: 'login',
+        component: LoginComponent
       },
     ]
   },

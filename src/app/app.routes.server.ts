@@ -1,8 +1,4 @@
 import { RenderMode, ServerRoute } from '@angular/ssr';
-import { ProductoService } from './services/producto.service';
-import { inject } from '@angular/core';
-import { Producto } from './models/producto';
-import { SeoService } from './services/seo.service';
 
 export const serverRoutes: ServerRoute[] = [
   {
@@ -15,7 +11,7 @@ export const serverRoutes: ServerRoute[] = [
   },
   {
     path: 'crear-cuenta',
-    renderMode: RenderMode.Client,
+    renderMode: RenderMode.Server,
   },
 
   {

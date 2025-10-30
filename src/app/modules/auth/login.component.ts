@@ -24,7 +24,7 @@ import { MatInputModule } from '@angular/material/input';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css'],
   standalone: true,
-      imports: [ CommonModule, MatDatepickerModule, MatNativeDateModule,MatFormFieldModule, MatInputModule, MatTableModule, MatPaginatorModule, RouterModule, FormsModule, ReactiveFormsModule, MatCardModule, MatAutocompleteModule, MatSelectModule, MatRadioModule, MatIconModule, MatDialogModule]
+  imports: [CommonModule, MatDatepickerModule, MatNativeDateModule, MatFormFieldModule, MatInputModule, MatTableModule, MatPaginatorModule, RouterModule, FormsModule, ReactiveFormsModule, MatCardModule, MatAutocompleteModule, MatSelectModule, MatRadioModule, MatIconModule, MatDialogModule]
 
 
 })
@@ -34,13 +34,13 @@ export class LoginComponent implements OnInit {
   usuario: Usuario;
 
   constructor(private authService: AuthService,
-              private router: Router,
-              private alertService: AlertService) {
+    private router: Router,
+    private alertService: AlertService) {
     this.usuario = new Usuario();
   }
 
   ngOnInit() {
-     if (this.authService.isAuthenticated()) {
+    if (this.authService.isAuthenticated()) {
       this.alertService.success(`Hola ${this.authService.usuario.username} ya estás autenticado!`, 'Autenticación')
       //swal.fire('Login', `Hola ${this.authService.usuario.username} ya estás autenticado!`, 'info');
       this.router.navigate(['']);
@@ -48,7 +48,7 @@ export class LoginComponent implements OnInit {
   }
 
   login(): void {
-     //console.log(this.usuario);
+    //console.log(this.usuario);
     if (this.usuario.username == null || this.usuario.password == null) {
       //swal.fire('Error Login', 'Username o password vacías!', 'error');
       this.alertService.info(`Usuario o clave vacios!`, 'Autenticación')
@@ -66,9 +66,11 @@ export class LoginComponent implements OnInit {
       //swal.fire('Login', `Hola ${usuario.username}, has iniciado sesión con éxito!`, 'success');
     }, err => {
       //if (err.status == 400) {
-        this.alertService.error('Usuario o clave incorrectas!', 'Autenticación')
-        //swal.fire('Error Login', 'Usuario o clave incorrectas!', 'error');
-     // }
+      this.alertService.error('Usuario o clave incorrectas!', 'Autenticación')
+      this.router.navigate(['/login']);
+
+      //swal.fire('Error Login', 'Usuario o clave incorrectas!', 'error');
+      // }
     }
     );
   }

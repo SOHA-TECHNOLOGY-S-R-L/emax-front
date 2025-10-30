@@ -21,6 +21,10 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatStepperModule } from '@angular/material/stepper';
+import { AsyncPipe } from '@angular/common';
+import { MatDividerModule } from '@angular/material/divider';
+
 
 @NgModule({
   imports: [
@@ -45,6 +49,9 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     MatCheckboxModule,
     MatRadioModule,
     MatExpansionModule,
+    MatStepperModule,
+    AsyncPipe,
+    MatDividerModule
   ],
   exports: [
     MatSidenavModule,
@@ -67,6 +74,10 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     MatDialogModule,
     MatCheckboxModule,
     MatRadioModule,
-    MatExpansionModule  ]
+    MatExpansionModule,
+    MatStepperModule,
+    AsyncPipe,
+    MatDividerModule
+  ]
 })
 export class AngularMaterialModule { }

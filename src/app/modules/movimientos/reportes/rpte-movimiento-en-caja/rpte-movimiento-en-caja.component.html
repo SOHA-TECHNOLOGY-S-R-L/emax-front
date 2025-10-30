@@ -35,7 +35,7 @@
         <mat-form-field>
           <mat-label>Usuarios</mat-label>
           <mat-select matNativeControl formControlName="usuariosId" multiple>
-            <mat-option *ngFor="let p of usuarioLst" value={{p.id}}>{{p.nomApellRz}}</mat-option>
+            <mat-option *ngFor="let p of usuarioLst" value={{p.id}}>{{p.cliente.nomApellRz}}</mat-option>
           </mat-select>
         </mat-form-field>
         <mat-form-field>

@@ -6,17 +6,17 @@
   </div> -->
   <!----------------------1-------------------->
   <div mat-subheader *ngIf="authService.hasRole('ROLE_LIST_CLIENTES') || authService.hasRole('ROLE_REGISTER_CLIENTE')">
-    <mat-icon>diversity_3</mat-icon>CLIENTES/PROVEEDORES
+    <mat-icon>diversity_3</mat-icon>PERSONAS
   </div>
   <ng-container *ngIf="authService.hasRole('ROLE_LIST_CLIENTES')">
     <a mat-list-item [routerLink]="['clientes']" [routerLinkActive]="['active']"
       [routerLinkActiveOptions]="{exact: true}">
-      Listado clientes o proveedores</a>
+      Listado personas</a>
   </ng-container>
   <ng-container *ngIf="authService.hasRole('ROLE_REGISTER_CLIENTE')">
     <a mat-list-item [routerLink]="['clientes/form']" [routerLinkActive]="['active']"
       [routerLinkActiveOptions]="{exact: true}">
-      Registro cliente</a>
+      Registro personas</a>
   </ng-container>
   <!----------------------2-------------------->
   <div mat-subheader

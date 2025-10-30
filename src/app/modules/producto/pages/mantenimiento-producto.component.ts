@@ -106,8 +106,8 @@ export class MantenimientoProductoComponent implements OnInit, AfterViewInit {
       //Pateon letras, números y guion . Al menos un número o letra en la cadena.
       { validators: [Validators.required, Validators.minLength(2)] }
 
-/*       { validators: [Validators.required, Validators.minLength(2), Validators.pattern('^[A-Z0-9-]*[A-Z0-9][A-Z0-9-]*$')] }
- */
+        /*       { validators: [Validators.required, Validators.minLength(2), Validators.pattern('^[A-Z0-9-]*[A-Z0-9][A-Z0-9-]*$')] }
+         */
       ],
       descripcion: [this.producto?.descripcion, Validators.required],
       medidas: [this.producto?.medidas,
@@ -253,13 +253,14 @@ export class MantenimientoProductoComponent implements OnInit, AfterViewInit {
   calcularPrecioNeto() {
     const margenesGanancia = this.formProducto.get('margenesGanancia') as FormArray;
     if (margenesGanancia.controls.length > 0) {
-      const costoUnitario: number = this.formProducto.get('costoUnitario')?.value;
+      const costoUnitario: number = + this.formProducto.get('costoUnitario')?.value;
       const impuestoIgv: number = + this.formProducto.get('impuestoIgv')?.value;
+      const costoMasImpuesto: number = costoUnitario * (100 + impuestoIgv) / 100;
       margenesGanancia.controls.forEach(abstractControl => {
         const margen = + abstractControl.get('margen')?.value
-        const precioNetoUnitario: number = costoUnitario * (100 + (impuestoIgv + margen)) / 100;
+        const precioNetoUnitario: number = costoMasImpuesto * (100 + margen) / 100;
         abstractControl.get('precioNetoSugerido')?.setValue(precioNetoUnitario.toString());
-        abstractControl.get('precioNeto')?.setValue(precioNetoUnitario.toString());
+        //abstractControl.get('precioNeto')?.setValue(precioNetoUnitario.toString());
       })
     }
   }
@@ -269,8 +270,10 @@ export class MantenimientoProductoComponent implements OnInit, AfterViewInit {
     if (abstractControl) {
       const costoUnitario: number = this.formProducto.get('costoUnitario')?.value;
       const impuestoIgv: number = + this.formProducto.get('impuestoIgv')?.value;
+      const costoMasImpuesto: number = costoUnitario * (100 + impuestoIgv) / 100;
+
       const margen = + abstractControl.get('margen')?.value
-      const precioNetoUnitario: number = costoUnitario * (100 + (impuestoIgv + margen)) / 100;
+      const precioNetoUnitario: number = costoMasImpuesto * (100 + margen) / 100;
       abstractControl.get('precioNetoSugerido')?.setValue(precioNetoUnitario.toString());
       //abstractControl.get('precioNeto')?.setValue(precioNetoUnitario.toString());
     }
@@ -280,9 +283,21 @@ export class MantenimientoProductoComponent implements OnInit, AfterViewInit {
     //console.log("this.formProducto", this.formProducto.value);
     this.recuperarValForm();
     if (this.producto.margenesProducto.length == 0) {
-      this.alertService.warning(`Debe agregar margenes al producto`, 'Producto');
+      this.alertService.warning(`Debe agregar margenes al producto`, 'Margenes de ganancia');
       return;
     }
+
+    const costoUnitario: number = + this.producto.costoUnitario;
+    const impuestoIgv: number = + this.producto.impuestoIgv;
+    const costoMasImpuesto: number = costoUnitario * (100 + impuestoIgv) / 100;
+
+    const tienePrecioInsuficiente = this.producto.margenesProducto
+      .some(margen => margen.precioNeto < costoMasImpuesto);
+    if (tienePrecioInsuficiente) {
+      this.alertService.error(`Precio Neto no cubre costo con impuesto. Corregir!`, 'Margenes de ganancia');
+      return;
+    }
+
     if (this.producto.id) {
       this.productoService.updateProducto(this.producto).subscribe(
         json => {

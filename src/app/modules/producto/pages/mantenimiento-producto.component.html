@@ -236,177 +236,7 @@
                 </div>}
               </div>
             </div> -->
-              <div class="row mb-2">
-                <div class="col d-grid">
-                  <button type="button" class="btn btn-warning" (click)="newMargenProducto()">Aplicar margenes de
-                    ganancia(%) por cantidad</button>
-                </div>
-              </div>
 
-              <div class="row">
-                <div class="col-2">
-                  <b>Mín Cant</b>
-                </div>
-                <div class="col-2">
-                  <b>Máx Cant</b>
-                </div>
-                <div class="col-2">
-                  <b>Margen(%)</b>
-                </div>
-                <div class="col-2">
-                  <b>P.Sugeri(S/)</b>
-                </div>
-                <div class="col-3">
-                  <b>P. Neto(S/)</b>
-                </div>
-                <div class="col-1">
-                </div>
-              </div>
-              <div formArrayName="margenesGanancia">
-                @for (margen of margenesGanancia.controls; track $index; let i = $index) {
-                <div class="row mb-2" [formGroupName]="i">
-                  <div class="col-2">
-                    <input type="number" formControlName="minCantidad" name="minCantidad" class="form-control">
-                    @if(margenesGanancia.controls[i].get('minCantidad')?.errors &&
-                    margenesGanancia.controls[i].get('minCantidad')?.touched){
-                    <div class="alert alert-danger"
-                      *ngIf="margenesGanancia.controls[i].get('minCantidad')?.errors?.['required']">
-                      Valor requerido
-                    </div>
-                    <div class="alert alert-danger"
-                      *ngIf="margenesGanancia.controls[i].get('minCantidad')?.errors?.['min']">
-                      Valor mínimo requerido
-                    </div>
-                    }
-                  </div>
-
-                  <div class="col-2">
-                    <input type="number" formControlName="maxCantidad" name="maxCantidad" class="form-control">
-                    @if(margenesGanancia.controls[i].get('maxCantidad')?.errors &&
-                    margenesGanancia.controls[i].get('maxCantidad')?.touched){
-                    <div class="alert alert-danger"
-                      *ngIf="margenesGanancia.controls[i].get('maxCantidad')?.errors?.['min']">
-                      Valor mínimo requerido
-                    </div>
-                    }
-                  </div>
-
-                  <div class="col-2">
-                    <input type="number" (input)="calcularPrecioNetoPorMargen(i)" formControlName="margen" name="margen"
-                      class="form-control">
-                    @if(margenesGanancia.controls[i].get('margen')?.errors &&
-                    margenesGanancia.controls[i].get('margen')?.touched){
-                    <div class="alert alert-danger"
-                      *ngIf="margenesGanancia.controls[i].get('margen')?.errors?.['required']">
-                      Valor requerido
-                    </div>
-                    <div class="alert alert-danger" *ngIf="margenesGanancia.controls[i].get('margen')?.errors?.['min']">
-                      Valor mínimo requerido
-                    </div>
-                    }
-                  </div>
-                  <div class="col-2">
-                    <input type="number" formControlName="precioNetoSugerido" name="precioNetoSugerido"
-                      class="form-control">
-                  </div>
-                  <div class="col-3">
-                    <input type="number" formControlName="precioNeto" name="precioNeto" class="form-control">
-                    @if(margenesGanancia.controls[i].get('precioNeto')?.errors &&
-                    margenesGanancia.controls[i].get('precioNeto')?.touched){
-                    <div class="alert alert-danger"
-                      *ngIf="margenesGanancia.controls[i].get('precioNeto')?.errors?.['required']">
-                      Valor requerido
-                    </div>
-                    <div class="alert alert-danger"
-                      *ngIf="margenesGanancia.controls[i].get('precioNeto')?.errors?.['min']">
-                      Valor mínimo requerido
-                    </div>
-                    }
-                  </div>
-                  <div class="col-1">
-                    <button mat-icon-button color="warn" (click)="eliminarMargenProducto(i)"
-                      matTooltip="Elimnar"><mat-icon>close</mat-icon></button>
-                  </div>
-
-                </div>
-                }
-              </div>
-
-              <!--             <div class="row mb-2">
-              <label for="precioBruto" class="col-form-label col-sm-4">Precio bruto (-IGV):</label>
-              <div class="input-group col-sm">
-                <input type="number" formControlName="precioBruto" name="precioBruto" class="form-control"
-                  placeholder="Precio bruto (sin IGV)" min="3">
-                <span class="input-group-text">S/</span>
-                <span class="input-group-text">0.00</span>
-                @if(formUtils.isValidField(formProducto,'precioBruto')){
-                <div class="alert alert-danger">
-                  {{formUtils.getFieldError(formProducto,'precioBruto')}}
-                </div>}
-              </div>
-            </div> -->
-              <!--             <div class="row mb-2">
-              <label for="precioNeto" class="col-form-label col-sm-4">Precio neto (+ IGV):</label>
-              <div class="input-group col-sm">
-                <input type="number" formControlName="precioNeto" name="precioNeto" class="form-control"
-                  placeholder="Precio neto (con IGV)" min="0" required>
-                <span class="input-group-text">S/</span>
-                <span class="input-group-text">0.00</span>
-                @if(formUtils.isValidField(formProducto,'precioNeto')){
-                <div class="alert alert-danger">
-                  {{formUtils.getFieldError(formProducto,'precioNeto')}}
-                </div>}
-              </div>
-            </div> -->
-              <!--             <div class="row mb-2">
-              <label for="precioBrutoRebajado" class="col-form-label col-sm-4">Precio bruto rebajado(-IGV):</label>
-              <div class="input-group col-sm">
-                <input type="number" formControlName="precioBrutoRebajado" name="precioBrutoRebajado"
-                  class="form-control" placeholder="Precio bruto rebajado (sin IGV)" min="2">
-                <span class="input-group-text">S/</span>
-                <span class="input-group-text">0.00</span>
-                @if(formUtils.isValidField(formProducto,'precioBrutoRebajado')){
-                <div class="alert alert-danger">
-                  {{formUtils.getFieldError(formProducto,'precioBrutoRebajado')}}
-                </div>}
-              </div>
-            </div> -->
-              <!--             <div class="row mb-2">
-              <label for="precioNetoRabajado" class="col-form-label col-sm-4">Precio neto rebajado(+IGV):</label>
-              <div class="input-group col-sm">
-                <input type="number" formControlName="precioNetoRabajado" name="precioNetoRabajado" class="form-control"
-                  placeholder="Precio neto rebajado (con IGV)" min="3">
-                <span class="input-group-text">S/</span>
-                <span class="input-group-text">0.00</span>
-                @if(formUtils.isValidField(formProducto,'precioNetoRabajado')){
-                <div class="alert alert-danger">
-                  {{formUtils.getFieldError(formProducto,'precioNetoRabajado')}}
-                </div>}
-              </div>
-            </div> -->
-
-              <!--             <div class="row mb-2">
-              <label for="fechaPrecioRebajadoDesde" class="col-form-label col-sm-4">Fch precio rebajado desde:</label>
-              <div class="input-group col-sm">
-                <input type="datetime-local" formControlName="fechaPrecioRebajadoDesde" name="fechaPrecioRebajadoDesde"
-                  class="form-control" placeholder="Fecha precio rebajado desde: ">
-                @if(formUtils.isValidField(formProducto,'fechaPrecioRebajadoDesde')){
-                <div class="alert alert-danger">
-                  {{formUtils.getFieldError(formProducto,'fechaPrecioRebajadoDesde')}}
-                </div>}
-              </div>
-            </div>
-            <div class="row mb-2">
-              <label for="fechaPrecioRebajadoHasta" class="col-form-label col-sm-4">Fch precio rebajado hasta:</label>
-              <div class="input-group col-sm">
-                <input type="datetime-local" formControlName="fechaPrecioRebajadoHasta" name="fechaPrecioRebajadoHasta"
-                  class="form-control" placeholder="Fecha precio rebajado hasta: ">
-                @if(formUtils.isValidField(formProducto,'fechaPrecioRebajadoHasta')){
-                <div class="alert alert-danger">
-                  {{formUtils.getFieldError(formProducto,'fechaPrecioRebajadoHasta')}}
-                </div>}
-              </div>
-            </div> -->
             </div>
 
 
@@ -531,6 +361,179 @@
               </div>
             </div> -->
             </div>
+          </div>
+          <div class="row">
+<!--             <div class="row mb-2">
+ -->              <div class="col d-grid">
+                <button type="button" class="btn btn-warning" (click)="newMargenProducto()">Aplicar margenes de
+                  ganancia(%) por cantidad</button>
+              </div>
+<!--             </div>
+ -->
+            <div class="row">
+              <div class="col-2 text-center">
+                <b>Mín Cant</b>
+              </div>
+              <div class="col-2 text-center">
+                <b>Máx Cant</b>
+              </div>
+              <div class="col-2 text-center">
+                <b>Margen(%)</b>
+              </div>
+              <div class="col-2 text-center">
+                <b>P.Sugeri(S/)</b>
+              </div>
+              <div class="col-3 text-center">
+                <b>P. Neto(S/)</b>
+              </div>
+              <div class="col-1">
+              </div>
+            </div>
+            <div formArrayName="margenesGanancia">
+              @for (margen of margenesGanancia.controls; track $index; let i = $index) {
+              <div class="row mb-2" [formGroupName]="i">
+                <div class="col-2">
+                  <input type="number" formControlName="minCantidad" name="minCantidad" class="form-control">
+                  @if(margenesGanancia.controls[i].get('minCantidad')?.errors &&
+                  margenesGanancia.controls[i].get('minCantidad')?.touched){
+                  <div class="alert alert-danger"
+                    *ngIf="margenesGanancia.controls[i].get('minCantidad')?.errors?.['required']">
+                    Valor requerido
+                  </div>
+                  <div class="alert alert-danger"
+                    *ngIf="margenesGanancia.controls[i].get('minCantidad')?.errors?.['min']">
+                    Valor mínimo requerido
+                  </div>
+                  }
+                </div>
+
+                <div class="col-2">
+                  <input type="number" formControlName="maxCantidad" name="maxCantidad" class="form-control">
+                  @if(margenesGanancia.controls[i].get('maxCantidad')?.errors &&
+                  margenesGanancia.controls[i].get('maxCantidad')?.touched){
+                  <div class="alert alert-danger"
+                    *ngIf="margenesGanancia.controls[i].get('maxCantidad')?.errors?.['min']">
+                    Valor mínimo requerido
+                  </div>
+                  }
+                </div>
+
+                <div class="col-2">
+                  <input type="number" (input)="calcularPrecioNetoPorMargen(i)" formControlName="margen" name="margen"
+                    class="form-control">
+                  @if(margenesGanancia.controls[i].get('margen')?.errors &&
+                  margenesGanancia.controls[i].get('margen')?.touched){
+                  <div class="alert alert-danger"
+                    *ngIf="margenesGanancia.controls[i].get('margen')?.errors?.['required']">
+                    Valor requerido
+                  </div>
+                  <div class="alert alert-danger" *ngIf="margenesGanancia.controls[i].get('margen')?.errors?.['min']">
+                    Valor mínimo requerido
+                  </div>
+                  }
+                </div>
+                <div class="col-2">
+                  <input type="number" formControlName="precioNetoSugerido" name="precioNetoSugerido"
+                    class="form-control">
+                </div>
+                <div class="col-3">
+                  <input type="number" formControlName="precioNeto" name="precioNeto" class="form-control">
+                  @if(margenesGanancia.controls[i].get('precioNeto')?.errors &&
+                  margenesGanancia.controls[i].get('precioNeto')?.touched){
+                  <div class="alert alert-danger"
+                    *ngIf="margenesGanancia.controls[i].get('precioNeto')?.errors?.['required']">
+                    Valor requerido
+                  </div>
+                  <div class="alert alert-danger"
+                    *ngIf="margenesGanancia.controls[i].get('precioNeto')?.errors?.['min']">
+                    Valor mínimo requerido
+                  </div>
+                  }
+                </div>
+                <div class="col-1">
+                  <button mat-icon-button color="warn" (click)="eliminarMargenProducto(i)"
+                    matTooltip="Elimnar"><mat-icon>close</mat-icon></button>
+                </div>
+
+              </div>
+              }
+            </div>
+
+            <!--             <div class="row mb-2">
+              <label for="precioBruto" class="col-form-label col-sm-4">Precio bruto (-IGV):</label>
+              <div class="input-group col-sm">
+                <input type="number" formControlName="precioBruto" name="precioBruto" class="form-control"
+                  placeholder="Precio bruto (sin IGV)" min="3">
+                <span class="input-group-text">S/</span>
+                <span class="input-group-text">0.00</span>
+                @if(formUtils.isValidField(formProducto,'precioBruto')){
+                <div class="alert alert-danger">
+                  {{formUtils.getFieldError(formProducto,'precioBruto')}}
+                </div>}
+              </div>
+            </div> -->
+            <!--             <div class="row mb-2">
+              <label for="precioNeto" class="col-form-label col-sm-4">Precio neto (+ IGV):</label>
+              <div class="input-group col-sm">
+                <input type="number" formControlName="precioNeto" name="precioNeto" class="form-control"
+                  placeholder="Precio neto (con IGV)" min="0" required>
+                <span class="input-group-text">S/</span>
+                <span class="input-group-text">0.00</span>
+                @if(formUtils.isValidField(formProducto,'precioNeto')){
+                <div class="alert alert-danger">
+                  {{formUtils.getFieldError(formProducto,'precioNeto')}}
+                </div>}
+              </div>
+            </div> -->
+            <!--             <div class="row mb-2">
+              <label for="precioBrutoRebajado" class="col-form-label col-sm-4">Precio bruto rebajado(-IGV):</label>
+              <div class="input-group col-sm">
+                <input type="number" formControlName="precioBrutoRebajado" name="precioBrutoRebajado"
+                  class="form-control" placeholder="Precio bruto rebajado (sin IGV)" min="2">
+                <span class="input-group-text">S/</span>
+                <span class="input-group-text">0.00</span>
+                @if(formUtils.isValidField(formProducto,'precioBrutoRebajado')){
+                <div class="alert alert-danger">
+                  {{formUtils.getFieldError(formProducto,'precioBrutoRebajado')}}
+                </div>}
+              </div>
+            </div> -->
+            <!--             <div class="row mb-2">
+              <label for="precioNetoRabajado" class="col-form-label col-sm-4">Precio neto rebajado(+IGV):</label>
+              <div class="input-group col-sm">
+                <input type="number" formControlName="precioNetoRabajado" name="precioNetoRabajado" class="form-control"
+                  placeholder="Precio neto rebajado (con IGV)" min="3">
+                <span class="input-group-text">S/</span>
+                <span class="input-group-text">0.00</span>
+                @if(formUtils.isValidField(formProducto,'precioNetoRabajado')){
+                <div class="alert alert-danger">
+                  {{formUtils.getFieldError(formProducto,'precioNetoRabajado')}}
+                </div>}
+              </div>
+            </div> -->
+
+            <!--             <div class="row mb-2">
+              <label for="fechaPrecioRebajadoDesde" class="col-form-label col-sm-4">Fch precio rebajado desde:</label>
+              <div class="input-group col-sm">
+                <input type="datetime-local" formControlName="fechaPrecioRebajadoDesde" name="fechaPrecioRebajadoDesde"
+                  class="form-control" placeholder="Fecha precio rebajado desde: ">
+                @if(formUtils.isValidField(formProducto,'fechaPrecioRebajadoDesde')){
+                <div class="alert alert-danger">
+                  {{formUtils.getFieldError(formProducto,'fechaPrecioRebajadoDesde')}}
+                </div>}
+              </div>
+            </div>
+            <div class="row mb-2">
+              <label for="fechaPrecioRebajadoHasta" class="col-form-label col-sm-4">Fch precio rebajado hasta:</label>
+              <div class="input-group col-sm">
+                <input type="datetime-local" formControlName="fechaPrecioRebajadoHasta" name="fechaPrecioRebajadoHasta"
+                  class="form-control" placeholder="Fecha precio rebajado hasta: ">
+                @if(formUtils.isValidField(formProducto,'fechaPrecioRebajadoHasta')){
+                <div class="alert alert-danger">
+                  {{formUtils.getFieldError(formProducto,'fechaPrecioRebajadoHasta')}}
+                </div>}
+              </div>
+            </div> -->
           </div>
         </div>
       </mat-card-content>

@@ -10,6 +10,7 @@ import { PageableResponse } from '../models/pageable-response';
 import { TipoDocumento } from '../models/tipo-documento';
 import { AlertService } from './alert.service';
 import { AuthService } from './auth.service';
+import { TipoPersona } from '../models/tipo-persona';
 
 @Injectable({
   providedIn: 'root'
@@ -34,6 +35,12 @@ export class ClienteService {
 
   getTipoDocumento(): Observable<TipoDocumento[]> {
     return this.http.get<TipoDocumento[]>(environment.apiUrl + '/clientes/documentos'
+      /*,{headers: this.agregarAuthorizationHeader()}*/
+    );
+  }
+
+  getTipoPersona(): Observable<TipoPersona[]> {
+    return this.http.get<TipoPersona[]>(environment.apiUrl + '/clientes/tipo-personas'
       /*,{headers: this.agregarAuthorizationHeader()}*/
     );
   }
@@ -184,5 +191,20 @@ export class ClienteService {
   filtrarClientes(term: string): Observable<Cliente[]> {
     return this.http.get<Cliente[]>(`${environment.apiUrl}/clientes/filtrar-cliente/${term}`
     );
+  }
+
+  colocarCodigoRenovacionClave(numeroDocumento: string): Observable<any> {
+    return this.http.put<any>(`${environment.apiUrl}/cliente/${numeroDocumento}/codigo-renovacion`, null)
+      .pipe(
+        map((response: any) => response.cliente as Cliente),
+        catchError(e => {
+          if (e.status == 400) {
+            return throwError(e);
+          }
+          if (e.error.mensaje) {
+            console.error(e.error.mensaje);
+          }
+          return throwError(e);
+        }));
   }
 }

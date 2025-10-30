@@ -1,13 +1,18 @@
+import { Cliente } from "./cliente";
 import { Role } from "./role";
 
 export class Usuario {
   id!: number;
   username!: string;
   activo!: boolean;
-  bloqueado!: boolean;
+  noBloqueado!: boolean;
+  //empleado:boolean=false;
   password!: string;
-  nomApellRz!: string;
-  email!: string;
+  reintentos!:number;
+  //nomApellRz!: string;
+  //email!: string;
+  codigoRenovacionClave!: string;
+  cliente!:Cliente;
   roles: Role[] = [];  //Se usa para modulo usuarios se ha cambviado revisar
 
 }

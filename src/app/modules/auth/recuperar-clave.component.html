@@ -1,0 +1,82 @@
+<div class="container-fluid bg-secondary">
+  <div class="container py-5">
+    <div class="row align-items-center py-4">
+      <!--       <div class="col-md-4 text-center text-md-left">
+        <h2 class="display-4 mb-4 mb-md-0 text-primary text-uppercase">RECUPERAR CLAVE</h2>
+      </div> -->
+      <div class="d-flex justify-content-center">
+
+        <!--         @switch (stepperOrientation | async) {
+        @case ('horizontal') {
+        <div>Make your screen smaller to see a vertical stepper</div>
+        }
+        @case ('vertical') {
+        <div>Make your screen larger to see a horizontal stepper</div>
+        }
+        } -->
+        <div class="card">
+          <mat-stepper [orientation]="(stepperOrientation | async)!" [linear]="true" #stepper>
+            <mat-step [stepControl]="firstFormGroup" label="Validar número documento">
+              <form #formColocarCodUser="ngForm" [formGroup]="firstFormGroup">
+                <mat-form-field>
+                  <mat-label>Ingrese número de documento</mat-label>
+                  <input matInput formControlName="numeroDocumento" />
+                  @if(formUtils.isValidField(firstFormGroup,'numeroDocumento')){
+                  <mat-error>{{formUtils.getFieldError(firstFormGroup,"numeroDocumento")}}</mat-error>
+                  }
+                </mat-form-field>
+                <div class="d-flex justify-content-end">
+                  <button matButton [disabled]="!formColocarCodUser.form.valid"
+                    (click)="colocarCodigoVerificacionUsuario()">Siguiente</button>
+                </div>
+              </form>
+            </mat-step>
+            <mat-step [stepControl]="secondFormGroup" label="Validar código verificación">
+               <p>Ingresa el <b>CODIGO DE VERIFICACIÓN</b> enviado al correo: <b>{{emailPrincipal}}</b> </p>
+               <form #formCodigoVerificacion="ngForm" [formGroup]="secondFormGroup">
+                <mat-form-field>
+                  <mat-label>Ingresar código de verificación</mat-label>
+                  <input matInput formControlName="codigoVerificacion" required>
+                  @if(formUtils.isValidField(secondFormGroup,'codigoVerificacion')){
+                  <mat-error> {{formUtils.getFieldError(secondFormGroup,"codigoVerificacion")}}</mat-error>
+                  }
+                </mat-form-field>
+                <div class="d-flex justify-content-end">
+                  <button matButton [disabled]="!formCodigoVerificacion.form.valid" (click)="valdiarCodigoVerificacion()">Siguiente</button>
+                </div>
+              </form>
+            </mat-step>
+            <mat-step [stepControl]="thirdFormGroup" label="Ingresa clave nueva">
+              <form #formRenovarClaveUsuario="ngForm" [formGroup]="thirdFormGroup">
+                <mat-form-field>
+                  <mat-label>Clave:</mat-label>
+                  <input type="password" matInput formControlName="clave" required>
+                  @if(formUtils.isValidField(thirdFormGroup,'clave')){
+                  <mat-error> {{formUtils.getFieldError(thirdFormGroup,'clave')}}</mat-error>
+                  }
+                </mat-form-field>
+                <mat-form-field>
+                  <mat-label>Confirmar clave:</mat-label>
+                  <input type="password" matInput formControlName="confirmaClave" required>
+                  @if(formUtils.isValidField(thirdFormGroup,'confirmaClave')){
+                  <mat-error> {{formUtils.getFieldError(thirdFormGroup,'confirmaClave')}}</mat-error>
+                  }
+                </mat-form-field>
+                <div class="d-flex justify-content-end">
+                  <button matButton [disabled]="!formRenovarClaveUsuario.form.valid" (click)="renovarClaveUsuario()">Siguiente</button>
+                </div>
+              </form>
+            </mat-step>
+            <mat-step>
+              <ng-template matStepLabel>Hecho!</ng-template>
+              <p>Se ha generado una nueva clave, puedes iniciar sesión</p>
+              <div class="d-flex justify-content-end">
+                <button matButton (click)=" irLogin()">Iniciar sesión</button>
+              </div>
+            </mat-step>
+          </mat-stepper>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

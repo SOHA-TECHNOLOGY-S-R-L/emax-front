@@ -9,6 +9,7 @@ import { PageableResponse } from '../models/pageable-response';
 import { Usuario } from '../models/usuario';
 import { environment } from '../../environments/environment';
 import { Modulo } from '../models/modulo';
+import { Cliente } from '../models/cliente';
 
 
 @Injectable({
@@ -54,12 +55,31 @@ export class UsuarioService {
           })); */
   }
 
-  updateRolUsuario(usuario:Usuario, usuarioId: number): Observable<any> {
+  updateRolUsuario(usuario: Usuario, usuarioId: number): Observable<any> {
     return this.httpClient.put(`${environment.apiUrl}/usuarios-roles/update/${usuarioId}`, usuario);
   }
 
-  deleteRolUsuario(usuario:Usuario, usuarioId: number): Observable<any> {
+  deleteRolUsuario(usuario: Usuario, usuarioId: number): Observable<any> {
     return this.httpClient.put(`${environment.apiUrl}/usuarios-roles/delete/${usuarioId}`, usuario);
   }
 
+  confirmarDobleInputClave(clave: string, confirmaClave: string): boolean {
+    return clave === confirmaClave;
+  }
+
+
+  resetClaveConUserName(username: string): Observable<boolean> {
+    return this.httpClient.get<boolean>(`${environment.apiUrl}/auth/${username}/renovar-clave`
+    );
+  }
+
+
+  validarCodigoRenovaciónClaveUsuario(username: string, codigoVerificacion: string): Observable<any> {
+    return this.httpClient.get<any>(`${environment.apiUrl}/usuario/${username}/validar-renovacion/${codigoVerificacion}`);
+  }
+
+
+  renovarClaveUsuario(username: string, clave: string): Observable<any> {
+    return this.httpClient.get<any>(`${environment.apiUrl}/usuario/${username}/renovar-clave/${clave}`);
+  }
 }
