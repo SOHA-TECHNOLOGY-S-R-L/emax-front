@@ -3,22 +3,23 @@ import { Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { environment } from '../../../../environments/environment';
+import { GenericosService } from '../../../services/genericos.service';
 import { SeoService } from '../../../services/seo.service';
 import { CarruselEmpresaComponent } from "../components/carrusel-empresa/carrusel-empresa.component";
-import { CategoriasProductoClienteComponent } from "../components/categorias-producto-cliente/categorias-producto-cliente.component";
+import { CategoriasProductoPersonaComponent } from "../components/categorias-producto-persona/categorias-producto-persona.component";
 import { EmpresaComponent } from '../components/empresa/empresa.component';
 import { ExperienciaComponent } from '../components/experiencia/experiencia.component';
-import { ProductoClienteComponent } from '../components/producto-cliente/producto-cliente.component';
 import { QuienesSomosComponent } from "../components/quienes-somos/quienes-somos.component";
-import { ServiciosClienteComponent } from '../components/servicios-cliente/servicios-cliente.component';
-import { GenericosService } from '../../../services/genericos.service';
+//import { ServiciosPersonaComponent } from '../components/servicios-persona/servicios-persona.component';
+import { ProductoPersonaComponent } from "../components/producto-persona/producto-persona.component";
+import { ServiciosPersonaComponent } from '../components/servicios-persona/servicios-persona.component';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrl: './home.component.css',
   standalone: true,
-  imports: [ServiciosClienteComponent, CommonModule, FormsModule, CarruselEmpresaComponent, RouterModule, ExperienciaComponent, EmpresaComponent, ProductoClienteComponent, CategoriasProductoClienteComponent, QuienesSomosComponent]
+  imports: [CommonModule, FormsModule, CarruselEmpresaComponent, RouterModule, ExperienciaComponent, EmpresaComponent,  CategoriasProductoPersonaComponent, QuienesSomosComponent, ProductoPersonaComponent, ServiciosPersonaComponent]
 })
 export class HomeComponent implements OnInit {
 

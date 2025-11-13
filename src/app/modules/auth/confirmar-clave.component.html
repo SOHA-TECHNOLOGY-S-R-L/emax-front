@@ -1,0 +1,34 @@
+<div [formGroup]="formEqualsClaves">
+  <div class="row mb-2">
+    <div class="col-12">
+      <input formControlName="clave" type="password" class="form-control" name="clave" placeholder="Clave">
+      @if(formUtils.isValidField(formEqualsClaves,'clave')){
+      <div class="alert alert-danger">
+        {{formUtils.getFieldError(formEqualsClaves,'clave')}}
+      </div>}
+    </div>
+  </div>
+  <div class="row mb-2">
+    <div class="col-12">
+      <input formControlName="confirmaClave" type="password" class="form-control" name="confirmaClave"
+        placeholder="Confirmar clave">
+
+      @if(formEqualsClaves.get('confirmaClave')?.invalid
+      && formEqualsClaves.get('confirmaClave')?.touched
+      ){
+      <div *ngIf="formEqualsClaves.get('confirmaClave')?.hasError('required')" class="alert alert-danger">
+        {{`Valor requerido`}}
+      </div>
+      <div *ngIf="formEqualsClaves.get('confirmaClave')?.hasError('notSame')" class="alert alert-danger">
+        {{`Claves no coinciden`}}
+      </div>
+      <div *ngIf="formEqualsClaves.get('confirmaClave')?.hasError('minlength')" class="alert alert-danger">
+        {{`Mínimo de 4 caracteres`}}
+      </div>
+      <div *ngIf="formEqualsClaves.get('confirmaClave')?.hasError('pattern')" class="alert alert-danger">
+        {{`No cumple requerimientos de campo`}}
+      </div>
+      }
+    </div>
+  </div>
+</div>

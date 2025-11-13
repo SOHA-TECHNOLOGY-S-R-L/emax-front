@@ -86,22 +86,22 @@ export class ProductoService {
     );
   }
 
-  /*   getClientes(page: number): Observable<any> {
-      return this.http.get(`${environment.apiUrl}/clientes` + '/page/' + page).pipe(
+  /*   getPersonas(page: number): Observable<any> {
+      return this.http.get(`${environment.apiUrl}/personas` + '/page/' + page).pipe(
         tap((response: any) => {
-          console.log('ClienteService: tap 1');
-          (response.content as Cliente[]).forEach(cliente => console.log(cliente.nombres));
+          console.log('PersonaService: tap 1');
+          (response.content as Persona[]).forEach(persona => console.log(persona.nombres));
         }),
         map((response: any) => {
-          (response.content as Cliente[]).map(cliente => {
-            cliente.nombres = cliente.nombres.toUpperCase();
-            return cliente;
+          (response.content as Persona[]).map(persona => {
+            persona.nombres = persona.nombres.toUpperCase();
+            return persona;
           });
           return response;
         }),
         tap(response => {
-          console.log('ClienteService: tap 2');
-          (response.content as Cliente[]).forEach(cliente => console.log(cliente.nombres));
+          console.log('PersonaService: tap 2');
+          (response.content as Persona[]).forEach(persona => console.log(persona.nombres));
         }));
     } */
 
@@ -309,7 +309,7 @@ export class ProductoService {
     formData.append("archivo", archivo);
     formData.append("productoId", productoId);
 
-    /*     const req = new HttpRequest('POST', `${environment.apiUrl}/clientes/upload`, formData, {
+    /*     const req = new HttpRequest('POST', `${environment.apiUrl}/personas/upload`, formData, {
           reportProgress: true
         }); */
 

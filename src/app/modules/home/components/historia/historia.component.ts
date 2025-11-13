@@ -14,8 +14,8 @@ export class HistoriaComponent implements OnInit {
     iniciaTrabajadores: number = 0;
     terminaTrabajadores: number = 30;
 
-    iniciaClientesFelices: number = 0;
-    terminaClientesFelices: number = 235;
+    iniciaPersonasFelices: number = 0;
+    terminaPersonasFelices: number = 235;
 
     iniciaProductosVendidos: number = 0;
     terminaProductosVendidos: number = 400;
@@ -39,11 +39,11 @@ export class HistoriaComponent implements OnInit {
       }
     }, 100);
 
-    let tiempoClientesFelices = setInterval(() => {
+    let tiempoPersonasFelices = setInterval(() => {
       c3 += 1;
-      this.iniciaClientesFelices = c3;
-      if (c3 == this.terminaClientesFelices) {
-        clearInterval(tiempoClientesFelices)
+      this.iniciaPersonasFelices = c3;
+      if (c3 == this.terminaPersonasFelices) {
+        clearInterval(tiempoPersonasFelices)
       }
     }, 30);
 

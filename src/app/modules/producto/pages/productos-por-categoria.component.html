@@ -2,7 +2,7 @@
   @for (producto of lstProductos; track $index) {
   <div class="col-12 col-sm-6 col-lg-3">
     <div class="card">
-      <a class="{{producto.estadoProducto.color}}" [routerLink]="['/tienda/productos-categoria', producto.categoria?.nombre, 'item-producto-cliente-online', producto.codigo]">
+      <a class="{{producto.estadoProducto.color}}" [routerLink]="['/tienda/productos-categoria', producto.categoria?.nombre, 'item-producto-persona-online', producto.codigo]">
         <img *ngIf="producto?.imagen" [src]="API_URL_VER_IMAGEN+producto.imagen" alt="{{producto.imagen}}" class="card-img-top"></a>
       <div class="card-body">
         <p class="card-title"> {{producto.nombre}} ({{producto.codigo}})</p>
@@ -21,7 +21,7 @@
       <div class="card-body">
         <div class="d-flex justify-content-evenly">
           <button type="button" class="btn btn-primary"
-            [routerLink]="['/tienda/productos-categoria', producto.categoria?.nombre, 'item-producto-cliente-online',producto.codigo]">Detalles</button>
+            [routerLink]="['/tienda/productos-categoria', producto.categoria?.nombre, 'item-producto-persona-online',producto.codigo]">Detalles</button>
 
           <button type="button" class="btn btn-secondary" (click)="chatear(producto.categoria!.nombre, producto.codigo)"><i class="fa-brands fa-whatsapp  mr-1"></i>Chatear</button>
         </div>

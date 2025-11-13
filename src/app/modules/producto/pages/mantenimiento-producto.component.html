@@ -5,15 +5,14 @@
       <mat-card-header class="card-header">
         <mat-card-title>{{ titulo }}</mat-card-title>
         <div class="ms-auto">
-          @if (!producto.id && authService.hasRole('ROLE_REGISTER_PRODUCTO')) {
-          <button color="primary" mat-raised-button (click)='guardarProducto()' [disabled]="!formProducto.valid">Crear
-            producto</button>
-          }
           @if (producto.id && authService.hasRole('ROLE_UPDATE_PRODUCTO')) {
           <button color="primary" mat-raised-button (click)='guardarProducto()'
             [disabled]="!formProducto.valid">Actualizar producto</button>
           }
-
+          @if (!producto.id && authService.hasRole('ROLE_REGISTER_PRODUCTO')) {
+          <button color="primary" mat-raised-button (click)='guardarProducto()' [disabled]="!formProducto.valid">Crear
+            producto</button>
+          }
 
           <!--         @if (producto.id && authService.hasRole('ROLE_UPDATE_PRODUCTO')) {
         <button color="primary" mat-raised-button (click)='guardarProducto()'>Actualizar producto</button>
@@ -303,7 +302,31 @@
                     id="inputGroupFileAddon04">Cargar</button>
                 </div>
             </div> -->
-
+              <div class="row mb-2">
+                @if (authService.hasRole('ROLE_ACTIVE_PRODUCTO')) {
+                <label for="activo" class="form-label col-sm-4"><b>Producto activo</b></label>
+                <div class="form-check form-switch col-sm-2">
+                  <input class="form-check-input" type="checkbox" formControlName="activo" name="activo"
+                    [checked]="producto.activo">
+                  @if(formUtils.isValidField(formProducto,'activo')){
+                  <div class="alert alert-danger">
+                    {{formUtils.getFieldError(formProducto,'activo')}}
+                  </div>}
+                </div>
+                }
+                @if (authService.hasRole('ROLE_VIEW_TIENDA_PRODUCTO')) {
+                <label for="visibleEnTienda" class="form-label col-sm-4"><b>Visible en tienda</b></label>
+                <div class="form-check form-switch col-sm-2">
+                  <input class="form-check-input" type="checkbox" formControlName="visibleEnTienda"
+                    name="visibleEnTienda" [checked]="producto.visibleEnTienda">
+                  @if(formUtils.isValidField(formProducto,'visibleEnTienda')){
+                  <div class="alert alert-danger">
+                    {{formUtils.getFieldError(formProducto,'visibleEnTienda')}}
+                  </div>}
+                </div>
+                }
+              </div>
+              @if (authService.hasRole('ROLE_IMAGE_PRODUCTO')) {
               <div class="row mb-2">
                 <label for="formFile" class="form-label col-sm-4"><b>Imágen del producto:</b><br>Visible en
                   tienda</label>
@@ -314,35 +337,13 @@
                     [disabled]="!this.isImage(file)" id="inputGroupFileAddon04">Subir</button>
                 </div>
               </div>
-
-              <div class="row mb-2">
-                <label for="activo" class="form-label col-sm-4"><b>Producto activo</b></label>
-                <div class="form-check form-switch col-sm-2">
-                  <input class="form-check-input" type="checkbox" formControlName="activo" name="activo"
-                    [checked]="producto.activo">
-                  @if(formUtils.isValidField(formProducto,'activo')){
-                  <div class="alert alert-danger">
-                    {{formUtils.getFieldError(formProducto,'activo')}}
-                  </div>}
-                </div>
-                <label for="visibleEnTienda" class="form-label col-sm-4"><b>Producto visible en tienda</b></label>
-                <div class="form-check form-switch col-sm-2">
-                  <input class="form-check-input" type="checkbox" formControlName="visibleEnTienda"
-                    name="visibleEnTienda" [checked]="producto.visibleEnTienda">
-                  @if(formUtils.isValidField(formProducto,'visibleEnTienda')){
-                  <div class="alert alert-danger">
-                    {{formUtils.getFieldError(formProducto,'visibleEnTienda')}}
-                  </div>}
-                </div>
-              </div>
-
               <div class="row mb-2">
                 <div class="col-sm">
                   <img *ngIf="producto?.imagen" [src]="verImagenProducto" alt="{{producto.imagen}}"
                     class="img-fluid img-thumbnail rounded mx-auto d-block">
-
                 </div>
               </div>
+              }
               <!--             <div class="row mb-2">
               <div class="ol-sm-6">
                 <span>Valid:</span>
@@ -362,14 +363,14 @@
             </div> -->
             </div>
           </div>
+          @if (authService.hasRole('ROLE_VIEW_MARGEN_PRODUCTO')) {
           <div class="row">
-<!--             <div class="row mb-2">
- -->              <div class="col d-grid">
-                <button type="button" class="btn btn-warning" (click)="newMargenProducto()">Aplicar margenes de
-                  ganancia(%) por cantidad</button>
-              </div>
-<!--             </div>
- -->
+            @if (authService.hasRole('ROLE_CREATE_MARGEN_PRODUCTO')) {
+            <div class="col d-grid">
+              <button type="button" class="btn btn-warning" (click)="newMargenProducto()">Aplicar margenes de
+                ganancia(%) por cantidad</button>
+            </div>
+            }
             <div class="row">
               <div class="col-2 text-center">
                 <b>Mín Cant</b>
@@ -450,91 +451,17 @@
                   </div>
                   }
                 </div>
+                @if (authService.hasRole('ROLE_DELETE_MARGEN_PRODUCTO')) {
                 <div class="col-1">
                   <button mat-icon-button color="warn" (click)="eliminarMargenProducto(i)"
                     matTooltip="Elimnar"><mat-icon>close</mat-icon></button>
                 </div>
-
+                }
               </div>
               }
             </div>
-
-            <!--             <div class="row mb-2">
-              <label for="precioBruto" class="col-form-label col-sm-4">Precio bruto (-IGV):</label>
-              <div class="input-group col-sm">
-                <input type="number" formControlName="precioBruto" name="precioBruto" class="form-control"
-                  placeholder="Precio bruto (sin IGV)" min="3">
-                <span class="input-group-text">S/</span>
-                <span class="input-group-text">0.00</span>
-                @if(formUtils.isValidField(formProducto,'precioBruto')){
-                <div class="alert alert-danger">
-                  {{formUtils.getFieldError(formProducto,'precioBruto')}}
-                </div>}
-              </div>
-            </div> -->
-            <!--             <div class="row mb-2">
-              <label for="precioNeto" class="col-form-label col-sm-4">Precio neto (+ IGV):</label>
-              <div class="input-group col-sm">
-                <input type="number" formControlName="precioNeto" name="precioNeto" class="form-control"
-                  placeholder="Precio neto (con IGV)" min="0" required>
-                <span class="input-group-text">S/</span>
-                <span class="input-group-text">0.00</span>
-                @if(formUtils.isValidField(formProducto,'precioNeto')){
-                <div class="alert alert-danger">
-                  {{formUtils.getFieldError(formProducto,'precioNeto')}}
-                </div>}
-              </div>
-            </div> -->
-            <!--             <div class="row mb-2">
-              <label for="precioBrutoRebajado" class="col-form-label col-sm-4">Precio bruto rebajado(-IGV):</label>
-              <div class="input-group col-sm">
-                <input type="number" formControlName="precioBrutoRebajado" name="precioBrutoRebajado"
-                  class="form-control" placeholder="Precio bruto rebajado (sin IGV)" min="2">
-                <span class="input-group-text">S/</span>
-                <span class="input-group-text">0.00</span>
-                @if(formUtils.isValidField(formProducto,'precioBrutoRebajado')){
-                <div class="alert alert-danger">
-                  {{formUtils.getFieldError(formProducto,'precioBrutoRebajado')}}
-                </div>}
-              </div>
-            </div> -->
-            <!--             <div class="row mb-2">
-              <label for="precioNetoRabajado" class="col-form-label col-sm-4">Precio neto rebajado(+IGV):</label>
-              <div class="input-group col-sm">
-                <input type="number" formControlName="precioNetoRabajado" name="precioNetoRabajado" class="form-control"
-                  placeholder="Precio neto rebajado (con IGV)" min="3">
-                <span class="input-group-text">S/</span>
-                <span class="input-group-text">0.00</span>
-                @if(formUtils.isValidField(formProducto,'precioNetoRabajado')){
-                <div class="alert alert-danger">
-                  {{formUtils.getFieldError(formProducto,'precioNetoRabajado')}}
-                </div>}
-              </div>
-            </div> -->
-
-            <!--             <div class="row mb-2">
-              <label for="fechaPrecioRebajadoDesde" class="col-form-label col-sm-4">Fch precio rebajado desde:</label>
-              <div class="input-group col-sm">
-                <input type="datetime-local" formControlName="fechaPrecioRebajadoDesde" name="fechaPrecioRebajadoDesde"
-                  class="form-control" placeholder="Fecha precio rebajado desde: ">
-                @if(formUtils.isValidField(formProducto,'fechaPrecioRebajadoDesde')){
-                <div class="alert alert-danger">
-                  {{formUtils.getFieldError(formProducto,'fechaPrecioRebajadoDesde')}}
-                </div>}
-              </div>
-            </div>
-            <div class="row mb-2">
-              <label for="fechaPrecioRebajadoHasta" class="col-form-label col-sm-4">Fch precio rebajado hasta:</label>
-              <div class="input-group col-sm">
-                <input type="datetime-local" formControlName="fechaPrecioRebajadoHasta" name="fechaPrecioRebajadoHasta"
-                  class="form-control" placeholder="Fecha precio rebajado hasta: ">
-                @if(formUtils.isValidField(formProducto,'fechaPrecioRebajadoHasta')){
-                <div class="alert alert-danger">
-                  {{formUtils.getFieldError(formProducto,'fechaPrecioRebajadoHasta')}}
-                </div>}
-              </div>
-            </div> -->
           </div>
+          }
         </div>
       </mat-card-content>
     </form>

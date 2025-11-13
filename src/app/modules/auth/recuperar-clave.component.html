@@ -32,8 +32,8 @@
               </form>
             </mat-step>
             <mat-step [stepControl]="secondFormGroup" label="Validar código verificación">
-               <p>Ingresa el <b>CODIGO DE VERIFICACIÓN</b> enviado al correo: <b>{{emailPrincipal}}</b> </p>
-               <form #formCodigoVerificacion="ngForm" [formGroup]="secondFormGroup">
+              <p>Ingresa el <b>CODIGO DE VERIFICACIÓN</b> enviado al correo: <b>{{emailPrincipal}}</b> </p>
+              <form #formCodigoVerificacion="ngForm" [formGroup]="secondFormGroup">
                 <mat-form-field>
                   <mat-label>Ingresar código de verificación</mat-label>
                   <input matInput formControlName="codigoVerificacion" required>
@@ -42,13 +42,20 @@
                   }
                 </mat-form-field>
                 <div class="d-flex justify-content-end">
-                  <button matButton [disabled]="!formCodigoVerificacion.form.valid" (click)="valdiarCodigoVerificacion()">Siguiente</button>
+                  <button matButton [disabled]="!formCodigoVerificacion.form.valid"
+                    (click)="valdiarCodigoVerificacion()">Siguiente</button>
                 </div>
               </form>
             </mat-step>
             <mat-step [stepControl]="thirdFormGroup" label="Ingresa clave nueva">
-              <form #formRenovarClaveUsuario="ngForm" [formGroup]="thirdFormGroup">
-                <mat-form-field>
+              <!--            <form id="formCreateCuenta" #formRenovarClaveUsuario="ngForm" [formGroup]="thirdFormGroup">
+                <confirmar-clave (outFormEqualsClavesChange)="formEqualsClavesChange($event)" />
+              </form> -->
+
+              <form #formRenovarClaveUsuario="ngForm" [formGroup]="thirdFormGroup" autocomplete="off">
+                <confirmar-clave (outFormEqualsClavesChange)="formEqualsClavesChange($event)" />
+
+                <!--                 <mat-form-field>
                   <mat-label>Clave:</mat-label>
                   <input type="password" matInput formControlName="clave" required>
                   @if(formUtils.isValidField(thirdFormGroup,'clave')){
@@ -61,9 +68,10 @@
                   @if(formUtils.isValidField(thirdFormGroup,'confirmaClave')){
                   <mat-error> {{formUtils.getFieldError(thirdFormGroup,'confirmaClave')}}</mat-error>
                   }
-                </mat-form-field>
+                </mat-form-field> -->
                 <div class="d-flex justify-content-end">
-                  <button matButton [disabled]="!formRenovarClaveUsuario.form.valid" (click)="renovarClaveUsuario()">Siguiente</button>
+                  <button matButton [disabled]="!isValidFormEqualsClave"
+                    (click)="renovarClaveUsuario()">Siguiente</button>
                 </div>
               </form>
             </mat-step>

@@ -24,6 +24,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatStepperModule } from '@angular/material/stepper';
 import { AsyncPipe } from '@angular/common';
 import { MatDividerModule } from '@angular/material/divider';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+
 
 
 @NgModule({
@@ -51,7 +53,8 @@ import { MatDividerModule } from '@angular/material/divider';
     MatExpansionModule,
     MatStepperModule,
     AsyncPipe,
-    MatDividerModule
+    MatDividerModule,
+    MatProgressSpinnerModule
   ],
   exports: [
     MatSidenavModule,
@@ -77,7 +80,8 @@ import { MatDividerModule } from '@angular/material/divider';
     MatExpansionModule,
     MatStepperModule,
     AsyncPipe,
-    MatDividerModule
+    MatDividerModule,
+    MatProgressSpinnerModule
   ]
 })
 export class AngularMaterialModule { }

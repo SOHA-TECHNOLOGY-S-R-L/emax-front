@@ -1,0 +1,97 @@
+<div class="container">
+  <div class="row mt-2">
+    <div class="col-12 col-sm-6 col-md-4 col-xl-2">
+      <mat-form-field>
+        <mat-label>Nombres y apellidos o Razón Social</mat-label>
+        <input matInput type="text" [(ngModel)]="persona.nomApellRz" name="nomApellRz" #nomApellRz="ngModel" required
+          minlength="2" disabled>
+      </mat-form-field>
+    </div>
+
+    <div class="col-12 col-sm-6 col-md-4 col-xl-2">
+      <mat-form-field>
+        <mat-label>Celular:</mat-label>
+        <input matInput type="text" [(ngModel)]="persona.celular" name="celular" #celular="ngModel" required
+          minlength="6" maxlength="14" pattern="^\d+$" disabled>
+      </mat-form-field>
+    </div>
+    <div class="col-12 col-sm-6 col-md-4 col-xl-2">
+      <mat-form-field>
+        <mat-label>Dirección:</mat-label>
+        <input matInput type="text" [(ngModel)]="persona.direccion" name="direccionPrincipal"
+          #direccionPrincipal="ngModel" required minlength="4" disabled>
+      </mat-form-field>
+
+    </div>
+    <div class="col-12 col-sm-6 col-md-4 col-xl-2">
+      <mat-form-field>
+        <mat-label>Tipo de documento:</mat-label>
+        <input matInput [(ngModel)]="persona.tipoDocumento.acronimo" name="tipoDocumento" #tipoDocumento="ngModel"
+          disabled>
+      </mat-form-field>
+    </div>
+    <div class="col-12 col-sm-6 col-md-4 col-xl-2">
+      <mat-form-field>
+        <mat-label>Número documento:</mat-label>
+        <input matInput type="text" [(ngModel)]="persona.numeroDocumento" name="numeroDocumento"
+          #numeroDocumento="ngModel" required minlength="8" maxlength="11" pattern="^\d+$" disabled>
+      </mat-form-field>
+    </div>
+    <div class="col-12 col-sm-6 col-md-4 col-xl-2">
+      <mat-form-field>
+        <mat-label>Correo electrónico:</mat-label>
+        <input matInput type="email" [(ngModel)]="persona.email" name="email" #email="ngModel" minlength="6"
+          pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$" disabled>
+      </mat-form-field>
+    </div>
+  </div>
+  <!--   <ng-container>
+    <section>
+      <label>Tipo pedido:</label>
+      <mat-radio-group name="tipoPedido" [(ngModel)]="tipoPedidoVentaPersonas">
+        <mat-radio-button *ngFor="let tipoPedido of tipoPedidos" [value]="tipoPedido">
+          {{tipoPedido.nombre}}
+        </mat-radio-button>
+      </mat-radio-group>
+    </section>
+  </ng-container> -->
+
+  <mat-form-field>
+    <input matInput placeholder="Añadir producto" [formControl]="autocompleteControl" [matAutocomplete]="auto">
+    <mat-autocomplete #auto="matAutocomplete" [displayWith]="mostrarNombre"
+      (optionSelected)="seleccionarProducto($event)">
+      <mat-option *ngFor="let producto of productosFiltrados | async" [value]="producto">
+        <span class="text-bold-italic">Producto:</span>{{producto.nombre}}
+        <span class="text-bold-italic">Color:</span>{{producto.color?.nombre }}
+        <span class="text-bold-italic">Material:</span>{{ producto.material?.nombre}}
+        <span class="text-bold-italic">Peso:</span>{{ producto.peso}}
+        <span class="text-bold-italic">Medidas:</span>{{ producto.medidas}}
+        <span class="text-bold-italic">Cantidad:</span>{{ producto.cantidadStock}}
+      </mat-option>
+    </mat-autocomplete>
+  </mat-form-field>
+  <div *ngIf="producto != undefined && producto.id" class="row">
+
+    <div class="col-12">
+      <pedido-proveedor-finalizado [personaId]="persona.id" [producto]="producto" />
+    </div>
+
+
+    <!--
+    @if(!tipoPedidoVentaPersonas.activo) {
+    <div class="col-12">
+      <pedido-proveedor-finalizado [personaId]="persona.id" [producto]="producto" />
+    </div>
+    } @else {
+    <div class="col-12 col-md-9">
+      <customize-item-producto-to-client [producto]="producto" />
+    </div>
+    <div class="col-12 col-md-3">
+      <h2>Carrito</h2>
+      <carrito-item-producto [personaId]="persona.id" />
+    </div>
+    }
+    -->
+
+  </div>
+</div>

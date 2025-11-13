@@ -7,7 +7,8 @@
     <mat-sidenav-content class="main-sidenav-content">
       <cabecera (clickMenuEvent)="sidenavLeft.toggle()" />
       <router-outlet></router-outlet>
- <app-pie></app-pie>
+      <loading-overlay></loading-overlay>
+      <app-pie></app-pie>
     </mat-sidenav-content>
   </mat-sidenav-container>
 </div>

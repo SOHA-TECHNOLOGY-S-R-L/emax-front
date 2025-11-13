@@ -5,35 +5,37 @@ import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { AngularMaterialModule } from '../compartido/angular-material.module';
 import { MatStepper, StepperOrientation } from '@angular/material/stepper';
 import { BreakpointObserver } from '@angular/cdk/layout';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { map, Observable } from 'rxjs';
 import { Router, RouterModule } from '@angular/router';
-import { ClienteService } from '../../services/cliente.service';
-import { Cliente } from '../../models/cliente';
+import { PersonaService } from '../../services/persona.service';
+import { Persona } from '../../models/persona';
 import { FormUtils } from '../../utils/form-utils';
 import { UsuarioService } from '../../services/usuario.service';
+import { ConfirmarClaveComponent } from './confirmar-clave.component';
 
 @Component({
   selector: 'recuperar-clave',
   standalone: true,
   templateUrl: './recuperar-clave.component.html',
   styleUrl: './recuperar-clave.component.css',
-  imports: [CommonModule, RouterModule, FormsModule, ReactiveFormsModule, AngularMaterialModule],
+  imports: [CommonModule, RouterModule, FormsModule, ReactiveFormsModule, AngularMaterialModule, ConfirmarClaveComponent],
 })
 export class RecuperarClaveComponent {
 
   private usuarioService = inject(UsuarioService);
-  private clienteService = inject(ClienteService);
+  private personaService = inject(PersonaService);
   private _formBuilder = inject(FormBuilder);
   private alert = inject(AlertService);
   private router = inject(Router)
   //public numDocumento: string | null | undefined;
   //firstFormGroup!: FormGroup;
   //secondFormGroup!: FormGroup;
-  //thirdFormGroup!: FormGroup;
-  public cliente!: Cliente;
+  public persona!: Persona;
   public usuario!: Usuario;
   public emailPrincipal: string = '';
+  public isValidFormEqualsClave = false;
+
   formUtils = FormUtils;
 
 
@@ -49,15 +51,14 @@ export class RecuperarClaveComponent {
       { validators: [Validators.required, Validators.minLength(6), Validators.maxLength(6), Validators.pattern('^\\d+$')] }
     ],
   });
-  thirdFormGroup = this._formBuilder.group({
-    clave: ['',
-      { validators: [Validators.required, Validators.minLength(4), Validators.pattern('^(?=.*[A-Za-z])(?=.*\\d).{4,}$')] }
 
-    ],
-    confirmaClave: ['',
-      { validators: [Validators.required, Validators.minLength(4), Validators.pattern('^(?=.*[A-Za-z])(?=.*\\d).{4,}$')] }
-    ]
+  //thirdFormGroup!: FormGroup;
+
+  thirdFormGroup = this._formBuilder.group({
+
+    confirmaClave: null,
   });
+
   stepperOrientation: Observable<StepperOrientation>;
 
   constructor() {
@@ -73,11 +74,10 @@ export class RecuperarClaveComponent {
   colocarCodigoVerificacionUsuario() {
     const numDocumento = this.firstFormGroup.get('numeroDocumento')?.value;
     if (numDocumento != null) {
-      this.clienteService.colocarCodigoRenovacionClave(numDocumento).subscribe(resp => {
-        console.log("resp", resp);
-        this.cliente = resp
-        this.emailPrincipal = this.formatoMailRecuperacion(this.cliente.email!);
-        if (this.cliente.email) {
+      this.personaService.colocarCodigoRenovacionClave(numDocumento).subscribe(resp => {
+        this.persona = resp
+        this.emailPrincipal = this.formatoMailRecuperacion(this.persona.email!);
+        if (this.persona.email) {
           this.stepper.next();
         }
       }, err => {
@@ -102,8 +102,8 @@ export class RecuperarClaveComponent {
 
   valdiarCodigoVerificacion() {
     const codigoRenovacion = this.secondFormGroup.get('codigoVerificacion')?.value;
-    if (this.cliente.numeroDocumento != null && codigoRenovacion != null) {
-      this.usuarioService.validarCodigoRenovaciónClaveUsuario(this.cliente.numeroDocumento, codigoRenovacion).subscribe(resp => {
+    if (this.persona.numeroDocumento != null && codigoRenovacion != null) {
+      this.usuarioService.validarCodigoRenovaciónClaveUsuario(this.persona.numeroDocumento, codigoRenovacion).subscribe(resp => {
         if (resp.isCodValido) {
           this.stepper.next();
         } else {
@@ -117,21 +117,23 @@ export class RecuperarClaveComponent {
 
   renovarClaveUsuario() {
 
-    const clave = this.thirdFormGroup.get('clave')?.value
-    const confirmaClave = this.thirdFormGroup.get('confirmaClave')?.value
-    if (this.usuarioService.confirmarDobleInputClave(clave!, confirmaClave!)) {
-      this.usuarioService.renovarClaveUsuario(this.cliente.numeroDocumento!, clave!).subscribe(resp => {
-        if (resp.isRenovarClaveUser) {
-          //this.alert.success('Se ha renovado la clave correctamente', 'Éxito');
-          this.stepper.next();
-        } else {
-          this.alert.error('No se pudo renovar la clave del usuario', 'Error');
-        }
-      });
-    } else {
-        this.alert.error("No coinciden las claves de registro", "Error");
+    const clave = this.thirdFormGroup.get('confirmaClave.clave')?.value
+    this.usuarioService.renovarClaveUsuario(this.persona.numeroDocumento!, clave!).subscribe(resp => {
+      if (resp.isRenovarClaveUser) {
+        //this.alert.success('Se ha renovado la clave correctamente', 'Éxito');
+        this.stepper.next();
+      } else {
+        this.alert.error('No se pudo renovar la clave del usuario', 'Error');
+      }
+    });
 
-    }
+  }
+
+
+  formEqualsClavesChange(equalsClavesChange: FormGroup) {
+    (this.thirdFormGroup as FormGroup).setControl('confirmaClave', equalsClavesChange);
+    //this.thirdFormGroup.setControl('confirmaClave', equalsClavesChange);
+    this.isValidFormEqualsClave = equalsClavesChange.valid
   }
 
   irLogin() {

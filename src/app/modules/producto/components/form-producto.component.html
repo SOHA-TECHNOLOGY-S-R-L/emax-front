@@ -23,7 +23,7 @@
       <!--       <div class="form-group row">
           <label for="nombre" class="col-form-label col-sm-2">Nombre</label>
           <div class="col-sm-6">
-            <input type="text" class="form-control" [(ngModel)]="cliente.nombre" name="nombre" #nombre="ngModel">
+            <input type="text" class="form-control" [(ngModel)]="persona.nombre" name="nombre" #nombre="ngModel">
             <div class="alert alert-danger" *ngIf="nombre.invalid && (nombre.dirty || nombre.touched)">
               <div *ngIf="nombre?.errors?.['required']">
                 Nombre es requerido

@@ -63,8 +63,8 @@ export class PedidoService {
     });
   }
 
-    getPedidosClientePageable(params: any, clienteId: number): Observable<PageableResponse> {
-    return this.http.get<any>(`${environment.apiUrl}/pedidos/cliente/${clienteId}/pageable`, {
+    getPedidosPersonaPageable(params: any, personaId: number): Observable<PageableResponse> {
+    return this.http.get<any>(`${environment.apiUrl}/pedidos/persona/${personaId}/pageable`, {
       /*headers: this.agregarAuthorizationHeader(),*/
       params: params,
     });
@@ -143,7 +143,7 @@ export class PedidoService {
       { observe: 'response', responseType: 'blob' as 'json' })
   }
 
-  downloadOrderToClienteInPDF(pedido: Pedido): Observable<HttpResponse<Blob>> {
+  downloadOrderToPersonaInPDF(pedido: Pedido): Observable<HttpResponse<Blob>> {
     return this.http.post<Blob>(`${environment.apiUrl}/pedidos/download-pdf`, pedido,
       { observe: 'response', responseType: 'blob' as 'json' })
   }

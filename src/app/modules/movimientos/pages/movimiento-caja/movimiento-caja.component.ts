@@ -1,11 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, OnInit } from '@angular/core';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { FormsModule, NgForm, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { find } from 'lodash-es';
-import moment from 'moment';
-import swal from 'sweetalert2';
-import { COLOR_CAJA_USUARIO, ESTADO_CAJA_USUARIO } from '../../../../constants/caja-usuario.constants';
 import { CajaUsuario } from '../../../../models/caja-usuario';
 import { MovimientoCaja } from '../../../../models/movimiento-caja';
 import { TipoMovimientoCaja } from '../../../../models/tipo-movimiento-caja';
@@ -14,6 +10,7 @@ import { AlertService } from '../../../../services/alert.service';
 import { AuthService } from '../../../../services/auth.service';
 import { CajaService } from '../../../../services/caja.service';
 import { MovimientoService } from '../../../../services/movimiento.service';
+import { InfoCajaUsuarioComponent } from '../../../caja/components/info-caja-usuario/info-caja-usuario.component';
 import { AngularMaterialModule } from '../../../compartido/angular-material.module';
 
 @Component({
@@ -21,23 +18,18 @@ import { AngularMaterialModule } from '../../../compartido/angular-material.modu
   templateUrl: './movimiento-caja.component.html',
   styleUrl: './movimiento-caja.component.css',
   standalone: true,
-  imports: [CommonModule, AngularMaterialModule ,RouterModule, FormsModule, ReactiveFormsModule ]
+  imports: [CommonModule, AngularMaterialModule, RouterModule, FormsModule, ReactiveFormsModule, InfoCajaUsuarioComponent]
 
 })
-export class MovimientoCajaComponent implements OnInit, AfterViewInit {
-  titulo: string = 'Movimiento de caja'
+export class MovimientoCajaComponent implements OnInit {
   movimientoCaja = new MovimientoCaja();
-  cajaUsuario!: CajaUsuario;
+  cajaUsuario = new CajaUsuario();
   tipoPagos: TipoPago[] = [];
 
   tipoMovimientosCajaLst: TipoMovimientoCaja[] = [];
   tipoMovCajaIngresos: TipoMovimientoCaja[] = [];
   tipoMovCajaEgresos: TipoMovimientoCaja[] = [];
-  isAutenticado!: boolean;
-  //user!: Usuario;
-  username!: string;
-  iMovimiento: string = "I";
-  estadoCajaUsuarioMap = ESTADO_CAJA_USUARIO;
+  iMovimiento!: string;
 
   constructor(private cajasService: CajaService,
     private movimientoService: MovimientoService,
@@ -50,26 +42,20 @@ export class MovimientoCajaComponent implements OnInit, AfterViewInit {
 
 
   ngOnInit(): void {
-    //this.isAutenticado = this.authService.isAuthenticated();
-    if (this.authService.isAuthenticated()) {
-      this.username = this.authService.usuario.username;
-    }
-
-    this.cajasService.getCajaUsuarioByUserName(this.username).subscribe(
-      res => {
-        if (res !== null && res.activa) {
-          this.cajaUsuario = res
-          this.cajaUsuario.fechaApertura = moment(this.cajaUsuario.fechaApertura).format('DD/MM/yyyy HH:mm:ss');
-          this.cajaUsuario.fechaActualizacion = moment(this.cajaUsuario.fechaActualizacion).format('DD/MM/yyyy HH:mm:ss');
-          this.cajaUsuario.color = COLOR_CAJA_USUARIO[('' + res.activa) as keyof typeof COLOR_CAJA_USUARIO];
-          //this.colores[('' + res.activa) as keyof typeof this.colores ];
-          //        console.log("getCajaUsuarioByUserName...", res)
-        } else {
-          this.alertService.info(`Debe aperturar caja`, 'Caja usuario')
-          this.router.navigate(['/cajas']);
-        }
-      }
-    )
+    /*   if (this.authService.isAuthenticated()) {
+        const username = this.authService.usuario.username;
+        this.cajasService.getCajaUsuarioByUserName(username).subscribe(
+          res => {
+            if (res !== null && res.activa) {
+              this.cajaId = res.caja.id;
+              this.username = username;
+            } else {
+              this.alertService.info(`Debe aperturar caja`, 'Caja usuario')
+              this.router.navigate(['/cajas']);
+            }
+          }
+        )
+      } */
 
     this.movimientoService.getAllTipoPagos().subscribe(
       response => this.tipoPagos = response
@@ -77,25 +63,47 @@ export class MovimientoCajaComponent implements OnInit, AfterViewInit {
 
     this.movimientoService.getAllTipoMovimientosCaja().subscribe(
       response => {
-        this.tipoMovCajaIngresos = response.filter(f => f.tipo == "I")
-        this.tipoMovCajaEgresos = response.filter(f => f.tipo == "E")
+        //console.log("response", response)
+        this.tipoMovCajaIngresos = response.filter(f => f.tipo === "I")
+        //console.log("tipoMovCajaIngresos", this.tipoMovCajaIngresos)
 
-      })
+        this.tipoMovCajaEgresos = response.filter(f => f.tipo === "E")
+        //console.log("tipoMovCajaEgresos", this.tipoMovCajaEgresos)
+        this.iMovimiento = "I";
+        this.changeTipoMovimiento(this.iMovimiento);
+
+      });
+    this.getCajaUsuario();
 
   }
-  ngAfterViewInit(): void {
-    this.changeTipoMovimiento(this.iMovimiento);
+
+  getCajaUsuario(): void {
+    if (this.authService.isAuthenticated()) {
+      const username = this.authService.usuario.username;
+      this.cajasService.getCajaUsuarioByUserName(username).subscribe(
+        result => {
+          if (result !== null && result.activa) {
+            this.cajaUsuario = result;
+          } else {
+            this.alertService.info(`Aperturar caja para realizar movimientos en caja `, "Caja")
+            this.router.navigate(['/cajas']);
+          }
+        }
+      )
+    } else {
+      this.alertService.info(`Se cerro la sesión sesión por tiempo de inactividad `, "Caja")
+      this.router.navigate(['/']);
+    }
   }
 
   changeTipoMovimiento(tipo: string) {
-    //this.movimientoCaja.tipoMovimientoCaja
     this.tipoMovimientosCajaLst = []
-    if (tipo == "I") {
-      this.tipoMovimientosCajaLst = this.tipoMovCajaIngresos
+    if (tipo === "I") {
+      this.tipoMovimientosCajaLst = [...this.tipoMovCajaIngresos]
       this.movimientoCaja.egresoDinero = 0;
     }
-    if (tipo == "E") {
-      this.tipoMovimientosCajaLst = this.tipoMovCajaEgresos
+    if (tipo === "E") {
+      this.tipoMovimientosCajaLst = [...this.tipoMovCajaEgresos]
       this.movimientoCaja.ingresoDinero = 0;
     }
     this.movimientoCaja.tipoMovimientoCaja = this.tipoMovimientosCajaLst[-1]
@@ -103,11 +111,11 @@ export class MovimientoCajaComponent implements OnInit, AfterViewInit {
 
   }
 
-  findTipoMovimientoCaja(id: number): TipoMovimientoCaja {
-    return find(this.tipoMovimientosCajaLst, { 'id': id })!
-  }
+  /*   setValuesControls(cajaUsuario: CajaUsuario) {
+      this.cajaUsuario = cajaUsuario;
+    } */
 
-  onSubmitForm() {
+  onSubmitForm(form: NgForm) {
     this.cajaUsuario.movimientos = []
     this.cajaUsuario.movimientosCaja = []
     this.cajaUsuario.fechaApertura = "";
@@ -116,9 +124,20 @@ export class MovimientoCajaComponent implements OnInit, AfterViewInit {
     console.log("onSubmitForm...", this.movimientoCaja);
     this.movimientoService.createMovimientoCaja(this.movimientoCaja).subscribe(
       resp => {
-        swal.fire(this.titulo, `Movimiento ${resp.cajaUsuario.id}, creado con éxito!`, 'success');
-        this.router.navigate(['/']);
+        console.log(`Movimiento ${resp.cajaUsuario.id}, creado con éxito!`);
+        //this.router.navigate(['/']);
       })
+    this.getCajaUsuario();
+    this.limpiarForm(form);
+
+
+  }
+
+  limpiarForm(form: NgForm) {
+      this.iMovimiento = "I";
+      this.changeTipoMovimiento(this.iMovimiento);
+      this.movimientoCaja.ingresoDinero=0;
+      this.movimientoCaja.egresoDinero=0;
   }
 
 }

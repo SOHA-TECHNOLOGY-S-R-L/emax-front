@@ -7,26 +7,42 @@ import { RpteMovimientoEnCajaPorUsuarioComponent } from './reportes/rpte-movimie
 import { RpteMovimientoEnCajaComponent } from './reportes/rpte-movimiento-en-caja/rpte-movimiento-en-caja.component';
 
 export const routes: Routes = [
-    { path: '',
-      component: MovimientoComponent,
-      canActivate:[isAuthenticatedGuard, RoleGuard],
-      data: { role: 'ROLE_REGISTER_PAGO_PEDIDO'}
-    },
-    { path: 'caja',
-      component: MovimientoCajaComponent,
-      canActivate:[isAuthenticatedGuard, RoleGuard],
-      data: { role: 'ROLE_REGISTER_MOVCAJA'}
-    },
-    { path: 'rpte-mov-en-caja',
-      component: RpteMovimientoEnCajaComponent ,
-      canActivate:[isAuthenticatedGuard, RoleGuard],
-      data: { role: 'ROLE_REPORT_MOVCAJA'}
-    },
-    { path: 'rpte-mov-en-caja-por-usuario',
-      component: RpteMovimientoEnCajaPorUsuarioComponent ,
-      canActivate:[isAuthenticatedGuard, RoleGuard],
-      data: { role: 'ROLE_RPTE_MOVCAJA_USUARIO'}
-    },
+
+  {
+    path: 'caja',
+    pathMatch: 'full',
+    component: MovimientoCajaComponent,
+    canActivate: [isAuthenticatedGuard, RoleGuard],
+    data: { role: 'ROLE_REGISTER_MOVCAJA' }
+  },
+  {
+    path: 'rpte-mov-en-caja',
+    pathMatch: 'full',
+    component: RpteMovimientoEnCajaComponent,
+    canActivate: [isAuthenticatedGuard, RoleGuard],
+    data: { role: 'ROLE_REPORT_MOVCAJA' }
+  },
+  {
+    path: 'rpte-mov-en-caja-por-usuario',
+    pathMatch: 'full',
+    component: RpteMovimientoEnCajaPorUsuarioComponent,
+    canActivate: [isAuthenticatedGuard, RoleGuard],
+    data: { role: 'ROLE_RPTE_MOVCAJA_USUARIO' }
+  },
+  {
+    path: ':pedidoId',
+    pathMatch: 'full',
+    component: MovimientoComponent,
+    canActivate: [isAuthenticatedGuard, RoleGuard],
+    data: { role: 'ROLE_REGISTER_PAGO_PEDIDO' }
+  },
+  {
+    path: '',
+    pathMatch: 'full',
+    component: MovimientoComponent,
+    canActivate: [isAuthenticatedGuard, RoleGuard],
+    data: { role: 'ROLE_REGISTER_PAGO_PEDIDO' }
+  },
 
 
 

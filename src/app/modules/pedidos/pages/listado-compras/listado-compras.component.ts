@@ -25,7 +25,7 @@ import { COLOR_ESTADO_PEDIDO } from '../../../../constants/pedido.constants';
 })
 export class ListadoComprasComponent implements OnInit, AfterViewInit {
 
-  displayedColumns: string[] = ['nomApellRz', 'createAt', 'adquiridoEn', 'costoNetoTotal', 'pagoTotal', 'vueltoTotal', 'saldoPedido', 'estado', 'acciones'];
+  displayedColumns: string[] = ['id','nomApellRz', 'createAt', 'adquiridoEn', 'costoNetoTotal', 'pagoTotal', 'vueltoTotal', 'saldoPedido', 'estado', 'acciones'];
   dataSource: Pedido[] = [];
   pageable: PageableResponse = new PageableResponse();
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -94,9 +94,9 @@ export class ListadoComprasComponent implements OnInit, AfterViewInit {
     this.loadItems();
   }
 
-  setPedido(pedido: Pedido): void {
+/*   setPedido(pedido: Pedido): void {
     this.pedidoService.setPedido(pedido);
     this.ro.navigate(['/movimientos']);
-  }
+  } */
 
 }

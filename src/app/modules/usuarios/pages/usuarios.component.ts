@@ -7,6 +7,7 @@ import { MatSort } from '@angular/material/sort';
 import { Router, RouterModule } from '@angular/router';
 import { ELEMENTOS_POR_PAGINA, PRIMERA_PAGINA, SIGUIENTE_PAGINA, ULTIMA_PAGINA } from '../../../constants/constantes';
 import { PageableResponse } from '../../../models/pageable-response';
+import { Persona } from '../../../models/persona';
 import { Usuario } from '../../../models/usuario';
 import { AlertService } from '../../../services/alert.service';
 import { AuthService } from '../../../services/auth.service';
@@ -14,6 +15,7 @@ import { ModalService } from '../../../services/modal.service';
 import { UsuarioService } from '../../../services/usuario.service';
 import { AngularMaterialModule } from '../../compartido/angular-material.module';
 import { SearchBoxTableComponent } from './../../compartido/search-box-table/search-box-table.component';
+import { PersonaService } from '../../../services/persona.service';
 
 
 @Component({
@@ -26,8 +28,8 @@ import { SearchBoxTableComponent } from './../../compartido/search-box-table/sea
 })
 export class UsuariosComponent implements OnInit, AfterViewInit {
 
-  displayedColumns: string[] = ['nomApellRz', 'email', 'acciones'];
-  dataSource: Usuario[] = [];
+  displayedColumns: string[] = ['nomApellRz', 'numeroDocumento','celular','email','usuario', 'acciones'];
+  dataSource: Persona[] = [];
   usuarioSeleccionado!: Usuario;
   pageable: PageableResponse = new PageableResponse();
   querySearch!: string;
@@ -38,10 +40,9 @@ export class UsuariosComponent implements OnInit, AfterViewInit {
 
   constructor(
     private usuarioService: UsuarioService,
+    private personaService: PersonaService,
     private modalService: ModalService,
     public authService: AuthService,
-    private modal: MatDialog,
-    private alertService: AlertService,
     private router: Router) {
 
   }
@@ -73,15 +74,16 @@ export class UsuariosComponent implements OnInit, AfterViewInit {
       query: !!this.querySearch ? this.querySearch : ''
     };
 
-    this.usuarioService.getAllUsuariosPageable(params).subscribe(response => {
-      this.dataSource = response.content as Usuario[];
+    this.personaService.getAllEmpleadosPageable(params).subscribe(response => {
+      this.dataSource = response.content as Persona[];
       this.pageable = response;
 
     });
   }
 
-  setUsuario(usuario: Usuario): void {
-    this.usuarioService.setUsuario(usuario);
+  setUsuario(empleado: Persona): void {
+    console.log(empleado);
+    this.usuarioService.setUsuario(empleado.usuario);
     this.router.navigate(['/usuarios/asignar-rol-usuario']);
   }
 

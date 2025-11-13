@@ -23,7 +23,7 @@ export class MenuTiendaComponent {
   }
 
   ngOnInit(): void {
-    this.categoriaService.getCategoriasActivas().subscribe(
+    this.categoriaService.getCategoriasActivasYVisibleTienda().subscribe(
       resp => {
         this.lstCategoria = resp.sort((a, b) => a.orden - b.orden)
       }, err => { },

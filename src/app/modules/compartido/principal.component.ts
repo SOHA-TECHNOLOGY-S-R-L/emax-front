@@ -7,13 +7,14 @@ import { MenuAppComponent } from './menus-nav/menu-app.component';
 import { CabeceraComponent } from './cabecera/cabecera.component';
 import { MenuTiendaComponent } from './menus-nav/menu-tienda.component';
 import { PieComponent } from './pie/pie.component';
+import { LoadingOverlayComponent } from './loading-overlay/loading-overlay.component';
 
 @Component({
   selector: 'app-principal',
   templateUrl: './principal.component.html',
   styleUrls: ['./principal.component.css'],
   standalone: true,
-  imports: [RouterModule,MatSidenavModule, MenuAppComponent, CabeceraComponent, PieComponent]
+  imports: [RouterModule,MatSidenavModule, MenuAppComponent, CabeceraComponent, PieComponent, LoadingOverlayComponent]
 })
 export class PrincipalComponent implements OnInit, OnDestroy {
 

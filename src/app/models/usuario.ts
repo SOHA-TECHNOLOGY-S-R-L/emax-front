@@ -1,4 +1,4 @@
-import { Cliente } from "./cliente";
+import { Persona } from "./persona";
 import { Role } from "./role";
 
 export class Usuario {
@@ -12,7 +12,7 @@ export class Usuario {
   //nomApellRz!: string;
   //email!: string;
   codigoRenovacionClave!: string;
-  cliente!:Cliente;
+  //persona!:Persona;
   roles: Role[] = [];  //Se usa para modulo usuarios se ha cambviado revisar
 
 }

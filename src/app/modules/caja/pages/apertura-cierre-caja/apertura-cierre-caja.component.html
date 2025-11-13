@@ -1,60 +1,15 @@
 <div class="container">
-  <mat-card class="card">
-    <form [formGroup]="formCaja">
-      <mat-card-header class="card-header">
-        <mat-card-title>Apertura o cierre de caja</mat-card-title>
-        <div class="ms-auto">
-          <button *ngIf="!cajaActiva && authService.hasRole('ROLE_OPEN_CJU')" (click)="abrirCaja()" mat-raised-button
-            color="primary">Abrir CAJA</button>
-          <button *ngIf="cajaActiva && authService.hasRole('ROLE_CLOSE_CJU')" (click)="cerrarCaja()" mat-raised-button
-            color="primary">Cerrar CAJA</button>
-        </div>
-      </mat-card-header>
-      <mat-card-content>
-        <mat-form-field class="example-full-width">
-          <mat-label>Fecha Apertura(Última):</mat-label>
-          <input matInput type="text" formControlName="fchApertura" readonly="true" name="fchApertura">
-          <div *ngIf="formCaja.get('fchApertura')?.invalid &&
-                  (formCaja.get('fchApertura')?.dirty ||
-                  formCaja.get('fchApertura')?.touched)">
-            <mat-error *ngIf="formCaja.get('fchApertura')?.errors?.['required']">
-              Fecha cierre requerido
-            </mat-error>
-          </div>
-        </mat-form-field>
-        <mat-form-field class="example-full-width">
-          <mat-label>Fecha cierre(Última):</mat-label>
-          <input matInput type="text" readonly="true" formControlName="fchCierre" name="fchCierre">
-          <div *ngIf="formCaja.get('fchCierre')?.invalid &&
-                  (formCaja.get('fchCierre')?.dirty ||
-                  formCaja.get('fctCierre')?.touched)">
-            <mat-error *ngIf="formCaja.get('fchCierre')?.errors?.['required']">
-              Fecha cierre requerido
-            </mat-error>
-          </div>
-        </mat-form-field>
-        <mat-form-field>
-          <mat-label>Caja asignada(Última)</mat-label>
-          <input matInput formControlName="cajaAsignada" readonly="true" name="cajaAsignada">
-          <div *ngIf="formCaja.get('cajaAsignada')?.invalid &&
-                  (formCaja.get('cajaAsignada')?.dirty ||
-                  formCaja.get('cajaAsignada')?.touched)">
-            <mat-error *ngIf="formCaja.get('cajaAsignada')?.errors?.['required']">
-              Nombre es requerido
-            </mat-error>
-          </div>
-        </mat-form-field>
-        <mat-form-field>
-          <mat-label>Saldo caja:</mat-label>
-          <input matInput formControlName="saldoCaja" type="number" readonly="true" name="saldoCaja">
-          <div *ngIf="formCaja.get('saldoCaja')?.invalid &&
-                  (formCaja.get('saldoCaja')?.dirty ||
-                  formCaja.get('saldoCaja')?.touched)">
-            <mat-error *ngIf="formCaja.get('saldoCaja')?.errors?.['required']">
-              Saldo caja es requerido
-            </mat-error>
-          </div>
-        </mat-form-field>
+  <div class="row">
+    <div class="col-12 col-sm-6">
+      @if(this.cajaUsuario.id != undefined && this.cajaUsuario != null){
+      <info-caja-usuario [inCajaUsuario]=cajaUsuario />
+      }
+    </div>
+    <div class="col-12 col-sm-6">
+      <ul class="list-group my-2">
+        <li class="list-group-item active">Apertura o cierre de caja</li>
+      </ul>
+      <form [formGroup]="formCaja">
         <mat-form-field *ngIf="!cajaActiva" class="example-full-width">
           <mat-label>Caja por asignar</mat-label>
           <mat-select name="cajaPorAsignar" formControlName="cajaPorAsignar"
@@ -88,14 +43,13 @@
           </div>
         </mat-form-field>
 
-
-        <!--       <div class="example-button-row">
-        <button *ngIf="!cajaActiva && authService.hasRole('ROLE_OPEN_CJU')" (click)="abrirCaja()" mat-raised-button
-          color="primary">Abrir CAJA</button>
-        <button *ngIf="cajaActiva && authService.hasRole('ROLE_CLOSE_CJU')" (click)="cerrarCaja()" mat-raised-button
-          color="primary">Cerrar CAJA</button>
-      </div> -->
-      </mat-card-content>
-    </form>
-  </mat-card>
+        <div class="d-flex justify-content-end">
+          <button *ngIf="!cajaActiva && authService.hasRole('ROLE_OPEN_CJU')" (click)="abrirCaja()" mat-raised-button
+            color="primary">Abrir CAJA</button>
+          <button *ngIf="cajaActiva && authService.hasRole('ROLE_CLOSE_CJU')" (click)="cerrarCaja()" mat-raised-button
+            color="primary">Cerrar CAJA</button>
+        </div>
+      </form>
+    </div>
+  </div>
 </div>

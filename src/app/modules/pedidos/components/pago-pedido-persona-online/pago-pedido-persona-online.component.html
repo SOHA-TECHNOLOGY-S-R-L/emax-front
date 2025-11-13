@@ -1,0 +1,39 @@
+<div class="container-fluid p-5">
+  <div class="container">
+    <div class="row">
+      <td class="col-12 text-center">
+        <h3>!Ya casi terminas!</h3>
+        <p> Pedido con <b>código {{data.id}}</b>, por un monto de <b>{{data.precioNetoTotal| currency:'PEN'}} </b> contiene
+          {{data.items.length}} item(s).</p>
+
+        <p><span class="fw-bold" style="font-size: 50px; font-weight: bolder;"> {{data.precioNetoTotal|
+            currency:'PEN'}}
+          </span></p>
+        <button class="btn btn-dark btn-lg" (click)="enviarPedidoChat()">ENVIA TU PAGO AQUÍ</button>
+      </td>
+    </div>
+    <div class="row">
+      <div class="col-12 col-sm-6 col-md-3">
+        <img src="banco-credito-peru.png" alt="Banco de crédito" class="img-fluid img-thumbnail">
+      </div>
+      <div class="col-12 col-sm-6 col-md-3">
+        <p class="text-start">CTA:
+          <b>215-7312458027</b>
+        </p>
+
+        <p class="text-start">CCI:
+          <b>002-215-007312458027-22</b>
+        </p>
+      </div>
+      <div class="col-12 col-sm-6 col-md-3">
+        <img src="yape-peru.png" alt="Medios de pago" class="img-fluid img-thumbnail">
+      </div>
+      <div class="col-12 col-sm-6 col-md-3">
+        <p class="text-start">Número de Celular<br>
+          <b>974798814</b>
+        </p>
+      </div>
+    </div>
+
+  </div>
+</div>

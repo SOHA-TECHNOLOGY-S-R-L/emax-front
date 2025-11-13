@@ -1,0 +1,91 @@
+<div class="container">
+  <div class="card">
+    <form class="d-flex flex-column" #personaForm="ngForm" autocomplete="off">
+      <div class="card-header">
+        <h6 class="card-title">{{ titulo }}</h6>
+        <div class="ms-auto">
+          <button *ngIf="!persona.id && authService.hasRole('ROLE_REGISTER_PERSONA') else elseBlock" color="primary"
+            mat-raised-button (click)='create()' [disabled]="!personaForm.form.valid">Crear persona o proveedor</button>
+          <ng-template #elseBlock>
+            <button *ngIf="authService.hasRole('ROLE_UPDATE_PERSONA')" color="primary" mat-raised-button
+              (click)='update()' [disabled]="!personaForm.form.valid">Actualizar persona o proveedor</button>
+          </ng-template>
+
+          <button color="primary" mat-raised-button [routerLink]="'/personas'">Cancelar</button>
+        </div>
+      </div>
+      <div class="card-body d-flex flex-column">
+        <mat-form-field appearance="fill">
+          <mat-label>Tipo documento</mat-label>
+          <mat-select [compareWith]="compararDocumento" [(ngModel)]="tipoDocumentoSelected" name="tipoDocumento">
+            <mat-option [value]="undefined">--- selecionar documento ---</mat-option>
+            <mat-option *ngFor="let documento of tipoDocumentos" [value]="documento">{{documento.nombre}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field class="fill">
+          <mat-label>Número documento</mat-label>
+          <input type="text" matInput [(ngModel)]="persona.numeroDocumento" name="numeroDocumento"
+            #numeroDocumento="ngModel" required minlength="8" maxlength="12" pattern="^\d+$">
+          <div *ngIf="formUtils.isValidFieldFp(numeroDocumento)" class="text-danger">
+            {{formUtils.getFieldErrorFp(numeroDocumento)}}
+          </div>
+        </mat-form-field>
+
+        <mat-form-field class="example-full-width">
+          <mat-label>Nombres y apellidos o Razón Social</mat-label>
+          <input matInput type="text" class="form-control" [(ngModel)]="persona.nomApellRz" name="nomApellRz"
+            #nomApellRz="ngModel" required minlength="2" pattern="^[a-zA-Z\s]+$">
+          <div *ngIf="formUtils.isValidFieldFp(nomApellRz)" class="text-danger">
+            {{formUtils.getFieldErrorFp(nomApellRz)}}
+          </div>
+        </mat-form-field>
+        <mat-form-field class="example-full-width">
+          <mat-label>Correo electrónico</mat-label>
+          <input matInput type="email" class="form-control" [(ngModel)]="persona.email" name="email" required
+            #email="ngModel" pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$">
+          <div *ngIf="formUtils.isValidFieldFp(email)" class="text-danger">
+            {{formUtils.getFieldErrorFp(email)}}
+          </div>
+        </mat-form-field>
+        <mat-form-field class="example-full-width">
+          <mat-label>Celular</mat-label>
+          <input matInput [(ngModel)]="persona.celular" name="celular" #celular="ngModel" minlength="6">
+          <div *ngIf="formUtils.isValidFieldFp(celular)" class="text-danger">
+            {{formUtils.getFieldErrorFp(celular)}}
+          </div>
+        </mat-form-field>
+        <mat-form-field class="example-full-width">
+          <mat-label>Direccion</mat-label>
+          <input matInput [(ngModel)]="persona.direccion" name="direccion" #direccion="ngModel" minlength="4">
+          <div *ngIf="formUtils.isValidFieldFp(direccion)" class="text-danger">
+            {{formUtils.getFieldErrorFp(direccion)}}
+          </div>
+        </mat-form-field>
+        <mat-form-field appearance="fill">
+          <mat-label>Tipo persona</mat-label>
+          <mat-select [compareWith]="compararPersona" [(ngModel)]="tipoPersonaSelected" name="tipoPersona">
+            <mat-option [value]="undefined">--- selecionar persona ---</mat-option>
+            <mat-option *ngFor="let person of tipoPersonas" [value]="person">{{person.persona}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <!--  <section>
+          <mat-label>Es empleado:</mat-label>
+          <mat-radio-group name="emp" [(ngModel)]="empleado">
+            <mat-radio-button *ngFor="let emp of listEmpleado" [value]="emp">
+              {{emp.empleado}}
+            </mat-radio-button>
+          </mat-radio-group>
+        </section>
+                 <section>
+          <label>Tipo pedido:</label>
+          <mat-radio-group name="tipoPedido" [(ngModel)]="tipoPedidoVentaPersonas">
+            <mat-radio-button *ngFor="let tipoPedido of tipoPedidos" [value]="tipoPedido">
+              {{tipoPedido.nombre}}
+            </mat-radio-button>
+          </mat-radio-group>
+        </section> -->
+      </div>
+    </form>
+  </div>
+
+</div>

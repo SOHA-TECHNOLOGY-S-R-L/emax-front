@@ -2,13 +2,12 @@
   <form (ngSubmit)="onSubmitForm()" autocomplete="off" style="margin-bottom: 1px;">
     <mat-card class="example-card">
       <mat-card-header class="d-flex justify-content-start">
-        <mat-card-title>Asignar roles a {{usuarioSeleccionado.cliente.nomApellRz}}
-          ({{usuarioSeleccionado.username}})</mat-card-title>
+        <mat-card-title>Asignar roles a ({{usuarioSeleccionado.username}})</mat-card-title>
         <div class="ms-auto">
           <button *ngIf="authService.hasRole('ROLE_ASIGNAR_ROL_USUARIO')" type="submit" color="primary"
             mat-raised-button>Asignar rol</button>
           <!--      <ng-template #elseBlock>
-          <button color="primary" mat-raised-button (click)='update()' [disabled]="!clienteForm.form.valid">Canclear</button>
+          <button color="primary" mat-raised-button (click)='update()' [disabled]="!personaForm.form.valid">Canclear</button>
         </ng-template> -->
 
           <button color="primary" mat-raised-button [routerLink]="'/usuarios'">Cancelar</button>

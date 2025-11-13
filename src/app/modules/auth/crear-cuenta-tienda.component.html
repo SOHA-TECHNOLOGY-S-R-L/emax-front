@@ -1,11 +1,13 @@
+<span *ngIf="isLoading" class="mat-icon-button spinner bg-gray-50 ml-auto">
+  <mat-spinner diameter=30></mat-spinner>
+</span>
 <div class="container-fluid bg-secondary">
   <div class="container py-5">
 
     <div class="row align-items-center">
       <div class="col-md-7 text-center text-md-left">
-        <!-- <h1 class="display-4 mb-4 mb-md-0 text-primary text-uppercase">Crear cuenta</h1> -->
         <div class="card p-4">
-          <form id="formCreateCuenta" #formCreateCuenta="ngForm" [formGroup]="formNewCuenta" (ngSubmit)="crearCuenta()"
+          <form id="formCreateCuenta" #formCreateCuenta="ngForm" [formGroup]="formNewCuenta"
             autocomplete="off">
             <div class="row mb-2">
               <label for="tipoDocumentoId" class="form-label col-12"><b>Datos del usuario:</b></label>
@@ -22,6 +24,7 @@
                 </div>}
               </div>
             </div>
+
             <div class="row mb-2">
               <div class="col-12">
                 <input formControlName="numeroDocumento" type="text" class="form-control" name="numeroDocumento"
@@ -32,6 +35,7 @@
                 </div>}
               </div>
             </div>
+
             <div class="row mb-2">
               <div class="col-12">
                 <input formControlName="nomApellRz" type="text" class="form-control" name="nomApellRz"
@@ -42,6 +46,7 @@
                 </div>}
               </div>
             </div>
+
             <div class="row mb-2">
               <div class="col-12">
                 <input formControlName="correo" type="text" class="form-control" name="correo"
@@ -52,18 +57,10 @@
                 </div>}
               </div>
             </div>
-            <!--                 <div class="row mb-2">
-                    <label for="celular" class="form-label col-12">Celular</label>
-                    <div class="col-12">
-                        <input formControlName="celular" type="text" class="form-control" name="celular"
-                            (change)="findByCelular($event)">
-                        @if(formUtils.isValidField(formNewCuenta,'celular')){
-                        <div class="alert alert-danger">
-                            {{formUtils.getFieldError(formNewCuenta,'celular')}}
-                        </div>}
-                    </div>
-                </div> -->
-            <div class="row mb-2">
+            <b>Crear clave:</b>
+            <confirmar-clave (outFormEqualsClavesChange)="formEqualsClavesChange($event)" />
+
+            <!--             <div class="row mb-2">
               <label for="clave" class="form-label col-12"><b>Crear Clave:</b></label>
               <div class="col-12">
                 <input formControlName="clave" type="password" class="form-control" name="clave" placeholder="Clave">
@@ -74,8 +71,6 @@
               </div>
             </div>
             <div class="row mb-2">
-              <!--             <label for="confirmaClave" class="form-label col-12"><b>Confirmar
-                clave:</b></label> -->
               <div class="col-12">
                 <input formControlName="confirmaClave" type="password" class="form-control" name="confirmaClave"
                   placeholder="Confirmar clave">
@@ -84,44 +79,39 @@
                   {{formUtils.getFieldError(formNewCuenta,'confirmaClave')}}
                 </div>}
               </div>
-            </div>
-
-
-            <!--                 <div class="row mb-2">
-                    <label for="direccion" class="form-label col-12">Dirección:</label>
-                    <div class="col-12">
-                        <input formControlName="direccion" type="text" class="form-control" name="direccion">
-                        @if(formUtils.isValidField(formNewCuenta,'direccion')){
-                        <div class="alert alert-danger">
-                            {{formUtils.getFieldError(formNewCuenta,'direccion')}}
-                        </div>}
-                    </div>
-                </div> -->
+            </div> -->
             <div class="d-flex justify-content-center">
               <button type="button" class="btn btn-secondary me-2" [routerLink]="['/']">Cancelar
                 registro</button>
 
+              @if(isCliente && isClienteEdit){
               <button type="submit" class="btn btn-primary"
-                [disabled]="!(formCreateCuenta.form.valid && !isCliente && !isUsuario)">Aceptación y registro</button>
+                [disabled]="!(formCreateCuenta.form.valid && isValidFormEqualsClave)" (click)="actualizarCuenta()">Actualizar cuenta</button>
+              }
+              @if(!isCliente){
+              <button type="submit" class="btn btn-primary"
+                [disabled]="!(formCreateCuenta.form.valid && isValidFormEqualsClave)" (click)="crearCuenta()">Registrar cuenta</button>
+              }
+
 
             </div>
           </form>
         </div>
       </div>
       <div class="col-md-5 text-white">
-        @if(isCliente && !isUsuario){
+        @if(isCliente && isClienteEdit){
         <div class="row">
           <div class="col-12 alert alert-info">
-            Hola <b>{{cliente.nomApellRz}}</b>, ya tenemos algunos datos, tu usuario de sesión es
-            <b>{{cliente.numeroDocumento}}</b> colocalé una clave.
+            Hola <b>{{persona.nomApellRz}}</b>, ya tenemos algunos datos, tu usuario de sesión es
+            <b>{{persona.numeroDocumento}}</b> colocalé una clave.
           </div>
         </div>
         }
 
-        @if(isCliente && isUsuario){
+        @if(isCliente && !isClienteEdit){
         <div class="row">
           <div class="col-12 alert alert-info">
-            <p>Hola <b>{{cliente.nomApellRz}}</b> ya tienes una cuenta creada, si olvidaste tu clave has click
+            <p>Hola <b>{{persona.nomApellRz}}</b> ya tienes una cuenta creada, si olvidaste tu clave has click
               aquí en <b><a [routerLink]="['/recuperar-clave']">RECUPERAR CLAVE</a></b> de lo contrario puedes <b>
                 <a [routerLink]="['/login']">INICIAR SESIÓN</a></b></p>
           </div>

@@ -1,0 +1,70 @@
+import { CarritoItemProductoComponent } from '../../components/carrito-item-producto/carrito-item-producto.component';
+import { CustomizeItemProductoToClientComponent } from '../../components/customize-item-producto-to-client/customize-item-producto-to-client.component';
+
+
+import { CommonModule } from '@angular/common';
+import { Component, inject, OnInit } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ActivatedRoute, RouterModule } from '@angular/router';
+import { map } from 'rxjs';
+import { environment } from '../../../../../environments/environment';
+import { Producto } from '../../../../models/producto';
+import { ProductoService } from '../../../../services/producto.service';
+import { SeoService } from '../../../../services/seo.service';
+import { AngularMaterialModule } from '../../../compartido/angular-material.module';
+
+
+@Component({
+  selector: 'item-producto-persona-online',
+  templateUrl: './item-producto-persona-online.component.html',
+  styleUrl: './item-producto-persona-online.component.css',
+  standalone: true,
+  imports: [CarritoItemProductoComponent, CustomizeItemProductoToClientComponent, CommonModule, RouterModule, FormsModule, ReactiveFormsModule, AngularMaterialModule]
+
+})
+export class ItemProductoPersonaOnlineComponent implements OnInit {
+  private activatedRoute = inject(ActivatedRoute);
+  private productoService = inject(ProductoService);
+  private seo = inject(SeoService);
+  //public authService = inject(AuthService);
+  public categoriaNombre = toSignal<string>(this.activatedRoute.paramMap.pipe(map(r =>  (r.get('nombre')!))));
+  public productoCodigo = toSignal<string>(this.activatedRoute.paramMap.pipe(map(r => (r.get('productoCodigo')!))));
+  //public productoId = toSignal<number>(this.activatedRoute.paramMap.pipe(map(r => + (r.get('productoId')!))));
+  producto!: Producto;
+  constructor() {
+  }
+
+  ngOnInit(): void {
+    console.log("productoId()", this.categoriaNombre())
+    this.loadProducto( this.productoCodigo()! , this.categoriaNombre()!);
+  }
+
+  loadProducto(productoCodigo: string ,categoriaNombre: string) {
+
+    this.productoService.productoCategoria(productoCodigo,categoriaNombre)
+      .subscribe(prd => {
+        this.producto = prd;
+        this.seoProducto(this.producto, categoriaNombre )
+      })
+  }
+
+  seoProducto(producto: Producto, categoriaNombre: string) {
+    const tittle = `${producto.nombre}(${producto.codigo}) ${categoriaNombre}`;
+    const descripcion = `${producto.descripcion} `
+    this.seo.title.setTitle(tittle)
+    this.seo.meta.updateTag({ name: "description", content: descripcion })
+    this.seo.meta.updateTag({ name: "keywords", content: `${producto.nombre}` })
+    this.seo.meta.updateTag({ property: "og:type", content: "website" })
+    this.seo.meta.updateTag({ property: "og:description", content: descripcion })
+    this.seo.meta.updateTag({ property: "og:url", content: `${environment.apiFront}/tienda/productos-categoria/${categoriaNombre}/item-producto-persona-online/${producto.codigo}` })
+    this.seo.meta.updateTag({ property: "og:title", content: tittle })
+    this.seo.meta.updateTag({ property: "og:image", content: `${environment.API_URL_VER_IMAGEN}${producto.imagen}` })
+    //this.seo.serCanonicalURL(`${environment.apiFront}/tienda/item-producto-persona-online`)
+    this.seo.setIndexFollow(true);
+  }
+
+
+
+
+}

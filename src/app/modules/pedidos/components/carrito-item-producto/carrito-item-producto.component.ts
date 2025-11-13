@@ -6,7 +6,7 @@ import { Router, RouterModule } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { ItemPedido } from '../../../../models/item-pedido';
 import { AuthService } from '../../../../services/auth.service';
-import { ClienteService } from '../../../../services/cliente.service';
+import { PersonaService } from '../../../../services/persona.service';
 import { ItemService } from '../../../../services/item.service';
 import { UsuarioService } from '../../../../services/usuario.service';
 import { PrimeNgModule } from '../../../compartido/prime-ng.module';
@@ -24,14 +24,14 @@ export class CarritoItemProductoComponent implements OnInit, OnDestroy {
   router = inject(Router);
   public authService = inject(AuthService);
   itemService = inject(ItemService)
-  clienteService = inject(ClienteService);
+  personaService = inject(PersonaService);
   usuarioService = inject(UsuarioService)
 
 
   itemServiceSuscription$!: Subscription;
   lstItemPedido: ItemPedido[] = [];
   @Input() tipoPedido!: string;
-  @Input() clienteId!: number;
+  @Input() personaId!: number;
   item!: ItemPedido;
   total: number = 0;
 
@@ -96,15 +96,15 @@ export class CarritoItemProductoComponent implements OnInit, OnDestroy {
 
   irRealizarPedido() {
     if (this.authService.isAuthenticated()) {
-      if (this.clienteId == 0) {
+      if (this.personaId == 0) {
         this.usuarioService.getUsuarioByUsername(this.authService.usuario.username)
           .subscribe(usr => {
-            this.clienteService.getClienteByUsuarioId(usr.id).subscribe(cli => {
-              this.router.navigate(['/tienda/pedido-cliente-online-finalizado', cli.id])
+            this.personaService.getPersonaByUsuarioId(usr.id).subscribe(cli => {
+              this.router.navigate(['/tienda/pedido-persona-online-finalizado', cli.id])
             })
           });
       } else {
-        this.router.navigate(['/pedidos/pedido-cliente-tienda-finalizado', this.clienteId])
+        this.router.navigate(['/pedidos/pedido-persona-tienda-finalizado', this.personaId])
       }
     }
   }

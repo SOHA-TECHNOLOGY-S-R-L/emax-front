@@ -19,24 +19,24 @@ export const serverRoutes: ServerRoute[] = [
     renderMode: RenderMode.Server,
   },
   {
-    path: 'productos-servicios',
+    path: 'productos',
     renderMode: RenderMode.Server,
   },
   {
-    path: 'contactanos-cliente',
+    path: 'ubicanos-cliente',
     renderMode: RenderMode.Server,
   },
   /*
   {
-    path: 'clientes',
+    path: 'personas',
     renderMode: RenderMode.Client,
   },
   {
-    path: 'clientes/form/:id',
+    path: 'personas/form/:id',
     renderMode: RenderMode.Client,
   },
   {
-    path: 'clientes/form',
+    path: 'personas/form',
     renderMode: RenderMode.Client,
   },
   {
@@ -60,7 +60,7 @@ export const serverRoutes: ServerRoute[] = [
     renderMode: RenderMode.Client,
   },
   {
-    path: 'pedidos/item-producto-cliente-tienda/:clienteId',
+    path: 'pedidos/item-producto-persona-tienda/:personaId',
     renderMode: RenderMode.Server,
   },
   {
@@ -68,7 +68,7 @@ export const serverRoutes: ServerRoute[] = [
     renderMode: RenderMode.Client,
   },
   {
-    path: 'pedidos/pedido-cliente-finalizado/:clienteId',
+    path: 'pedidos/pedido-persona-finalizado/:personaId',
     renderMode: RenderMode.Client,
   },
   {
@@ -124,7 +124,7 @@ export const serverRoutes: ServerRoute[] = [
     },
   },
   {
-    path: 'tienda/productos-categoria/:nombre/item-producto-cliente-online/:productoCodigo',
+    path: 'tienda/productos-categoria/:nombre/item-producto-persona-online/:productoCodigo',
     renderMode: RenderMode.Prerender,
     getPrerenderParams: async () => {
       return [
@@ -499,7 +499,7 @@ export const serverRoutes: ServerRoute[] = [
 
   },
   /*{
-    path: 'pedidos/item-producto-cliente-online/:productoId',
+    path: 'pedidos/item-producto-persona-online/:productoId',
     renderMode: RenderMode.Server,
     getPrerenderParams: async () => {
       const productoService = inject(ProductoService);

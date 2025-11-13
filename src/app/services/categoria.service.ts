@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, Subject, throwError } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { catchError, filter, map } from 'rxjs/operators';
 
 import { Router } from '@angular/router';
 import { environment } from '../../environments/environment';
@@ -45,6 +45,11 @@ export class CategoriaService {
     return this.http.get<Categoria[]>(environment.apiUrl + '/categorias/active');
   }
 
+  getCategoriasActivasYVisibleTienda(): Observable<Categoria[]> {
+    return this.http.get<Categoria[]>(environment.apiUrl + '/categorias/active').pipe(
+      map(categorias => categorias.filter(cat => cat.visibleEnTienda === true)));
+  }
+
 
   createCategoria(categoria: Categoria): Observable<Categoria> {
     return this.http.post(`${environment.apiUrl}/categoria`, categoria)
@@ -82,7 +87,7 @@ export class CategoriaService {
     formData.append("archivo", archivo);
     formData.append("productoId", productoId);
 
-    /*     const req = new HttpRequest('POST', `${environment.apiUrl}/clientes/upload`, formData, {
+    /*     const req = new HttpRequest('POST', `${environment.apiUrl}/personas/upload`, formData, {
           reportProgress: true
         }); */
 

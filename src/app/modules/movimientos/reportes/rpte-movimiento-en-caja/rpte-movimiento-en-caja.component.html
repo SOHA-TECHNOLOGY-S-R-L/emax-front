@@ -30,18 +30,18 @@
             <mat-option *ngFor="let e of cajaLst" value={{e.id}}>{{e.nombre}}</mat-option>
           </mat-select>
         </mat-form-field>
-        <!--   <autocomplete-cliente></autocomplete-cliente>
+        <!--   <autocomplete-persona></autocomplete-persona>
  -->
         <mat-form-field>
           <mat-label>Usuarios</mat-label>
           <mat-select matNativeControl formControlName="usuariosId" multiple>
-            <mat-option *ngFor="let p of usuarioLst" value={{p.id}}>{{p.cliente.nomApellRz}}</mat-option>
+            <mat-option *ngFor="let u of usuarioLst" value={{u.id}}>{{u.username}}</mat-option>
           </mat-select>
         </mat-form-field>
         <mat-form-field>
-          <input matInput placeholder="Busca por cliente o proveedor" [formControl]="autocompleteControl"
+          <input matInput placeholder="Busca por persona o proveedor" [formControl]="autocompleteControl"
             aria-label="Number" [matAutocomplete]="auto">
-          <mat-autocomplete #auto="matAutocomplete" [displayWith]="mostrarApellidoCliente"
+          <mat-autocomplete #auto="matAutocomplete" [displayWith]="mostrarApellidoPersona"
             (optionSelected)="seleccionar($event)">
             <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
               {{option.nomApellRz}}

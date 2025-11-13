@@ -85,9 +85,9 @@ export class ProductosPorCategoriaComponent implements OnInit, OnDestroy {
 
 
   chatear(categoriaNombre: string, productoCodigo: string) {
-    const url = encodeURI( `${environment.apiFront}/tienda/productos-categoria/${categoriaNombre}/item-producto-cliente-online/${productoCodigo}`);
-    this.chatUtils.infoString(url);
-    this.router.navigate(['/tienda/productos-categoria', categoriaNombre, 'item-producto-cliente-online',productoCodigo]);
+    const url = encodeURI( `${environment.apiFront}/tienda/productos-categoria/${categoriaNombre}/item-producto-persona-online/${productoCodigo}`);
+    this.chatUtils.infoFromEmpleadoVenta(url);
+    this.router.navigate(['/tienda/productos-categoria', categoriaNombre, 'item-producto-persona-online',productoCodigo]);
   }
 
   ngOnDestroy(): void {

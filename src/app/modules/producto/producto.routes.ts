@@ -2,7 +2,7 @@ import { Routes } from '@angular/router';
 import { isAuthenticatedGuard } from '../../guards/is-authenticated.guard';
 import { RoleGuard } from '../../guards/role.guard';
 import { MantenimientoProductoComponent } from './pages/mantenimiento-producto.component';
-import { ProductoComponent } from './pages/producto.component';
+import { ProductosComponent } from './pages/productos.component';
 import { ProductosPorCategoriaComponent } from './pages/productos-por-categoria.component';
 import { CategoriaListadoComponent } from './pages/categorias/categoria-listado.component';
 import { CategoriaMantenimientoComponent } from './pages/categorias/categoria-mantenimiento.component';
@@ -10,7 +10,7 @@ import { CategoriaMantenimientoComponent } from './pages/categorias/categoria-ma
 export const routes: Routes = [
   {
     path: '',
-    component: ProductoComponent,
+    component: ProductosComponent,
     canActivate: [isAuthenticatedGuard, RoleGuard],
     data: { role: 'ROLE_LIST_PRODUCTOS' },
     pathMatch: 'full'

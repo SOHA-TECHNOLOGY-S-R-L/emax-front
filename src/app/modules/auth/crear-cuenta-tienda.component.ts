@@ -1,40 +1,36 @@
 import { Component, inject } from '@angular/core';
 
-import { find } from 'lodash-es';
-import { ClienteService } from '../../services/cliente.service';
-import { AlertService } from '../../services/alert.service';
-import { FormUtils } from '../../utils/form-utils';
-import { Cliente } from '../../models/cliente';
-import { TipoDocumento } from '../../models/tipo-documento';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { MatCardModule } from '@angular/material/card';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatDialogModule } from '@angular/material/dialog';
-import { MatIconModule } from '@angular/material/icon';
-import { MatPaginatorModule } from '@angular/material/paginator';
-import { MatRadioModule } from '@angular/material/radio';
-import { MatSelectModule } from '@angular/material/select';
-import { MatTableModule } from '@angular/material/table';
-import { RouterModule, Router } from '@angular/router';
-import { MatListModule } from '@angular/material/list';
-import { MatNativeDateModule } from '@angular/material/core';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { UsuarioService } from '../../services/usuario.service';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router, RouterModule } from '@angular/router';
+import { find, findIndex } from 'lodash-es';
+import { Persona } from '../../models/persona';
+import { TipoDocumento } from '../../models/tipo-documento';
 import { Usuario } from '../../models/usuario';
+import { AlertService } from '../../services/alert.service';
+import { PersonaService } from '../../services/persona.service';
+import { UsuarioService } from '../../services/usuario.service';
+import { FormUtils } from '../../utils/form-utils';
+import { AngularMaterialModule } from '../compartido/angular-material.module';
+import { ConfirmarClaveComponent } from "./confirmar-clave.component";
+import { TipoPersona } from '../../models/tipo-persona';
+import { CLIENTE } from '../../constants/constantes';
 
 @Component({
   selector: 'app-crear-cuenta-tienda',
   templateUrl: './crear-cuenta-tienda.component.html',
   styleUrl: './crear-cuenta-tienda.component.css',
   standalone: true,
-  imports: [CommonModule, MatDatepickerModule, MatNativeDateModule, MatFormFieldModule, MatInputModule, MatListModule, MatTableModule, MatPaginatorModule, RouterModule, FormsModule, ReactiveFormsModule, MatCardModule, MatAutocompleteModule, MatSelectModule, MatRadioModule, MatIconModule, MatDialogModule]
-
+  imports: [CommonModule,
+    RouterModule,
+    FormsModule,
+    ReactiveFormsModule,
+    AngularMaterialModule, ConfirmarClaveComponent]
 })
+
 export class CrearCuentaTiendaComponent {
-  private clienteService = inject(ClienteService);
+
+  private personaService = inject(PersonaService);
   private usuarioService = inject(UsuarioService);
   private alertService = inject(AlertService);
   private formBuilder = inject(FormBuilder);
@@ -42,19 +38,23 @@ export class CrearCuentaTiendaComponent {
   formUtils = FormUtils;
 
   tipoDocumentos: TipoDocumento[] = [];
+  tipoPersonas: TipoPersona[] = [];
+  tipoPersonaSelected!: TipoPersona;
+
   //usuario: Usuario = new Usuario();
-  cliente: Cliente = new Cliente();
+  persona: Persona = new Persona();
   usuario: Usuario = new Usuario();
   formNewCuenta!: FormGroup;
   isCliente: boolean = false;
-  isUsuario: boolean = false;
+  //isUsuario: boolean = false;
   frmDefault!: FrmCrearCuentaDefault;
+  isClienteEdit: boolean = false;
+  isValidFormEqualsClave = false;
+  isLoading: boolean = false;
+
+
 
   ngOnInit() {
-    this.clienteService.getTipoDocumento().subscribe(doc => {
-      this.tipoDocumentos = doc
-      console.log("aa:", this.tipoDocumentos);
-    });
 
     this.frmDefault = {
       tipoDocumentoId: -1,
@@ -65,52 +65,46 @@ export class CrearCuentaTiendaComponent {
       confirmaClave: '',
     }
 
+    this.personaService.getTipoDocumento().subscribe(doc => {
+      this.tipoDocumentos = doc
+    });
+
+    this.personaService.getTipoPersona().subscribe(per => {
+      this.tipoPersonas = per.filter(per => per.persona.includes("Cliente") || per.persona.includes("Proveedor"))
+      console.log(this.tipoPersonas);
+    });
+
     this.createForm();
 
   }
 
   createForm(): void {
     this.formNewCuenta = this.formBuilder.group({
-      //usuario: [this.cajaUsuario?.usuario?.username],
-      //usuario:   [this.cajaUsuario?.usuario?.apellido +'-'+ this.cajaUsuario?.usuario?.nombre],
       tipoDocumentoId: [this.frmDefault.tipoDocumentoId, Validators.required],
-
       numeroDocumento: [this.frmDefault.numDocumento,
       { validators: [Validators.required, Validators.minLength(8), Validators.maxLength(12), Validators.pattern('^\\d+$')] }
       ],
       nomApellRz: [this.frmDefault.nomApellRz,
       { validators: [Validators.required, Validators.minLength(2), Validators.pattern('^[a-zA-Z\\s]+$')] }
       ],
-
       correo: [this.frmDefault.correo, [Validators.required, Validators.pattern('^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$')]
       ],
-
-      /*       direccion: [this.cliente?.direccion,
-            { validators: [Validators.required, Validators.minLength(5)] }
-            ],
-
-            celular: [this.cliente?.celular, [Validators.required, Validators.minLength(6), Validators.maxLength(14), Validators.pattern('^\\d+$')]], */
-
-
-      /*       clave: [this.cliente?.usuario?.password,
-            { validators: [Validators.required, Validators.minLength(4), Validators.pattern('^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$')] }
-
-            ],
-            confirmaClave: [this.cliente?.usuario?.confirmaPassword,
-            { validators: [Validators.required, Validators.minLength(4), Validators.pattern('^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$')] }
-            ] */
-
-      /**  ^(?=.[A-Za-z])(?=.\d).{4,}$ exige al menos una letra, al menos un dígito y un mínimo de 4 caracteres.
- */
-      clave: [this.frmDefault.clave,
-      { validators: [Validators.required, Validators.minLength(4), Validators.pattern('^(?=.*[A-Za-z])(?=.*\\d).{4,}$')] }
-
-      ],
-      confirmaClave: [this.frmDefault.confirmaClave,
-      { validators: [Validators.required, Validators.minLength(4), Validators.pattern('^(?=.*[A-Za-z])(?=.*\\d).{4,}$')] }
-      ]
-
+      confirmaClave: null,
     })
+  }
+
+  setValueControls() {
+    this.usuario.username = this.formNewCuenta.get('numeroDocumento')?.value
+    this.usuario.password = this.formNewCuenta.get('confirmaClave.clave')?.value
+    this.usuario.noBloqueado = true;
+    this.usuario.activo = true;
+    this.usuario.reintentos = 0
+    this.persona.usuario = { ...this.usuario }
+    this.persona.tipoDocumento = find(this.tipoDocumentos, (td) => td.id === +this.formNewCuenta.get('tipoDocumentoId')?.value)!
+    this.persona.numeroDocumento = this.formNewCuenta.get('numeroDocumento')?.value
+    this.persona.nomApellRz = this.formNewCuenta.get('nomApellRz')?.value
+    this.persona.email = this.formNewCuenta.get('correo')?.value
+    this.persona.direccion = this.formNewCuenta.get('direccion')?.value
   }
 
   crearCuenta() {
@@ -118,56 +112,89 @@ export class CrearCuentaTiendaComponent {
       this.formNewCuenta.markAllAsTouched();
       return;
     }
-
-
     if (this.formNewCuenta.valid) {
-      const clave = this.formNewCuenta.get('clave')?.value
-      const confirmaClave = this.formNewCuenta.get('confirmaClave')?.value
-      if (this.usuarioService.confirmarDobleInputClave(clave, confirmaClave)) {
-        this.usuario.username = this.formNewCuenta.get('numeroDocumento')?.value
-        this.usuario.password = this.formNewCuenta.get('clave')?.value
-        this.usuario.noBloqueado = true;
-       // this.usuario.empleado = false;
-        this.usuario.activo = true;
-        this.usuario.reintentos = 0
-        this.cliente.tipoDocumento = find(this.tipoDocumentos, (td) => td.id === +this.formNewCuenta.get('tipoDocumentoId')?.value)!
-        this.cliente.numeroDocumento = this.formNewCuenta.get('numeroDocumento')?.value
-        this.cliente.nomApellRz = this.formNewCuenta.get('nomApellRz')?.value
-        this.cliente.email = this.formNewCuenta.get('correo')?.value
-        this.cliente.direccion = this.formNewCuenta.get('direccion')?.value
-        this.cliente.usuario = { ...this.usuario }
-        this.clienteService.create(this.cliente).subscribe(resp => {
-          this.alertService.success(`Hola ${resp.nomApellRz} se ha creado tu cuenta, puedes iniciar sesión`, "Exito");
-          this.router.navigate(['/login']);
-        })
+      this.isLoading = true;
+      this.setValueControls();
+      this.tipoPersonaSelected = this.tipoPersonas[this.findIndexTipoPersona(CLIENTE)];
+      this.persona.tipoPersona = this.tipoPersonaSelected
 
-      } else {
-        this.alertService.error("No coinciden las claves de registro", "Error");
-      }
+      this.personaService.create(this.persona).subscribe(resp => {
+        this.alertService.success(`Hola ${resp.nomApellRz} se ha creado tu cuenta, puedes iniciar sesión`, "Exito");
+        this.router.navigate(['/login']);
+      })
+      this.isLoading = false;
+
     }
   }
 
+  actualizarCuenta() {
+    this.isLoading = true;
+
+    this.setValueControls()
+    this.persona.pedidos = [];
+    this.personaService.update(this.persona)
+      .subscribe(
+        json => {
+          this.alertService.success(`${json.mensaje}`, 'Cliente Actualizado')
+          this.router.navigate(['/login']);
+        }/* ,
+        err => {
+          this.errores = err.error.errors as string[];
+          console.error('Código del error desde el backend: ' + err.status);
+          console.error(err.error.errors);
+        } */
+      )
+    this.isLoading = false;
+
+  }
+
+  findIndexTipoPersona(tipoPersonaId: number): number {
+    return findIndex(this.tipoPersonas, (td) => td.id == tipoPersonaId)
+  }
+
   findByNumDocumento(event: any) {
+    this.isLoading = true;
     const numero = event.target.value;
     const tipoDocumentoId = this.formNewCuenta.get('tipoDocumentoId')?.value;
-    this.clienteService.getNumeroDocumento(numero).subscribe(resp => {
-      if (resp) {
-        this.cliente = resp;
+    this.personaService.getNumeroDocumento(numero).subscribe(resp => {
+      if (resp != null) {
+        this.isCliente = true
+        this.persona = resp;
         this.frmDefault.tipoDocumentoId = resp.tipoDocumento?.id;
         this.frmDefault.numDocumento = resp.numeroDocumento;
         this.frmDefault.nomApellRz = resp.nomApellRz;
         this.frmDefault.correo = resp.email;
-        this.isCliente = true
-        this.isUsuario = (resp.usuario) ? true : false;
+        //this.frmDefault.tipoPersonaId = resp.tipoPersona.id;
+
+        this.tipoPersonaSelected = this.tipoPersonas[this.findIndexTipoPersona(resp.tipoPersona.id)];
+        this.persona.tipoPersona = this.tipoPersonaSelected
+
+        this.formNewCuenta.get('tipoDocumentoId')?.setValue(tipoDocumentoId);
+        if (resp.usuario.password != null) {
+          this.isClienteEdit = false;
+        } else {
+          this.isClienteEdit = true;
+        }
+        this.createForm();
+
+      } else {
+        this.tipoPersonaSelected = this.tipoPersonas[this.findIndexTipoPersona(CLIENTE)];
+        this.persona.tipoPersona = this.tipoPersonaSelected
+        this.isCliente = false
       }
-      this.createForm();
+      this.isLoading = false;
 
     }, err => {
       console.log("Entro")
     }, () => {
-      this.formNewCuenta.get('tipoDocumentoId')?.setValue(tipoDocumentoId);
       //this.formNewCuenta.get('numeroDocumento')?.setValue(numero);
     })
+
+  }
+
+  formEqualsClavesChange(equalsClavesChange: FormGroup) {
+    this.formNewCuenta.setControl('confirmaClave', equalsClavesChange);
+    this.isValidFormEqualsClave = equalsClavesChange.valid
 
   }
 
@@ -178,8 +205,8 @@ export class CrearCuentaTiendaComponent {
       const nomApellRz = this.formNewCuenta.get('nomApellRz')?.value;
       const direccion = this.formNewCuenta.get('direccion')?.value;
 
-      this.clienteService.getCelular(celular).subscribe(resp => {
-        this.cliente = resp;
+      this.personaService.getCelular(celular).subscribe(resp => {
+        this.persona = resp;
         this.frmDefault.tipoDocumentoId = resp.tipoDocumento?.id;
         this.frmDefault.numDocumento = resp.numeroDocumento;
         this.frmDefault.nomApellRz = resp.nomApellRz;
@@ -205,6 +232,7 @@ export class CrearCuentaTiendaComponent {
 
 interface FrmCrearCuentaDefault {
   tipoDocumentoId?: number,
+  tipoPersonaId?: number,
   numDocumento?: string,
   nomApellRz?: string,
   correo?: string,

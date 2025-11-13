@@ -6,8 +6,8 @@ import { Routes } from '@angular/router';
 import { CrearCuentaTiendaComponent } from './modules/auth/crear-cuenta-tienda.component';
 import { PrincipalComponent } from './modules/compartido/principal.component';
 import { ProductosPorCategoriaComponent } from './modules/producto/pages/productos-por-categoria.component';
-import { ItemProductoClienteOnlineComponent } from './modules/pedidos/pages/item-producto-cliente-online/item-producto-cliente-online.component';
-import { PedidoClienteOnlineFinalizadoComponent } from './modules/pedidos/components/pedido-cliente-online-finalizado/pedido-cliente-online-finalizado.component';
+import { ItemProductoPersonaOnlineComponent } from './modules/pedidos/pages/item-producto-persona-online/item-producto-persona-online.component';
+import { PedidoPersonaOnlineFinalizadoComponent } from './modules/pedidos/components/pedido-persona-online-finalizado/pedido-persona-online-finalizado.component';
 import { RecuperarClaveComponent } from './modules/auth/recuperar-clave.component';
 
 export const routes: Routes = [
@@ -22,8 +22,8 @@ export const routes: Routes = [
         loadChildren: () => import("./modules/home/home.routes").then((r) => r.routes),
       },
       {
-        path: 'clientes',
-        loadChildren: () => import("./modules/clientes/clientes.routes").then((r) => r.routes),
+        path: 'personas',
+        loadChildren: () => import("./modules/personas/personas.routes").then((r) => r.routes),
       },
       {
         path: 'pedidos',
@@ -52,13 +52,13 @@ export const routes: Routes = [
             path: 'productos-categoria/:nombre', component: ProductosPorCategoriaComponent,
           },
           {
-            path: 'productos-categoria/:nombre/item-producto-cliente-online/:productoCodigo', component: ItemProductoClienteOnlineComponent,
+            path: 'productos-categoria/:nombre/item-producto-persona-online/:productoCodigo', component: ItemProductoPersonaOnlineComponent,
           },
           /*  {
-             path: 'item-producto-cliente-online/:productoId', component: ItemProductoClienteOnlineComponent,
+             path: 'item-producto-persona-online/:productoId', component: ItemProductoPersonaOnlineComponent,
            }, */
           {
-            path: 'pedido-cliente-online-finalizado/:clienteId', component: PedidoClienteOnlineFinalizadoComponent,
+            path: 'pedido-persona-online-finalizado/:personaId', component: PedidoPersonaOnlineFinalizadoComponent,
           },
         ]
 

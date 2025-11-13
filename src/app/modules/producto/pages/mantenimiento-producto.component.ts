@@ -109,16 +109,25 @@ export class MantenimientoProductoComponent implements OnInit, AfterViewInit {
         /*       { validators: [Validators.required, Validators.minLength(2), Validators.pattern('^[A-Z0-9-]*[A-Z0-9][A-Z0-9-]*$')] }
          */
       ],
-      descripcion: [this.producto?.descripcion, Validators.required],
+      descripcion: [this.producto?.descripcion,
+      { validators: [Validators.required, Validators.minLength(2)] }
+      ],
       medidas: [this.producto?.medidas,
       { validators: [Validators.minLength(2), Validators.pattern('^[0-9]{1,3}([\\.][0-9]{2})?(x|X)?([0-9]{1,3}([\\.][0-9]{2})?)?(x|X)?([0-9]{1,3}([\\.][0-9]{2})?)?\\s(cm|CM|mt|MT)$')] }
       ],
       peso: [this.producto?.peso,
       { validators: [Validators.minLength(4), Validators.pattern('^[0-9]{1,3}([(\\.)][0-9]{2})?\\s(kg|KG)$')] }
       ],
-      umbralPocaCantidad: [this.producto?.umbralPocaCantidad, Validators.min(1)],
-      umbralCantidadAgotada: [this.producto?.umbralCantidadAgotada, Validators.min(0)],
-      cantidadStock: [this.producto?.cantidadStock, Validators.required],
+      umbralPocaCantidad: [this.producto?.umbralPocaCantidad,
+      { validators: [Validators.required, Validators.min(1)] }
+      ],
+
+      umbralCantidadAgotada: [this.producto?.umbralCantidadAgotada,
+      { validators: [Validators.required, Validators.min(0)] }
+      ],
+      cantidadStock: [this.producto?.cantidadStock,
+      { validators: [Validators.required, Validators.min(0)] }
+      ],
       /*       cantidadStock: [
               { value: this.producto?.cantidadStock, disabled: true },
               { validators: [Validators.required, Validators.min(0)] }
@@ -127,15 +136,25 @@ export class MantenimientoProductoComponent implements OnInit, AfterViewInit {
         { value: this.producto?.cantidadVendidos, disabled: true },
         { validators: [Validators.required, Validators.min(0)] }
       ],
-      minCantidadPedido: [this.producto?.minCantidadPedido, Validators.min(1)],
-      maxCantidadPedido: [this.producto?.maxCantidadPedido, Validators.min(1)],
-      gruposDe: [this.producto?.gruposDe, Validators.min(1)],
-      costoUnitario: [this.producto?.costoUnitario, Validators.min(0)],
+      minCantidadPedido: [this.producto?.minCantidadPedido,
+      { validators: [Validators.required, Validators.min(1)] }
+      ],
+      maxCantidadPedido: [this.producto?.maxCantidadPedido,
+      { validators: [Validators.required, Validators.min(1)] }
+      ],
+      gruposDe: [this.producto?.gruposDe,
+      { validators: [Validators.required, Validators.min(1)] }
+      ],
+      costoUnitario: [this.producto?.costoUnitario,
+      { validators: [Validators.required, Validators.min(1)] }
+      ],
 
       //costoPersonalizacion: [this.producto?.costoPersonalizacion, Validators.min(0)],
       //costoUnitarioEmpaque: [this.producto?.costoUnitarioEmpaque, Validators.min(0)],
       //precioBruto: [this.producto?.precioBruto, Validators.min(3)],
-      impuestoIgv: [this.producto?.impuestoIgv, Validators.required],
+      impuestoIgv: [this.producto?.impuestoIgv,
+      { validators: [Validators.required, Validators.min(18)] }
+      ],
 
       //margenGanancia: [this.producto?.margenGanancia, [Validators.required, Validators.min(0)]],
       //precioNeto: [this.producto?.precioNeto, [Validators.required, Validators.min(0)]],
@@ -371,7 +390,7 @@ export class MantenimientoProductoComponent implements OnInit, AfterViewInit {
         let formData = new FormData();
         formData.append("archivo", imagen);
         formData.append("producto", JSON.stringify(this.producto));
-        formData.append("clienteOnline", 'false');
+        formData.append("personaOnline", 'false');
 
         if (this.producto.id) {
           this.productoService.updateProductoImagen(formData, this.producto.id).subscribe(

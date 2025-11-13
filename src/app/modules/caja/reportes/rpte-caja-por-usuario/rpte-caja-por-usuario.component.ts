@@ -72,7 +72,6 @@ export class RpteCajaPorUsuarioComponent implements OnInit {
   }
 
   generarReporte() {
-    debugger;
     this.filtrosReporte.fecha_apertura1 = [moment(this.formCierreCajaPorUsuario.get("fchTimeDesde")?.value).format("YYYY-MM-DD HH:mm")];
     this.filtrosReporte.fecha_apertura2 = [moment(this.formCierreCajaPorUsuario.get("fchTimeHasta")?.value).format("YYYY-MM-DD HH:mm")];
     this.filtrosReporte.activa = this.formCierreCajaPorUsuario.get("estadoCajaUsuario")?.value;

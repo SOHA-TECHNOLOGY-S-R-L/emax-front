@@ -16,8 +16,8 @@
       {{item.producto.precioNetoNumberShow | currency: 'PEN'}}
     </div>
     <div class="col-4 d-flex align-items-center">
-      <span id="cantidad">#</span>
-      <input type="number" name="cantidad" aria-describedby="cantidad" [step]="item.producto.gruposDe.toString()"
+<!--       <span id="cantidad">#</span>
+ -->      <input type="number" name="cantidad" class="form-control" [step]="item.producto.gruposDe.toString()"
         [min]="item.producto.minCantidadPedido.toString()" [max]="item.producto.maxCantidadPedido.toString()"
         [value]="item.cantidad" (input)="actualizarCantidad(item.producto.id, $event);calcularTotal() " />
 

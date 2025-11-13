@@ -1,4 +1,4 @@
-import { Cliente } from './cliente';
+import { Persona } from './persona';
 import { EstadoPedido } from './estado-pedido';
 import { ItemPedido } from './item-pedido';
 import { Movimiento } from './movimiento';
@@ -10,7 +10,7 @@ export class Pedido {
   observacion!: string;
   items:Array<ItemPedido> = [];
   movimientos:Array<Movimiento> = [];
-  cliente?:Cliente;
+  persona?:Persona;
   nomApellRzEnvio:string = '';
   direccionEnvio:string = '';
   celularEnvio:string = '';

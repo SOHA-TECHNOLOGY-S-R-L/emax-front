@@ -1,19 +1,18 @@
-import { FormControl, FormGroup, NgModel } from '@angular/forms';
-import { Producto } from '../models/producto';
+import moment from 'moment';
 import { environment } from '../../environments/environment';
 import { Pedido } from '../models/pedido';
-import { Categoria } from '../models/categoria';
+import { Producto } from '../models/producto';
 export class ChatUtils {
 
-  static defaultMesage() {
+  static defaultMesageFromEmpleadoVenta() {
     const mensaje = `Hola!, estoy interesado en los productos de la página.`
-    const link = environment.API_URL_WHATSAPP + encodeURI(mensaje);
+    const link = environment.URL_WHATSAPP_VENTA + encodeURI(mensaje);
     window.open(link, "_blank")
   }
 
-  static infoString(texto: string) {
+  static infoFromEmpleadoVenta(texto: string) {
     const mensaje = `Hola!, quiero saber mas de ${texto}`
-    const link = environment.API_URL_WHATSAPP + encodeURI(mensaje);
+    const link = environment.URL_WHATSAPP_VENTA + encodeURI(mensaje);
     window.open(link, "_blank")
   }
 
@@ -23,15 +22,15 @@ export class ChatUtils {
     window.open(link, "_blank")
   } */
 
-  static infoProduct(producto: Producto) {
+  static infoProductFromEmpleadoVenta(producto: Producto) {
     const mensaje = `Hola!, quiero saber mas de ${producto.codigo} - ${producto.nombre}`
-    const link = environment.API_URL_WHATSAPP + encodeURI(mensaje);
+    const link = environment.URL_WHATSAPP_VENTA + encodeURI(mensaje);
     window.open(link, "_blank")
   }
 
-  static sendPedido(pedido: Pedido) {
-    const mensaje = `Pedido finalizado! Con código ${pedido.id}, por un monto de S/. ${pedido.precioNetoTotal} contiene ${pedido.items.length} producto(s). Pendiente de adjuntar voucher de pago...`
-    const link = environment.API_URL_WHATSAPP + encodeURI(mensaje);
+  static pagoPedidoToEmpleadoCaja(pedido: Pedido) {
+    const mensaje = `Envío imagen con pago por pedido con código ${pedido.id}, por un monto de S/. ${pedido.precioNetoTotal.toFixed(2)}, fecha creación de pedido  ${moment(pedido.createAt).format('DD/MM/yyyy HH:mm:ss')}`
+    const link = environment.URL_WHATSAPP_CAJA + encodeURI(mensaje);
     window.open(link, "_blank")
   }
 

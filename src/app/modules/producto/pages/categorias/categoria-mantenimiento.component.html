@@ -43,13 +43,35 @@
                   </div>}
                 </div>
               </div>
+              <div class="row mb-2">
+                @if (authService.hasRole('ROLE_ACTIVE_CATEGORIA')) {
+                <label for="activa" class="form-label col-sm-4"><b>Categoria activa</b></label>
+                <div class="form-check form-switch col-sm-2">
+                  <input class="form-check-input" type="checkbox" formControlName="activa" name="activa"
+                    [checked]="categoria.activa">
+                  @if(formUtils.isValidField(formCategoria,'activa')){
+                  <div class="alert alert-danger">
+                    {{formUtils.getFieldError(formCategoria,'activa')}}
+                  </div>}
+                </div>
+                }
+                @if (authService.hasRole('ROLE_VIEW_TIENDA_CATEGORIA')) {
+                <label for="visibleEnTienda" class="form-label col-sm-4"><b>Visible en tienda</b></label>
+                <div class="form-check form-switch col-sm-2">
+                  <input class="form-check-input" type="checkbox" formControlName="visibleEnTienda"
+                    name="visibleEnTienda" [checked]="categoria.visibleEnTienda">
+                  @if(formUtils.isValidField(formCategoria,'visibleEnTienda')){
+                  <div class="alert alert-danger">
+                    {{formUtils.getFieldError(formCategoria,'visibleEnTienda')}}
+                  </div>}
+                </div>
+                }
+              </div>
             </div>
             <div class="col-sm">
               <div class="row mb-2">
-
+                @if (authService.hasRole('ROLE_IMAGE_CATEGORIA')) {
                 <div class="row mb-2">
-                  <!--                 <label for="formFile" class="form-label col-sm-4"><b>Imágen de categoria:</b><br>Visible en
-                  Home</label> -->
                   <div class="input-group col-sm">
                     <input #file (change)="this.isImage(file)" type="file" name="imagen" class="form-control"
                       style="padding: 25px;" id="inputGroupFile04" aria-describedby="inputGroupFileAddon04">
@@ -57,25 +79,14 @@
                       [disabled]="!this.isImage(file)" id="inputGroupFileAddon04">Subir</button>
                   </div>
                 </div>
-
-                <div class="row mb-2">
-                  <label for="activa" class="form-label col-sm-4"><b>Categoria activa</b></label>
-                  <div class="form-check form-switch col-sm-2">
-                    <input class="form-check-input" type="checkbox" formControlName="activa" name="activa"
-                      [checked]="categoria.activa">
-                    @if(formUtils.isValidField(formCategoria,'activa')){
-                    <div class="alert alert-danger">
-                      {{formUtils.getFieldError(formCategoria,'activa')}}
-                    </div>}
-                  </div>
-                </div>
-
                 <div class="row mb-2">
                   <div class="col-sm">
                     <img *ngIf="categoria?.imagen" [src]="verImagenCategoria" alt="{{categoria.imagen}}"
                       class="img-fluid img-thumbnail rounded mx-auto d-block">
                   </div>
                 </div>
+
+                }
                 <!--             <div class="row mb-2">
               <div class="ol-sm-6">
                 <span>Valid:</span>

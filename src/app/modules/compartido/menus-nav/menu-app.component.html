@@ -5,16 +5,16 @@
       INICIO</a>
   </div> -->
   <!----------------------1-------------------->
-  <div mat-subheader *ngIf="authService.hasRole('ROLE_LIST_CLIENTES') || authService.hasRole('ROLE_REGISTER_CLIENTE')">
+  <div mat-subheader *ngIf="authService.hasRole('ROLE_LIST_PERSONAS') || authService.hasRole('ROLE_REGISTER_PERSONA')">
     <mat-icon>diversity_3</mat-icon>PERSONAS
   </div>
-  <ng-container *ngIf="authService.hasRole('ROLE_LIST_CLIENTES')">
-    <a mat-list-item [routerLink]="['clientes']" [routerLinkActive]="['active']"
+  <ng-container *ngIf="authService.hasRole('ROLE_LIST_PERSONAS')">
+    <a mat-list-item [routerLink]="['personas']" [routerLinkActive]="['active']"
       [routerLinkActiveOptions]="{exact: true}">
       Listado personas</a>
   </ng-container>
-  <ng-container *ngIf="authService.hasRole('ROLE_REGISTER_CLIENTE')">
-    <a mat-list-item [routerLink]="['clientes/form']" [routerLinkActive]="['active']"
+  <ng-container *ngIf="authService.hasRole('ROLE_REGISTER_PERSONA')">
+    <a mat-list-item [routerLink]="['personas/form']" [routerLinkActive]="['active']"
       [routerLinkActiveOptions]="{exact: true}">
       Registro personas</a>
   </ng-container>
@@ -47,19 +47,25 @@
   </ng-container>
   <!----------------------3-------------------->
   <div mat-subheader
-    *ngIf="authService.hasRole('ROLE_REGISTER_MOVCAJA') || authService.hasRole('ROLE_REPORT_MOVCAJA') || authService.hasRole('ROLE_RPTE_MOVCAJA_USUARIO')">
+    *ngIf="authService.hasRole('ROLE_REGISTER_PAGO_PEDIDO') || authService.hasRole('ROLE_REGISTER_MOVCAJA') || authService.hasRole('ROLE_REPORT_MOVCAJA') || authService.hasRole('ROLE_RPTE_MOVCAJA_USUARIO')">
     <mat-icon>currency_exchange</mat-icon>MOVIMIENTOS CAJA
   </div>
+  <ng-container *ngIf="authService.hasRole('ROLE_REGISTER_PAGO_PEDIDO')">
+    <a mat-list-item [routerLink]="['movimientos']" [routerLinkActive]="['active']"
+      [routerLinkActiveOptions]="{exact: true}">Registro pago por pedido</a>
+  </ng-container>
   <ng-container *ngIf="authService.hasRole('ROLE_REGISTER_MOVCAJA')">
-    <a mat-list-item [routerLink]="['movimientos/caja']" [routerLinkActive]="['active']">Registro Ingreso/Egreso
+    <a mat-list-item [routerLink]="['movimientos/caja']" [routerLinkActive]="['active']"
+      [routerLinkActiveOptions]="{exact: true}">Registro Ingreso/Egreso
       caja chica</a>
   </ng-container>
   <ng-container *ngIf="authService.hasRole('ROLE_REPORT_MOVCAJA')">
-    <a mat-list-item [routerLink]="['movimientos/rpte-mov-en-caja']" [routerLinkActive]="['active']">Reporte
-      movimientos</a>
+    <a mat-list-item [routerLink]="['movimientos/rpte-mov-en-caja']" [routerLinkActive]="['active']"
+      [routerLinkActiveOptions]="{exact: true}">Reporte movimientos</a>
   </ng-container>
   <ng-container *ngIf="authService.hasRole('ROLE_RPTE_MOVCAJA_USUARIO')">
-    <a mat-list-item [routerLink]="['movimientos/rpte-mov-en-caja-por-usuario']" [routerLinkActive]="['active']">Reporte
+    <a mat-list-item [routerLink]="['movimientos/rpte-mov-en-caja-por-usuario']" [routerLinkActive]="['active']"
+      [routerLinkActiveOptions]="{exact: true}">Reporte
       movimientos por cajero</a>
   </ng-container>
   <!----------------------4-------------------->
@@ -111,9 +117,14 @@
       [routerLinkActiveOptions]="{exact: true}">
       Listado de usuarios</a>
   </ng-container>
-  <ng-container *ngIf="this.authService.isAuthenticated()">
-    <a (click)="logout()" mat-list-item [routerLink]="['/tienda/productos-categoria','Tienda']" [routerLinkActive]="['active']"
+  <ng-container *ngIf="authService.hasRole('ROLE_REGISTER_USUARIO')">
+    <a mat-list-item [routerLink]="['usuarios/add']" [routerLinkActive]="['active']"
       [routerLinkActiveOptions]="{exact: true}">
+      Registro de usuarios</a>
+  </ng-container>
+  <ng-container *ngIf="this.authService.isAuthenticated()">
+    <a (click)="logout()" mat-list-item [routerLink]="['/tienda/productos-categoria','Tienda']"
+      [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact: true}">
       Cerrar sesión</a>
   </ng-container>
 </mat-nav-list>

@@ -46,7 +46,7 @@
                 </td>
                 <td>
                   @if (authService.hasRole('ROLE_UPDATE_CATEGORIA')) {
-                  <button *ngIf="authService.hasRole('ROLE_UPDATE_CATEGORIA')" mat-icon-button color="primary"
+                  <button mat-icon-button color="primary"
                     [routerLink]="['/productos/categorias', cat.id]" matTooltip="Actualizar categoria">
                     <mat-icon>edit</mat-icon>
                   </button>

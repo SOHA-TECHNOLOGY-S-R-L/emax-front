@@ -5,7 +5,7 @@ import { ActivatedRoute, RouterModule } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
 import { COLOR_ESTADO_PRODUCTO } from '../../../../constants/color-estado-producto';
-import { SERVICIO_DISENIO, SERVICIO_SUBLIMACION } from '../../../../constants/constantes';
+import { SERVICIO_GRABADO_IMAGEN } from '../../../../constants/constantes';
 import { ItemPedido } from '../../../../models/item-pedido';
 import { Producto } from '../../../../models/producto';
 import { AuthService } from '../../../../services/auth.service';
@@ -15,6 +15,7 @@ import { ProductoService } from '../../../../services/producto.service';
 import { ChatUtils } from '../../../../utils/chat-utils';
 import { FormUtils } from '../../../../utils/form-utils';
 import { AngularMaterialModule } from '../../../compartido/angular-material.module';
+import { AlertService } from './../../../../services/alert.service';
 
 @Component({
   selector: 'customize-item-producto-to-client',
@@ -31,6 +32,7 @@ export class CustomizeItemProductoToClientComponent implements OnInit, OnChanges
   private itemService = inject(ItemService);
   private activatedRoute = inject(ActivatedRoute);
   public authService = inject(AuthService);
+  private alertService = inject(AlertService);
 
   @Input() producto!: Producto;
 
@@ -39,19 +41,21 @@ export class CustomizeItemProductoToClientComponent implements OnInit, OnChanges
   chatUtils = ChatUtils;
   verImagenProducto!: string;
   verImagenItem!: string;
-  servicioDisenio!: Producto;
-  servicioSublimacion!: Producto;
+  //servicioDisenio!: Producto;
+  servicioGrabadoImagen!: Producto;
 
   item = new ItemPedido()
   items: ItemPedido[] = [];
   gruposDe!: number;
   minCantidadPedido!: number;
   maxCantidadPedido!: number;
-  isDisenio: boolean = false;
+  //isDisenio: boolean = false;
+  isGrabarImagen: boolean = false;
+
   frm = this.formBuilder.group({
     descripcion: [''],
-    cantidad: [0],
-    disenio: [false]
+    cantidad: [0]
+    //isGrabarImagen: [false]
   })
   constructor() {
     this.itemServiceSuscription$ = this.itemService.getItems().subscribe({
@@ -69,12 +73,12 @@ export class CustomizeItemProductoToClientComponent implements OnInit, OnChanges
           this.items = this.itemService.getLocalStorageItems()
         } */
 
-    this.productoService.getProductoByCod(SERVICIO_DISENIO).subscribe(prd => {
-      this.servicioDisenio = prd;
-    });
+    /*     this.productoService.getProductoByCod(SERVICIO_DISENIO).subscribe(prd => {
+          this.servicioDisenio = prd;
+        }); */
 
-    this.productoService.getProductoByCod(SERVICIO_SUBLIMACION).subscribe(prd => {
-      this.servicioSublimacion = prd;
+    this.productoService.getProductoByCod(SERVICIO_GRABADO_IMAGEN).subscribe(prd => {
+      this.servicioGrabadoImagen = prd;
     });
   }
 
@@ -95,29 +99,54 @@ export class CustomizeItemProductoToClientComponent implements OnInit, OnChanges
     return this.authService.isAuthenticated();
   }
 
-
-  isImage(fileInput: HTMLInputElement): boolean {
-    return this.mediosUtilsService.isImage(fileInput);
-  }
-
   subirImagen(fileInput: HTMLInputElement) {
     if (fileInput && fileInput.files && fileInput.files.length > 0) {
       const imagen: File = fileInput.files[0];
-      this.mediosUtilsService.subirImagen(imagen, true).subscribe(resp => {
-        //this.mediosUtilsService.imageToBase64(imagen);
-        this.verImagenItem = environment.API_URL_VER_IMAGEN + resp.imagen;
-        this.item.imagen = resp.imagen;
-        // this.mediosUtilsService.imagenSeleccionada = null;  Limpiar la imagen seleccionada
-      })
+      console.log(imagen.type.indexOf('image'));
+      if (imagen.type.indexOf('image') >= 0) {
+        this.mediosUtilsService.subirImagen(imagen, true).subscribe(resp => {
+          //this.mediosUtilsService.imageToBase64(imagen);
+          this.verImagenItem = environment.API_URL_VER_IMAGEN + resp.imagen;
+          this.item.imagen = resp.imagen;
+          this.isGrabarImagen = true;
+          // this.mediosUtilsService.imagenSeleccionada = null;  Limpiar la imagen seleccionada
+        })
+      } else {
+        this.alertService.error('El archivo debe ser del tipo imagen', 'Imagen');
+        return;
+      }
     }
   }
 
-  addOneItemServicioDisenio(event: any) {
-    this.isDisenio = event.target.checked;
-    if (this.isDisenio) {
-      this.item.cantidad = this.servicioDisenio.minCantidadPedido;
-      this.item.descripcion = this.servicioDisenio.descripcion;
-      this.item.producto = { ...this.servicioDisenio };
+
+  addOneItemServicioGrabadoImagen2() {
+    //debugger;
+    if (this.isGrabarImagen) {
+      this.item.cantidad = (this.frm.get('cantidad')?.value ? this.frm.get('cantidad')?.value : 0)!;
+      this.item.descripcion = this.servicioGrabadoImagen.descripcion;
+      this.item.producto = { ...this.servicioGrabadoImagen };
+      this.item.imagenUri = environment.API_URL_VER_IMAGEN + this.item.imagen
+
+      if (this.itemService.existItemInItems(this.items, this.item.producto.id)) {
+        this.items = this.itemService.UpdateAmountItemFromExterno(this.items, this.item.producto.id, this.item.cantidad);
+        this.itemService.setItems(this.items);
+        //this.itemService.saveLocalStorageItems(this.items);
+      }
+      else if (this.item.cantidad <= this.item.producto.maxCantidadPedido) {
+        this.items = [...this.items, { ...this.item }];
+        this.addItem(this.items, this.item);
+      }
+    } //else {
+    //this.deleteItem(this.items, this.item.producto.id);
+    //}
+  }
+
+  addOneItemServicioGrabadoImagen() {
+    //debugger;
+    if (this.isGrabarImagen) {
+      this.item.cantidad = (this.frm.get('cantidad')?.value ? this.frm.get('cantidad')?.value : 0)!;
+      this.item.descripcion = this.servicioGrabadoImagen.descripcion;
+      this.item.producto = { ...this.servicioGrabadoImagen };
       this.item.imagenUri = environment.API_URL_VER_IMAGEN + this.item.imagen
 
       if (!this.itemService.existItemInItems(this.items, this.item.producto.id)
@@ -126,31 +155,9 @@ export class CustomizeItemProductoToClientComponent implements OnInit, OnChanges
         this.itemService.setItems(this.items);
         //this.itemService.saveLocalStorageItems(this.items);
       }
-    } else {
-      this.deleteItem(this.items, this.item.producto.id);
-
-    }
-  }
-
-  addOneItemServicioSublimacion(event: any) {
-    this.isDisenio = event.target.checked;
-    console.log(this.servicioSublimacion);
-
-    if (this.isDisenio) {
-      this.item.cantidad = this.servicioSublimacion.minCantidadPedido;
-      this.item.descripcion = this.servicioSublimacion.descripcion;
-      this.item.producto = { ...this.servicioSublimacion };
-      this.item.imagenUri = environment.API_URL_VER_IMAGEN + this.item.imagen
-
-      if (!this.itemService.existItemInItems(this.items, this.item.producto.id)
-        && this.item.cantidad <= this.item.producto.maxCantidadPedido) {
-        this.items = [...this.items, { ...this.item }];
-        this.itemService.setItems(this.items);
-        //this.itemService.saveLocalStorageItems(this.items);
-      }
-    } else {
-      this.deleteItem(this.items, this.item.producto.id);
-    }
+    } //else {
+    //this.deleteItem(this.items, this.item.producto.id);
+    //}
   }
 
   deleteItem(items: ItemPedido[], productoId: number) {
@@ -166,6 +173,7 @@ export class CustomizeItemProductoToClientComponent implements OnInit, OnChanges
   }
 
   sendOneItemProducto() {
+    //debugger;
     this.item.cantidad = (this.frm.get('cantidad')?.value ? this.frm.get('cantidad')?.value : 0)!;
     this.item.descripcion = (this.frm.get('descripcion')?.value ? this.frm.get('descripcion')?.value : '')!;
     this.item.producto = { ...this.producto };
@@ -179,11 +187,12 @@ export class CustomizeItemProductoToClientComponent implements OnInit, OnChanges
       this.items = [...this.items, { ...this.item }];
       this.addItem(this.items, this.item);
     }
+    this.addOneItemServicioGrabadoImagen2();
   }
 
   chatear(producto: Producto) {
-    const url = encodeURI( `${environment.apiFront}/tienda/productos-categoria/${producto.categoria?.nombre}/item-producto-cliente-online/${producto.codigo}`);
-    this.chatUtils.infoString(url);
+    const url = encodeURI(`${environment.apiFront}/tienda/productos-categoria/${producto.categoria?.nombre}/item-producto-persona-online/${producto.codigo}`);
+    this.chatUtils.infoFromEmpleadoVenta(url);
   }
 
   ngOnDestroy(): void {

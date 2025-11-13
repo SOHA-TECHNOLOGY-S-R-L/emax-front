@@ -6,6 +6,7 @@ export class Categoria {
   descripcion!:string;
   imagen: string = 'no-imagen.png';
   activa!:boolean
+  visibleEnTienda!:boolean
   colorActiva!:string;
   orden!: number;
   productos :Producto[]=[];

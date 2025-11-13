@@ -18,9 +18,13 @@
       <table [ngClass]="{'d-none': !dataSource.length}" mat-table [dataSource]="dataSource" matSort
         matSortActive="entregadoEn" matSortDisableClear matSortDirection="desc">
 
+        <ng-container matColumnDef="id">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Id </th>
+          <td mat-cell *matCellDef="let element"> {{element.id}} </td>
+        </ng-container>
         <ng-container matColumnDef="nomApellRz">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header> Cliente </th>
-          <td mat-cell *matCellDef="let element"> {{element.cliente.nomApellRz}} </td>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Persona </th>
+          <td mat-cell *matCellDef="let element"> {{element.persona.nomApellRz}} </td>
         </ng-container>
 
         <ng-container matColumnDef="createAt">
@@ -64,11 +68,11 @@
           <th mat-header-cell *matHeaderCellDef> Acciones </th>
           <td mat-cell *matCellDef="let element">
             <div class="d-flex flex-row">
-              <button *ngIf="authService.hasRole('ROLE_REGISTER_PAGO_PEDIDO')" mat-icon-button color="warn"
-                (click)="setPedido(element)" matTooltip="Pagar">
+               <button *ngIf="authService.hasRole('ROLE_REGISTER_PAGO_PEDIDO')" mat-icon-button color="warn"
+                [routerLink]="['/movimientos', element.id]" matTooltip="Pagar">
                 <mat-icon>price_change</mat-icon>
               </button>
-              <button *ngIf="authService.hasRole('ROLE_VIEW_DETAILS_PEDIDO')" mat-icon-button color="primary"
+              <button *ngIf="authService.hasRole('ROLE_VIEW_DETAILS_VENTA')" mat-icon-button color="primary"
                 [routerLink]="['/pedidos/detalle-venta', element.id]" matTooltip="Ver Detalle">
                 <mat-icon>visibility</mat-icon>
               </button>
@@ -90,6 +94,10 @@
       <table [ngClass]="{'d-none': !dataSource.length}" mat-table [dataSource]="dataSource" matSort
         matSortActive="entregadoEn" matSortDisableClear matSortDirection="desc">
 
+<!--         <ng-container matColumnDef="id">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Entrega </th>
+          <td mat-cell *matCellDef="let element"> {{element.id}} </td>
+        </ng-container> -->
 
         <ng-container matColumnDef="entregadoEn">
           <th mat-header-cell *matHeaderCellDef mat-sort-header> Entrega </th>
@@ -117,7 +125,7 @@
           <th mat-header-cell *matHeaderCellDef>Ver</th>
           <td mat-cell *matCellDef="let element">
             <div class="d-flex flex-row">
-              <button *ngIf="authService.hasRole('ROLE_VIEW_DETAILS_PEDIDO')" mat-icon-button color="primary"
+              <button *ngIf="authService.hasRole('ROLE_VIEW_DETAILS_VENTA')" mat-icon-button color="primary"
                 [routerLink]="['/pedidos/detalle-venta', element.id]" matTooltip="Ver Detalle">
                 <mat-icon>visibility</mat-icon>
               </button>

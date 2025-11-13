@@ -18,7 +18,7 @@ export class Producto {
   cantidadVendidos: number = 0;
   cantidadStock: number = 0; // esto se actualiza al comprar
   minCantidadPedido: number = 1;
-  maxCantidadPedido: number = 100000;
+  maxCantidadPedido: number = 1;
   gruposDe: number = 1;
   costoUnitario: number = 1;// esto se actualiza al comprar
   //costoPersonalizacion: number=0;

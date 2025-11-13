@@ -1,6 +1,4 @@
-
-@if(producto.cantidadStock < producto.umbralCantidadAgotada ) {
-  <div class="row col-12 alert alert-danger mt-2 ">
+@if(producto.cantidadStock < producto.umbralCantidadAgotada ) { <div class="row col-12 alert alert-danger mt-2 ">
   SIN STOCK! No podrá concluir su pedido.
   </div>
   }
@@ -49,42 +47,18 @@
         </div>
       </div>
       }
-
-
-      <!--         <h2>REALIZAR PEDIDO</h2>
- -->
       <form id="addToCart" [formGroup]="frm" (ngSubmit)="sendOneItemProducto()">
         <div class="container-fluid">
           <div class="row mb-2">
-            <label for="addDisenio" class="col-8"><b>¿GRABAR IMAGEN EN EL ARTÍCULO?:</b> </label>
-            <div class="col-4">
-              <div class="form-check form-check-inline">
-                <input class="form-check-input" type="checkbox" formControlName="disenio" name="disenio" id="addDisenio"
-                  (click)="addOneItemServicioDisenio($event); addOneItemServicioSublimacion($event);">
-                <label class="form-check-label" for="addDisenio">Sí</label>
-              </div>
+            <label for="addDisenio" class="col-6"><b>¿GRABAR IMAGEN EN PRODUCTOS?</b> </label>
+            <div class="input-group col-6">
+              <input #file type="file" (change)="subirImagen(file)" name="imagen" class="form-control"
+                style="display: none;" id="inputGroupFile04" aria-describedby="inputGroupFileAddon04">
+              <label for="inputGroupFile04" class="btn btn-secondary">📁 Elegir imagen</label>
             </div>
           </div>
-          @if (this.isDisenio) {
-          <div class="row mb-2">
-            <div class="input-group col-12">
-              <input #file (change)="this.isImage(file)" type="file" name="imagen" class="form-control"
-                style="padding: 25px;" id="inputGroupFile04" aria-describedby="inputGroupFileAddon04">
-              <button (click)="subirImagen(file)" class="btn btn-primary" type="button" [disabled]="!this.isImage(file)"
-                id="inputGroupFileAddon04">Subir</button>
-            </div>
 
-            <!--           <div class="input-group">
-            <input type="text" class="form-control border-0" style="padding: 25px;" placeholder="Your Email">
-            <div class="input-group-append">
-              <button class="btn btn-primary px-4">Sign Up</button>
-            </div>
-          </div> -->
-          </div>
-          }
           <div class="row mb-2">
-            <!--                     <label for="descripcion" class="col-form-label col-12"><b>Descripción:</b> </label>
- -->
             <div class="input-group col-12">
               <textarea formControlName="descripcion" name="descripcion" class="form-control"
                 [ngStyle]="{'resize': 'none'}" placeholder="¿Algo que debamos conciderar en su pedido?" maxlength="250"

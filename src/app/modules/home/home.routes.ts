@@ -1,9 +1,8 @@
-import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
-import { NosotrosComponent } from './pages/nosotros/nosotros.component';
+import { Routes } from '@angular/router';
+import { UbicanosClienteComponent } from './pages/ubicanos-cliente/ubicanos-cliente.component';
 import { HomeComponent } from './pages/home.component';
-import { ProductoServicioClienteComponent } from './pages/producto-servicio-cliente/producto-servicio-cliente.component';
-import { ContactanosClienteComponent } from './pages/contactanos-cliente/contactanos-cliente.component';
+import { NosotrosComponent } from './pages/nosotros/nosotros.component';
+import { ProductosClienteComponent } from './pages/productos-cliente/productos-cliente.component';
 
 export const routes: Routes = [
   {
@@ -12,8 +11,8 @@ export const routes: Routes = [
     pathMatch: 'full'
   },
   { path: 'nosotros', component: NosotrosComponent },
-  { path: 'productos-servicios', component: ProductoServicioClienteComponent },
-  { path: 'contactanos-cliente', component: ContactanosClienteComponent },
+  { path: 'productos-cliente', component: ProductosClienteComponent },
+  { path: 'ubicanos-cliente', component: UbicanosClienteComponent },
 ];
 
 /* @NgModule({

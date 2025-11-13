@@ -9,10 +9,10 @@ import moment from 'moment';
 import { Observable } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { Caja } from '../../../../models/caja';
-import { Cliente } from '../../../../models/cliente';
+import { Persona } from '../../../../models/persona';
 import { Usuario } from '../../../../models/usuario';
 import { CajaService } from '../../../../services/caja.service';
-import { ClienteService } from '../../../../services/cliente.service';
+import { PersonaService } from '../../../../services/persona.service';
 import { MovimientoService } from '../../../../services/movimiento.service';
 import { UsuarioService } from '../../../../services/usuario.service';
 import { AngularMaterialModule } from '../../../compartido/angular-material.module';
@@ -33,12 +33,12 @@ export class RpteMovimientoEnCajaComponent implements OnInit {
   caja!: Caja;
 
   autocompleteControl = new FormControl();
-  filteredOptions!: Observable<Cliente[]>;
+  filteredOptions!: Observable<Persona[]>;
 
   constructor(
     private formBuilder: FormBuilder,
     private cajaService: CajaService,
-    private clienteService: ClienteService,
+    private personaService: PersonaService,
     private movimientoService: MovimientoService,
     private usuarioService: UsuarioService,
     private activatedRoute: ActivatedRoute,
@@ -60,7 +60,7 @@ export class RpteMovimientoEnCajaComponent implements OnInit {
       fecha_transaccion2: [now.toISOString().slice(0, 16)],
       caja_id: [],
       usuario_id: [],
-      cliente_id: []
+      persona_id: []
     }
 
     this.createForm();
@@ -73,19 +73,19 @@ export class RpteMovimientoEnCajaComponent implements OnInit {
 
   }
 
-  private _filter(value: string): Observable<Cliente[]> {
+  private _filter(value: string): Observable<Persona[]> {
     const filterValue = value.toLowerCase();
-    return this.clienteService.filtrarClientes(filterValue);
+    return this.personaService.filtrarPersonas(filterValue);
   }
 
-  mostrarApellidoCliente(cliente: Cliente): string {
-    return cliente && cliente.nomApellRz ? cliente.nomApellRz : '';
+  mostrarApellidoPersona(persona: Persona): string {
+    return persona && persona.nomApellRz ? persona.nomApellRz : '';
   }
 
   seleccionar(event: MatAutocompleteSelectedEvent): void {
-    let cliente = event.option.value as Cliente;
-    console.log(cliente);
-    this.filtrosReporte.cliente_id = [cliente.id]
+    let persona = event.option.value as Persona;
+    console.log(persona);
+    this.filtrosReporte.persona_id = [persona.id]
   }
 
   generarReporte() {
@@ -132,7 +132,7 @@ export class RpteMovimientoEnCajaComponent implements OnInit {
         fchTimeHasta: [this.filtrosReporte.fecha_transaccion2[0]],
         cajasId: [this.filtrosReporte.caja_id[0]],
         usuariosId: [this.filtrosReporte.usuario_id[0]],
-        cleintesId: [this.filtrosReporte.cliente_id[0]]
+        cleintesId: [this.filtrosReporte.persona_id[0]]
       }
     )
   }
@@ -144,7 +144,7 @@ interface FiltrosReporte {
   fecha_transaccion2: string[],
   caja_id: string[],
   usuario_id: number[],
-  cliente_id: number[]
+  persona_id: number[]
 
 }
 

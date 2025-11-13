@@ -42,7 +42,7 @@ export class AuthInterceptor implements HttpInterceptor {
         if (e.status == 403) {
           this.alertsService.warning(`Hola ${this.authService.usuario.username} no tienes acceso a este recurso!`,'Acceso denegado')
           //swal.fire('Acceso denegado', `Hola ${this.authService.usuario.username} no tienes acceso a este recurso!`, 'warning');
-          //this.router.navigate(['/clientes']);
+          //this.router.navigate(['/personas']);
         }
         return throwError(e);
       })

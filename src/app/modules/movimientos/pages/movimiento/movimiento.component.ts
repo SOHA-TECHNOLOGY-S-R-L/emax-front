@@ -1,12 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { Router, RouterModule } from '@angular/router';
+import { Component, ElementRef, inject, OnInit, ViewChild } from '@angular/core';
+import { FormsModule, NgForm, ReactiveFormsModule } from '@angular/forms';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import * as fileSaver from 'file-saver-es';
 import { find } from 'lodash-es';
-import moment from 'moment';
 import { concatMap } from 'rxjs';
-import { COLOR_CAJA_USUARIO, ESTADO_CAJA_USUARIO } from '../../../../constants/caja-usuario.constants';
+import { ESTADO_CAJA_USUARIO } from '../../../../constants/caja-usuario.constants';
 import { CajaUsuario } from '../../../../models/caja-usuario';
 import { Movimiento } from '../../../../models/movimiento';
 import { Pedido } from '../../../../models/pedido';
@@ -17,108 +16,125 @@ import { AuthService } from '../../../../services/auth.service';
 import { CajaService } from '../../../../services/caja.service';
 import { MovimientoService } from '../../../../services/movimiento.service';
 import { PedidoService } from '../../../../services/pedido.service';
+import { InfoCajaUsuarioComponent } from '../../../caja/components/info-caja-usuario/info-caja-usuario.component';
 import { AngularMaterialModule } from '../../../compartido/angular-material.module';
+import { SearchBoxTableComponent } from '../../../compartido/search-box-table/search-box-table.component';
+import { UsuarioService } from '../../../../services/usuario.service';
 
 
 @Component({
   selector: 'app-movimiento',
   templateUrl: './movimiento.component.html',
   styleUrl: './movimiento.component.css',
-  standalone:true,
-  imports: [CommonModule, RouterModule, AngularMaterialModule , FormsModule, ReactiveFormsModule ]
+  standalone: true,
+  imports: [CommonModule, RouterModule, AngularMaterialModule, FormsModule, ReactiveFormsModule, InfoCajaUsuarioComponent]
 })
 export class MovimientoComponent implements OnInit {
-  titulo: string = 'Movimiento de pago'
+  private activatedRoute = inject(ActivatedRoute);
+  private pedidoService = inject(PedidoService);
+
+  titulo: string = '';
   movimiento = new Movimiento();
-  cajaUsuario!: CajaUsuario;
+  cajaUsuario = new CajaUsuario();
   pedido!: Pedido;
   tipoPagos: TipoPago[] = [];
   tipoMovimientosPedidoLst: TipoMovimientoPedido[] = [];
   tipoMovPedidoIngresos: TipoMovimientoPedido[] = [];
   tipoMovPedidoEgresos: TipoMovimientoPedido[] = [];
-  isAutenticado!: boolean;
-  //user!: Usuario;
-  username!: string;
   iMovimiento: string = "I";
-  estadoCajaUsuarioMap = ESTADO_CAJA_USUARIO;
+  pedidoIdSearch: string = '';
+  isFromPedidos: boolean = false;
+
+  @ViewChild("searchPedidoText") searchText!: ElementRef;
+
 
 
   constructor(private cajasService: CajaService,
     private movimientoService: MovimientoService,
-    private pedidoService: PedidoService,
-    public authService: AuthService,
+    private authService: AuthService,
+    private usuarioService: UsuarioService,
     private alertService: AlertService,
     private router: Router
   ) {
 
   }
-
-
   ngOnInit(): void {
-    //this.isAutenticado = this.authService.isAuthenticated();
-    if (this.authService.isAuthenticated()) {
-      this.username = this.authService.usuario.username;
-    }
-    //trae pedidos
-    this.pedido = { ...this.pedidoService.pedido };
-    this.cajasService.getCajaUsuarioByUserName(this.username).subscribe(
-      res => {
-        //console.log("getCajaUsuarioByUserName...", res)
-        if (res !== null && res.activa) {
-          this.cajaUsuario = res
-          this.cajaUsuario.fechaApertura = moment(this.cajaUsuario.fechaApertura).format('DD/MM/yyyy HH:mm:ss');
-          this.cajaUsuario.fechaActualizacion = moment(this.cajaUsuario.fechaActualizacion).format('DD/MM/yyyy HH:mm:ss');
-          this.cajaUsuario.color = COLOR_CAJA_USUARIO[('' + res.activa) as keyof typeof COLOR_CAJA_USUARIO];
-        } else {
-          this.alertService.info(`Debe aperturar caja`, "Caja")
-          //swal.fire('', `Debe aperturar caja`, 'info');
-          this.router.navigate(['/cajas']);
-        }
-      }
-    )
-    // trae tipo de pagos
-    this.movimientoService.getAllTipoPagos().subscribe(
-      response => this.tipoPagos = response
-    )
 
-    //trae tipo de movimientos
-    this.movimientoService.getAllTipoMovimientosPedido().subscribe(
-      response => {
-        this.tipoMovPedidoIngresos = response.filter(f => f.tipo == "I")
-        this.tipoMovPedidoEgresos = response.filter(f => f.tipo == "E")
-      })
+    this.activatedRoute.paramMap.subscribe(params => {
+      this.pedidoIdSearch = params.get('pedidoId')!;
+      if (this.pedidoIdSearch != null) {
+        this.isFromPedidos = true;
+      }
+    });
+    this.movimientoService.getAllTipoPagos().subscribe(response => this.tipoPagos = response);
+    this.getCajaUsuario();
   }
 
-  ngAfterViewInit(): void {
-    if (this.pedido.tipoPedido.nombre == "VENTA AL CLIENTE") {
-      this.iMovimiento = 'I'
-      this.changeTipoMovimiento(this.iMovimiento);
+  getCajaUsuario(): void {
+    if (this.authService.isAuthenticated()) {
+      const username = this.authService.usuario.username;
+      this.cajasService.getCajaUsuarioByUserName(username).subscribe(
+        result => {
+          if (result !== null && result.activa) {
+            this.cajaUsuario = result;
+          } else {
+            this.alertService.info(`Aperturar caja para realizar movimientos en caja `, "Caja")
+            this.router.navigate(['/cajas']);
+          }
+        }
+      )
+    } else {
+      this.alertService.info(`Se cerro la sesión sesión por tiempo de inactividad `, "Caja")
+      this.router.navigate(['/']);
     }
-    if (this.pedido.tipoPedido.nombre == "COMPRA O ADQUISICION") {
-      this.iMovimiento = 'E'
-      this.changeTipoMovimiento(this.iMovimiento);
+  }
+
+  searchByPedidoId(event: any): void {
+    const pedidoId = +event
+    if (!isNaN(pedidoId) && !Number.isInteger(pedidoId)) {
+      this.alertService.error("Debe ingrear un número de Pedido valido", "Registro de pago pedido");
+      return;
     }
+
+    this.pedidoService.getPedido(pedidoId).subscribe(pedido => {
+      this.pedido = pedido
+      this.titulo = `${this.pedido.tipoPedido.nombre}`
+      this.movimientoService.getAllTipoMovimientosPedido().subscribe(
+        tipoMov => {
+          this.tipoMovPedidoIngresos = tipoMov.filter(f => f.tipo === "I")
+          this.tipoMovPedidoEgresos = tipoMov.filter(f => f.tipo === "E")
+          if (this.pedido.tipoPedido.nombre === "VENTA PERSONA") {
+            this.iMovimiento = 'I'
+            this.changeTipoMovimiento(this.iMovimiento);
+          }
+          if (this.pedido.tipoPedido.nombre === "COMPRA O ADQUISICION") {
+            this.iMovimiento = 'E'
+            this.changeTipoMovimiento(this.iMovimiento);
+          }
+        })
+    }
+    );
   }
 
   changeTipoMovimiento(tipo: string) {
     this.tipoMovimientosPedidoLst = []
     this.movimiento.egresoDinero = 0;
     this.movimiento.ingresoDinero = 0;
-    if (tipo == "I") {
-      this.tipoMovimientosPedidoLst = this.tipoMovPedidoIngresos
-      if (this.pedido.tipoPedido.nombre == "VENTA AL CLIENTE") {
+    if (tipo === "I") {
+      this.tipoMovimientosPedidoLst = [...this.tipoMovPedidoIngresos]
+      if (this.pedido.tipoPedido.nombre === "VENTA PERSONA") {
         this.movimiento.tipoMovimientoPedido = this.findTipoMovimientoPedido(1);
       }
-      if (this.pedido.tipoPedido.nombre == "COMPRA O ADQUISICION") {
+      if (this.pedido.tipoPedido.nombre === "COMPRA O ADQUISICION") {
         this.movimiento.tipoMovimientoPedido = this.findTipoMovimientoPedido(4);
       }
     }
-    if (tipo == "E") {
-      this.tipoMovimientosPedidoLst = this.tipoMovPedidoEgresos
-      if (this.pedido.tipoPedido.nombre == "VENTA AL CLIENTE") {
+    if (tipo === "E") {
+      this.tipoMovimientosPedidoLst = [...this.tipoMovPedidoEgresos]
+      if (this.pedido.tipoPedido.nombre === "VENTA PERSONA") {
         this.movimiento.tipoMovimientoPedido = this.findTipoMovimientoPedido(2);
       }
-      if (this.pedido.tipoPedido.nombre == "COMPRA O ADQUISICION") {
+      if (this.pedido.tipoPedido.nombre === "COMPRA O ADQUISICION") {
         this.movimiento.tipoMovimientoPedido = this.findTipoMovimientoPedido(3);
       }
     }
@@ -154,7 +170,7 @@ export class MovimientoComponent implements OnInit {
     }
   }
 
-  onSubmitForm() {
+  onSubmitForm(form: NgForm) {
     this.movimiento.pedido = this.pedido
     this.movimiento.pedido.createAt = "";
     this.movimiento.pedido.entregadoEn = "";
@@ -167,23 +183,40 @@ export class MovimientoComponent implements OnInit {
     this.cajaUsuario.movimientos = []
 
     this.movimiento.cajaUsuario = { ...this.cajaUsuario }
-    //console.log("onSubmitForm...", this.movimiento);
-    if (this.pedido.tipoPedido.nombre == "VENTA AL CLIENTE") {
+    if (this.pedido.tipoPedido.nombre == "VENTA PERSONA") {
       this.movimientoService.createMovimiento(this.movimiento).pipe(
-        concatMap(mov => this.pedidoService.downloadOrderToClienteInPDF(mov.pedido))
+        concatMap(mov => this.pedidoService.downloadOrderToPersonaInPDF(mov.pedido))
       ).subscribe(response => {
-        this.alertService.success(`Venta pagada con éxito, se esta descargando su orden...!`, this.titulo)
         fileSaver.saveAs(response.body!,
           this.pedidoService.filenameFromHeader(response.headers)) //utilidad pra qeu descargue automaticamente
-        this.router.navigate(['/pedidos/listado-ventas']);
+        if (this.isFromPedidos) {
+          this.router.navigate(['/pedidos/listado-ventas'])
+        };
+
       })
     }
-        if (this.pedido.tipoPedido.nombre == "COMPRA O ADQUISICION") {
+    if (this.pedido.tipoPedido.nombre == "COMPRA O ADQUISICION") {
       this.movimientoService.createMovimiento(this.movimiento).subscribe(response => {
-        this.alertService.success(`Compra pagada realizada con éxito!`, this.titulo)
-        this.router.navigate(['/pedidos/listado-compras']);
+        if (this.isFromPedidos) {
+          this.router.navigate(['/pedidos/listado-compras']);
+        }
       })
     }
+    this.getCajaUsuario();
+    this.limpiarForm(form);
+    this.alertService.success(`Se realizó la  ${this.pedido.tipoPedido.nombre} exitosamente`, "Exito");
+
+  }
+
+  limpiarForm(form: NgForm) {
+    //form.reset();
+    this.searchByPedidoId("0");
+    this.movimiento.ingresoDinero = 0;
+    this.movimiento.egresoDinero = 0;
+    this.iMovimiento = "I";
+    this.setMovimientoDinero(this.iMovimiento);
+    this.searchText.nativeElement.value = '';
+    this.searchText.nativeElement.focus();
   }
 }
 

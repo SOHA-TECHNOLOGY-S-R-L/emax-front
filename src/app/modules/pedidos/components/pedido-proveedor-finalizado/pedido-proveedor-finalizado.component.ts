@@ -6,26 +6,27 @@ import { findIndex } from 'lodash-es';
 import moment from 'moment';
 import { Subscription } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
-import { Cliente } from '../../../../models/cliente';
+import { Persona } from '../../../../models/persona';
 import { ItemPedido } from '../../../../models/item-pedido';
 import { Pedido } from '../../../../models/pedido';
 import { Producto } from '../../../../models/producto';
 import { TipoDocumento } from '../../../../models/tipo-documento';
 import { TipoPedido } from '../../../../models/tipo-pedido';
 import { AuthService } from '../../../../services/auth.service';
-import { ClienteService } from '../../../../services/cliente.service';
+import { PersonaService } from '../../../../services/persona.service';
 import { ItemService } from '../../../../services/item.service';
 import { PedidoService } from '../../../../services/pedido.service';
 import { ChatUtils } from '../../../../utils/chat-utils';
 import { FormUtils } from '../../../../utils/form-utils';
 import { AngularMaterialModule } from '../../../compartido/angular-material.module';
+import { AlertService } from '../../../../services/alert.service';
 
 @Component({
   selector: 'pedido-proveedor-finalizado',
   templateUrl: './pedido-proveedor-finalizado.component.html',
   styleUrl: './pedido-proveedor-finalizado.component.css',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, ReactiveFormsModule, AngularMaterialModule ]
+  imports: [CommonModule, RouterModule, FormsModule, ReactiveFormsModule, AngularMaterialModule]
 
 })
 export class PedidoProveedorFinalizadoComponent implements OnInit, OnChanges {
@@ -33,21 +34,23 @@ export class PedidoProveedorFinalizadoComponent implements OnInit, OnChanges {
 
   public authService = inject(AuthService);
   private activatedRoute = inject(ActivatedRoute);
-  private clienteService = inject(ClienteService);
+  private personaService = inject(PersonaService);
   private pedidoService = inject(PedidoService);
   private router = inject(Router);
   private itemService = inject(ItemService)
+  private alertService = inject(AlertService);
+
   itemServiceSuscription$!: Subscription;
-  cliente!: Cliente;
+  persona!: Persona;
   pedido = new Pedido();
   item = new ItemPedido();
   lstItemPedido: ItemPedido[] = [];
   tipoDocumentos: TipoDocumento[] = [];
   tipoPedidos: TipoPedido[] = [];
   tipoDocumentoSelected!: TipoDocumento;
-  tipoPedidoVentaClientes!: TipoPedido;
+  tipoPedidoVentaPersonas!: TipoPedido;
   @Input() producto!: Producto;
-  @Input() clienteId!: number;
+  @Input() personaId!: number;
   formUtils = FormUtils;
   chatUtils = ChatUtils;
   total: number = 0;
@@ -67,16 +70,16 @@ export class PedidoProveedorFinalizadoComponent implements OnInit, OnChanges {
   }
 
   ngOnInit(): void {
-    this.clienteService.getTipoDocumento().subscribe(doc => {
+    this.personaService.getTipoDocumento().subscribe(doc => {
       this.tipoDocumentos = doc
     });
 
-    this.clienteService.getCliente(this.clienteId).subscribe(cli => {
+    this.personaService.getPersona(this.personaId).subscribe(cli => {
       const now = new Date();
-      this.cliente = cli;
-      const index = this.findIndexDocument(this.cliente.tipoDocumento.id);
+      this.persona = cli;
+      const index = this.findIndexDocument(this.persona.tipoDocumento.id);
       this.tipoDocumentoSelected = this.tipoDocumentos[index];
-      this.pedido.cliente = this.cliente;
+      this.pedido.persona = this.persona;
       now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
       this.pedido.adquiridoEn = moment(now).toISOString().slice(0, 16);
       //this.pedido.adquiridoEn = moment(now).add(2, 'days').toISOString().slice(0, 16);
@@ -84,8 +87,8 @@ export class PedidoProveedorFinalizadoComponent implements OnInit, OnChanges {
 
 
     /*     this.activatedRoute.queryParams.subscribe(params => {
-          const value = params['clienteOnline'];
-          this.clienteOnline = value ? value.toLocaleLowerCase() === 'true' : false;
+          const value = params['personaOnline'];
+          this.personaOnline = value ? value.toLocaleLowerCase() === 'true' : false;
         }) */
 
     /*     if (this.lstItemPedido.length === 0) {
@@ -98,7 +101,7 @@ export class PedidoProveedorFinalizadoComponent implements OnInit, OnChanges {
       this.tipoPedidos.forEach(r =>
         r.activo = r.id == 1 ? true : false
       )
-      this.tipoPedidoVentaClientes = this.tipoPedidos[1];
+      this.tipoPedidoVentaPersonas = this.tipoPedidos[1];
     });
   }
 
@@ -169,11 +172,18 @@ export class PedidoProveedorFinalizadoComponent implements OnInit, OnChanges {
       this.calcularTotal();
       this.pedido.costoNetoTotal = this.total;
       //this.pedido.adquiridoEn = moment(this.pedido.adquiridoEn).toISOString().slice(0, 16);
-      this.pedido.tipoPedido = this.tipoPedidoVentaClientes;
+      this.pedido.tipoPedido = this.tipoPedidoVentaPersonas;
       //console.log(JSON.stringify(this.pedido));
       this.pedidoService.createPedidoTienda(this.pedido).subscribe(p => {
         this.pedidoService.setPedido(p);
-        this.router.navigate(['/movimientos']);
+        this.alertService.info("Pedido Compra N°:" + p.id + " a caja", "Finalizar pedido");
+        //if (p.tipoPedido.id == VENTA_TIPO_PEDIDO) {
+        //  this.router.navigate(['/pedidos/listado-ventas']);
+        //}
+        //if (p.tipoPedido.id == COMPRA_TIPO_PEDIDO) {
+          this.router.navigate(['/pedidos/listado-compras']);
+        //}
+        //this.router.navigate(['/movimientos']);
 
       });
     }

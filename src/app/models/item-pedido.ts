@@ -10,7 +10,7 @@ export class ItemPedido {
   imagenUri:string = 'no-imagen.png';
 
   /*
-  public calcularImporteVentaCliente(): number {
+  public calcularImporteVentaPersona(): number {
     return this.cantidad * this.importe;
   }
 

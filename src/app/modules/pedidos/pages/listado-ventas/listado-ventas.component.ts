@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
-import { ClienteService } from '../../../../services/cliente.service';
+import { PersonaService } from '../../../../services/persona.service';
 import { SearchBoxTableComponent } from './../../../compartido/search-box-table/search-box-table.component';
 
 import { CommonModule } from '@angular/common';
@@ -12,7 +12,7 @@ import moment from 'moment';
 import { concatMap } from 'rxjs';
 import { ELEMENTOS_POR_PAGINA, PRIMERA_PAGINA, SIGUIENTE_PAGINA, ULTIMA_PAGINA } from '../../../../constants/constantes';
 import { COLOR_ESTADO_PEDIDO } from '../../../../constants/pedido.constants';
-import { Cliente } from '../../../../models/cliente';
+import { Persona } from '../../../../models/persona';
 import { PageableResponse } from '../../../../models/pageable-response';
 import { Pedido } from '../../../../models/pedido';
 import { AuthService } from '../../../../services/auth.service';
@@ -30,7 +30,7 @@ import { AngularMaterialModule } from '../../../compartido/angular-material.modu
 
 export class ListadoVentasComponent implements OnInit, AfterViewInit {
 
-  displayedColumnsLarge: string[] = ['nomApellRz', 'createAt', 'entregadoEn', 'precioNetoTotal', 'pagoTotal', 'vueltoTotal', 'saldoPedido', 'estado', 'acciones'];
+  displayedColumnsLarge: string[] = ['id','nomApellRz', 'createAt', 'entregadoEn', 'precioNetoTotal', 'pagoTotal', 'vueltoTotal', 'saldoPedido', 'estado', 'acciones'];
   displayedColumnsShort: string[] = [ 'entregadoEn', 'precioNetoTotal', 'pagoTotal','acciones'];
 
   dataSource: Pedido[] = [];
@@ -39,7 +39,7 @@ export class ListadoVentasComponent implements OnInit, AfterViewInit {
   @ViewChild(MatSort) sort!: MatSort;
   querySearch!: string;
 
-  cliente!: Cliente;
+  persona!: Persona;
   pedidos: Pedido[] = [];
   pedidoSeleccionado!: Pedido;
 
@@ -48,7 +48,7 @@ export class ListadoVentasComponent implements OnInit, AfterViewInit {
     // private modalService: ModalService,
     public authService: AuthService,
     public usuarioService: UsuarioService,
-    public clienteService: ClienteService,
+    public personaService: PersonaService,
     private dialog: MatDialog,
     private ro: Router,
     private activatedRoute: ActivatedRoute) {
@@ -57,10 +57,10 @@ export class ListadoVentasComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     /*     this.usuarioService.getUsuarioByUsername(this.authService.usuario.username).pipe(
-          concatMap(usr => this.clienteService.getClienteByUsuarioId(usr.id))
+          concatMap(usr => this.personaService.getPersonaByUsuarioId(usr.id))
         ).subscribe(cli => {
-          this.cliente = cli;
-          console.log("cli", this.cliente);
+          this.persona = cli;
+          console.log("cli", this.persona);
 
         }); */
 
@@ -103,8 +103,8 @@ export class ListadoVentasComponent implements OnInit, AfterViewInit {
 
       } else if (this.authService.hasRole('ROLE_LIST_MY_ORDERS')) {
         this.usuarioService.getUsuarioByUsername(this.authService.usuario.username).pipe(
-          concatMap(usr => this.clienteService.getClienteByUsuarioId(usr.id)),
-          concatMap(cli => this.pedidoService.getPedidosClientePageable(params, cli.id))
+          concatMap(usr => this.personaService.getPersonaByUsuarioId(usr.id)),
+          concatMap(cli => this.pedidoService.getPedidosPersonaPageable(params, cli.id))
         ).subscribe(response => {
           this.dataSource = response.content as Pedido[];
           this.dataSource.forEach((r: Pedido) => {
@@ -131,10 +131,10 @@ export class ListadoVentasComponent implements OnInit, AfterViewInit {
     this.loadItems();
   }
 
-  setPedido(pedido: Pedido): void {
+/*   setPedido(pedido: Pedido): void {
     this.pedidoService.setPedido(pedido);
     this.ro.navigate(['/movimientos']);
-  }
+  } */
 
 
 }

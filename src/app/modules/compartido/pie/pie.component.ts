@@ -30,7 +30,7 @@ export class PieComponent implements OnInit {
   }
 
   chatear() {
-    this.chatUtils.defaultMesage();
+    this.chatUtils.defaultMesageFromEmpleadoVenta();
   }
 
 }

@@ -10,11 +10,11 @@ import { DetalleItemPedidoComponent } from './components/detalle-item-pedido/det
 import { ListadoVentasComponent } from './pages/listado-ventas/listado-ventas.component';
 import { ListadoComprasComponent } from './pages/listado-compras.component';
 import { CustomizeItemProductoToClientComponent } from './components/customize-item-producto-to-client/customize-item-producto-to-client.component';
-import { ItemProductoClienteTiendaComponent } from './pages/item-producto-cliente-tienda/item-producto-cliente-tienda.component';
-import { ItemProductoClienteOnlineComponent } from './pages/item-producto-cliente-online/item-producto-cliente-online.component';
+import { ItemProductoPersonaTiendaComponent } from './pages/item-producto-persona-tienda/item-producto-persona-tienda.component';
+import { ItemProductoPersonaOnlineComponent } from './pages/item-producto-persona-online/item-producto-persona-online.component';
 import { CarritoItemProductoComponent } from './components/carrito-item-producto/carrito-item-producto.component';
 import { PedidoProveedorFinalizadoComponent } from './components/pedido-proveedor-finalizado/pedido-proveedor-finalizado.component';
-import { PedidoClienteFinalizadoComponent } from './components/pedido-finalizado/pedido-cliente-finalizado.component';
+import { PedidoPersonaFinalizadoComponent } from './components/pedido-finalizado/pedido-persona-finalizado.component';
 
 @NgModule({
   declarations: [
@@ -24,10 +24,10 @@ import { PedidoClienteFinalizadoComponent } from './components/pedido-finalizado
     DetallePedidoCompraComponent,
     RptePedidoComponent,
     DetalleItemPedidoComponent,
-    ItemProductoClienteTiendaComponent,
-    ItemProductoClienteOnlineComponent,
+    ItemProductoPersonaTiendaComponent,
+    ItemProductoPersonaOnlineComponent,
     CustomizeItemProductoToClientComponent,
-    PedidoClienteFinalizadoComponent,
+    PedidoPersonaFinalizadoComponent,
     CarritoItemProductoComponent,
     PedidoProveedorFinalizadoComponent
   ],

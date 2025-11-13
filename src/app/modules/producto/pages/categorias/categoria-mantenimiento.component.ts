@@ -28,7 +28,7 @@ export class CategoriaMantenimientoComponent implements OnInit {
   formCategoria!: FormGroup;
   verImagenCategoria!: string;
   formUtils = FormUtils;
-  titulo: string = "Crear Producto";
+  titulo: string = "Categoria";
   constructor(
     private router: Router,
     private alertService: AlertService,
@@ -59,7 +59,9 @@ export class CategoriaMantenimientoComponent implements OnInit {
     this.formCategoria = this.formBuilder.group({
       nombre: [this.categoria?.nombre, Validators.required],
       descripcion: [this.categoria?.descripcion, Validators.required],
-      activa: [this.categoria?.activa]
+      activa: [this.categoria?.activa],
+      visibleEnTienda: [this.categoria?.visibleEnTienda],
+
     });
   }
 
@@ -68,6 +70,7 @@ export class CategoriaMantenimientoComponent implements OnInit {
     this.categoria.nombre = this.formCategoria.get('nombre')?.value;
     this.categoria.descripcion = this.formCategoria.get('descripcion')?.value;
     this.categoria.activa = this.formCategoria.get('activa')?.value;
+    this.categoria.activa = this.formCategoria.get('visibleEnTienda')?.value;
   }
 
   guardarCategoria() {
