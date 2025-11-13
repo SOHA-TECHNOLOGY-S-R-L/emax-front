@@ -20,9 +20,7 @@ export class AuthInterceptor implements HttpInterceptor {
     return next.handle(req).pipe(
       catchError(e => {
        // let errorMessage = '';
-        if (e instanceof ErrorEvent) {
-          // client-side error
-          //errorMessage = e.error.message;
+        if (e.error instanceof Error || e.error?.message) {
           console.log(`AuthInterceptor.client-side error:`, e);
         }
 
