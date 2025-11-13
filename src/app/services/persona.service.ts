@@ -51,14 +51,11 @@ export class PersonaService {
         map((response: any) => response.persona as Persona),
         catchError(e => {
           if (e.status == 404) {
-            console.log("e1", e);
             return EMPTY;
           }
           if (e.error.mensaje) {
-            console.log("e2", e);
             this.alertService.error(e.error.mensaje, e.error.err);
           }
-          console.log("e3", e);
 
           return throwError(e);
         }))
@@ -69,14 +66,11 @@ export class PersonaService {
         map((response: any) => response.persona as Persona),
         catchError(e => {
           if (e.status == 404) {
-            console.log("e1", e);
             return EMPTY;
           }
-          if (e.error.mensaje) {
-            console.log("e2", e);
+          if (e.error?.mensaje) {
             this.alertService.error(e.error.mensaje, e.error.err);
           }
-          console.log("e3", e);
 
           return throwError(e);
         }))
@@ -118,24 +112,6 @@ export class PersonaService {
 
   }
 
-  /*   getPersonas(page: number): Observable<any> {
-      return this.http.get(`${environment.apiUrl}/personas` + '/page/' + page).pipe(
-        tap((response: any) => {
-          console.log('PersonaService: tap 1');
-          (response.content as Persona[]).forEach(persona => console.log(persona.nomApellRz));
-        }),
-        map((response: any) => {
-          (response.content as Persona[]).map(persona => {
-            persona.nomApellRz = persona.nomApellRz.toUpperCase();
-            return persona;
-          });
-          return response;
-        }),
-        tap(response => {
-          console.log('PersonaService: tap 2');
-          (response.content as Persona[]).forEach(persona => console.log(persona.nomApellRz));
-        }));
-    } */
 
   create(persona: Persona): Observable<Persona> {
     return this.http.post(`${environment.apiUrl}/personas`, persona
@@ -190,7 +166,7 @@ export class PersonaService {
         if (e.status == 400) {
           return throwError(e);
         }
-        if (e.error.mensaje) {
+        if (e.error?.mensaje) {
           console.error(e.error.mensaje);
         }
         return throwError(e);
@@ -202,8 +178,8 @@ export class PersonaService {
       /*, {headers: this.agregarAuthorizationHeader()}*/
     ).pipe(
       catchError(e => {
-        if (e.error.mensaje) {
-          console.error(e.error.mensaje);
+        if (e.error?.mensaje) {
+          console.error(e.error?.mensaje);
         }
         return throwError(e);
       }));
@@ -234,8 +210,8 @@ export class PersonaService {
           if (e.status == 400) {
             return throwError(e);
           }
-          if (e.error.mensaje) {
-            console.error(e.error.mensaje);
+          if (e.error?.mensaje) {
+            console.error(e.error?.mensaje);
           }
           return throwError(e);
         }));

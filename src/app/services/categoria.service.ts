@@ -59,7 +59,7 @@ export class CategoriaService {
           if (e.status == 400) {
             return throwError(e);
           }
-          if (e.error.mensaje) {
+          if (e.error?.mensaje) {
             console.error(e.error.mensaje);
           }
           return throwError(e);
@@ -75,7 +75,7 @@ export class CategoriaService {
           if (e.status == 400) {
             return throwError(e);
           }
-          if (e.error.mensaje) {
+          if (e.error?.mensaje) {
             console.error(e.error.mensaje);
           }
           return throwError(e);
@@ -94,7 +94,7 @@ export class CategoriaService {
     return this.http.post<any>(`${environment.apiUrl}/upload-imagen/`, formData).pipe(
       map(response => response.producto as Producto),
       catchError(e => {
-        if (e.error.mensaje) {
+        if (e.error?.mensaje) {
           this.alertService.error(e.error.mensaje, e.error.err);
         }
         return throwError(e);

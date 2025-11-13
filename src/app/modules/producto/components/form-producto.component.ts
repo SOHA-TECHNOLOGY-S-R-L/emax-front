@@ -86,7 +86,6 @@ export class FormProductoComponent implements OnInit, AfterViewInit {
 
 
   create(): void {
-    console.log(this.producto);
     this.productoService.createProducto(this.producto).subscribe(
       producto => {
         this.alertService.success(`${producto.nombre} ha sido creado con éxito`, 'Nueo producto');
@@ -104,7 +103,7 @@ export class FormProductoComponent implements OnInit, AfterViewInit {
   update(): void {
     this.productoService.updateProducto(this.producto).subscribe(
       json => {
-        this.alertService.success(`${json.mensaje}: ${json.producto.nombre}`, 'Producto actualizado');
+        this.alertService.success(`${json?.mensaje}: ${json.producto.nombre}`, 'Producto actualizado');
         this.router.navigate(['/pr/productos']);
 
       },

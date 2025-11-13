@@ -28,10 +28,6 @@ export class DetallePedidoCompraComponent implements OnInit {
       let pedidoId = +params.get('pedidoId')!;
       this.pedidoService.getPedido(pedidoId).subscribe(pedido => {
         this.pedido = pedido
-        /*         if(this.pedido!.persona!.razonSocial.length>0 ){
-                  this.razonSocialActivate=true;
-                } */
-        console.log("Detalle pedido....", this.pedido)
 
       });
     });

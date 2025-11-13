@@ -51,16 +51,11 @@ export class CarritoItemProductoComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    console.log("CarritoComprasComponent.ngOnInit", this.lstItemPedido);
+    //console.log("CarritoComprasComponent.ngOnInit", this.lstItemPedido);
     //if (this.lstItemPedido.length === 0) {
     //  this.lstItemPedido = this.itemService.importePorMargenCantidad(this.itemService.getLocalStorageItems());
     this.calcularTotal();
-    //}
-    /*     this.lstItemPedido.map(item => {
-          item.imagen = environment.API_URL_VER_IMAGEN + item.imagen ;
-          return item;
-        }) */
-    /*    this.lstItemPedido = [...this.lstItemPedido, {...this.itemPedido} ] */
+
   }
 
   actualizarCantidad(productoId: number, event: any): void {
@@ -80,19 +75,6 @@ export class CarritoItemProductoComponent implements OnInit, OnDestroy {
     this.total = this.itemService.calculateTotalFromItems(this.lstItemPedido)
   }
 
-  /*   openDialog(itemPedido: ItemPedido) {
-      const dialogRef = this.matDialog.open(DetalleItemPedidoComponent, {
-        data: itemPedido.descripcion,
-        width: '550px',
-        disableClose: true
-      });
-
-      dialogRef.afterClosed().subscribe(result => {
-        itemPedido.descripcion = result
-        console.log('Item Pedido: ', itemPedido);
-        //this.animal = result;
-      });
-    } */
 
   irRealizarPedido() {
     if (this.authService.isAuthenticated()) {

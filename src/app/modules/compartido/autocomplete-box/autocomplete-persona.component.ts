@@ -45,7 +45,7 @@ export class AutocompletePersonaComponent implements OnInit {
 
    seleccionarProducto(event: MatAutocompleteSelectedEvent): void {
     let persona = event.option.value as Persona;
-    console.log(persona);
+    //console.log(persona);
 /*      if (this.existeItem(producto.id)) {
       this.incrementaCantidad(producto.id);
     } else {

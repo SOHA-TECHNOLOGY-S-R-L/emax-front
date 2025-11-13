@@ -52,16 +52,13 @@ export class AsignarRolUsuarioComponent implements OnInit {
         const index = findIndex(this.usuarioSeleccionado.roles, (rr) => rr.id == r.id)
         if (index != -1) {
           if (!r.activated) {
-            console.log("aqui elimina:", r.descripcion);
             this.rolesEliminar.push(r);
           }
           if (r.activated) {
-            console.log("aqui elimina:", r.descripcion);
             this.rolesInsertar.push(r);
           }
         } else {
           if (r.activated) {
-            console.log("aqui inserta el rol:", r.descripcion);
             this.rolesInsertar.push(r)
           }
         }
@@ -71,7 +68,7 @@ export class AsignarRolUsuarioComponent implements OnInit {
       this.usuarioSeleccionado.roles = [];
       this.usuarioSeleccionado.roles = this.rolesEliminar;
       this.usuarioService.deleteRolUsuario(this.usuarioSeleccionado, this.usuarioSeleccionado.id).subscribe(resp => {
-        this.alertService.success(resp.mensaje, "Asignar roles a usaurio");
+        this.alertService.success(resp?.mensaje, "Asignar roles a usaurio");
       })
     }
 
@@ -79,7 +76,7 @@ export class AsignarRolUsuarioComponent implements OnInit {
       this.usuarioSeleccionado.roles = [];
       this.usuarioSeleccionado.roles = this.rolesInsertar;
       this.usuarioService.updateRolUsuario(this.usuarioSeleccionado, this.usuarioSeleccionado.id).subscribe(resp => {
-        this.alertService.success(resp.mensaje, "Asignar roles a usaurio");
+        this.alertService.success(resp?.mensaje, "Asignar roles a usaurio");
       })
     }
     this.router.navigate(['/usuarios']);

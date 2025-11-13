@@ -25,7 +25,7 @@ export class CarruselServiciosComponent {
   ngOnInit() {
     this.productService.getLstProductosServicios().subscribe(resp => {
 
-            console.log("this.lstProductos.resp", resp);
+            //console.log("this.lstProductos.resp", resp);
 
       this.lstProductos = resp.map(prd => {
         prd.estadoProducto.color = COLOR_ESTADO_PRODUCTO[('' + prd.estadoProducto.id) as keyof typeof COLOR_ESTADO_PRODUCTO];
@@ -36,7 +36,7 @@ export class CarruselServiciosComponent {
 
         return prd;
       })
-      console.log("this.lstProductos.servicios", this.lstProductos);
+      //console.log("this.lstProductos.servicios", this.lstProductos);
     });
 
 

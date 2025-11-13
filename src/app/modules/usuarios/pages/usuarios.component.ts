@@ -82,7 +82,6 @@ export class UsuariosComponent implements OnInit, AfterViewInit {
   }
 
   setUsuario(empleado: Persona): void {
-    console.log(empleado);
     this.usuarioService.setUsuario(empleado.usuario);
     this.router.navigate(['/usuarios/asignar-rol-usuario']);
   }

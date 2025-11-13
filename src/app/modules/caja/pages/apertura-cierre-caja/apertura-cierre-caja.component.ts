@@ -90,7 +90,7 @@ export class AperturaCierreCajaComponent implements OnInit {
 
 
   abrirCaja() {
-    console.log("AperturaCajaComponent.abrirCaja...", this.cajaUsuario);
+    //console.log("AperturaCajaComponent.abrirCaja...", this.cajaUsuario);
     this.cajaUsuario.fechaApertura = '';
     this.cajaUsuario.fechaCierre = '';
     //this.cajaUsuario.usuario.password = "";

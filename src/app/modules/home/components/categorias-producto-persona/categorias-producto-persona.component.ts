@@ -23,19 +23,6 @@ export class CategoriasProductoPersonaComponent implements OnInit {
   ngOnInit(): void {
     this.categoriaService.getCategoriasActivasYVisibleTienda().subscribe(categorias => {
       this.lstCategoria = categorias.sort((a, b) => a.orden - b.orden)
-      /*
-            this.lstCategoria = categorias.map(cat => {
-              cat.imagen = environment.API_URL_VER_IMAGEN + cat.imagen;
-              return cat;
-            }).sort((a, b) => a.orden - b.orden)
-
-                  let nombreCategoria = this.lstCategoria.map(cat => cat.nombre)
-                  console.log("this.lstCategoria", `Ofrecemos ${nombreCategoria.toString()} , para`);
-
-                   this.seoService.meta.updateTag({name: "description", content: `Ofrecemos ${nombreCategoria.toString()}, para hacer publicidad,  mercahndising y branding`})
-                  this.seoService.meta.updateTag({name: "og:description", content: `Ofrecemos ${nombreCategoria.toString()}, para hacer publicidad,  mercahndising y branding`})
-                 this.seoService.setIndexFollow(true); */
-
     })
 
   }

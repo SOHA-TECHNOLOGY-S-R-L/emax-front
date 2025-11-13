@@ -320,7 +320,7 @@ export class MantenimientoProductoComponent implements OnInit, AfterViewInit {
     if (this.producto.id) {
       this.productoService.updateProducto(this.producto).subscribe(
         json => {
-          this.alertService.success(`${json.mensaje}: ${json.producto.nombre}`, 'Producto');
+          this.alertService.success(`${json?.mensaje}: ${json.producto.nombre}`, 'Producto');
           this.router.navigate(['/productos']);
         }
       )
@@ -332,46 +332,10 @@ export class MantenimientoProductoComponent implements OnInit, AfterViewInit {
     }
   }
 
-  /*   crearProducto() {
-      this.productoService.createProducto(this.producto).subscribe(resp => {
-        this.alertService.success('Porducto ha sido creado exitosamente', 'Producto');
-        this.router.navigate(['/productos']);
-      })
-    }
-
-    update(): void {
-      this.productoService.updateProducto(this.producto).subscribe(
-        json => {
-          this.alertService.success(`${json.mensaje}: ${json.producto.nombre}`, 'Producto actualizado');
-          this.router.navigate(['/productos']);
-
-        }
-      )
-    } */
-
 
   isImage(fileInput: HTMLInputElement): boolean {
     return this.mediosUtilsService.isImage(fileInput);
   }
-
-  /*   subirImagen(fileInput: HTMLInputElement) {
-      if (fileInput && fileInput.files && fileInput.files.length > 0) {
-        const imagen: File = fileInput.files[0];
-        this.mediosUtilsService.subirImagen(imagen).subscribe(resp => {
-          this.verImagenItem = environment.API_URL_VER_IMAGEN + resp.imagen;
-          this.item.imagen = resp.imagen;
-        })
-      }
-    } */
-  /*
-    seleccionarImagen(event: any) {
-      this.imagenSeleccionada = event.target.files[0];
-      if (this.imagenSeleccionada!.type.indexOf('image') < 0) {
-        this.alertService.error('El archivo debe ser del tipo imagen', 'Imagen');
-        return
-      }
-      this.recuperarValForm();
-    } */
 
   subirImagen(fileInput: HTMLInputElement) {
     if (fileInput && fileInput.files && fileInput.files.length > 0) {
@@ -383,48 +347,13 @@ export class MantenimientoProductoComponent implements OnInit, AfterViewInit {
     }
   }
 
-  /*   subirImagen(fileInput: HTMLInputElement) {
-      this.recuperarValForm();
-      if (fileInput && fileInput.files && fileInput.files.length > 0) {
-        const imagen: File = fileInput.files[0];
-        let formData = new FormData();
-        formData.append("archivo", imagen);
-        formData.append("producto", JSON.stringify(this.producto));
-        formData.append("personaOnline", 'false');
-
-        if (this.producto.id) {
-          this.productoService.updateProductoImagen(formData, this.producto.id).subscribe(
-            resp => {
-              this.producto = resp;
-              this.verImagenProducto = environment.API_URL_VER_IMAGEN + this.producto.imagen;
-            })
-        } else {
-          this.productoService.createProductoImagen(formData).subscribe(
-            resp => {
-              this.producto = resp;
-              this.verImagenProducto = environment.API_URL_VER_IMAGEN + this.producto.imagen;
-            })
-        }
-
-      } else {
-        this.alertService.error('Debe colocar un codigo y nombre al producto', 'Imagen');
-      }
-    } */
 
   cargarDatosAuxiliares(): void {
     this.productoService.getColoresProducto().subscribe(resp => this.colores = resp);
     this.productoService.getMaterialesProducto().subscribe(resp => this.materiales = resp);
     this.categoriaService.getCategoriasProducto().subscribe(resp => this.categorias = resp);
     this.productoService.getUsosInternoProducto().subscribe(resp => this.usos = resp);
-    //this.genericosDeProductoService.getGenericos().subscribe(result =>{
-    //  this.genericosDeProducto = result
-    //  this.colores =  result.filter(p => p.id>=10 && p.id<30);
-    //  this.materiales = result.filter(p => p.id>=30 && p.id<50);
-    //  this.origenes = result.filter(p => p.id>=50 && p.id<70);
-    //  this.empaques = result.filter(p => p.id>=70 && p.id<90);
-    //  this.categorias = result.filter(p => p.id>=90 && p.id<100);
-    //  this.usos = result.filter(p => p.id>=100 && p.id<120);
-    //});
+
   }
 
 

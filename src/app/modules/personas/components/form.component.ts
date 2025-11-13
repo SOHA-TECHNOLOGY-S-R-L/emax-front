@@ -116,7 +116,7 @@ export class FormComponent implements OnInit {
       .subscribe(
         json => {
           this.router.navigate(['/personas']);
-          this.alertServie.success(`${json.mensaje}`, 'Persona Actualizado')
+          this.alertServie.success(`${json?.mensaje}`, 'Persona Actualizado')
         },
         err => {
           this.errores = err.error.errors as string[];

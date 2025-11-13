@@ -28,15 +28,14 @@ export class InfoCajaUsuarioComponent implements OnInit, OnChanges {
   constructor() { }
 
   ngOnInit(): void {
-    console.log("ngOnInit.inCajaUsuario", this.inCajaUsuario)
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (this.inCajaUsuario!= null) {
       //console.log("currentValue", changes['username'].currentValue);
-      console.log("currentValue.inCajaUsuario", changes['inCajaUsuario'].currentValue);
+      //console.log("currentValue.inCajaUsuario", changes['inCajaUsuario'].currentValue);
       //console.log("previousValue", changes['username'].previousValue);
-      console.log("previousValue.inCajaUsuario", changes['inCajaUsuario'].previousValue);
+      //console.log("previousValue.inCajaUsuario", changes['inCajaUsuario'].previousValue);
       if (changes['inCajaUsuario'].currentValue != changes['inCajaUsuario'].previousValue) {
         this.cajaService.getCajaUsuarioByCajaIdAndUsername(this.inCajaUsuario.caja.id, this.inCajaUsuario.usuario.username).subscribe(
           result => {

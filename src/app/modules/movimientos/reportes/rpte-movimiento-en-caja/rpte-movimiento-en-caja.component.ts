@@ -84,7 +84,7 @@ export class RpteMovimientoEnCajaComponent implements OnInit {
 
   seleccionar(event: MatAutocompleteSelectedEvent): void {
     let persona = event.option.value as Persona;
-    console.log(persona);
+    //console.log(persona);
     this.filtrosReporte.persona_id = [persona.id]
   }
 

@@ -81,16 +81,10 @@ export class ProductosComponent implements OnInit, AfterViewInit {
       }
       );
       this.dataSource = this.productos;
-      console.log("this.dataSource", this.dataSource);
       this.pageable = response;
 
     });
   }
-
-/*   findObjectInGenericos(id: number) {
-    console.log("findObjectInGenericos", this.genericosDeProducto);
-    return find(this.genericosDeProducto, { "id": id })
-  } */
 
 
   searchEvent(query: string): void {

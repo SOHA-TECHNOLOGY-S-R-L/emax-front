@@ -56,13 +56,6 @@ export class ListadoVentasComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-    /*     this.usuarioService.getUsuarioByUsername(this.authService.usuario.username).pipe(
-          concatMap(usr => this.personaService.getPersonaByUsuarioId(usr.id))
-        ).subscribe(cli => {
-          this.persona = cli;
-          console.log("cli", this.persona);
-
-        }); */
 
   }
 

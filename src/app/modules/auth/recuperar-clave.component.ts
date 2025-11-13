@@ -81,7 +81,7 @@ export class RecuperarClaveComponent {
           this.stepper.next();
         }
       }, err => {
-        this.alert.error(err.error.mensaje, 'Error');
+        //this.alert.error(err.error.mensaje, 'Error');
       });
     } else {
       return;

@@ -205,7 +205,7 @@ export class PedidoPersonaOnlineFinalizadoComponent implements OnInit {
     this.formaEnvio = formaEnvio;
 
     if (this.isEnvio) {
-      console.log(servicioSelected[0].minCantidadPedido);
+      //console.log(servicioSelected[0].minCantidadPedido);
       this.item.cantidad = servicioSelected[0].minCantidadPedido;
       this.item.descripcion = servicioSelected[0].descripcion;
       this.item.producto = { ...servicioSelected[0] };

@@ -84,7 +84,6 @@ export class AddEditUsuarioComponent {
         });
       }
     });
-    console.log("this.personaService", this.persona);
   }
 
 
@@ -194,7 +193,7 @@ export class AddEditUsuarioComponent {
         json => {
          // this.isLoading = false;
           this.router.navigate(['/usuarios']);
-          this.alertServie.success(`${json.mensaje}`, 'Usuario actualizado')
+          this.alertServie.success(`${json?.mensaje}`, 'Usuario actualizado')
         },
         err => {
           this.errores = err.error.errors as string[];

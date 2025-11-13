@@ -102,7 +102,7 @@ export class PedidoPersonaTiendaFinalizadoComponent implements OnInit {
 
     this.productoService.getLstProductoServicioEnvio().subscribe(resp => {
       this.serviciosEnvio = resp
-      console.log("this.serviciosEnvio", this.serviciosEnvio);
+      //console.log("this.serviciosEnvio", this.serviciosEnvio);
 
     });
 
@@ -182,7 +182,7 @@ export class PedidoPersonaTiendaFinalizadoComponent implements OnInit {
     this.formaEnvio = formaEnvio;
 
     if (this.isEnvio) {
-      console.log(servicioSelected[0].minCantidadPedido);
+      //console.log(servicioSelected[0].minCantidadPedido);
       this.item.cantidad = servicioSelected[0].minCantidadPedido;
       this.item.descripcion = servicioSelected[0].descripcion;
       this.item.producto = { ...servicioSelected[0] };

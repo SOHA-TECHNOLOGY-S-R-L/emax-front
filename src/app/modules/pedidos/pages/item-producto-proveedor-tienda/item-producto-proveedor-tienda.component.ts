@@ -88,7 +88,7 @@ export class ItemProductoProveedorTiendaComponent implements OnInit {
   seleccionarProducto(event: MatAutocompleteSelectedEvent): void {
     this.producto = event.option.value as Producto;
     //this.productoService.setProductoToSeo(this.producto);
-    console.log("this.producto2", this.producto);
+    //console.log("this.producto2", this.producto);
 
     //if (!this.tipoPedidoVentaPersonas) {
       let nuevoItem = new ItemPedido();

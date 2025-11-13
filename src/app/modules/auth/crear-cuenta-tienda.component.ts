@@ -71,7 +71,6 @@ export class CrearCuentaTiendaComponent {
 
     this.personaService.getTipoPersona().subscribe(per => {
       this.tipoPersonas = per.filter(per => per.persona.includes("Cliente") || per.persona.includes("Proveedor"))
-      console.log(this.tipoPersonas);
     });
 
     this.createForm();
@@ -135,7 +134,7 @@ export class CrearCuentaTiendaComponent {
     this.personaService.update(this.persona)
       .subscribe(
         json => {
-          this.alertService.success(`${json.mensaje}`, 'Cliente Actualizado')
+          this.alertService.success(`${json?.mensaje}`, 'Cliente Actualizado')
           this.router.navigate(['/login']);
         }/* ,
         err => {

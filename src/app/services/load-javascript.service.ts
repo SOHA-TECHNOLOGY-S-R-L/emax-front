@@ -14,7 +14,6 @@ load(archivos: string[]){
     script.src = "../../assets/js/" + archivo + ".js";
     script.type = "text/javascript";
     script.async = true;
-    console.log(script.src)
     let body = document.getElementsByTagName('body')[0];
     body.appendChild(script);
   }

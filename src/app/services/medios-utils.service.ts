@@ -72,7 +72,7 @@ export class MediosUtilsService {
           if (e.status == 400) {
             return throwError(e);
           }
-          if (e.error.mensaje) {
+          if (e.error?.mensaje) {
             console.error(e.error.mensaje);
           }
           return throwError(e);

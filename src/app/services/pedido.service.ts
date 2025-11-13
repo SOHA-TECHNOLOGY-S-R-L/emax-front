@@ -113,7 +113,7 @@ export class PedidoService {
         /*          if (e.status == 400) {
                   return throwError(e);
                 } */
-        if (e.error.mensaje) {
+        if (e.error?.mensaje) {
           this.alertService.error(e.error.mensaje, e.error.err);
           //console.error(e.error.mensaje);
         }
@@ -129,7 +129,7 @@ export class PedidoService {
         /*          if (e.status == 400) {
                   return throwError(e);
                 } */
-        if (e.error.mensaje) {
+        if (e.error?.mensaje) {
           this.alertService.error(e.error.mensaje, e.error.err);
           //console.error(e.error.mensaje);
         }
@@ -162,7 +162,7 @@ export class PedidoService {
         if (e.status == 400) {
           return throwError(e);
         }
-        if (e.error.mensaje) {
+        if (e.error?.mensaje) {
           console.error(e.error.mensaje);
         }
         return throwError(e);

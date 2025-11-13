@@ -91,7 +91,7 @@ export class CustomizeItemProductoToClientComponent implements OnInit, OnChanges
       this.verImagenProducto = environment.API_URL_VER_IMAGEN + this.producto.imagen;
       this.frm.get('cantidad')?.setValue(this.minCantidadPedido);
       this.verImagenItem = environment.API_URL_VER_IMAGEN + this.item.imagen;
-      console.log("this.verImagenItem", this.verImagenItem);
+      //console.log("this.verImagenItem", this.verImagenItem);
     }
   }
 
@@ -102,7 +102,7 @@ export class CustomizeItemProductoToClientComponent implements OnInit, OnChanges
   subirImagen(fileInput: HTMLInputElement) {
     if (fileInput && fileInput.files && fileInput.files.length > 0) {
       const imagen: File = fileInput.files[0];
-      console.log(imagen.type.indexOf('image'));
+      //console.log(imagen.type.indexOf('image'));
       if (imagen.type.indexOf('image') >= 0) {
         this.mediosUtilsService.subirImagen(imagen, true).subscribe(resp => {
           //this.mediosUtilsService.imageToBase64(imagen);

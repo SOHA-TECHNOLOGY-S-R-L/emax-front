@@ -121,10 +121,10 @@ export class MovimientoCajaComponent implements OnInit {
     this.cajaUsuario.fechaApertura = "";
     this.cajaUsuario.fechaActualizacion = "";
     this.movimientoCaja.cajaUsuario = { ...this.cajaUsuario }
-    console.log("onSubmitForm...", this.movimientoCaja);
+    //console.log("onSubmitForm...", this.movimientoCaja);
     this.movimientoService.createMovimientoCaja(this.movimientoCaja).subscribe(
       resp => {
-        console.log(`Movimiento ${resp.cajaUsuario.id}, creado con éxito!`);
+        //console.log(`Movimiento ${resp.cajaUsuario.id}, creado con éxito!`);
         //this.router.navigate(['/']);
       })
     this.getCajaUsuario();
