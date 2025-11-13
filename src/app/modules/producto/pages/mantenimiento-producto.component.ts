@@ -125,13 +125,13 @@ export class MantenimientoProductoComponent implements OnInit, AfterViewInit {
       umbralCantidadAgotada: [this.producto?.umbralCantidadAgotada,
       { validators: [Validators.required, Validators.min(0)] }
       ],
-      cantidadStock: [this.producto?.cantidadStock,
-      { validators: [Validators.required, Validators.min(0)] }
-      ],
-      /*       cantidadStock: [
-              { value: this.producto?.cantidadStock, disabled: true },
-              { validators: [Validators.required, Validators.min(0)] }
+      /*       cantidadStock: [this.producto?.cantidadStock,
+            { validators: [Validators.required, Validators.min(0)] }
             ], */
+      cantidadStock: [
+        { value: this.producto?.cantidadStock, disabled: true },
+        { validators: [Validators.required, Validators.min(0)] }
+      ],
       cantidadVendidos: [
         { value: this.producto?.cantidadVendidos, disabled: true },
         { validators: [Validators.required, Validators.min(0)] }
