@@ -17,8 +17,8 @@
     </div>
     <div class="col-4 d-flex align-items-center">
 <!--       <span id="cantidad">#</span>
- -->      <input type="number" name="cantidad" class="form-control" [step]="item.producto.gruposDe.toString()"
-        [min]="item.producto.minCantidadPedido.toString()" [max]="item.producto.maxCantidadPedido.toString()"
+ -->      <input type="number" name="cantidad" class="form-control" [step]="item.producto.gruposDe"
+        [min]="item.producto.minCantidadPedido" [max]="item.producto.maxCantidadPedido"
         [value]="item.cantidad" (input)="actualizarCantidad(item.producto.id, $event);calcularTotal() " />
 
    <!--    <input type="number" formControlName="cantidad" class="form-control" name="cantidad" [step]="gruposDe.toString()"

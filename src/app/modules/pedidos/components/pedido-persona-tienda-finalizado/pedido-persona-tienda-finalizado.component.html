@@ -177,9 +177,9 @@
                   [value]="item.descripcion" rows="3"
                   (change)="actualizarDescripcion(item.producto.id, $event)"></textarea></td>
               <td>
-                <input style="width:80px" type="number" name="cantidad" aria-describedby="cantidad"
-                  [step]="item.producto.gruposDe.toString()" [min]="item.producto.minCantidadPedido.toString()"
-                  [max]="item.producto.maxCantidadPedido.toString()" [value]="item.cantidad"
+                <input style="width:80px" type="number" name="cantidad" class="form-control"
+                  [step]="item.producto.gruposDe" [min]="item.producto.minCantidadPedido"
+                  [max]="item.producto.maxCantidadPedido" [value]="item.cantidad"
                   (input)="actualizarCantidad(item.producto.id, $event);calcularTotal() " />
               </td>
               <td>{{item.producto.precioNetoNumberShow| currency:'PEN'}}</td>

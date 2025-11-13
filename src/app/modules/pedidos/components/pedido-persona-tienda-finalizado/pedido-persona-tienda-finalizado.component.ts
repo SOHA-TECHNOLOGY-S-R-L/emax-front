@@ -164,7 +164,7 @@ export class PedidoPersonaTiendaFinalizadoComponent implements OnInit {
       this.pedidoService.createPedidoTienda(this.pedido).subscribe(p => {
         this.pedidoService.setPedido(p);
         //this.itemService.removeLocalStorageItems();
-        this.alertService.info(`Pedido de  ${p.pedido.tipoPedido.nombre} con N° ${p.id} a caja`,"Finalizar pedido");
+        this.alertService.info(`Pedido de  ${p.tipoPedido.nombre} con N° ${p.id} a caja`,"Finalizar pedido");
         if (p.tipoPedido.id == VENTA_TIPO_PEDIDO) {
           this.router.navigate(['/pedidos/listado-ventas']);
         }
