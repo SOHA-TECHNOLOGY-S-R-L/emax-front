@@ -199,7 +199,8 @@ export const serverRoutes: ServerRoute[] = [
         { nombre: 'Antiestres', productoCodigo: 'ANT-MIN' },
         { nombre: 'Servicios', productoCodigo: 'SR1' },
         { nombre: 'Servicios', productoCodigo: 'SR2' },
-        { nombre: 'Servicios', productoCodigo: 'SR3' },
+        //SR3 ESTA ACTIVO PERO VISIBLE EN TIENDA
+        //{ nombre: 'Servicios', productoCodigo: 'SR3' },
         { nombre: 'Servicios', productoCodigo: 'SR4' },
       ]
 
