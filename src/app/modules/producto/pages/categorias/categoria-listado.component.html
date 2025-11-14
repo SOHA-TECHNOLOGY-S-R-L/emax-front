@@ -45,9 +45,13 @@
                     }}</span>
                 </td>
                 <td>
+                  <span class="celda-estado {{cat.colorVisibleEnTienda}}">{{cat.visibleEnTienda + '' | i18nSelect: estadoActivoCategoria
+                    }}</span>
+                </td>
+                <td>
                   @if (authService.hasRole('ROLE_UPDATE_CATEGORIA')) {
-                  <button mat-icon-button color="primary"
-                    [routerLink]="['/productos/categorias', cat.id]" matTooltip="Actualizar categoria">
+                  <button mat-icon-button color="primary" [routerLink]="['/productos/categorias', cat.id]"
+                    matTooltip="Actualizar categoria">
                     <mat-icon>edit</mat-icon>
                   </button>
                   }

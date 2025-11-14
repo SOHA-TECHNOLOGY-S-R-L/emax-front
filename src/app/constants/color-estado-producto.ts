@@ -15,3 +15,13 @@ export const ESTADO_ACTIVO_CATEGORIA = {
  true:"Sí",
  false:"No"
 };
+
+export const COLOR_ACTIVO_PRODUCTO = {
+ "true":"color_activo", //registrado es atributo CSS
+ "false":"color_inactivo",
+};
+
+export const ESTADO_ACTIVO_PRODUCTO = {
+ true:"Sí",
+ false:"No"
+};

@@ -33,6 +33,7 @@ export class CategoriaListadoComponent implements OnInit {
       this.categorias = categorias.map(cat => {
         cat.imagen = environment.API_URL_VER_IMAGEN + cat.imagen;
         cat.colorActiva = COLOR_ACTIVO_CATEGORIA[('' + cat.activa) as keyof typeof COLOR_ACTIVO_CATEGORIA];
+        cat.colorVisibleEnTienda = COLOR_ACTIVO_CATEGORIA[('' + cat.visibleEnTienda) as keyof typeof COLOR_ACTIVO_CATEGORIA];
         cat.cantidadProductos = cat.productos.length;
         return cat;
       })

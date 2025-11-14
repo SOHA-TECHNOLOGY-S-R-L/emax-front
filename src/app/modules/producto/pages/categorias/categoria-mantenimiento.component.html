@@ -5,6 +5,8 @@
       <div class="card-header">
         <div class="card-title">{{ titulo }}</div>
         <div class="ms-auto">
+          <button class="btn btn-secondary" [routerLink]="'/productos/categorias'">Cancelar</button>
+
           @if (!categoria.id && authService.hasRole('ROLE_REGISTER_CATEGORIA')) {
           <button class="btn btn-primary" (click)='guardarCategoria()' [disabled]="!formCategoria.valid">Crear
             producto</button>
@@ -13,7 +15,6 @@
           <button class="btn btn-primary" (click)='guardarCategoria()' [disabled]="!formCategoria.valid">Actualizar
             categoria</button>
           }
-          <button class="btn btn-secondary" [routerLink]="'/productos/categorias'">Cancelar</button>
         </div>
       </div>
       <div class="card-body">

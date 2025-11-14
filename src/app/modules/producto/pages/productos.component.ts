@@ -17,6 +17,9 @@ import { ModalService } from '../../../services/modal.service';
 import { ProductoService } from '../../../services/producto.service';
 import { AngularMaterialModule } from '../../compartido/angular-material.module';
 
+import { COLOR_ACTIVO_PRODUCTO, ESTADO_ACTIVO_PRODUCTO } from '../../../constants/color-estado-producto';
+import { environment } from '../../../../environments/environment';
+
 @Component({
   selector: 'app-productos',
   templateUrl: './productos.component.html',
@@ -28,7 +31,7 @@ import { AngularMaterialModule } from '../../compartido/angular-material.module'
 })
 export class ProductosComponent implements OnInit, AfterViewInit {
 
-  displayedColumns: string[] = ['id', 'nombre', 'color', 'material', 'categoria', 'uso', 'cantidadStock', 'costoUnitario', 'acciones'];
+  displayedColumns: string[] = ['codigo', 'nombre', 'categoria', 'cantidadStock', 'costoUnitario','activo','visibleEnTienda', 'acciones'];
   dataSource: Producto[] = [];
   productos: Producto[] = [];
   pageable: PageableResponse = new PageableResponse();
@@ -36,6 +39,8 @@ export class ProductosComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   isLoading = true;
+  estadoActivoProducto = ESTADO_ACTIVO_PRODUCTO
+
 
   constructor(
     private productoService: ProductoService,
@@ -76,10 +81,16 @@ export class ProductosComponent implements OnInit, AfterViewInit {
     };
 
     this.productoService.getAllProductosPageable(params).subscribe(response => {
-      this.productos = response.content as Producto[]
-      this.productos.forEach(p => {
-      }
-      );
+      this.productos = (response.content as Producto[]).map(prod => {
+              prod.imagen = environment.API_URL_VER_IMAGEN + prod.imagen;
+              prod.colorActivo = COLOR_ACTIVO_PRODUCTO[('' + prod.activo) as keyof typeof COLOR_ACTIVO_PRODUCTO];
+              prod.colorVisibleEnTienda = COLOR_ACTIVO_PRODUCTO[('' + prod.visibleEnTienda) as keyof typeof COLOR_ACTIVO_PRODUCTO];
+              //cat.cantidadProductos = cat.productos.length;
+              return prod;
+            }
+
+      )
+
       this.dataSource = this.productos;
       this.pageable = response;
 

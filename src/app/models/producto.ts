@@ -44,6 +44,8 @@ export class Producto {
   estadoProducto!: EstadoProducto;
   margenesProducto: MargenProducto[] = [];
   precioNetoNumberShow?: number;
+  colorActivo!: string;
+  colorVisibleEnTienda!: string;
   //precioNetoStringShow?: string;
 }
 

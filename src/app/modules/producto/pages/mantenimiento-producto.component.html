@@ -5,6 +5,8 @@
       <mat-card-header class="card-header">
         <mat-card-title>{{ titulo }}</mat-card-title>
         <div class="ms-auto">
+          <button color="primary" mat-raised-button [routerLink]="'/productos'">Cancelar</button>
+
           @if (producto.id && authService.hasRole('ROLE_UPDATE_PRODUCTO')) {
           <button color="primary" mat-raised-button (click)='guardarProducto()'
             [disabled]="!formProducto.valid">Actualizar producto</button>
@@ -17,7 +19,6 @@
           <!--         @if (producto.id && authService.hasRole('ROLE_UPDATE_PRODUCTO')) {
         <button color="primary" mat-raised-button (click)='guardarProducto()'>Actualizar producto</button>
         } -->
-          <button color="primary" mat-raised-button [routerLink]="'/productos'">Cancelar</button>
         </div>
       </mat-card-header>
       <mat-card-content>
