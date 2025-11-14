@@ -13,7 +13,6 @@ export const serverRoutes: ServerRoute[] = [
     path: 'crear-cuenta',
     renderMode: RenderMode.Server,
   },
-
   {
     path: 'nosotros',
     renderMode: RenderMode.Server,
@@ -26,59 +25,10 @@ export const serverRoutes: ServerRoute[] = [
     path: 'ubicanos-cliente',
     renderMode: RenderMode.Server,
   },
-  /*
   {
-    path: 'personas',
-    renderMode: RenderMode.Client,
-  },
-  {
-    path: 'personas/form/:id',
-    renderMode: RenderMode.Client,
-  },
-  {
-    path: 'personas/form',
-    renderMode: RenderMode.Client,
-  },
-  {
-    path: 'cajas',
-    renderMode: RenderMode.Client,
-  },
-  {
-    path: 'cajas/rpte-caja',
-    renderMode: RenderMode.Client,
-  },
-  {
-    path: 'cajas/rpte-caja-por-usuario',
-    renderMode: RenderMode.Client,
-  },
-  {
-    path: 'pedidos/listado-ventas',
-    renderMode: RenderMode.Client,
-  },
-  {
-    path: 'pedidos/listado-compras',
-    renderMode: RenderMode.Client,
-  },
-  {
-    path: 'pedidos/item-producto-persona-tienda/:personaId',
+    path: 'pedidos/pedido-persona-tienda-finalizado/:personaId',
     renderMode: RenderMode.Server,
   },
-  {
-    path: 'pedidos/rpte-pedidos/:tipoPedidoId',
-    renderMode: RenderMode.Client,
-  },
-  {
-    path: 'pedidos/pedido-persona-finalizado/:personaId',
-    renderMode: RenderMode.Client,
-  },
-  {
-    path: 'pedidos/detalle-venta/:pedidoId',
-    renderMode: RenderMode.Client,
-  },
-  {
-    path: 'pedidos/detalle-compra/:pedidoId',
-    renderMode: RenderMode.Client,
-  }, */
   {
     path: 'tienda',
     renderMode: RenderMode.Server,
@@ -197,43 +147,19 @@ export const serverRoutes: ServerRoute[] = [
         { nombre: 'Antiestres', productoCodigo: 'ANT-COR' },
         { nombre: 'Antiestres', productoCodigo: 'ANT-MED' },
         { nombre: 'Antiestres', productoCodigo: 'ANT-MIN' },
-        { nombre: 'Servicios', productoCodigo: 'SR1' },
-        { nombre: 'Servicios', productoCodigo: 'SR2' },
+        //{ nombre: 'Servicios', productoCodigo: 'SR1' },
+        //{ nombre: 'Servicios', productoCodigo: 'SR2' },
         //SR3 ESTA ACTIVO PERO VISIBLE EN TIENDA
         //{ nombre: 'Servicios', productoCodigo: 'SR3' },
         { nombre: 'Servicios', productoCodigo: 'SR4' },
       ]
-
-
     },
-
   },
-  /*{
-    path: 'pedidos/item-producto-persona-online/:productoId',
+  {
+    path: 'tienda/pedido-persona-online-finalizado/:personaId',
     renderMode: RenderMode.Server,
-    getPrerenderParams: async () => {
-      const productoService = inject(ProductoService);
-      const seoService = inject(SeoService);
+  },
 
-      const ids = await productoService.getIdsProductosActivosHowPromise();
-      console.log("IDSSSS", ids);
-      return ids.map(id => ({ productoId: id.toString() }));
-      return [{ productoId: '1' }, { productoId: '2' }, { productoId: '3' }];
-
-    },
-  },*/
-  /*   {
-      path: 'productos/mantenimiento-producto/:productoId',
-      renderMode: RenderMode.Server,
-    },
-    {
-      path: 'productos/categorias/:categoriaId',
-      renderMode: RenderMode.Server,
-    },
-    {
-      path: 'productos/productos-categoria/:categoriaId',
-      renderMode: RenderMode.Server,
-    }, */
   {
     path: '**',
     renderMode: RenderMode.Client

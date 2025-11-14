@@ -50,7 +50,7 @@ export class CrearCuentaTiendaComponent {
   frmDefault!: FrmCrearCuentaDefault;
   isClienteEdit: boolean = false;
   isValidFormEqualsClave = false;
-  isLoading: boolean = false;
+  //isLoading: boolean = false;
 
 
 
@@ -112,7 +112,7 @@ export class CrearCuentaTiendaComponent {
       return;
     }
     if (this.formNewCuenta.valid) {
-      this.isLoading = true;
+      //this.isLoading = true;
       this.setValueControls();
       this.tipoPersonaSelected = this.tipoPersonas[this.findIndexTipoPersona(CLIENTE)];
       this.persona.tipoPersona = this.tipoPersonaSelected
@@ -121,13 +121,13 @@ export class CrearCuentaTiendaComponent {
         this.alertService.success(`Hola ${resp.nomApellRz} se ha creado tu cuenta, puedes iniciar sesión`, "Exito");
         this.router.navigate(['/login']);
       })
-      this.isLoading = false;
+      //this.isLoading = false;
 
     }
   }
 
   actualizarCuenta() {
-    this.isLoading = true;
+    //this.isLoading = true;
 
     this.setValueControls()
     this.persona.pedidos = [];
@@ -143,7 +143,7 @@ export class CrearCuentaTiendaComponent {
           console.error(err.error.errors);
         } */
       )
-    this.isLoading = false;
+    //this.isLoading = false;
 
   }
 
@@ -152,7 +152,7 @@ export class CrearCuentaTiendaComponent {
   }
 
   findByNumDocumento(event: any) {
-    this.isLoading = true;
+    //this.isLoading = true;
     const numero = event.target.value;
     const tipoDocumentoId = this.formNewCuenta.get('tipoDocumentoId')?.value;
     this.personaService.getNumeroDocumento(numero).subscribe(resp => {
@@ -181,7 +181,7 @@ export class CrearCuentaTiendaComponent {
         this.persona.tipoPersona = this.tipoPersonaSelected
         this.isCliente = false
       }
-      this.isLoading = false;
+      //this.isLoading = false;
 
     }, err => {
       console.log("Entro")
