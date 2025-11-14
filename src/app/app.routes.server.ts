@@ -163,7 +163,8 @@ export const serverRoutes: ServerRoute[] = [
         { nombre: 'Libretas publicitarias', productoCodigo: 'LIB-CP2' },
         { nombre: 'Libretas publicitarias', productoCodigo: 'LIB-CP3' },
         { nombre: 'Libretas publicitarias', productoCodigo: 'LIB-PS' },
-        { nombre: 'Lapiceros publicitarios', productoCodigo: 'LA-1' },
+        //LA-1 ESTA INACTIVO Y NO VISIBLE EN TIENDA
+        //{ nombre: 'Lapiceros publicitarios', productoCodigo: 'LA-1' },
         { nombre: 'Lapiceros publicitarios', productoCodigo: 'LA-ECO2' },
         { nombre: 'Lapiceros publicitarios', productoCodigo: 'LA-ECO3' },
         { nombre: 'Lapiceros publicitarios', productoCodigo: 'LA-ECO1' },
@@ -186,7 +187,8 @@ export const serverRoutes: ServerRoute[] = [
         { nombre: 'Lapiceros publicitarios', productoCodigo: 'LAP-TR4' },
         { nombre: 'Lapiceros publicitarios', productoCodigo: 'LAP-VDA' },
         { nombre: 'Lapiceros publicitarios', productoCodigo: 'LAP-AZ1' },
-        { nombre: 'Maquinas e insumos', productoCodigo: 'MAQ-1' },
+        //MAQ-1 ESTA ACTIVO PERO VISIBLE EN TIENDA
+        //{ nombre: 'Maquinas e insumos', productoCodigo: 'MAQ-1' },
         { nombre: 'Maquinas e insumos', productoCodigo: 'MQ-1' },
         { nombre: 'Maquinas e insumos', productoCodigo: 'PL-1' },
         { nombre: 'Maquinas e insumos', productoCodigo: 'C-1' },
