@@ -333,17 +333,23 @@ export class MantenimientoProductoComponent implements OnInit, AfterViewInit {
   }
 
 
-  isImage(fileInput: HTMLInputElement): boolean {
-    return this.mediosUtilsService.isImage(fileInput);
-  }
+  /*   isImage(fileInput: HTMLInputElement): boolean {
+      return this.mediosUtilsService.isImage(fileInput);
+    } */
 
   subirImagen(fileInput: HTMLInputElement) {
     if (fileInput && fileInput.files && fileInput.files.length > 0) {
       const imagen: File = fileInput.files[0];
-      this.mediosUtilsService.subirImagen(imagen, false).subscribe(resp => {
-        this.verImagenProducto = environment.API_URL_VER_IMAGEN + resp.imagen;
-        this.producto.imagen = resp.imagen;
-      })
+      if (imagen.type.indexOf('image') >= 0) {
+        this.mediosUtilsService.subirImagen(imagen, false).subscribe(resp => {
+          this.verImagenProducto = environment.API_URL_VER_IMAGEN + resp.imagen;
+          this.producto.imagen = resp.imagen;
+        })
+      } else {
+        this.alertService.error('El archivo debe ser del tipo imagen', 'Imagen');
+        return;
+      }
+
     }
   }
 

@@ -1,13 +1,13 @@
 @if(!isAuthenticated() ) {
-<div class="row col-12 alert alert-danger mt-2 ">
-    <a [routerLink]="['/login/']" >Para realizar pedido INICIAR SESIÓN</a>
+<div class="row col-12 alert alert-danger mt-2 ">Para realizar pedido
+    <a [routerLink]="['/login/']" > Iniciar sesión</a>
 </div>
 }
 <h5>Carrito</h5>
 @for (item of lstItemPedido; track $index) {
 <div class="p-1" style="border-bottom: 1px solid #ccc;">
   <div class="d-flex d-flex-inline">
-    <p-button severity="danger" icon="pi pi-trash" (click)="eliminarItemPedido(item.producto.id)" />
+    <p-button severity="danger" icon="pi pi-trash" (click)="eliminarItemPedido(item.producto.id)" aria-label="Eliminar carrito" />
     <p class="mx-2 my-0">{{item.producto.nombre}}</p>
     <img [src]="item.imagenUri" alt={{item.imagen}} width="75px" />
   </div>

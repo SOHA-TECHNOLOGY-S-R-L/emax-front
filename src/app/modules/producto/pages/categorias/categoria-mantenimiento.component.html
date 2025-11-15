@@ -73,12 +73,21 @@
               <div class="row mb-2">
                 @if (authService.hasRole('ROLE_IMAGE_CATEGORIA')) {
                 <div class="row mb-2">
-                  <div class="input-group col-sm">
+                  <label for="clicUploadImageToCategoria" class="col-5"><b>Imágen de categoria:</b><br>Visible en
+                    tienda</label>
+                  <div class="input-group col-7">
+                    <input #file type="file" (change)="subirImagen(file)" name="imagen" class="form-control"
+                      style="display: none;" id="clicUploadImageToCategoria" aria-describedby="clicUploadImageToCategoria">
+                    <label for="clicUploadImageToCategoria" class="btn btn-secondary">📁 Elegir imagen de categoría</label>
+                  </div>
+
+
+                  <!--                   <div class="input-group col-sm">
                     <input #file (change)="this.isImage(file)" type="file" name="imagen" class="form-control"
                       style="padding: 25px;" id="inputGroupFile04" aria-describedby="inputGroupFileAddon04">
                     <button (click)="subirImagen(file)" class="btn btn-primary" type="button"
                       [disabled]="!this.isImage(file)" id="inputGroupFileAddon04">Subir</button>
-                  </div>
+                  </div> -->
                 </div>
                 <div class="row mb-2">
                   <div class="col-sm">

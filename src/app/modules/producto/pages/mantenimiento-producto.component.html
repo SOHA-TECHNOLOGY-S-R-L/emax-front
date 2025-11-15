@@ -26,7 +26,7 @@
           <div class="row">
             <div class="col-sm">
               <div class="row mb-2">
-                <label for="nombre" class="col-form-label col-sm-4"><b>Nombre:</b><br>Visible submenú de tienda</label>
+                <label for="nombre" class="col-form-label col-sm-4"><b>Nombre:</b><br>Visible en tienda</label>
                 <div class="input-group col-sm">
                   <input formControlName="nombre" type="text" class="form-control" name="nombre" placeholder="Nombre">
                   @if(formUtils.isValidField(formProducto,'nombre')){
@@ -88,7 +88,7 @@
 
               <div class="row mb-2">
                 <label for="cantidadStock" class="col-form-label col-sm-4"><b>Cantidad en stock:</b><br>
-                  Recálculo automatico</label>
+                  Automático</label>
                 <div class="input-group col-sm">
                   <input type="number" formControlName="cantidadStock" name="cantidadStock" class="form-control"
                     placeholder="Cantidad en stock" min="0">
@@ -176,7 +176,7 @@
               </div>
               <div class="row mb-2">
                 <label for="costoUnitario" class="col-form-label col-sm-4"><b>Costo unitario:</b><br>
-                  Recálculo automatico</label>
+                  Automático</label>
                 <div class="input-group col-sm">
                   <input type="number" (input)="calcularPrecioNeto()" formControlName="costoUnitario"
                     name="costoUnitario" class="form-control" placeholder="Costo unitario" required min="0">
@@ -242,9 +242,7 @@
 
             <div class="col-sm">
               <div class="row mb-2">
-                <label for="categoriaId" class="form-label col-sm-4"><b>Categoria del producto:</b> <br>Visible en menú
-                  de
-                  la tienda</label>
+                <label for="categoriaId" class="form-label col-sm-5"><b>Categoría del producto:</b> <br>Visible en tienda</label>
                 <div class="input-group col-sm">
                   <select formControlName="categoriaId" name="categoriaId" class="form-control">
                     <option *ngFor="let categoria of categorias" [value]="categoria.id">{{categoria.nombre}}</option>
@@ -256,7 +254,7 @@
                 </div>
               </div>
               <div class="row mb-2">
-                <label for="materialId" class="form-label col-sm-4">Material del producto:</label>
+                <label for="materialId" class="form-label col-sm-5">Material del producto:</label>
                 <div class="input-group col-sm">
                   <select formControlName="materialId" name="materialId" class="form-control">
                     <option *ngFor="let material of materiales" [value]="material.id">{{material.nombre}}</option>
@@ -268,7 +266,7 @@
                 </div>
               </div>
               <div class="row mb-2">
-                <label for="colorId" class="form-label col-sm-4">Color del producto:</label>
+                <label for="colorId" class="form-label col-sm-5">Color del producto:</label>
                 <div class="input-group col-sm">
                   <select formControlName="colorId" name="colorId" class="form-control">
                     <option *ngFor="let color of colores" [value]="color.id">{{color.nombre}}</option>
@@ -280,7 +278,7 @@
                 </div>
               </div>
               <div class="row mb-2">
-                <label for="usoId" class="form-label col-sm-4">Uso del producto:</label>
+                <label for="usoId" class="form-label col-sm-5">Uso del producto:</label>
                 <div class="input-group col-sm">
                   <select formControlName="usoId" name="usoId" class="form-control">
                     <option *ngFor="let uso of usos" [value]="uso.id">{{uso.nombre}}</option>
@@ -291,18 +289,7 @@
                   </div>}
                 </div>
               </div>
-              <!--  -------- -->
-              <!--             <div class="row mb-2">
-              <label for="formFile" class="form-label col-sm-4"><b>Imágen del producto:</b><br>Visible en tienda</label>
-                <div class="input-group col-sm">
-                  <input (change)="seleccionarImagen($event)" type="file" name="imagen" formControlName="imagen"
-                    class="form-control" id="inputGroupFile04" aria-describedby="inputGroupFileAddon04"
-                    aria-label="Cargar">
-                  <button (click)="subirImagen()" class="btn btn-outline-primary" type="button"
-                    [disabled]="!(imagenSeleccionada && producto.nombre && producto.codigo)"
-                    id="inputGroupFileAddon04">Cargar</button>
-                </div>
-            </div> -->
+
               <div class="row mb-2">
                 @if (authService.hasRole('ROLE_ACTIVE_PRODUCTO')) {
                 <label for="activo" class="form-label col-sm-4"><b>Producto activo</b></label>
@@ -329,14 +316,23 @@
               </div>
               @if (authService.hasRole('ROLE_IMAGE_PRODUCTO')) {
               <div class="row mb-2">
-                <label for="formFile" class="form-label col-sm-4"><b>Imágen del producto:</b><br>Visible en
+                <!--            <label for="formFile" class="form-label col-sm-4"><b>Imágen del producto:</b><br>Visible en
                   tienda</label>
                 <div class="input-group col-sm">
                   <input #file (change)="this.isImage(file)" type="file" name="imagen" class="form-control"
                     style="padding: 25px;" id="inputGroupFile04" aria-describedby="inputGroupFileAddon04">
                   <button (click)="subirImagen(file)" class="btn btn-primary" type="button"
                     [disabled]="!this.isImage(file)" id="inputGroupFileAddon04">Subir</button>
+                </div> -->
+                <label for="clicUploadImageToProduct" class="form-label col-sm-5"><b>Imágen del producto:</b><br>Visible en
+                  tienda</label>
+                <div class="input-group col-7">
+                  <input #file type="file" (change)="subirImagen(file)" name="imagen" class="form-control"
+                    style="display: none;" id="clicUploadImageToProduct" aria-describedby="clicUploadImageToProduct">
+                  <label for="clicUploadImageToProduct" class="btn btn-secondary">📁 Elegir imagen del producto</label>
                 </div>
+
+
               </div>
               <div class="row mb-2">
                 <div class="col-sm">

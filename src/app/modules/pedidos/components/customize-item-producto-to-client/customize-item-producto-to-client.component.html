@@ -52,11 +52,11 @@
       <form id="addToCart" [formGroup]="frm" (ngSubmit)="sendOneItemProducto()">
         <div class="container-fluid">
           <div class="row mb-2">
-            <label for="addDisenio" class="col-6"><b>¿GRABAR IMAGEN EN PRODUCTOS?</b> </label>
+            <label for="clicUploadImageToClient" class="col-6"><b>¿GRABAR IMAGEN EN PRODUCTOS?</b> </label>
             <div class="input-group col-6">
               <input #file type="file" (change)="subirImagen(file)" name="imagen" class="form-control"
-                style="display: none;" id="inputGroupFile04" aria-describedby="inputGroupFileAddon04">
-              <label for="inputGroupFile04" class="btn btn-secondary">📁 Elegir imagen</label>
+                style="display: none;" id="clicUploadImageToClient" aria-describedby="clicUploadImageToClient">
+              <label for="clicUploadImageToClient" class="btn btn-secondary">📁 Elegir imagen</label>
             </div>
           </div>
 

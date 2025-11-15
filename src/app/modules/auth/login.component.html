@@ -20,13 +20,12 @@
                 <button (click)='login()' type="submit" class="btn btn-primary mb-2">Iniciar sesión</button>
              </div>
               <div class="text-center">
-                <a [routerLink]="['/recuperar-clave']" class="text-secondary">¿Olvidaste tu contaseña?</a>
+                <a id="clicOlvidasteTuClave" [routerLink]="['/recuperar-clave']" class="text-secondary">¿Olvidaste tu clave?</a>
               </div>
             </div>
             <div class="card-footer">
               <a [routerLink]="['/crear-cuenta']" class="text-secondary">Crear cuenta</a> o <a
-                [routerLink]="['/tienda/productos-categoria', 'Tienda']" class="text-secondary">Comprar en tienda
-                virtual</a>
+                [routerLink]="['/tienda/productos-categoria', 'Tienda']" class="text-secondary">Ir a tienda</a>
             </div>
           </form>
         </div>
