@@ -20,7 +20,7 @@ export class Producto {
   minCantidadPedido: number = 1;
   maxCantidadPedido: number = 999999999;
   gruposDe: number = 1;
-  costoUnitario: number = 1;// esto se actualiza al comprar
+  costoUnitario: number = 0;// esto se actualiza al comprar
   //costoPersonalizacion: number=0;
   impuestoIgv: number = 18;
   //margenGanancia:number=0;

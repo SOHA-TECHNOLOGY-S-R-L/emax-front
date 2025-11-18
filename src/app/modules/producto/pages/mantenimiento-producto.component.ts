@@ -145,9 +145,9 @@ export class MantenimientoProductoComponent implements OnInit, AfterViewInit {
       gruposDe: [this.producto?.gruposDe,
       { validators: [Validators.required, Validators.min(1)] }
       ],
-      costoUnitario: [this.producto?.costoUnitario,
-      { validators: [Validators.required, Validators.min(1)] }
-      ],
+      costoUnitario: [this.producto?.costoUnitario
+/*       { validators: [Validators.required, Validators.min(0)] }
+ */      ],
 
       //costoPersonalizacion: [this.producto?.costoPersonalizacion, Validators.min(0)],
       //costoUnitarioEmpaque: [this.producto?.costoUnitarioEmpaque, Validators.min(0)],
