@@ -114,6 +114,24 @@
     border-top-right-radius: 0.5rem;
 }
 
+/* .icon-square {
+  background-color: white;
+  padding: 6px;
+  border-radius: 8px;
+  color: #0d6efd;
+  display: inline-block;
+} */
+
+.icon-square {
+/*   background-color: #fff;
+ */  padding: 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
 @media screen and (max-width: 900px) {
   .wrapper .carousel {
     grid-auto-columns: calc((100% / 2) - 9px);

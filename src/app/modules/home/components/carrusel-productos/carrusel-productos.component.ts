@@ -6,6 +6,7 @@ import { ProductoService } from '../../../../services/producto.service';
 import { PrimeNgModule } from '../../../compartido/prime-ng.module';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { AngularMaterialModule } from '../../../compartido/angular-material.module';
 
 
 @Component({
@@ -13,7 +14,7 @@ import { RouterModule } from '@angular/router';
   templateUrl: './carrusel-productos.component.html',
   styleUrl: './carrusel-productos.component.css',
   standalone: true,
-  imports: [PrimeNgModule, CommonModule, RouterModule]
+  imports: [PrimeNgModule, CommonModule, RouterModule, AngularMaterialModule]
 
 })
 export class CarruselProductosComponent {
