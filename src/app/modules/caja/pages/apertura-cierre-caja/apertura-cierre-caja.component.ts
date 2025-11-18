@@ -28,11 +28,11 @@ export class AperturaCierreCajaComponent implements OnInit {
   private fb = inject(FormBuilder);
   cajaUsuario = new CajaUsuario();
   //cajaUsuario!: CajaUsuario;
-  //username!: string;
+  username!: string;
   //cajaId!: number;
 
   cajas: Caja[] = [];
-  //caja!: Caja;
+  caja!: Caja;
   //isAutenticado!: boolean;
   cajaActiva: boolean = false;
   //fechaActual!: string;
@@ -61,9 +61,9 @@ export class AperturaCierreCajaComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.authService.isAuthenticated()) {
-      const username = this.authService.usuario.username;
-      this.usuarioService.getUsuarioByUsername(username).subscribe(resp => this.cajaUsuario.usuario = resp)
-      this.cajaService.getCajaUsuarioByUserName(username).subscribe(
+      this.username = this.authService.usuario.username;
+      //this.usuarioService.getUsuarioByUsername(username).subscribe(resp => this.cajaUsuario.usuario = resp)
+      this.cajaService.getCajaUsuarioByUserName(this.username).subscribe(
         result => {
           if (result != null) {
             this.cajaUsuario = result;
@@ -79,9 +79,19 @@ export class AperturaCierreCajaComponent implements OnInit {
   }
 
   asignarCajaUsuario(caja: Caja) {
-    this.cajaUsuario.caja = caja
-    //this.cajaId = caja.id;
-    this.formCaja.get("ubicacionCaja")?.setValue(caja.ubicacion);
+    this.cajaService.getCajaUsuarioInactivoByCajaId(caja.id).subscribe(result => {
+
+      if (result != null) {
+        if (result.saldoCaja > 0 && result.activa == true) {
+          this.alertService.success(`${result.caja.nombre}, debe estar cerrada y sin saldo para ser asignada.`, "Caja",)
+          return;
+        }
+      }
+      this.cajaUsuario.caja = caja
+      this.cajaUsuario.ingresoEsperado = 0;
+      this.cajaUsuario.egresoEsperado = 0;
+      this.formCaja.get("ubicacionCaja")?.setValue(caja.ubicacion);
+    })
   }
 
   obtenerTodoCajas() {
@@ -90,16 +100,18 @@ export class AperturaCierreCajaComponent implements OnInit {
 
 
   abrirCaja() {
-    //console.log("AperturaCajaComponent.abrirCaja...", this.cajaUsuario);
-    this.cajaUsuario.fechaApertura = '';
-    this.cajaUsuario.fechaCierre = '';
-    //this.cajaUsuario.usuario.password = "";
-    this.cajaUsuario.usuario.roles = [];
-    this.cajaService.create(this.cajaUsuario).subscribe(
-      response => {
-        this.alertService.success(`Se habrió ${this.cajaUsuario.caja.nombre}, para ${this.cajaUsuario.usuario.username} con éxito!`, "Caja",)
-        this.router.navigate(['/']);
-      })
+    this.usuarioService.getUsuarioByUsername(this.username).subscribe(resp => {
+      this.cajaUsuario.usuario = resp;
+      //this.cajaUsuario.fechaApertura = '';
+      //this.cajaUsuario.fechaCierre = '';
+      //this.cajaUsuario.usuario.password = "";
+      this.cajaUsuario.usuario.roles = [];
+      this.cajaService.create(this.cajaUsuario).subscribe(
+        response => {
+          this.alertService.success(`Se habrió ${this.cajaUsuario.caja.nombre}, para ${this.cajaUsuario.usuario.username} con éxito!`, "Caja",)
+          this.router.navigate(['/']);
+        })
+    })
   }
 
   cerrarCaja() {
@@ -111,7 +123,9 @@ export class AperturaCierreCajaComponent implements OnInit {
 
     if (saldoPorConteo == saldoCaja) {
       this.cajaUsuario.saldoPorConteo = saldoPorConteo!;
-      this.cajaUsuario.activa = false;
+      /*this.cajaUsuario.ingresoEsperado = 0;
+      this.cajaUsuario.egresoEsperado = 0;
+      this.cajaUsuario.activa = false;*/
       this.cajaService.update(this.cajaUsuario).subscribe(
         response => {
           this.alertService.success(`Se cerró ${this.cajaUsuario.caja.nombre}, para ${this.cajaUsuario.usuario.username} con éxito!`, "Caja")

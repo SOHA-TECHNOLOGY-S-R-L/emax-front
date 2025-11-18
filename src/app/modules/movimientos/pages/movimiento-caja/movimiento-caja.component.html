@@ -75,19 +75,19 @@
             </mat-option>
           </mat-select>
         </mat-form-field>
-        <ng-container *ngIf="iMovimiento=='I'">
-          <mat-form-field>
-            <mat-label>INGRESO DINERO</mat-label>
-            <input matInput type="number" name="ingresoDinero" #ingresoDinero="ngModel"
-              [(ngModel)]="movimientoCaja.ingresoDinero" min="0" required>
-            <div *ngIf="ingresoDinero.invalid && (ingresoDinero.dirty || ingresoDinero.touched)">
-              <mat-error *ngIf="ingresoDinero?.errors?.['required']">
-                Pago es requerido
-              </mat-error>
-            </div>
-          </mat-form-field>
-        </ng-container>
-        <ng-container *ngIf="iMovimiento=='E'">
+        @if (iMovimiento==='I') {
+        <mat-form-field>
+          <mat-label>INGRESO DINERO</mat-label>
+          <input matInput type="number" name="ingresoDinero" #ingresoDinero="ngModel"
+            [(ngModel)]="movimientoCaja.ingresoDinero" min="0" required>
+          <div *ngIf="ingresoDinero.invalid && (ingresoDinero.dirty || ingresoDinero.touched)">
+            <mat-error *ngIf="ingresoDinero?.errors?.['required']">
+              Pago es requerido
+            </mat-error>
+          </div>
+        </mat-form-field>
+        }
+        @if (iMovimiento==='E') {
           <mat-form-field>
             <mat-label>EGRESO DINERO</mat-label>
             <input matInput type="number" name="egresoDinero" #egresoDinero="ngModel"
@@ -98,8 +98,7 @@
               </mat-error>
             </div>
           </mat-form-field>
-        </ng-container>
-
+        }
         <div class="d-flex justify-content-end">
           <button type="submit" color="primary" mat-raised-button cdkFocusInitial [disabled]="!myForm.form.valid">
             Registrar movimiento</button>

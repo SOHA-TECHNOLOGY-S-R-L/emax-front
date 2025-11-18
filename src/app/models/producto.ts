@@ -13,12 +13,12 @@ export class Producto {
   medidas?: string
   peso?: string
   // galeriaProducto: GaleriaProducto[]=[]
-  umbralPocaCantidad: number = 1;
+  umbralPocaCantidad: number = 5;
   umbralCantidadAgotada: number = 0;
   cantidadVendidos: number = 0;
   cantidadStock: number = 0; // esto se actualiza al comprar
   minCantidadPedido: number = 1;
-  maxCantidadPedido: number = 1;
+  maxCantidadPedido: number = 999999999;
   gruposDe: number = 1;
   costoUnitario: number = 1;// esto se actualiza al comprar
   //costoPersonalizacion: number=0;

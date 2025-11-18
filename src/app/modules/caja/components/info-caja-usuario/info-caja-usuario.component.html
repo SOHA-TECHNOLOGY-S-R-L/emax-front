@@ -7,10 +7,28 @@
         i18nSelect: estadoCajaUsuarioMap }}</span>
     </div>
   </li>
-
+  @if (cajaUsuario.activa) {
   <li class="list-group-item d-flex justify-content-between align-items-start">
     <div class="me-auto">
-      <span class="cabecera">Saldo Caja:</span> {{cajaUsuario.saldoCaja | currency: "PEN"}}<br>
+      <span class="cabecera">Saldo:</span><b> {{cajaUsuario.saldoCaja| currency: "PEN"}}</b><br>
+    </div>
+  </li>
+  }
+  @if (!cajaUsuario.activa) {
+  <li class="list-group-item d-flex justify-content-between align-items-start">
+    <div class="me-auto">
+      <span class="cabecera">Saldo con conteo:</span> <b>{{cajaUsuario.saldoPorConteo| currency: "PEN"}}</b><br>
+    </div>
+  </li>
+  }
+  <li class="list-group-item d-flex justify-content-between align-items-start">
+    <div class="me-auto">
+      <span class="cabecera">Ingresos:</span> {{cajaUsuario.ingresoEsperado| currency: "PEN"}}<br>
+    </div>
+  </li>
+  <li class="list-group-item d-flex justify-content-between align-items-start">
+    <div class="me-auto">
+      <span class="cabecera">Egresos:</span> {{cajaUsuario.egresoEsperado| currency: "PEN"}}<br>
     </div>
   </li>
   <li class="list-group-item d-flex justify-content-between align-items-start">
@@ -20,12 +38,12 @@
   </li>
   <li class="list-group-item d-flex justify-content-between align-items-start">
     <div class="me-auto">
-      <span class="cabecera">Usuario asignado:</span> {{cajaUsuario.usuario.username}}<br>
+      <span class="cabecera">Usuario:</span> {{cajaUsuario.usuario.username}}<br>
     </div>
   </li>
   <li class="list-group-item d-flex justify-content-between align-items-start">
     <div class="me-auto">
-      <span class="cabecera">Ubicación caja:</span> {{cajaUsuario.caja.ubicacion}}<br>
+      <span class="cabecera">Ubicación:</span> {{cajaUsuario.caja.ubicacion}}<br>
     </div>
   </li>
   <li class="list-group-item d-flex justify-content-between align-items-start">

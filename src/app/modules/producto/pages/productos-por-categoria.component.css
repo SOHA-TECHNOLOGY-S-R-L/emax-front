@@ -2,3 +2,11 @@
   font-size: large;
   font-weight: bold;
 }
+
+.productos-por-categoria-img {
+    width: 100%;        /* siempre ocupa todo el ancho */
+    height: auto;
+    object-fit: contain;
+    border-top-left-radius: 0.5rem;   /* opcional */
+    border-top-right-radius: 0.5rem;  /* opcional */
+}

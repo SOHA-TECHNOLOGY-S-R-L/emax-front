@@ -1,10 +1,10 @@
+import { TitleCasePipe } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
-import { Categoria } from '../../../../models/categoria';
-import { ProductoService } from '../../../../services/producto.service';
-import { environment } from '../../../../../environments/environment';
 import { RouterModule } from '@angular/router';
-import { SeoService } from '../../../../services/seo.service';
+import { environment } from '../../../../../environments/environment';
+import { Categoria } from '../../../../models/categoria';
 import { CategoriaService } from '../../../../services/categoria.service';
+import { SeoService } from '../../../../services/seo.service';
 
 @Component({
   selector: 'categorias-producto-persona',

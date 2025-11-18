@@ -5,7 +5,7 @@
       <a class="{{producto.estadoProducto.color}}"
         [routerLink]="['/tienda/productos-categoria', producto.categoria?.nombre, 'item-producto-persona-online', producto.codigo]">
         <img *ngIf="producto?.imagen" [src]="API_URL_VER_IMAGEN+producto.imagen" [alt]="producto.imagen" loading="lazy"
-          decoding="async" priority="false" class="card-img-top">
+          decoding="async" priority="false" class="productos-por-categoria-img" >
         <!--         <img *ngIf="producto?.imagen"
         ngOptimizedImage
         [ngSrc]="API_URL_VER_IMAGEN+producto.imagen"

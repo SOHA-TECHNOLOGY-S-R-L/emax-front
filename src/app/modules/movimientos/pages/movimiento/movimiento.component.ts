@@ -192,11 +192,12 @@ export class MovimientoComponent implements OnInit {
         if (this.isFromPedidos) {
           this.router.navigate(['/pedidos/listado-ventas'])
         };
-
+        this.alertService.success(`Se realizó la  ${this.pedido.tipoPedido.nombre} exitosamente`, "Exito");
       })
     }
     if (this.pedido.tipoPedido.nombre == "COMPRA O ADQUISICION") {
       this.movimientoService.createMovimiento(this.movimiento).subscribe(response => {
+        this.alertService.success(`Se realizó la  ${this.pedido.tipoPedido.nombre} exitosamente`, "Exito");
         if (this.isFromPedidos) {
           this.router.navigate(['/pedidos/listado-compras']);
         }
@@ -204,7 +205,6 @@ export class MovimientoComponent implements OnInit {
     }
     this.getCajaUsuario();
     this.limpiarForm(form);
-    this.alertService.success(`Se realizó la  ${this.pedido.tipoPedido.nombre} exitosamente`, "Exito");
 
   }
 

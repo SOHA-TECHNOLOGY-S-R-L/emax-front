@@ -6,7 +6,8 @@
         <div class="relative mx-auto">
           <a class="{{product.estadoProducto.color}}"
             [routerLink]="['/tienda/productos-categoria',product.categoria.nombre, 'item-producto-persona-online', product.codigo]">
-            <img [src]="API_URL_VER_IMAGEN+product.imagen" [alt]="product.nombre" class="w-full rounded-border" width="200px" /></a>
+            <img [src]="API_URL_VER_IMAGEN+product.imagen" [alt]="product.nombre" class="productos-por-categoria-img" />
+          </a>
         </div>
       </div>
       <div class="mb-4 font-medium">{{ product.nombre }}</div>
