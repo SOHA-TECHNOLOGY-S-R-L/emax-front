@@ -242,7 +242,8 @@
 
             <div class="col-sm">
               <div class="row mb-2">
-                <label for="categoriaId" class="form-label col-sm-5"><b>Categoría del producto:</b> <br>Visible en tienda</label>
+                <label for="categoriaId" class="form-label col-sm-5"><b>Categoría del producto:</b> <br>Visible en
+                  tienda</label>
                 <div class="input-group col-sm">
                   <select formControlName="categoriaId" name="categoriaId" class="form-control">
                     <option *ngFor="let categoria of categorias" [value]="categoria.id">{{categoria.nombre}}</option>
@@ -324,7 +325,8 @@
                   <button (click)="subirImagen(file)" class="btn btn-primary" type="button"
                     [disabled]="!this.isImage(file)" id="inputGroupFileAddon04">Subir</button>
                 </div> -->
-                <label for="clicUploadImageToProduct" class="form-label col-sm-5"><b>Imágen del producto:</b><br>Visible en
+                <label for="clicUploadImageToProduct" class="form-label col-sm-5"><b>Imágen del producto:</b><br>Visible
+                  en
                   tienda</label>
                 <div class="input-group col-7">
                   <input #file type="file" (change)="subirImagen(file)" name="imagen" class="form-control"
@@ -461,6 +463,24 @@
           }
         </div>
       </mat-card-content>
+      <mat-card-footer class="card-header">
+        <div class="ms-auto">
+          <button color="primary" mat-raised-button [routerLink]="'/productos'">Cancelar</button>
+
+          @if (producto.id && authService.hasRole('ROLE_UPDATE_PRODUCTO')) {
+          <button color="primary" mat-raised-button (click)='guardarProducto()'
+            [disabled]="!formProducto.valid">Actualizar producto</button>
+          }
+          @if (!producto.id && authService.hasRole('ROLE_REGISTER_PRODUCTO')) {
+          <button color="primary" mat-raised-button (click)='guardarProducto()' [disabled]="!formProducto.valid">Crear
+            producto</button>
+          }
+
+          <!--         @if (producto.id && authService.hasRole('ROLE_UPDATE_PRODUCTO')) {
+        <button color="primary" mat-raised-button (click)='guardarProducto()'>Actualizar producto</button>
+        } -->
+        </div>
+      </mat-card-footer>
     </form>
 
   </mat-card>
