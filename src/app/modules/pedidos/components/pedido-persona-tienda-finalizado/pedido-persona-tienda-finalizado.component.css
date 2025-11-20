@@ -1,0 +1,9 @@
+.icon-square {
+/*   background-color: #fff;
+ */  padding: 10px;
+  border-radius: 6px;
+  font-size: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}

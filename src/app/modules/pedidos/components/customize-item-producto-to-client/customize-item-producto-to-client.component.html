@@ -27,7 +27,7 @@
           <ul class="list-group" style="list-style-type: none;">
             <li style="margin-bottom: 6px;"><i class="fa fa-angle-right mr-2"></i><b>Cantidad en stock:
               </b>{{producto.cantidadStock}} unid</li>
-<!--
+            <!--
             <li style="margin-bottom: 6px;"><i class="fa fa-angle-right mr-2"></i><b>Mín cantidad en pedido:
               </b>{{producto.minCantidadPedido}} unid </li>
             <li style="margin-bottom: 6px;"><i class="fa fa-angle-right mr-2"></i><b>Máx cantidad en pedido:
@@ -49,7 +49,7 @@
         </div>
       </div>
       }
-      <form id="addToCart" [formGroup]="frm" (ngSubmit)="sendOneItemProducto()">
+      <form id="frmAddToCart" [formGroup]="frm" (ngSubmit)="sendOneItemProducto()">
         <div class="container-fluid">
           <div class="row mb-2">
             <label for="clicUploadImageToClient" class="col-6"><b>¿GRABAR IMAGEN EN PRODUCTOS?</b> </label>
@@ -71,16 +71,28 @@
             <img class="col-4" [src]="verImagenItem">
             <div class="col-8">
               <div class="d-flex flex-column">
-                <label for="cantidad" class="form-label"><b>Cantidad:</b></label>
+<!--                 <label for="cantidad" class="form-label"><b>Cantidad:</b></label>
                 <div class="mb-2">
-                  <input type="number" formControlName="cantidad" class="form-control" name="cantidad"
-                    [step]="gruposDe" [min]="minCantidadPedido"
-                    [max]="maxCantidadPedido" />
+                  <input type="number" formControlName="cantidad" class="form-control" name="cantidad" [step]="gruposDe"
+                    [min]="minCantidadPedido" [max]="maxCantidadPedido" />
+                </div> -->
+
+
+                <div class="input-group mb-2">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text" id="inputCantidadItemProducto">Cantidad:</span>
+                  </div>
+                  <input type="number" formControlName="cantidad" class="form-control" name="cantidad" [step]="gruposDe"
+                    [min]="minCantidadPedido" [max]="maxCantidadPedido"
+                    aria-describedby="inputCantidadItemProducto">
                 </div>
+
+
+
                 <div class="d-flex flex-wrap flex-column flex-sm-row justify-content-sm-evenly">
                   <button type="button" class="btn btn-secondary mb-2" (click)="chatear(producto)"><i
                       class="fa-brands fa-whatsapp mr-1"></i>Chatear</button>
-                  <button type="submit" class="btn btn-primary mb-2">Añadir
+                  <button id="btnAddToCart" type="submit" class="btn btn-primary mb-2">Añadir
                     carrito</button>
                 </div>
               </div>

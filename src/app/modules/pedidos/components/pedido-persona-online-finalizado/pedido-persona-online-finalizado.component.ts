@@ -1,13 +1,14 @@
+import { SERVICIO_ENTREGA_PROVINCIAL } from './../../../../constants/constantes';
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormsModule, NgForm, ReactiveFormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { findIndex } from 'lodash-es';
+import { findIndex, forEach } from 'lodash-es';
 import moment from 'moment';
 import { Subscription } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
-import { SERVICIO_ENTREGA_CIUDAD, SERVICIO_ENTREGA_LOCAL, SERVICIO_GRABADO_IMAGEN } from '../../../../constants/constantes';
+import { SERVICIO_ENTREGA_CIUDAD, SERVICIO_ENTREGA_LOCAL } from '../../../../constants/constantes';
 import { ItemPedido } from '../../../../models/item-pedido';
 import { Pedido } from '../../../../models/pedido';
 import { Persona } from '../../../../models/persona';
@@ -62,8 +63,9 @@ export class PedidoPersonaOnlineFinalizadoComponent implements OnInit {
 
   SERVICIO_ENTREGA_LOCAL = SERVICIO_ENTREGA_LOCAL;
   SERVICIO_ENTREGA_CIUDAD = SERVICIO_ENTREGA_CIUDAD;
+  SERVICIO_ENTREGA_PROVINCIAL = SERVICIO_ENTREGA_PROVINCIAL;
   //SERVICIO_DISENIO = SERVICIO_DISENIO;
-  SERVICIO_GRABADO_IMAGEN = SERVICIO_GRABADO_IMAGEN;
+  //SERVICIO_GRABADO_IMAGEN = SERVICIO_GRABADO_IMAGEN;
 
 
   constructor() {
@@ -169,6 +171,8 @@ export class PedidoPersonaOnlineFinalizadoComponent implements OnInit {
       this.pedido.tipoPedido = this.tipoPedidoVentaPersonas
       this.pedidoService.createPedidoTienda(this.pedido).subscribe(p => {
         this.openDialog(p)
+        this.pedido.items=[];
+
         //this.pedidoService.setPedido(p);
         //this.itemService.removeLocalStorageItems();
         //this.router.navigate(['/pedidos/contactanos']);
@@ -199,23 +203,32 @@ export class PedidoPersonaOnlineFinalizadoComponent implements OnInit {
   }
 
   addItemsServicioEnvio(event: any, formaEnvio: string) {
+    debugger;
     this.isEnvio = event.target.checked;
-    let servicioSelected = this.serviciosEnvio.filter(ser => ser.codigo == formaEnvio);
-    let servicioNoSelected = this.serviciosEnvio.filter(ser => ser.codigo != formaEnvio);
+    let envioSelected = this.serviciosEnvio.filter(ser => ser.codigo == formaEnvio);
+    let envioNoSelected = this.serviciosEnvio.filter(ser => ser.codigo != formaEnvio);
     this.formaEnvio = formaEnvio;
 
     if (this.isEnvio) {
-      //console.log(servicioSelected[0].minCantidadPedido);
-      this.item.cantidad = servicioSelected[0].minCantidadPedido;
-      this.item.descripcion = servicioSelected[0].descripcion;
-      this.item.producto = { ...servicioSelected[0] };
-      this.item.imagenUri = environment.API_URL_VER_IMAGEN + this.item.imagen
+      //console.log(envioSelected[0].minCantidadPedido);
+      this.item.cantidad = envioSelected[0].minCantidadPedido;
+      this.item.descripcion = envioSelected[0].descripcion;
+      this.item.producto = { ...envioSelected[0] };
+      this.item.imagenUri = environment.API_URL_VER_IMAGEN + this.item.producto.imagen
 
-      if (this.itemService.existItemInItems(this.items, servicioNoSelected[0].id)) {
-        this.items = this.itemService.deleteItemFromItems(this.items, this.item.producto.id);
-        this.itemService.setItems(this.items);
-        //this.itemService.saveLocalStorageItems(this.items);
-      }
+      /*       if (this.itemService.existItemInItems(this.items, envioNoSelected[0].id)) {
+              this.items = this.itemService.deleteItemFromItems(this.items, this.item.producto.id);
+              this.itemService.setItems(this.items);
+              this.itemService.saveLocalStorageItems(this.items);
+            } */
+
+      envioNoSelected.forEach(servicio => {
+        if (this.itemService.existItemInItems(this.items, servicio.id)) {
+          this.items = this.itemService.deleteItemFromItems(this.items, servicio.id);
+        }
+      })
+      this.itemService.setItems(this.items);
+
 
       if (!this.itemService.existItemInItems(this.items, this.item.producto.id)
         && this.item.cantidad <= this.item.producto.maxCantidadPedido) {
