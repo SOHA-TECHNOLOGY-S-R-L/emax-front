@@ -145,9 +145,9 @@ export class MantenimientoProductoComponent implements OnInit, AfterViewInit {
       gruposDe: [this.producto?.gruposDe,
       { validators: [Validators.required, Validators.min(1)] }
       ],
-      costoUnitario: [this.producto?.costoUnitario
-/*       { validators: [Validators.required, Validators.min(0)] }
- */      ],
+      costoUnitario: [this.producto?.costoUnitario,
+       { validators: [Validators.required, Validators.min(0)] }
+       ],
 
       //costoPersonalizacion: [this.producto?.costoPersonalizacion, Validators.min(0)],
       //costoUnitarioEmpaque: [this.producto?.costoUnitarioEmpaque, Validators.min(0)],
@@ -206,8 +206,8 @@ export class MantenimientoProductoComponent implements OnInit, AfterViewInit {
       minCantidad: [margenProducto.minCantidad, [Validators.required, Validators.min(1)]],
       maxCantidad: [margenProducto.maxCantidad, Validators.min(1)],
       margen: [margenProducto.margen, [Validators.required, Validators.min(1)]],
-      precioNetoSugerido: [margenProducto.precioNetoSugerido, [Validators.required, Validators.min(1)]],
-      precioNeto: [margenProducto.precioNeto, [Validators.required, Validators.min(1)]],
+      precioNetoSugerido: [margenProducto.precioNetoSugerido, [Validators.required, Validators.min(0)]],
+      precioNeto: [margenProducto.precioNeto, [Validators.required, Validators.min(0)]],
     })
   }
 
@@ -216,8 +216,8 @@ export class MantenimientoProductoComponent implements OnInit, AfterViewInit {
       minCantidad: [1, Validators.min(1)],
       maxCantidad: [],
       margen: [1, [Validators.required, Validators.min(1)]],
-      precioNetoSugerido: [1, [Validators.required, Validators.min(1)]],
-      precioNeto: [1, [Validators.required, Validators.min(1)]],
+      precioNetoSugerido: [1, [Validators.required, Validators.min(0)]],
+      precioNeto: [1, [Validators.required, Validators.min(0)]],
     });
     this.agregrarMargenProducto(formGroup);
   }

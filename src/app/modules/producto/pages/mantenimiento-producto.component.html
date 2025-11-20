@@ -179,7 +179,7 @@
                   Automático</label>
                 <div class="input-group col-sm">
                   <input type="number" (input)="calcularPrecioNeto()" formControlName="costoUnitario"
-                    name="costoUnitario" class="form-control" placeholder="Costo unitario" required min="0">
+                    name="costoUnitario" class="form-control" placeholder="Costo unitario" step="any">
                   <span class="input-group-text">S/</span>
                   <span class="input-group-text">0.00</span>
                   @if(formUtils.isValidField(formProducto,'costoUnitario')){
@@ -418,7 +418,7 @@
 
                 <div class="col-2">
                   <input type="number" (input)="calcularPrecioNetoPorMargen(i)" formControlName="margen" name="margen"
-                    class="form-control">
+                    class="form-control" step="any">
                   @if(margenesGanancia.controls[i].get('margen')?.errors &&
                   margenesGanancia.controls[i].get('margen')?.touched){
                   <div class="alert alert-danger"
@@ -432,10 +432,10 @@
                 </div>
                 <div class="col-2">
                   <input type="number" formControlName="precioNetoSugerido" name="precioNetoSugerido"
-                    class="form-control">
+                    class="form-control" step="any">
                 </div>
                 <div class="col-3">
-                  <input type="number" formControlName="precioNeto" name="precioNeto" class="form-control">
+                  <input type="number" formControlName="precioNeto" name="precioNeto" class="form-control" step="any">
                   @if(margenesGanancia.controls[i].get('precioNeto')?.errors &&
                   margenesGanancia.controls[i].get('precioNeto')?.touched){
                   <div class="alert alert-danger"
