@@ -58,9 +58,9 @@ export const serverRoutes: ServerRoute[] = [
     renderMode: RenderMode.Prerender,
     getPrerenderParams: async () => {
       return [
-        { nombre: 'servicios', productoCodigo: 'sr1' },
-        { nombre: 'servicios', productoCodigo: 'sr2' },
-        { nombre: 'servicios', productoCodigo: 'sr4' },
+        //{ nombre: 'servicios', productoCodigo: 'sr1' },
+        //{ nombre: 'servicios', productoCodigo: 'sr2' },
+        //{ nombre: 'servicios', productoCodigo: 'sr4' },
         { nombre: 'tazas-publicitarias', productoCodigo: 'tz1' },
         { nombre: 'tazas-publicitarias', productoCodigo: 'tz2' },
         { nombre: 'tazas-publicitarias', productoCodigo: 'tz3' },
@@ -74,7 +74,7 @@ export const serverRoutes: ServerRoute[] = [
         { nombre: 'vasos-publicitarios', productoCodigo: 'tm-2' },
         { nombre: 'vasos-publicitarios', productoCodigo: 'ch-1' },
         { nombre: 'tomatodos-publicitarios', productoCodigo: 'mg-1' },
-        { nombre: 'maquinas-e-insumos', productoCodigo: 'maq-1' },
+        //{ nombre: 'maquinas-e-insumos', productoCodigo: 'maq-1' },
         { nombre: 'maquinas-e-insumos', productoCodigo: 'mq-1' },
         { nombre: 'maquinas-e-insumos', productoCodigo: 'pl-1' },
         { nombre: 'maquinas-e-insumos', productoCodigo: 'c-1' },
@@ -149,9 +149,9 @@ export const serverRoutes: ServerRoute[] = [
         { nombre: 'antiestres', productoCodigo: 'ant-min' },
         { nombre: 'tomatodos-publicitarios', productoCodigo: 'ta60' },
         { nombre: 'tomatodos-publicitarios', productoCodigo: 'ta75' },
-        { nombre: 'envios', productoCodigo: 'envio-1' },
-        { nombre: 'envios', productoCodigo: 'envio-2' },
-        { nombre: 'envios', productoCodigo: 'envio-3' },
+        //{ nombre: 'envios', productoCodigo: 'envio-1' },
+        //{ nombre: 'envios', productoCodigo: 'envio-2' },
+        //{ nombre: 'envios', productoCodigo: 'envio-3' },
 
       ]
     },
