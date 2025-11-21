@@ -18,11 +18,11 @@
         matSortActive="nombre" matSortDisableClear matSortDirection="desc">
         <ng-container matColumnDef="codigo">
           <th mat-header-cell *matHeaderCellDef mat-sort-header> Código </th>
-          <td mat-cell *matCellDef="let element"> {{element.codigo}} </td>
+          <td mat-cell *matCellDef="let element"> {{element.codigo | uppercase}} </td>
         </ng-container>
         <ng-container matColumnDef="nombre">
           <th mat-header-cell *matHeaderCellDef mat-sort-header> Nombre </th>
-          <td mat-cell *matCellDef="let element"> {{element.nombre}} </td>
+          <td mat-cell *matCellDef="let element"> {{element.nombre | stringToTitleWithAccents}} </td>
         </ng-container>
         <!--         <ng-container matColumnDef="color">
           <th mat-header-cell *matHeaderCellDef> Color </th>

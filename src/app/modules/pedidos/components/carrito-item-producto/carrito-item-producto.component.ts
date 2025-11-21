@@ -10,6 +10,7 @@ import { PersonaService } from '../../../../services/persona.service';
 import { ItemService } from '../../../../services/item.service';
 import { UsuarioService } from '../../../../services/usuario.service';
 import { PrimeNgModule } from '../../../compartido/prime-ng.module';
+import { StringToTitleWithAccents } from '../../../../pipes/StringToTitleWithAccents.pipe';
 
 
 @Component({
@@ -17,7 +18,7 @@ import { PrimeNgModule } from '../../../compartido/prime-ng.module';
   templateUrl: './carrito-item-producto.component.html',
   styleUrl: './carrito-item-producto.component.css',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, ReactiveFormsModule, PrimeNgModule]
+  imports: [CommonModule, RouterModule, FormsModule, ReactiveFormsModule, PrimeNgModule, StringToTitleWithAccents]
 
 })
 export class CarritoItemProductoComponent implements OnInit, OnDestroy {

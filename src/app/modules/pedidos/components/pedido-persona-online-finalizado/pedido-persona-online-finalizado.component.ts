@@ -25,13 +25,14 @@ import { FormUtils } from '../../../../utils/form-utils';
 import { PrimeNgModule } from '../../../compartido/prime-ng.module';
 import { PagoPedidoPersonaOnlineComponent } from '../pago-pedido-persona-online/pago-pedido-persona-online.component';
 import { AlertService } from './../../../../services/alert.service';
+import { StringToTitleWithAccents } from '../../../../pipes/StringToTitleWithAccents.pipe';
 
 @Component({
   selector: 'pedido-persona-online-finalizado',
   templateUrl: './pedido-persona-online-finalizado.component.html',
   styleUrl: './pedido-persona-online-finalizado.component.css',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, ReactiveFormsModule, PrimeNgModule]
+  imports: [CommonModule, RouterModule, FormsModule, ReactiveFormsModule, PrimeNgModule, StringToTitleWithAccents]
 
 })
 export class PedidoPersonaOnlineFinalizadoComponent implements OnInit {

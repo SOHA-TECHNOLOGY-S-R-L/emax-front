@@ -1,4 +1,5 @@
-import { CommonModule } from '@angular/common';
+import { StringToTitleWithAccents } from './../../../../pipes/StringToTitleWithAccents.pipe';
+import { CommonModule, UpperCasePipe } from '@angular/common';
 import { Component, inject, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterModule } from '@angular/router';
@@ -22,7 +23,7 @@ import { AlertService } from './../../../../services/alert.service';
   templateUrl: './customize-item-producto-to-client.component.html',
   styleUrl: './customize-item-producto-to-client.component.css',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, ReactiveFormsModule, AngularMaterialModule]
+  imports: [CommonModule, RouterModule, FormsModule, ReactiveFormsModule, AngularMaterialModule, StringToTitleWithAccents, UpperCasePipe]
 
 })
 export class CustomizeItemProductoToClientComponent implements OnInit, OnChanges {

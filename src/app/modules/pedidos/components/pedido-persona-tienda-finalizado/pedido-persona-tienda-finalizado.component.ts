@@ -22,13 +22,14 @@ import { FormUtils } from '../../../../utils/form-utils';
 import { PrimeNgModule } from '../../../compartido/prime-ng.module';
 import { TipoPedido } from './../../../../models/tipo-pedido';
 import { AlertService } from './../../../../services/alert.service';
+import { StringToTitleWithAccents } from '../../../../pipes/StringToTitleWithAccents.pipe';
 
 @Component({
   selector: 'pedido-persona-tienda-finalizado',
   templateUrl: './pedido-persona-tienda-finalizado.component.html',
   styleUrl: './pedido-persona-tienda-finalizado.component.css',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, ReactiveFormsModule, PrimeNgModule]
+  imports: [CommonModule, RouterModule, FormsModule, ReactiveFormsModule, PrimeNgModule, StringToTitleWithAccents]
 
 })
 export class PedidoPersonaTiendaFinalizadoComponent implements OnInit {

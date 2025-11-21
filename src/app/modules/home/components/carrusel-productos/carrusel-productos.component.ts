@@ -7,6 +7,7 @@ import { PrimeNgModule } from '../../../compartido/prime-ng.module';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { AngularMaterialModule } from '../../../compartido/angular-material.module';
+import { StringToTitleWithAccents } from '../../../../pipes/StringToTitleWithAccents.pipe';
 
 
 @Component({
@@ -14,7 +15,7 @@ import { AngularMaterialModule } from '../../../compartido/angular-material.modu
   templateUrl: './carrusel-productos.component.html',
   styleUrl: './carrusel-productos.component.css',
   standalone: true,
-  imports: [PrimeNgModule, CommonModule, RouterModule, AngularMaterialModule]
+  imports: [PrimeNgModule, CommonModule, RouterModule, AngularMaterialModule, StringToTitleWithAccents]
 
 })
 export class CarruselProductosComponent {
@@ -27,7 +28,7 @@ export class CarruselProductosComponent {
   constructor() { }
 
   ngOnInit() {
-    this.productService.productosPorCategoriaNombre('Tienda').subscribe(resp => {
+    this.productService.productosPorCategoriaNombre('tienda').subscribe(resp => {
       this.lstProductos = resp.map(prd => {
         prd.estadoProducto.color = COLOR_ESTADO_PRODUCTO[('' + prd.estadoProducto.id) as keyof typeof COLOR_ESTADO_PRODUCTO];
         //prd.imagen = environment.API_URL_VER_IMAGEN + prd.imagen;

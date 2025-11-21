@@ -5,13 +5,14 @@ import { environment } from '../../../../../environments/environment';
 import { Categoria } from '../../../../models/categoria';
 import { CategoriaService } from '../../../../services/categoria.service';
 import { SeoService } from '../../../../services/seo.service';
+import { StringToTitleWithAccents } from '../../../../pipes/StringToTitleWithAccents.pipe';
 
 @Component({
   selector: 'categorias-producto-persona',
   standalone: true,
   templateUrl: './categorias-producto-persona.component.html',
   styleUrl: './categorias-producto-persona.component.css',
-  imports: [RouterModule]
+  imports: [RouterModule, StringToTitleWithAccents]
 })
 export class CategoriasProductoPersonaComponent implements OnInit {
   private seoService = inject(SeoService);

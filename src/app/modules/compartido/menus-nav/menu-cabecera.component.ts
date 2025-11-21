@@ -44,7 +44,7 @@ export class MenuCabeceraComponent {
     this.authService.logout();
     this.alertService.success(`Hola ${username}, has cerrado sesión con éxito!`, 'Cerrar sesión');
     //swal.fire('Logout', `Hola ${username}, has cerrado sesión con éxito!`, 'success');
-    this.router.navigate(['/tienda/productos-categoria', 'Tienda']);
+    this.router.navigate(['/tienda/productos-categoria', 'tienda']);
   }
 
   sideNavToggle(): void {

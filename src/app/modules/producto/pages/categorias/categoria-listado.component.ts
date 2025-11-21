@@ -1,21 +1,21 @@
-import { ProductoService } from './../../../../services/producto.service';
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
-import { Categoria } from '../../../../models/categoria';
+import { RouterModule } from '@angular/router';
 import { environment } from '../../../../../environments/environment';
 import { COLOR_ACTIVO_CATEGORIA, ESTADO_ACTIVO_CATEGORIA } from '../../../../constants/color-estado-producto';
+import { Categoria } from '../../../../models/categoria';
 import { AuthService } from '../../../../services/auth.service';
-import { RouterModule } from '@angular/router';
-import { PrimeNgModule } from '../../../compartido/prime-ng.module';
-import { AngularMaterialModule } from '../../../compartido/angular-material.module';
 import { CategoriaService } from '../../../../services/categoria.service';
+import { AngularMaterialModule } from '../../../compartido/angular-material.module';
+import { ProductoService } from './../../../../services/producto.service';
+import { StringToTitleWithAccents } from '../../../../pipes/StringToTitleWithAccents.pipe';
 
 @Component({
   selector: 'categoria-listado',
   standalone: true,
   templateUrl: './categoria-listado.component.html',
   styleUrl: './categoria-listado.component.css',
-  imports: [CommonModule, RouterModule, AngularMaterialModule]
+  imports: [CommonModule, RouterModule, AngularMaterialModule, StringToTitleWithAccents]
 })
 export class CategoriaListadoComponent implements OnInit {
   private productoService = inject(ProductoService);

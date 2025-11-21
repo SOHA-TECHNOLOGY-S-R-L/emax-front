@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, UpperCasePipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
@@ -11,13 +11,14 @@ import { AngularMaterialModule } from '../../compartido/angular-material.module'
 import { CategoriaService } from './../../../services/categoria.service';
 import { ProductoService } from './../../../services/producto.service';
 import { SeoService } from './../../../services/seo.service';
+import { StringToTitleWithAccents } from "../../../pipes/StringToTitleWithAccents.pipe";
 
 @Component({
   selector: 'productos-por-categoria',
   templateUrl: './productos-por-categoria.component.html',
   styleUrl: './productos-por-categoria.component.css',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, ReactiveFormsModule, AngularMaterialModule],
+  imports: [CommonModule, RouterModule, FormsModule, ReactiveFormsModule, AngularMaterialModule, StringToTitleWithAccents, UpperCasePipe],
   changeDetection: ChangeDetectionStrategy.OnPush
 
 })

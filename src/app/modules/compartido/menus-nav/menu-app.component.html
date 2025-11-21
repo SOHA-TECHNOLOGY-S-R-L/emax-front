@@ -123,7 +123,7 @@
       Registro de usuarios</a>
   </ng-container>
   <ng-container *ngIf="this.authService.isAuthenticated()">
-    <a (click)="logout()" mat-list-item [routerLink]="['/tienda/productos-categoria','Tienda']"
+    <a (click)="logout()" mat-list-item [routerLink]="['/tienda/productos-categoria','tienda']"
       [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact: true}">
       Cerrar sesión</a>
   </ng-container>

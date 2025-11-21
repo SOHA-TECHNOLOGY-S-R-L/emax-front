@@ -9,7 +9,7 @@
 
           @if (!categoria.id && authService.hasRole('ROLE_REGISTER_CATEGORIA')) {
           <button class="btn btn-primary" (click)='guardarCategoria()' [disabled]="!formCategoria.valid">Crear
-            producto</button>
+            categoria</button>
           }
           @if (categoria.id && authService.hasRole('ROLE_UPDATE_CATEGORIA')) {
           <button class="btn btn-primary" (click)='guardarCategoria()' [disabled]="!formCategoria.valid">Actualizar

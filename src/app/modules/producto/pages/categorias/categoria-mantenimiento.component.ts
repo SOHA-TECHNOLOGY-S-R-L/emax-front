@@ -70,7 +70,7 @@ export class CategoriaMantenimientoComponent implements OnInit {
     this.categoria.nombre = this.formCategoria.get('nombre')?.value;
     this.categoria.descripcion = this.formCategoria.get('descripcion')?.value;
     this.categoria.activa = this.formCategoria.get('activa')?.value;
-    this.categoria.activa = this.formCategoria.get('visibleEnTienda')?.value;
+    this.categoria.visibleEnTienda = this.formCategoria.get('visibleEnTienda')?.value;
   }
 
   guardarCategoria() {

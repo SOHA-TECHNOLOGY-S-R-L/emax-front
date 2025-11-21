@@ -12,7 +12,7 @@
     </div>
     <div class="col-12 col-md-7">
       @if (producto) {
-      <h5>{{producto.codigo}} {{producto.nombre}}</h5>
+      <h5> {{producto.nombre | stringToTitleWithAccents }} ({{producto.codigo  | uppercase}})</h5>
 
       <div class="row">
         @for (margen of producto.margenesProducto; track $index) {

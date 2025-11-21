@@ -11,7 +11,7 @@
           <a class="nav-link" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
             aria-controls="navbarSupportedContent" [routerLink]="['/tienda/productos-categoria',categoria.nombre]"
             [routerLinkActive]="['active']" (click)="emitCategoriaSubject(categoria)">
-            {{categoria.nombre | uppercase}}</a>
+            {{categoria.nombre | stringToTitleWithAccents}}</a>
 
 
           <!--         <a class="nav-link" [routerLink]="['/productos/productos-categoria',categoria.id]" [queryParams]="{ name: categoria.nombre }" [routerLinkActive]="['active']">

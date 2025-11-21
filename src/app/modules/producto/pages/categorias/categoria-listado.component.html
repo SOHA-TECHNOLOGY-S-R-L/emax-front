@@ -30,7 +30,7 @@
                   <img [src]="cat.imagen" width="86" alt={{cat.imagen}} />
                 </td>
                 <td>
-                  {{cat.nombre}}
+                  {{cat.nombre | stringToTitleWithAccents }}
                 </td>
                 <td>
                   {{cat.descripcion}}

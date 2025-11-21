@@ -3,13 +3,14 @@ import { Component, inject, Renderer2 } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { Categoria } from '../../../models/categoria';
 import { CategoriaService } from '../../../services/categoria.service';
+import { StringToTitleWithAccents } from '../../../pipes/StringToTitleWithAccents.pipe';
 
 @Component({
   selector: 'menu-tienda',
   templateUrl: './menu-tienda.component.html',
   styleUrl: './menu-tienda.component.css',
   standalone: true,
-  imports: [CommonModule, RouterModule]
+  imports: [CommonModule, RouterModule, StringToTitleWithAccents]
 })
 export class MenuTiendaComponent {
   private categoriaService = inject(CategoriaService)

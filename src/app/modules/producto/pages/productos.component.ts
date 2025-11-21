@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { SearchBoxTableComponent } from '../../compartido/search-box-table/search-box-table.component';
 
-import { CommonModule } from '@angular/common';
+import { CommonModule, UpperCasePipe } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
@@ -19,13 +19,14 @@ import { AngularMaterialModule } from '../../compartido/angular-material.module'
 
 import { COLOR_ACTIVO_PRODUCTO, ESTADO_ACTIVO_PRODUCTO } from '../../../constants/color-estado-producto';
 import { environment } from '../../../../environments/environment';
+import { StringToTitleWithAccents } from '../../../pipes/StringToTitleWithAccents.pipe';
 
 @Component({
   selector: 'app-productos',
   templateUrl: './productos.component.html',
   styleUrls: ['./productos.component.css'],
   standalone: true,
-  imports: [SearchBoxTableComponent, CommonModule,  RouterModule, FormsModule, ReactiveFormsModule, AngularMaterialModule ]
+  imports: [SearchBoxTableComponent, CommonModule,  RouterModule, FormsModule, ReactiveFormsModule, AngularMaterialModule, StringToTitleWithAccents, UpperCasePipe ]
 
 
 })

@@ -8,7 +8,7 @@
             [alt]="categoria.descripcion">
         </div>
         <div class="portfolio-text bg-primary">
-          <h5 class="font-weight-bold mb-4">{{categoria.nombre}}</h5>
+          <h5 class="font-weight-bold mb-4">{{categoria.nombre | stringToTitleWithAccents}}</h5>
           <div class="d-flex align-items-center justify-content-center">
             <a class="btn btn-sm btn-secondary m-1" [routerLink]="['/tienda/productos-categoria' ,categoria.nombre]"
               [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact: true}" data-lightbox="portfolio">

@@ -10,7 +10,7 @@
           </a>
         </div>
       </div>
-      <div class="mb-4 font-medium">{{ product.nombre }}</div>
+      <div class="mb-4 font-medium">{{ product.nombre | stringToTitleWithAccents }}</div>
       <div class="flex justify-content-between items-center">
         <div class="mt-0 font-semibold text-xl">
           {{ product.precioNetoNumberShow | currency: 'PEN' }}

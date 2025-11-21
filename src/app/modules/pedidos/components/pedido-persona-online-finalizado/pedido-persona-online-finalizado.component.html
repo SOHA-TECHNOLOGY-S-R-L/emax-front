@@ -168,7 +168,7 @@
               <img [src]="item.imagenUri" width="86" alt={{item.imagen}} />
             </td>
             <td>
-              <b>{{item.producto.nombre}}</b>
+              <b>{{item.producto.nombre | stringToTitleWithAccents}}</b>
               <!--            @if(item.producto.codigo != SERVICIO_ENTREGA_LOCAL &&
               item.producto.codigo != SERVICIO_ENTREGA_CIUDAD &&
               item.producto.codigo != SERVICIO_DISENIO &&

@@ -4,11 +4,11 @@ export const SIGUIENTE_PAGINA = 'Siguiente página:';
 export const ANTERIOR_PAGINA = 'Anterior página:';
 export const ULTIMA_PAGINA = 'Ultima página:';
 //Envios servicios internos Grafiya;
-export const SERVICIO_GRABADO_IMAGEN = 'SR1';
+export const SERVICIO_GRABADO_IMAGEN = 'sr1';
 //Envios servicios externos de Grafiya;
-export const SERVICIO_ENTREGA_LOCAL = 'ENVIO-1';
-export const SERVICIO_ENTREGA_PROVINCIAL = 'ENVIO-2';
-export const SERVICIO_ENTREGA_CIUDAD = 'ENVIO-3';
+export const SERVICIO_ENTREGA_LOCAL = 'envio-1';
+export const SERVICIO_ENTREGA_PROVINCIAL = 'envio-2';
+export const SERVICIO_ENTREGA_CIUDAD = 'envio-3';
 
 //tipo pedido
 export const VENTA_TIPO_PEDIDO = 1;

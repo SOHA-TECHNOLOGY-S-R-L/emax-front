@@ -6,13 +6,14 @@ import { ProductoService } from '../../../../services/producto.service';
 import { Producto } from '../../../../models/producto';
 import { COLOR_ESTADO_PRODUCTO } from '../../../../constants/color-estado-producto';
 import { environment } from '../../../../../environments/environment';
+import { StringToTitleWithAccents } from '../../../../pipes/StringToTitleWithAccents.pipe';
 
 @Component({
   selector: 'carrusel-servicios',
   templateUrl: './carrusel-servicios.component.html',
   styleUrl: './carrusel-servicios.component.css',
   standalone: true,
-  imports: [PrimeNgModule, CommonModule, RouterModule]
+  imports: [PrimeNgModule, CommonModule, RouterModule, StringToTitleWithAccents]
 })
 export class CarruselServiciosComponent {
   private productService = inject(ProductoService)

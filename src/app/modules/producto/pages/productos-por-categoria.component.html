@@ -17,7 +17,7 @@
         class="card-img-top"> -->
       </a>
       <div class="card-body">
-        <p class="card-title"> {{producto.nombre}} ({{producto.codigo}})</p>
+        <p class="card-title"> {{producto.nombre | stringToTitleWithAccents }} ({{producto.codigo | uppercase }})</p>
         <p class="card-subtitle text-muted">{{producto.descripcion}}</p>
         <div class="row">
           <div class="col">
