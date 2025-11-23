@@ -11,13 +11,17 @@ import { Usuario } from '../../../../models/usuario';
 import { CajaService } from '../../../../services/caja.service';
 import { UsuarioService } from '../../../../services/usuario.service';
 import { AngularMaterialModule } from '../../../compartido/angular-material.module';
+import { Persona } from '../../../../models/persona';
+import { PersonaService } from '../../../../services/persona.service';
+import { map } from 'rxjs';
+import { CLIENTE, PROVEEDOR } from '../../../../constants/constantes';
 
 @Component({
   selector: 'app-rpte-caja',
   templateUrl: './rpte-caja.component.html',
   styleUrl: './rpte-caja.component.css',
   standalone: true,
-  imports: [CommonModule,AngularMaterialModule , RouterModule, FormsModule, ReactiveFormsModule ]
+  imports: [CommonModule, AngularMaterialModule, RouterModule, FormsModule, ReactiveFormsModule]
 
 })
 export class RpteCajaComponent implements OnInit {
@@ -25,7 +29,9 @@ export class RpteCajaComponent implements OnInit {
   formCierreCaja!: FormGroup;
   filtrosReporte!: FiltrosReporte;
   //estadoPedidoLst: EstadoPedido[] = [];
-  usuarioLst: Usuario[] = [];
+  personasLst: Persona[] = [];
+
+  //usuarioLst: Usuario[] = [];
   usuario!: Usuario;
   cajaLst: Caja[] = []
   caja!: Caja;
@@ -35,6 +41,7 @@ export class RpteCajaComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private cajaService: CajaService,
+    private personaService: PersonaService,
     private usuarioService: UsuarioService,
     private activatedRoute: ActivatedRoute,
   ) { }
@@ -101,7 +108,12 @@ export class RpteCajaComponent implements OnInit {
   }
 
   cargarUsuarios() {
-    this.usuarioService.getAllUsers().subscribe(res => this.usuarioLst = res);
+
+    this.personaService.getAllPersonas().pipe(
+      map(personas => personas.filter(p => p.tipoPersona.id !== CLIENTE && p.tipoPersona.id !== PROVEEDOR))
+    ).subscribe(resp => this.personasLst = resp);
+
+    //this.usuarioService.getAllUsers().subscribe(res => this.usuarioLst = res);
   }
 
   createForm() {

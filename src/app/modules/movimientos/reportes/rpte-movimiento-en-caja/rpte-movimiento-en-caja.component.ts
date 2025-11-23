@@ -16,6 +16,7 @@ import { PersonaService } from '../../../../services/persona.service';
 import { MovimientoService } from '../../../../services/movimiento.service';
 import { UsuarioService } from '../../../../services/usuario.service';
 import { AngularMaterialModule } from '../../../compartido/angular-material.module';
+import { CLIENTE, PROVEEDOR } from '../../../../constants/constantes';
 
 @Component({
   selector: 'app-rpte-movimiento-en-caja',
@@ -28,7 +29,9 @@ export class RpteMovimientoEnCajaComponent implements OnInit {
   titulo!: string;
   formMov!: FormGroup;
   filtrosReporte!: FiltrosReporte;
-  usuarioLst: Usuario[] = [];
+    personasLst: Persona[] = [];
+
+  //usuarioLst: Usuario[] = [];
   cajaLst: Caja[] = []
   caja!: Caja;
 
@@ -122,7 +125,12 @@ export class RpteMovimientoEnCajaComponent implements OnInit {
   }
 
   cargarUsuarios() {
-    this.usuarioService.getAllUsers().subscribe(res => this.usuarioLst = res);
+
+    this.personaService.getAllPersonas().pipe(
+        map(personas => personas.filter(p => p.tipoPersona.id !== CLIENTE && p.tipoPersona.id !== PROVEEDOR))
+    ).subscribe(resp => this.personasLst = resp);
+
+   // this.usuarioService.getAllUsers().subscribe(res => this.usuarioLst = res);
   }
 
   createForm() {

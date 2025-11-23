@@ -36,7 +36,7 @@
         <mat-form-field>
           <mat-label>Usuarios</mat-label>
           <mat-select matNativeControl formControlName="usuariosId" multiple>
-            <mat-option *ngFor="let u of usuarioLst" value={{u.id}}>{{u.username}}</mat-option>
+            <mat-option *ngFor="let persona of personasLst" value={{persona.usuario.id}}>{{persona.nomApellRz}}</mat-option>
           </mat-select>
         </mat-form-field>
       </mat-card-content>
