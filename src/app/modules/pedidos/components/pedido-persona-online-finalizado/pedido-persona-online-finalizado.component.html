@@ -160,8 +160,8 @@
             <td>
               <!--               <p-button severity="danger" icon="pi pi-trash" (click)="eliminarItemPedido(item.producto.id)" />
  -->
-              <button id="btnDeleteFromPedidoOnline" class="btn btn-danger icon-square" title="Eliminar item"
-                (click)="eliminarItemPedido(item.producto.id)">
+              <button type="button" id="btnDeleteFromPedidoOnline" class="btn btn-danger icon-square" title="Eliminar item"
+                (click)="$event.stopPropagation(); eliminarItemPedido(item.producto.id)">
                 <i class="fa-regular fa-trash-can"></i> </button>
             </td>
             <td>
@@ -193,13 +193,15 @@
               <input style="width:80px" type="number" name="cantidad" aria-describedby="cantidad"
                 [step]="item.producto.gruposDe.toString()" [min]="item.producto.minCantidadPedido.toString()"
                 [max]="item.producto.maxCantidadPedido.toString()" [value]="item.cantidad"
-                (input)="actualizarCantidad(item.producto.id, $event);calcularTotal() " />
+                (input)="actualizarCantidad(item.producto.id, $event);calcularTotal() "
+                (keydown.enter)="$event.preventDefault()" />
             </td>
             <td>{{item.producto.precioNetoNumberShow| currency:'PEN'}}</td>
 
             <td>
               <input style="width:90px" type="number" name="importe" min="1" [value]="item.importe" disabled
-                (input)="actualizarImporte(item.producto.id, $event); calcularTotal()" />
+                (input)="actualizarImporte(item.producto.id, $event); calcularTotal()"
+                (keydown.enter)="$event.preventDefault()" />
             </td>
           </tr>
         </tbody>

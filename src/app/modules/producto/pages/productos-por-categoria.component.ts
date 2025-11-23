@@ -50,7 +50,7 @@ export class ProductosPorCategoriaComponent implements OnInit, OnDestroy {
     //console.log("this.loadPorductosPorCategoria.categoriaId()", categoriaName);
     this.productoService.productosPorCategoriaNombre(categoriaName)
       .subscribe(resp => {
-        this.lstProductos = resp.map(prd => {
+        const productos = resp.map(prd => {
           prd.estadoProducto.color = COLOR_ESTADO_PRODUCTO[('' + prd.estadoProducto.id) as keyof typeof COLOR_ESTADO_PRODUCTO];
           //muestar todos los productos en formato string
           //prd.precioNetoStringShow = "S/ ".concat(prd.margenesProducto.map(m => m.precioNeto).toString().replaceAll(',', ' - '));
@@ -61,6 +61,9 @@ export class ProductosPorCategoriaComponent implements OnInit, OnDestroy {
           }
           return prd;
         })
+
+        this.lstProductos = productos.sort((a, b) => a.estadoProducto.id - b.estadoProducto.id);
+
         this.seoProductosPorCategoria(categoriaName, this.lstProductos);
         this.cdr.detectChanges();
 

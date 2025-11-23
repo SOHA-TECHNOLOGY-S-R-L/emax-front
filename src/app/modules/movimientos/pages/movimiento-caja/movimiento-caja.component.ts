@@ -137,6 +137,7 @@ export class MovimientoCajaComponent implements OnInit {
       this.changeTipoMovimiento(this.iMovimiento);
       this.movimientoCaja.ingresoDinero=0;
       this.movimientoCaja.egresoDinero=0;
+      this.movimientoCaja.descripcion="";
   }
 
 }

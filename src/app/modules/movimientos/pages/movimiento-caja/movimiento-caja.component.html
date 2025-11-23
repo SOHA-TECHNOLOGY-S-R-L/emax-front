@@ -88,17 +88,21 @@
         </mat-form-field>
         }
         @if (iMovimiento==='E') {
-          <mat-form-field>
-            <mat-label>EGRESO DINERO</mat-label>
-            <input matInput type="number" name="egresoDinero" #egresoDinero="ngModel"
-              [(ngModel)]="movimientoCaja.egresoDinero" min="0" required>
-            <div *ngIf="egresoDinero.invalid && (egresoDinero.dirty || egresoDinero.touched)">
-              <mat-error *ngIf="egresoDinero?.errors?.['required']">
-                Pago es requerido
-              </mat-error>
-            </div>
-          </mat-form-field>
+        <mat-form-field>
+          <mat-label>EGRESO DINERO</mat-label>
+          <input matInput type="number" name="egresoDinero" #egresoDinero="ngModel"
+            [(ngModel)]="movimientoCaja.egresoDinero" min="0" required>
+          <div *ngIf="egresoDinero.invalid && (egresoDinero.dirty || egresoDinero.touched)">
+            <mat-error *ngIf="egresoDinero?.errors?.['required']">
+              Pago es requerido
+            </mat-error>
+          </div>
+        </mat-form-field>
         }
+        <mat-form-field>
+          <mat-label>Datos adicionales</mat-label>
+          <textarea name="descripcion" [(ngModel)]="movimientoCaja.descripcion"  matInput placeholder="Coloca aquí datos adicionales que creas necesario"></textarea>
+        </mat-form-field>
         <div class="d-flex justify-content-end">
           <button type="submit" color="primary" mat-raised-button cdkFocusInitial [disabled]="!myForm.form.valid">
             Registrar movimiento</button>
