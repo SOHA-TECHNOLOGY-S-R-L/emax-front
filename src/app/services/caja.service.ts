@@ -39,8 +39,21 @@ export class CajaService {
     return this.http.get<Caja[]>(`${environment.apiUrl}/cajas-por-asignar`);
   }
 
-  getCajaUsuarioByUserName(username: string): Observable<CajaUsuario> {
-    return this.http.get<CajaUsuario>(`${environment.apiUrl}/cajas/usuarios/${username}`
+  getCajaUsuarioActiveByUserName(username: string): Observable<CajaUsuario> {
+    return this.http.get<CajaUsuario>(`${environment.apiUrl}/cajas-usuarios-active/${username}`)
+    /*       .pipe(
+            map<CajaUsuario, CajaUsuario>(resp => {
+              if (resp != null && resp.movimientos.length > 0) {
+                resp.movimientos.splice(0, resp.movimientos.length)
+              }
+              return resp
+            }
+            )
+          ); */
+  }
+
+  getCajaUsuarioInactiveByUserName(username: string): Observable<CajaUsuario> {
+    return this.http.get<CajaUsuario>(`${environment.apiUrl}/cajas-usuarios-inactive/${username}`
     )
       .pipe(
         map<CajaUsuario, CajaUsuario>(resp => {
@@ -53,7 +66,21 @@ export class CajaService {
       );
   }
 
-    getCajaUsuarioInactivoByCajaId(cajaId: number): Observable<CajaUsuario> {
+/*   getCajaUsuarioByUserName(username: string): Observable<CajaUsuario> {
+    return this.http.get<CajaUsuario>(`${environment.apiUrl}/cajas/usuarios/${username}`
+    )
+      .pipe(
+        map<CajaUsuario, CajaUsuario>(resp => {
+          if (resp != null && resp.movimientos.length > 0) {
+            resp.movimientos.splice(0, resp.movimientos.length)
+          }
+          return resp
+        }
+        )
+      );
+  } */
+
+  getCajaUsuarioInactivoByCajaId(cajaId: number): Observable<CajaUsuario> {
     return this.http.get<CajaUsuario>(`${environment.apiUrl}/cajas/${cajaId}/usuarios`
     )
       .pipe(

@@ -7,3 +7,27 @@
   align-items: center;
   justify-content: center;
 }
+
+.cabecera {
+  display: inline-block;
+  width: 150px;
+  font-weight: bold;
+}
+
+#itemsPedidoOnlineFinalizadoToMovil {
+    display: none;
+}
+
+
+@media (max-width: 767px) {
+
+
+  #itemsPedidoOnlineFinalizadoToDesktop {
+    display: none;
+  }
+
+#itemsPedidoOnlineFinalizadoToMovil {
+    display:block;
+}
+}
+

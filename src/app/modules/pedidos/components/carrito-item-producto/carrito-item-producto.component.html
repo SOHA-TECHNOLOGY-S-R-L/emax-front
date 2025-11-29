@@ -3,7 +3,7 @@
 <div class="row alert alert-danger">
   <div class="col-12 d-inline-flex">
     <div>Para realizar pedido</div>&nbsp;&nbsp;
-    <div><b><a [routerLink]="['/login/']"> Iniciar sesión</a></b></div>
+    <div><b><a [routerLink]="['/login/']" (click)="closeModal()"> Iniciar sesión</a></b></div>
   </div>
 </div>
 }
@@ -45,9 +45,9 @@
   <div class="col-12 d-flex justify-content-center">
     @if(lstItemPedido.length > 0 && authService.hasRole('ROLE_CREATE_VENTA') &&
     authService.isAuthenticated()){
-    <button (click)="irRealizarPedido()" class="btn btn-primary">Realizar el pedido</button>
+    <button (click)="irRealizarPedido(); closeModal();" class="btn btn-primary">Realizar el pedido</button>
     } @else {
-    <button (click)="irRealizarPedido()" class="btn btn-primary" disabled>Realizar el pedido</button>
+    <button (click)="irRealizarPedido(); closeModal()" class="btn btn-primary" disabled>Realizar el pedido</button>
     }
   </div>
 </div>

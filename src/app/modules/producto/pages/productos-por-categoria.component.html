@@ -1,11 +1,11 @@
 <div class="row">
   @for (producto of lstProductos; track $index) {
-  <div class="col-12 col-sm-6 col-lg-3">
+  <div class="col-6 col-lg-3">
     <div class="card">
       <a class="{{producto.estadoProducto.color}}"
         [routerLink]="['/tienda/productos-categoria', producto.categoria?.nombre, 'item-producto-persona-online', producto.codigo]">
         <img *ngIf="producto?.imagen" [src]="API_URL_VER_IMAGEN+producto.imagen" [alt]="producto.imagen" loading="lazy"
-          decoding="async" priority="false" class="productos-por-categoria-img" >
+          decoding="async" priority="false" class="productos-por-categoria-img">
         <!--         <img *ngIf="producto?.imagen"
         ngOptimizedImage
         [ngSrc]="API_URL_VER_IMAGEN+producto.imagen"
@@ -17,21 +17,21 @@
         class="card-img-top"> -->
       </a>
       <div class="card-body">
-        <p class="card-title"> {{producto.nombre | stringToTitleWithAccents }} ({{producto.codigo | uppercase }})</p>
-        <p class="card-subtitle text-muted">{{producto.descripcion}}</p>
-        <div class="row">
-          <div class="col">
+<!--         <p class="card-title"> {{producto.nombre | stringToTitleWithAccents }}</p>
+ -->        <p class="card-subtitle text-muted">{{producto.descripcion}} ({{producto.codigo | uppercase }}). <i>Vendidos:</i> {{producto.cantidadVendidos}}</p>
+        <!--         <div class="row">
+          <div class="col-12 col-sm-7 text-sm-start">
+            <span><i>Stock: </i>{{producto.cantidadStock}}</span>
+          </div>
+          <div class="col-12 col-sm-5 text-sm-end">
             <span class="precio">{{producto.precioNetoNumberShow | currency: 'PEN'}}</span>
           </div>
-        </div>
+        </div> -->
       </div>
       <ul class="list-group list-group-flush">
-        <li class="list-group-item"><i>Orden mín:</i> {{producto.minCantidadPedido}}, <i>Grupos de:</i>
-          {{producto.gruposDe}}</li>
-        <li class="list-group-item"><i>En stock:</i> {{producto.cantidadStock}}, <i>Vendidos:</i>
-          {{producto.cantidadVendidos}}</li>
+        <li class="list-group-item"><i>Stock:</i> {{producto.cantidadStock}}, <span class="precio">{{producto.precioNetoNumberShow | currency: 'PEN'}}</span></li>
       </ul>
-      <div class="card-body">
+      <div class="card-footer">
         <div class="d-flex justify-content-evenly">
           <button type="button" class="btn btn-primary"
             [routerLink]="['/tienda/productos-categoria', producto.categoria?.nombre, 'item-producto-persona-online',producto.codigo]">Detalles</button>

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, EventEmitter, inject, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Router, RouterModule } from '@angular/router';
@@ -31,10 +31,12 @@ export class CarritoItemProductoComponent implements OnInit, OnDestroy {
 
   itemServiceSuscription$!: Subscription;
   lstItemPedido: ItemPedido[] = [];
-  @Input() tipoPedido!: string;
+  //@Input() tipoPedido!: string;
   @Input() personaId!: number;
   item!: ItemPedido;
   total: number = 0;
+  @Output() modalEmitter = new EventEmitter<void>();
+
 
   constructor(
     public matDialog: MatDialog,
@@ -94,6 +96,10 @@ export class CarritoItemProductoComponent implements OnInit, OnDestroy {
 
   isAuthenticated(): boolean {
     return this.authService.isAuthenticated();
+  }
+
+  closeModal() {
+    this.modalEmitter.emit();
   }
 
   ngOnDestroy(): void {

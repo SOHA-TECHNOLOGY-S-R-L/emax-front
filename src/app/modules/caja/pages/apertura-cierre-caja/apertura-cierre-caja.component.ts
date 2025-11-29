@@ -63,14 +63,26 @@ export class AperturaCierreCajaComponent implements OnInit {
     if (this.authService.isAuthenticated()) {
       this.username = this.authService.usuario.username;
       //this.usuarioService.getUsuarioByUsername(username).subscribe(resp => this.cajaUsuario.usuario = resp)
-      this.cajaService.getCajaUsuarioByUserName(this.username).subscribe(
+
+      this.cajaService.getCajaUsuarioActiveByUserName(this.username).subscribe(
         result => {
           if (result != null) {
             this.cajaUsuario = result;
             this.cajaActiva = this.cajaUsuario.activa;
+          } else {
+            this.cajaService.getCajaUsuarioInactiveByUserName(this.username).subscribe(
+              result => {
+                if (result != null) {
+                  this.cajaUsuario = result;
+                  this.cajaActiva = this.cajaUsuario.activa;
+                }
+              }
+            )
           }
         }
       )
+
+
       this.obtenerTodoCajas();
 
     } else {

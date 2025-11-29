@@ -12,11 +12,11 @@
     </div>
     <div class="col-12 col-md-7">
       @if (producto) {
-      <h5> {{producto.nombre | stringToTitleWithAccents }} ({{producto.codigo  | uppercase}})</h5>
+      <h5> {{producto.nombre | stringToTitleWithAccents }} ({{producto.codigo | uppercase}})</h5>
 
       <div class="row">
         @for (margen of producto.margenesProducto; track $index) {
-        <div class="col-6 col-sm-4">
+        <div class="col-4">
           <p> {{margen.minCantidad}} - {{margen.maxCantidad}} unid</p>
           <span class="precio">{{margen.precioNeto | currency:'PEN'}}</span>
         </div>
@@ -25,16 +25,16 @@
       <div class="row">
         <div class="col">
           <ul class="list-group" style="list-style-type: none;">
-            <li style="margin-bottom: 6px;"><i class="fa fa-angle-right mr-2"></i><b>Cantidad en stock:
-              </b>{{producto.cantidadStock}} unid</li>
+<!--             <li style="margin-bottom: 6px;"><i class="fa fa-angle-right mr-2"></i><b>Cantidad en stock:
+              </b>{{producto.cantidadStock}} unid</li> -->
             <!--
             <li style="margin-bottom: 6px;"><i class="fa fa-angle-right mr-2"></i><b>Mín cantidad en pedido:
               </b>{{producto.minCantidadPedido}} unid </li>
             <li style="margin-bottom: 6px;"><i class="fa fa-angle-right mr-2"></i><b>Máx cantidad en pedido:
               </b>{{producto.maxCantidadPedido}} unid </li> -->
 
-            <li style="margin-bottom: 6px;"><i class="fa fa-angle-right mr-2"></i><b>En grupos de:
-              </b>{{producto.gruposDe}} unid</li>
+<!--             <li style="margin-bottom: 6px;"><i class="fa fa-angle-right mr-2"></i><b>En grupos de:
+              </b>{{producto.gruposDe}} unid</li> -->
             <li style="margin-bottom: 6px;"><i class="fa fa-angle-right mr-2"></i><b>Color:
               </b>{{producto.color?.nombre}}
             </li>
@@ -44,6 +44,10 @@
 
             <li style="margin-bottom: 6px;"><i class="fa fa-angle-right mr-2"></i><b>Material:
               </b>{{producto.material?.nombre}}</li>
+
+            <li style="margin-bottom: 6px;"><i class="fa fa-angle-right mr-2"></i><b>Grupos de:
+              </b>{{producto.gruposDe}} unid, <i><b>Stock:
+              </b></i>{{producto.cantidadStock}} unid </li>
 
           </ul>
         </div>
@@ -71,7 +75,7 @@
             <img class="col-4" [src]="verImagenItem">
             <div class="col-8">
               <div class="d-flex flex-column">
-<!--                 <label for="cantidad" class="form-label"><b>Cantidad:</b></label>
+                <!--                 <label for="cantidad" class="form-label"><b>Cantidad:</b></label>
                 <div class="mb-2">
                   <input type="number" formControlName="cantidad" class="form-control" name="cantidad" [step]="gruposDe"
                     [min]="minCantidadPedido" [max]="maxCantidadPedido" />
@@ -83,8 +87,7 @@
                     <span class="input-group-text" id="inputCantidadItemProducto">Cantidad:</span>
                   </div>
                   <input type="number" formControlName="cantidad" class="form-control" name="cantidad" [step]="gruposDe"
-                    [min]="minCantidadPedido" [max]="maxCantidadPedido"
-                    aria-describedby="inputCantidadItemProducto">
+                    [min]="minCantidadPedido" [max]="maxCantidadPedido" aria-describedby="inputCantidadItemProducto">
                 </div>
 
 

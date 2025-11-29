@@ -46,7 +46,7 @@ export class PedidoPersonaTiendaFinalizadoComponent implements OnInit {
   persona!: Persona;
   pedido = new Pedido();
   tipoDocumentos: TipoDocumento[] = [];
-  tipoDocumentoSelected!: TipoDocumento;
+  //tipoDocumentoSelected!: TipoDocumento;
   tipoPedidoVentaPersonas!: TipoPedido;
   tipoPedidos: TipoPedido[] = [];
   items: ItemPedido[] = [];
@@ -78,20 +78,31 @@ export class PedidoPersonaTiendaFinalizadoComponent implements OnInit {
   ngOnInit(): void {
     this.personaService.getTipoDocumento().subscribe(doc => {
       this.tipoDocumentos = doc
+      this.activatedRoute.paramMap.subscribe(params => {
+        let personaId = +params.get('personaId')!;
+        this.personaService.getPersona(personaId).subscribe(cli => {
+          const now = new Date();
+          this.persona = cli;
+          //const index = this.findIndexDocument(this.persona.tipoDocumento.id);
+
+
+          /*         this.personaService.getTipoDocumento().subscribe(doc => {
+                    this.tipoDocumentos = doc
+                  });
+           */
+
+          //this.tipoDocumentoSelected = this.tipoDocumentos[index];
+          //console.log("this.tipoDocumentoSelected", this.tipoDocumentoSelected);
+          this.pedido.persona = this.persona;
+          now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+          this.pedido.entregadoEn = moment(now).add(5, 'minutes').toISOString().slice(0, 16);
+        });
+      });
+
+
+
     });
 
-    this.activatedRoute.paramMap.subscribe(params => {
-      let personaId = +params.get('personaId')!;
-      this.personaService.getPersona(personaId).subscribe(cli => {
-        const now = new Date();
-        this.persona = cli;
-        const index = this.findIndexDocument(this.persona.tipoDocumento.id);
-        this.tipoDocumentoSelected = this.tipoDocumentos[index];
-        this.pedido.persona = this.persona;
-        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-        this.pedido.entregadoEn = moment(now).add(2, 'days').toISOString().slice(0, 16);
-      });
-    });
 
 
 
@@ -117,13 +128,22 @@ export class PedidoPersonaTiendaFinalizadoComponent implements OnInit {
   }
 
   calcularTotal() {
+    console.log(this.items);
     this.total = this.itemService.calculateTotalFromItems(this.items)
   }
 
 
-  findIndexDocument(tipoDocumentoId: number): number {
+/*   findIndexDocument(tipoDocumentoId: number): number {
     return findIndex(this.tipoDocumentos, (td) => td.id == tipoDocumentoId)
-  }
+  } */
+
+/*   compararDocumento(o1: TipoDocumento, o2: TipoDocumento): boolean {
+    if (o1 === undefined && o2 === undefined) {
+      return true;
+    }
+
+    return o1 === null || o2 === null || o1 === undefined || o2 === undefined ? false : o1.id === o2.id;
+  } */
 
 
   eliminarItemPedido(id: number): void {
@@ -149,9 +169,9 @@ export class PedidoPersonaTiendaFinalizadoComponent implements OnInit {
   actualizarImporte(productoId: number, event: any): void {
     const precio: number = parseFloat(event.target.value);
     this.items = this.itemService.UpdatePrecioItemFromItemsCliete(this.items, productoId, precio);
-    this.calcularTotal();
-
-    this.itemService.setItems(this.items);
+    //console.log("actualizarImporte", this.items)
+    //this.itemService.setItems(this.items);
+    //this.calcularTotal();
     //this.itemService.saveLocalStorageItems(this.items);
   }
 
@@ -177,7 +197,6 @@ export class PedidoPersonaTiendaFinalizadoComponent implements OnInit {
   }
 
   addItemsServicioEnvio(event: any, formaEnvio: string) {
-    debugger;
     this.isEnvio = event.target.checked;
     let envioSelected = this.serviciosEnvio.filter(ser => ser.codigo == formaEnvio);
     let envioNoSelected = this.serviciosEnvio.filter(ser => ser.codigo != formaEnvio);

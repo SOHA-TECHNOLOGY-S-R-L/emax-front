@@ -1,19 +1,23 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, inject, Output } from '@angular/core';
 import { Usuario } from '../../../models/usuario';
 import { AlertService } from '../../../services/alert.service';
 import { AuthService } from '../../../services/auth.service';
 import { Router, RouterModule } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
+import { MatDialog } from '@angular/material/dialog';
+import { AngularMaterialModule } from '../angular-material.module';
+import { ModalCarritoItemProductoComponent } from '../../pedidos/components/modal-carrito-item-producto/modal-carrito-item-producto.component';
 
 @Component({
   selector: 'menu-cabecera',
   templateUrl: './menu-cabecera.component.html',
   styleUrl: './menu-cabecera.component.css',
   standalone: true,
-  imports: [CommonModule, RouterModule, MatIconModule]
+  imports: [CommonModule, RouterModule, AngularMaterialModule]
 })
 export class MenuCabeceraComponent {
+
 
   @Output()
   clickMenuEvent = new EventEmitter<any>();
@@ -23,6 +27,10 @@ export class MenuCabeceraComponent {
   usuario!: Usuario;
   /*   @Output()
     clickMenuEvent = new EventEmitter(); */
+
+  //readonly animal = signal('');
+  //readonly name = model('');
+  readonly dialog = inject(MatDialog);
 
   constructor(private authService: AuthService,
     private router: Router,
@@ -50,5 +58,22 @@ export class MenuCabeceraComponent {
   sideNavToggle(): void {
     this.clickMenuEvent.emit();
   }
+
+
+
+
+  openModalCart(): void {
+    const dialogRef = this.dialog.open(ModalCarritoItemProductoComponent, {
+      data:  0 ,
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
+      if (result !== undefined) {
+       // this.animal.set(result);
+      }
+    });
+  }
+
 
 }

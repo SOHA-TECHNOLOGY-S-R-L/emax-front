@@ -17,12 +17,8 @@ import { CajaService } from '../../../../services/caja.service';
 })
 export class InfoCajaUsuarioComponent implements OnInit, OnChanges {
   private cajaService = inject(CajaService);
-  //private router = inject(Router);
   cajaUsuario!: CajaUsuario;
-  /*   @Input() username!: string;
-    @Input() cajaId!: number; */
   @Input() inCajaUsuario!: CajaUsuario;
-  //@Output() outCajaUsuario: EventEmitter<CajaUsuario> = new EventEmitter();
 
   estadoCajaUsuarioMap = ESTADO_CAJA_USUARIO;
   constructor() { }
@@ -39,24 +35,13 @@ export class InfoCajaUsuarioComponent implements OnInit, OnChanges {
       if (changes['inCajaUsuario'].currentValue != changes['inCajaUsuario'].previousValue) {
         this.cajaService.getCajaUsuarioByCajaIdAndUsername(this.inCajaUsuario.caja.id, this.inCajaUsuario.usuario.username).subscribe(
           result => {
+            console.log("result", result);
             this.setValuesControls(result);
           }
         )
       }
     }
   }
-
-  /*   setValuesControls(cajaUsuario: CajaUsuario | null) {
-      if (cajaUsuario != null) {
-        //cajaUsuario = cajaUsuario
-        cajaUsuario.fechaApertura = moment(cajaUsuario.fechaApertura).format('DD/MM/yyyy HH:mm:ss');
-        cajaUsuario.color = COLOR_CAJA_USUARIO[('' + cajaUsuario.activa) as keyof typeof COLOR_CAJA_USUARIO];
-        if (cajaUsuario.fechaCierre != null) {
-          cajaUsuario.fechaCierre = moment(cajaUsuario.fechaCierre).format('DD/MM/yyyy HH:mm:ss')
-        };
-        this.outCajaUsuario.emit(cajaUsuario);
-      }
-    } */
 
   setValuesControls(cajaUsuario: CajaUsuario | null) {
     if (cajaUsuario != null) {
@@ -66,7 +51,6 @@ export class InfoCajaUsuarioComponent implements OnInit, OnChanges {
       if (this.cajaUsuario.fechaCierre != null) {
         this.cajaUsuario.fechaCierre = moment(this.cajaUsuario.fechaCierre).format('DD/MM/yyyy HH:mm:ss')
       };
-      //this.outCajaUsuario.emit(cajaUsuario);
     }
   }
 }

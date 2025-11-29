@@ -49,7 +49,7 @@ export class PedidoPersonaOnlineFinalizadoComponent implements OnInit {
   persona!: Persona;
   pedido = new Pedido();
   tipoDocumentos: TipoDocumento[] = [];
-  tipoDocumentoSelected!: TipoDocumento;
+  //tipoDocumentoSelected!: TipoDocumento;
   tipoPedidoVentaPersonas!: TipoPedido;
   tipoPedidos: TipoPedido[] = [];
   items: ItemPedido[] = [];
@@ -91,8 +91,8 @@ export class PedidoPersonaOnlineFinalizadoComponent implements OnInit {
       this.personaService.getPersona(personaId).subscribe(cli => {
         const now = new Date();
         this.persona = cli;
-        const index = this.findIndexDocument(this.persona.tipoDocumento.id);
-        this.tipoDocumentoSelected = this.tipoDocumentos[index];
+        //const index = this.findIndexDocument(this.persona.tipoDocumento.id);
+        //this.tipoDocumentoSelected = this.tipoDocumentos[index];
         this.pedido.persona = this.persona;
         now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
         this.pedido.entregadoEn = moment(now).add(2, 'days').toISOString().slice(0, 16);
@@ -130,10 +130,10 @@ export class PedidoPersonaOnlineFinalizadoComponent implements OnInit {
   }
 
 
-  findIndexDocument(tipoDocumentoId: number): number {
+/*   findIndexDocument(tipoDocumentoId: number): number {
     return findIndex(this.tipoDocumentos, (td) => td.id == tipoDocumentoId)
   }
-
+ */
 
   eliminarItemPedido(id: number): void {
     this.items = this.itemService.deleteItemFromItems(this.items, id);
@@ -172,7 +172,7 @@ export class PedidoPersonaOnlineFinalizadoComponent implements OnInit {
       this.pedido.tipoPedido = this.tipoPedidoVentaPersonas
       this.pedidoService.createPedidoTienda(this.pedido).subscribe(p => {
         this.openDialog(p)
-        this.pedido.items=[];
+        this.itemService.setItems([]);
 
         //this.pedidoService.setPedido(p);
         //this.itemService.removeLocalStorageItems();
@@ -184,8 +184,9 @@ export class PedidoPersonaOnlineFinalizadoComponent implements OnInit {
   openDialog(pedido: Pedido): void {
     const dialogRef = this.dialog.open(PagoPedidoPersonaOnlineComponent, {
       data: pedido,
-      width: '50%',
-      disableClose: false
+      height: 'auto',
+/*       width: '90%',
+ */      disableClose: false
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -204,7 +205,6 @@ export class PedidoPersonaOnlineFinalizadoComponent implements OnInit {
   }
 
   addItemsServicioEnvio(event: any, formaEnvio: string) {
-    debugger;
     this.isEnvio = event.target.checked;
     let envioSelected = this.serviciosEnvio.filter(ser => ser.codigo == formaEnvio);
     let envioNoSelected = this.serviciosEnvio.filter(ser => ser.codigo != formaEnvio);

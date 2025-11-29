@@ -42,21 +42,6 @@ export class MovimientoCajaComponent implements OnInit {
 
 
   ngOnInit(): void {
-    /*   if (this.authService.isAuthenticated()) {
-        const username = this.authService.usuario.username;
-        this.cajasService.getCajaUsuarioByUserName(username).subscribe(
-          res => {
-            if (res !== null && res.activa) {
-              this.cajaId = res.caja.id;
-              this.username = username;
-            } else {
-              this.alertService.info(`Debe aperturar caja`, 'Caja usuario')
-              this.router.navigate(['/cajas']);
-            }
-          }
-        )
-      } */
-
     this.movimientoService.getAllTipoPagos().subscribe(
       response => this.tipoPagos = response
     )
@@ -80,7 +65,7 @@ export class MovimientoCajaComponent implements OnInit {
   getCajaUsuario(): void {
     if (this.authService.isAuthenticated()) {
       const username = this.authService.usuario.username;
-      this.cajasService.getCajaUsuarioByUserName(username).subscribe(
+      this.cajasService.getCajaUsuarioActiveByUserName(username).subscribe(
         result => {
           if (result !== null && result.activa) {
             this.cajaUsuario = result;

@@ -7,98 +7,90 @@
   <div class="row">
     <div class="col-12 col-md-6">
       <div class="row">
-        <label for="nomApellRz" class="form-label col-12 col-md-4">Persona</label>
+        <label for="tipoDocumentoId" class="form-label col-12 col-md-4"><b>Datos del cliente:</b></label>
         <div class="col-12 col-md">
-          <input type="text" [(ngModel)]="persona.nomApellRz" class="form-control" name="nomApellRz"
-            #nomApellRz="ngModel" required minlength="2">
-          <div *ngIf="formUtils.isValidFieldFp(nomApellRz)" class="alert alert-danger">
-            {{formUtils.getFieldErrorFp(nomApellRz)}}
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <label for="direccionPrincipal" class="col-form-label col-12 col-md-4">Dirección:</label>
-        <div class="col-12 col-md">
-          <input type="text" [(ngModel)]="persona.direccion" class="form-control" name="direccionPrincipal"
-            #direccionPrincipal="ngModel" required minlength="4">
-          <div *ngIf="formUtils.isValidFieldFp(direccionPrincipal)" class="alert alert-danger">
-            {{formUtils.getFieldErrorFp(direccionPrincipal)}}
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <label for="tipoDocumento" class="form-label col-12 col-md-4">Tipo de documento:</label>
-        <div class="col-12 col-md">
-          <select name="tipoDocumento" [(ngModel)]="persona.tipoDocumento" class="form-control" name="tipoDocumento"
-            #tipoDocumento="ngModel" required>
-            <option *ngFor="let documento of tipoDocumentos" [value]="documento">
+          <select name="tipoDocumentoId" [(ngModel)]="persona.tipoDocumento.id" class="form-control"
+            #tipoDocumentoId="ngModel" required>
+            <option *ngFor="let documento of tipoDocumentos" [value]="documento.id">
               {{documento.nombre}}</option>
           </select>
-          <div *ngIf="formUtils.isValidFieldFp(tipoDocumento)" class="alert alert-danger">
-            {{formUtils.getFieldErrorFp(tipoDocumento)}}
+          <div *ngIf="formUtils.isValidFieldFp(tipoDocumentoId)" class="alert alert-danger">
+            {{formUtils.getFieldErrorFp(tipoDocumentoId)}}
           </div>
         </div>
       </div>
       <div class="row">
-        <label for="numeroDocumento" class="form-label col-12 col-md-4">Número documento:</label>
         <div class="col-12 col-md">
           <input type="text" [(ngModel)]="persona.numeroDocumento" class="form-control" name="numeroDocumento"
-            #numeroDocumento="ngModel" required minlength="8" maxlength="11" pattern="^\d+$">
+            #numeroDocumento="ngModel" required minlength="8" maxlength="11" pattern="^\d+$"
+            placeholder="Número documento">
           <div *ngIf="formUtils.isValidFieldFp(numeroDocumento)" class="alert alert-danger">
             {{formUtils.getFieldErrorFp(numeroDocumento)}}
           </div>
         </div>
       </div>
       <div class="row">
-        <label for="celular" class="form-label col-12 col-md-4">Celular:</label>
+        <div class="col-12 col-md">
+          <input type="text" [(ngModel)]="persona.nomApellRz" class="form-control" name="nomApellRz"
+            placeholder="Nombres y apellidos o Razon S." #nomApellRz="ngModel" required minlength="2">
+          <div *ngIf="formUtils.isValidFieldFp(nomApellRz)" class="alert alert-danger">
+            {{formUtils.getFieldErrorFp(nomApellRz)}}
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12 col-md">
+          <input type="text" [(ngModel)]="persona.direccion" class="form-control" name="direccionPrincipal"
+            placeholder="Dirección" #direccionPrincipal="ngModel" minlength="4">
+          <div *ngIf="formUtils.isValidFieldFp(direccionPrincipal)" class="alert alert-danger">
+            {{formUtils.getFieldErrorFp(direccionPrincipal)}}
+          </div>
+        </div>
+      </div>
+      <div class="row">
         <div class="col-12 col-md">
           <input type="text" [(ngModel)]="persona.celular" class="form-control" name="celular" #celular="ngModel"
-            required minlength="6" maxlength="14" pattern="^\d+$">
+            placeholder="Celular" minlength="6" maxlength="14" pattern="^\d+$">
           <div *ngIf="formUtils.isValidFieldFp(celular)" class="alert alert-danger">
             {{formUtils.getFieldErrorFp(celular)}}
           </div>
         </div>
       </div>
       <div class="row">
-        <label for="email" class="form-label col-12 col-md-4">Correo electrónico:</label>
         <div class="col-12 col-md">
-          <input type="email" [(ngModel)]="persona.email" class="form-control" name="email" placeholder="xxx@xxx.xx"
-            #email="ngModel" required minlength="6" pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$">
+          <input type="email" [(ngModel)]="persona.email" class="form-control" name="email"
+            placeholder="Correo electrónico" #email="ngModel" minlength="6"
+            pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$">
           <div *ngIf="formUtils.isValidFieldFp(email)" class="alert alert-danger">
             {{formUtils.getFieldErrorFp(email)}}
           </div>
         </div>
       </div>
     </div>
-    <div class="col-6">
+    <div class="col-12 col-md-6">
       <div class="row mb-2">
-        <label for="addEnvio" class="form-label col-8"><b>¿Adicionar servicio de envio a mi pedido?:</b>
-        </label>
-        <div class="col-4">
+        <div class="col-12">
           <div class="form-check form-check-inline">
+            <label class="form-check-label" for="addEnvio"><b>¿Adicionar envio al pedido?:</b> </label>
             <input class="form-check-input" type="checkbox" [(ngModel)]="isEnvio" name="addEnvio" id="addEnvio"
               (click)="addItemsServicioEnvio($event, SERVICIO_ENTREGA_LOCAL)">
-            <label class="form-check-label" for="addEnvio">Sí</label>
           </div>
         </div>
       </div>
       @if(isEnvio){
       <div class="row mb-2">
-        <div class="col-4">
+        <div class="d-flex justify-content-between">
           <div class="form-check form-check-inline">
             <input class="form-check-input" type="radio" name="envio" [(ngModel)]="formaEnvio" id="envioLocal"
               [value]="SERVICIO_ENTREGA_LOCAL" (click)="addItemsServicioEnvio($event, SERVICIO_ENTREGA_LOCAL)" checked>
             <label class="form-check-label" for="envioLocal">Envío local</label>
           </div>
-        </div>
-        <div class="col-4">
           <div class="form-check form-check-inline">
             <input class="form-check-input" type="radio" name="envio" [(ngModel)]="formaEnvio" id="envioProvincial"
-              [value]="SERVICIO_ENTREGA_PROVINCIAL" (click)="addItemsServicioEnvio($event, SERVICIO_ENTREGA_PROVINCIAL)" checked>
+              [value]="SERVICIO_ENTREGA_PROVINCIAL" (click)="addItemsServicioEnvio($event, SERVICIO_ENTREGA_PROVINCIAL)"
+              checked>
             <label class="form-check-label" for="envioProvincial">Envío provincial</label>
           </div>
-        </div>
-        <div class="col-4">
           <div class="form-check form-check-inline">
             <input class="form-check-input" type="radio" name="envio" [(ngModel)]="formaEnvio" id="envioOtraCiudad"
               [value]="SERVICIO_ENTREGA_CIUDAD" (click)="addItemsServicioEnvio($event,SERVICIO_ENTREGA_CIUDAD)">
@@ -107,21 +99,19 @@
         </div>
       </div>
       <div class="row">
-        <label for="nomApellRzEnvio" class="col-form-label col-12 col-md-4">Persona envio</label>
         <div class="col-12 col-md">
           <input type="text" [(ngModel)]="pedido.nomApellRzEnvio" class="form-control" name="nomApellRzEnvio"
-            #nomApellRzEnvio="ngModel" minlength="2">
+            placeholder="Persona envío" #nomApellRzEnvio="ngModel" minlength="2">
           <div *ngIf="formUtils.isValidFieldFp(nomApellRzEnvio)" class="alert alert-danger">
             {{formUtils.getFieldErrorFp(nomApellRzEnvio)}}
           </div>
         </div>
       </div>
       <div class="row">
-        <label for="direccionEnvio" class="col-form-label col-12 col-md-4">Dirección envío:</label>
         <div class="col-12 col-md">
           <textarea [(ngModel)]="pedido.direccionEnvio" class="form-control" name="direccionEnvio"
             #direccionEnvio="ngModel" minlength="2" maxlength="250" rows="3"
-            placeholder="Colocar tambien referencias..."></textarea>
+            placeholder="Dirección de envío, colocar tambien referencias..."></textarea>
 
           <div *ngIf="formUtils.isValidFieldFp(direccionEnvio)" class="alert alert-danger">
             {{formUtils.getFieldErrorFp(direccionEnvio)}}
@@ -129,10 +119,9 @@
         </div>
       </div>
       <div class="row">
-        <label for="celularEnvio" class="col-form-label col-12 col-md-4">Celular envio:</label>
         <div class="col-12 col-md">
           <input type="text" [(ngModel)]="pedido.celularEnvio" class="form-control" name="celularEnvio"
-            #celularEnvio="ngModel" minlength="6" maxlength="14" pattern="^\d+$">
+            placeholder="Celular envío" #celularEnvio="ngModel" minlength="6" maxlength="14" pattern="^\d+$">
           <div *ngIf="formUtils.isValidFieldFp(celularEnvio)" class="alert alert-danger">
             {{formUtils.getFieldErrorFp(celularEnvio)}}
           </div>
@@ -141,7 +130,7 @@
       }
     </div>
   </div>
-  <div class="row">
+  <div id="itemsPedidoOnlineFinalizadoToDesktop" class="row">
     <div class="col-12">
       <table class="tabla-desktop table table-striped table-hover table-sm" cellspacing="1" cellpadding="1">
         <thead>
@@ -158,10 +147,8 @@
         <tbody>
           <tr *ngFor="let item of items">
             <td>
-              <!--               <p-button severity="danger" icon="pi pi-trash" (click)="eliminarItemPedido(item.producto.id)" />
- -->
-              <button type="button" id="btnDeleteFromPedidoOnline" class="btn btn-danger icon-square" title="Eliminar item"
-                (click)="$event.stopPropagation(); eliminarItemPedido(item.producto.id)">
+              <button type="button" id="btnDeleteFromPedidoOnline" class="btn btn-danger icon-square"
+                title="Eliminar item" (click)="$event.stopPropagation(); eliminarItemPedido(item.producto.id)">
                 <i class="fa-regular fa-trash-can"></i> </button>
             </td>
             <td>
@@ -169,10 +156,6 @@
             </td>
             <td>
               <b>{{item.producto.nombre | stringToTitleWithAccents}}</b>
-              <!--            @if(item.producto.codigo != SERVICIO_ENTREGA_LOCAL &&
-              item.producto.codigo != SERVICIO_ENTREGA_CIUDAD &&
-              item.producto.codigo != SERVICIO_DISENIO &&
-              item.producto.codigo != SERVICIO_GRABADO_IMAGEN){ -->
               @if(item.producto.codigo != SERVICIO_ENTREGA_LOCAL &&
               item.producto.codigo != SERVICIO_ENTREGA_CIUDAD &&
               item.producto.codigo != SERVICIO_ENTREGA_PROVINCIAL){
@@ -233,6 +216,76 @@
 
         </tfoot>
       </table>
+    </div>
+  </div>
+
+  <div id="itemsPedidoOnlineFinalizadoToMovil" class="row">
+    @for (item of items; track $index) {
+    <div class="col">
+      <ul class="list-group my-1">
+        <li class="list-group-item active d-flex justify-content-between">
+          <span>{{item.producto.nombre | stringToTitleWithAccents}}</span>
+          <button type="button" id="btnDeleteFromPedidoOnline" class="btn btn-danger icon-square" title="Eliminar item"
+            (click)="$event.stopPropagation(); eliminarItemPedido(item.producto.id)">
+            <i class="fa-regular fa-trash-can"></i> </button>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-start">
+          <div class="me-auto">
+            <span class="cabecera">Imágen:</span> <img [src]="item.imagenUri" width="86" alt={{item.imagen}} /><br>
+          </div>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-start">
+          <div class="me-auto">
+            <span class="cabecera">Descripción:</span>
+            <textarea name="descripcion" [ngStyle]="{'resize': 'none'}" maxlength="250" [value]="item.descripcion"
+              rows="3" (change)="actualizarDescripcion(item.producto.id, $event)"></textarea>
+          </div>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-start">
+          <div class="me-auto">
+            <span class="cabecera">Cantidad:</span>
+            <input style="width:90px" type="number" name="cantidad" aria-describedby="cantidad"
+              [step]="item.producto.gruposDe.toString()" [min]="item.producto.minCantidadPedido.toString()"
+              [max]="item.producto.maxCantidadPedido.toString()" [value]="item.cantidad"
+              (input)="actualizarCantidad(item.producto.id, $event);calcularTotal() "
+              (keydown.enter)="$event.preventDefault()" />
+          </div>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-start">
+          <div class="me-auto">
+            <span class="cabecera">S/.Precio:</span> {{item.producto.precioNetoNumberShow| currency:'PEN'}}<br>
+          </div>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-start">
+          <div class="me-auto">
+            <span class="cabecera">S/. Subtotal:</span>
+            <input style="width:90px" type="number" name="importe" min="1" [value]="item.importe" disabled
+              (input)="actualizarImporte(item.producto.id, $event); calcularTotal()"
+              (keydown.enter)="$event.preventDefault()" />
+          </div>
+        </li>
+      </ul>
+    </div>
+    }
+    <div class="col">
+      <ul class="list-group my-1">
+
+        <li class="list-group-item d-flex justify-content-between align-items-start">
+          <div class="me-auto">
+            <span class="cabecera">Entregar El:</span>
+            <input type="datetime-local" [(ngModel)]="pedido.entregadoEn" class="form-control" #entregadoEn="ngModel"
+              name="entregadoEn" required disabled>
+            <div *ngIf="formUtils.isValidFieldFp(entregadoEn)" class="alert alert-danger">
+              {{formUtils.getFieldErrorFp(entregadoEn)}}
+            </div>
+          </div>
+        </li>
+
+        <li class="list-group-item active align-items-start">
+          <span class="cabecera">TOTAL S/:</span> {{total | currency:'PEN'}}
+        </li>
+
+      </ul>
     </div>
   </div>
   <div class="row mb-2">

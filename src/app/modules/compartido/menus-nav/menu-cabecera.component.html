@@ -20,8 +20,11 @@
   </div>
   }
   @if (isAutenticado()) {
-  <button type="button" (click)="sideNavToggle()" class="btn btn-primary"><i
-      class="fa-solid fa-bars mr-2"></i>Menú</button>
+  <button type="button" (click)="sideNavToggle()" class="btn btn-primary mr-2">
+    <i class="fa-solid fa-bars mr-2"></i>Menú</button>
   }
+    <button type="button" (click)="openModalCart()" class="btn btn-primary">
+    <i class="fa-solid fa-cart-plus mr-2"></i>Carrito
+    </button>
 
 </nav>

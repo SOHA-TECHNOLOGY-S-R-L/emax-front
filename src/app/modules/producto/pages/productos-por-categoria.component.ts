@@ -18,7 +18,7 @@ import { StringToTitleWithAccents } from "../../../pipes/StringToTitleWithAccent
   templateUrl: './productos-por-categoria.component.html',
   styleUrl: './productos-por-categoria.component.css',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, ReactiveFormsModule, AngularMaterialModule, StringToTitleWithAccents, UpperCasePipe],
+  imports: [CommonModule, RouterModule, FormsModule, ReactiveFormsModule, AngularMaterialModule,  UpperCasePipe],
   changeDetection: ChangeDetectionStrategy.OnPush
 
 })
