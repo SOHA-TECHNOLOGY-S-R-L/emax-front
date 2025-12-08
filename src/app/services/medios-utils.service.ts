@@ -21,24 +21,24 @@ export class MediosUtilsService {
     private httpClient: HttpClient
   ) { }
 
-/*   seleccionarImagen(event: any) {
-    let imagenSeleccionada: File;
-    this.imagenSeleccionada = event.target.files[0];
-    if (this.imagenSeleccionada!.type.indexOf('image') < 0) {
-      this.alertService.error('El archivo debe ser del tipo imagen', 'Imagen');
-      return;
-    }
-  } */
+  /*   seleccionarImagen(event: any) {
+      let imagenSeleccionada: File;
+      this.imagenSeleccionada = event.target.files[0];
+      if (this.imagenSeleccionada!.type.indexOf('image') < 0) {
+        this.alertService.error('El archivo debe ser del tipo imagen', 'Imagen');
+        return;
+      }
+    } */
 
   isImage(fileInput: HTMLInputElement): boolean {
-    let result:boolean = false;
+    let result: boolean = false;
     if (fileInput && fileInput.files && fileInput.files.length > 0) {
       let imagenSeleccionada: File;
       //imagenSeleccionada = event.target.files[0];
       imagenSeleccionada = fileInput.files[0];
       if (imagenSeleccionada!.type.indexOf('image') < 0) {
         this.alertService.error('El archivo debe ser del tipo imagen', 'Imagen');
-        return result= false;
+        return result = false;
       }
       return result = true;
     }
@@ -70,6 +70,20 @@ export class MediosUtilsService {
       .pipe(
         catchError(e => {
           if (e.status == 400) {
+            return throwError(e);
+          }
+          if (e.error?.mensaje) {
+            console.error(e.error.mensaje);
+          }
+          return throwError(e);
+        }));
+  }
+
+  eliminarImagen(nombreImagen: string): Observable<any> {
+    return this.httpClient.delete<any>(`${environment.apiUrl}/medios/eliminar/${nombreImagen}`)
+      .pipe(
+        catchError(e => {
+          if (e.status == 404) {
             return throwError(e);
           }
           if (e.error?.mensaje) {

@@ -16,7 +16,7 @@
     @if (authService.hasRole('ROLE_LIST_VENTAS')) {
     <div class="mat-elevation-z8">
       <table [ngClass]="{'d-none': !dataSource.length}" mat-table [dataSource]="dataSource" matSort
-        matSortActive="entregadoEn" matSortDisableClear matSortDirection="desc">
+        matSortActive="id" matSortDisableClear matSortDirection="desc">
 
         <ng-container matColumnDef="id">
           <th mat-header-cell *matHeaderCellDef mat-sort-header> Id </th>
@@ -84,7 +84,7 @@
         <tr mat-row *matRowDef="let row; columns: displayedColumnsLarge;"></tr>
       </table>
       <mat-paginator [length]="pageable.totalElements" [ngClass]="{'d-none': !dataSource.length}"
-        [pageSizeOptions]="[10, 20, 40]" [pageSize]="10" (page)="loadItems()" showFirstLastButtons
+        [pageSizeOptions]="[10, 20, 40, 60]" [pageSize]="10" (page)="loadItems()" showFirstLastButtons
         class="table-paginator">
       </mat-paginator>
     </div>
@@ -92,7 +92,7 @@
 
     <div class="mat-elevation-z8">
       <table [ngClass]="{'d-none': !dataSource.length}" mat-table [dataSource]="dataSource" matSort
-        matSortActive="entregadoEn" matSortDisableClear matSortDirection="desc">
+        matSortActive="id" matSortDisableClear matSortDirection="desc">
 
 <!--         <ng-container matColumnDef="id">
           <th mat-header-cell *matHeaderCellDef mat-sort-header> Entrega </th>
@@ -137,7 +137,7 @@
         <tr mat-row *matRowDef="let row; columns: displayedColumnsShort;"></tr>
       </table>
       <mat-paginator [length]="pageable.totalElements" [ngClass]="{'d-none': !dataSource.length}"
-        [pageSizeOptions]="[10, 20, 40]" [pageSize]="10" (page)="loadItems()" showFirstLastButtons
+        [pageSizeOptions]="[10, 20, 40, 60]" [pageSize]="10" (page)="loadItems()" showFirstLastButtons
         class="table-paginator">
       </mat-paginator>
     </div>

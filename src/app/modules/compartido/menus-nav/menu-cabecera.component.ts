@@ -64,13 +64,14 @@ export class MenuCabeceraComponent {
 
   openModalCart(): void {
     const dialogRef = this.dialog.open(ModalCarritoItemProductoComponent, {
-      data:  0 ,
-    });
+      data: 0,
+/*       disableClose: true
+ */    });
 
     dialogRef.afterClosed().subscribe(result => {
       console.log('The dialog was closed');
       if (result !== undefined) {
-       // this.animal.set(result);
+        // this.animal.set(result);
       }
     });
   }

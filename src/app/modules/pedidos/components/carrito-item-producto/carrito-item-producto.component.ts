@@ -1,9 +1,10 @@
+import { ProductoService } from './../../../../services/producto.service';
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, inject, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Router, RouterModule } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { concatMap, Subscription } from 'rxjs';
 import { ItemPedido } from '../../../../models/item-pedido';
 import { AuthService } from '../../../../services/auth.service';
 import { PersonaService } from '../../../../services/persona.service';
@@ -11,6 +12,9 @@ import { ItemService } from '../../../../services/item.service';
 import { UsuarioService } from '../../../../services/usuario.service';
 import { PrimeNgModule } from '../../../compartido/prime-ng.module';
 import { StringToTitleWithAccents } from '../../../../pipes/StringToTitleWithAccents.pipe';
+import { environment } from '../../../../../environments/environment';
+import { MediosUtilsService } from '../../../../services/medios-utils.service';
+import { AlertService } from '../../../../services/alert.service';
 
 
 @Component({
@@ -25,8 +29,13 @@ export class CarritoItemProductoComponent implements OnInit, OnDestroy {
   router = inject(Router);
   public authService = inject(AuthService);
   itemService = inject(ItemService)
+  productoService = inject(ProductoService)
   personaService = inject(PersonaService);
-  usuarioService = inject(UsuarioService)
+  usuarioService = inject(UsuarioService);
+  mediosUtilsService = inject(MediosUtilsService);
+  alertService = inject(AlertService);
+
+  API_URL_VER_IMAGEN = environment.API_URL_VER_IMAGEN;
 
 
   itemServiceSuscription$!: Subscription;
@@ -68,8 +77,19 @@ export class CarritoItemProductoComponent implements OnInit, OnDestroy {
     //this.itemService.saveLocalStorageItems(this.lstItemPedido);
   }
 
-  eliminarItemPedido(id: number): void {
-    this.lstItemPedido = this.itemService.deleteItemFromItems(this.lstItemPedido, id);
+  eliminarItemPedido(item: ItemPedido): void {
+    this.productoService.getProductoByImage(item.imagen).subscribe(
+      prod => { console.log("Producto encontrado", prod) },
+      err => { //Producto no encontrado
+        console.log("Producto no encontrado ...", err);
+        if (err.status === 404) {
+          this.mediosUtilsService.eliminarImagen(item.imagen).subscribe(resp => {
+            console.log("Eliminado correctamente:", resp);
+          });
+        }
+      }
+    );
+    this.lstItemPedido = this.itemService.deleteItemFromItems(this.lstItemPedido, item.producto.id);
     this.itemService.setItems(this.lstItemPedido);
     //this.itemService.saveLocalStorageItems(this.lstItemPedido);
   }

@@ -10,9 +10,9 @@
 @for (item of lstItemPedido; track $index) {
 <div style="border-bottom: 1px solid #ccc; padding-top: 2px;">
   <div class="d-flex justify-content-between align-items-center">
-    <img [src]="item.imagenUri" alt={{item.imagen}} width="48px" />
+    <img [src]="API_URL_VER_IMAGEN+item.imagen" alt={{item.imagen}} width="48px" />
     <p class="my-0">{{item.producto.nombre | stringToTitleWithAccents}}</p>
-    <button id="btnDeleteFromCart" class="btn btn-danger icon-square" title="Eliminar item" (click)="eliminarItemPedido(item.producto.id)">
+    <button id="btnDeleteFromCart" class="btn btn-danger icon-square" title="Eliminar item" (click)="eliminarItemPedido(item)">
       <i class="fa-solid fa-delete-left"></i>
     </button>
   </div>

@@ -15,7 +15,7 @@
 
     <div class="mat-elevation-z8">
       <table [ngClass]="{'d-none': !dataSource.length}" mat-table [dataSource]="dataSource" matSort
-        matSortActive="entregadoEn" matSortDisableClear matSortDirection="desc">
+        matSortActive="id" matSortDisableClear matSortDirection="desc">
 
         <ng-container matColumnDef="id">
           <th mat-header-cell *matHeaderCellDef mat-sort-header> Cod </th>

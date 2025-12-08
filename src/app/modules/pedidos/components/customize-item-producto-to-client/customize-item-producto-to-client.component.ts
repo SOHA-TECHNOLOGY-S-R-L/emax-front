@@ -41,8 +41,7 @@ export class CustomizeItemProductoToClientComponent implements OnInit, OnChanges
   formUtils = FormUtils;
   chatUtils = ChatUtils;
   verImagenProducto!: string;
-  verImagenItem!: string;
-  //servicioDisenio!: Producto;
+  //verImagenItem!: string;
   servicioGrabadoImagen!: Producto;
 
   item = new ItemPedido()
@@ -50,10 +49,10 @@ export class CustomizeItemProductoToClientComponent implements OnInit, OnChanges
   gruposDe!: number;
   minCantidadPedido!: number;
   maxCantidadPedido!: number;
-  //isDisenio: boolean = false;
-  isGrabarImagen: boolean = false;
+  isGrabarImagen!: boolean;
 
   frm = this.formBuilder.group({
+    imagenProducto: ['no-imagen.png'],
     descripcion: [''],
     cantidad: [0]
     //isGrabarImagen: [false]
@@ -70,14 +69,6 @@ export class CustomizeItemProductoToClientComponent implements OnInit, OnChanges
   }
 
   ngOnInit(): void {
-    /*     if (this.items.length === 0) {
-          this.items = this.itemService.getLocalStorageItems()
-        } */
-
-    /*     this.productoService.getProductoByCod(SERVICIO_DISENIO).subscribe(prd => {
-          this.servicioDisenio = prd;
-        }); */
-
     this.productoService.getProductoByCod(SERVICIO_GRABADO_IMAGEN).subscribe(prd => {
       this.servicioGrabadoImagen = prd;
     });
@@ -90,9 +81,8 @@ export class CustomizeItemProductoToClientComponent implements OnInit, OnChanges
       this.minCantidadPedido = this.producto.minCantidadPedido
       this.maxCantidadPedido = this.producto.maxCantidadPedido
       this.verImagenProducto = environment.API_URL_VER_IMAGEN + this.producto.imagen;
+      //this.verImagenItem = environment.API_URL_VER_IMAGEN + this.item.imagen;
       this.frm.get('cantidad')?.setValue(this.minCantidadPedido);
-      this.verImagenItem = environment.API_URL_VER_IMAGEN + this.item.imagen;
-      //console.log("this.verImagenItem", this.verImagenItem);
     }
   }
 
@@ -100,17 +90,15 @@ export class CustomizeItemProductoToClientComponent implements OnInit, OnChanges
     return this.authService.isAuthenticated();
   }
 
-  subirImagen(fileInput: HTMLInputElement) {
+  subirImagenToProducto(fileInput: HTMLInputElement) {
     if (fileInput && fileInput.files && fileInput.files.length > 0) {
       const imagen: File = fileInput.files[0];
-      //console.log(imagen.type.indexOf('image'));
       if (imagen.type.indexOf('image') >= 0) {
         this.mediosUtilsService.subirImagen(imagen, true).subscribe(resp => {
-          //this.mediosUtilsService.imageToBase64(imagen);
-          this.verImagenItem = environment.API_URL_VER_IMAGEN + resp.imagen;
-          this.item.imagen = resp.imagen;
-          this.isGrabarImagen = true;
-          // this.mediosUtilsService.imagenSeleccionada = null;  Limpiar la imagen seleccionada
+          this.frm.get('imagenProducto')?.setValue(resp.imagen);
+          this.alertService.success("Se ha subido la imágen correctamente","Imágen");
+          //error('El archivo debe ser del tipo imagen', 'Imagen');
+          //this.verImagenItem = environment.API_URL_VER_IMAGEN + resp.imagen;
         })
       } else {
         this.alertService.error('El archivo debe ser del tipo imagen', 'Imagen');
@@ -121,45 +109,37 @@ export class CustomizeItemProductoToClientComponent implements OnInit, OnChanges
 
 
   addOneItemServicioGrabadoImagen2() {
-    //debugger;
-    if (this.isGrabarImagen) {
-      this.item.cantidad = (this.frm.get('cantidad')?.value ? this.frm.get('cantidad')?.value : 0)!;
-      this.item.descripcion = this.servicioGrabadoImagen.descripcion;
-      this.item.producto = { ...this.servicioGrabadoImagen };
-      this.item.imagenUri = environment.API_URL_VER_IMAGEN + this.item.imagen
 
-      if (this.itemService.existItemInItems(this.items, this.item.producto.id)) {
-        this.items = this.itemService.UpdateAmountItemFromExterno(this.items, this.item.producto.id, this.item.cantidad);
-        this.itemService.setItems(this.items);
-        //this.itemService.saveLocalStorageItems(this.items);
-      }
-      else if (this.item.cantidad <= this.item.producto.maxCantidadPedido) {
-        this.items = [...this.items, { ...this.item }];
-        this.addItem(this.items, this.item);
-      }
-    } //else {
-    //this.deleteItem(this.items, this.item.producto.id);
-    //}
+    this.item.cantidad = (this.frm.get('cantidad')?.value ? this.frm.get('cantidad')?.value : 0)!;
+    this.item.descripcion = this.servicioGrabadoImagen.descripcion;
+    this.item.producto = { ...this.servicioGrabadoImagen };
+    this.item.imagen = this.frm.get('imagenProducto')!.value!
+    if (this.itemService.existItemInItems(this.items, this.item.producto.id)) {
+      this.items = this.itemService.UpdateAmountItemFromExterno(this.items, this.item.producto.id, this.item.cantidad);
+      this.items = this.itemService.UpdateImageItemFromExterno(this.items, this.item.producto.id, this.item.imagen);
+      this.itemService.setItems(this.items);
+      //this.itemService.saveLocalStorageItems(this.items);
+    }
+    else if (this.item.cantidad <= this.item.producto.maxCantidadPedido) {
+      this.items = [...this.items, { ...this.item }];
+      this.addItem(this.items, this.item);
+    }
   }
 
-  addOneItemServicioGrabadoImagen() {
-    //debugger;
-    if (this.isGrabarImagen) {
-      this.item.cantidad = (this.frm.get('cantidad')?.value ? this.frm.get('cantidad')?.value : 0)!;
-      this.item.descripcion = this.servicioGrabadoImagen.descripcion;
-      this.item.producto = { ...this.servicioGrabadoImagen };
-      this.item.imagenUri = environment.API_URL_VER_IMAGEN + this.item.imagen
+  /*   addOneItemServicioGrabadoImagen() {
+      if (this.isGrabarImagen) {
+        this.item.cantidad = (this.frm.get('cantidad')?.value ? this.frm.get('cantidad')?.value : 0)!;
+        this.item.descripcion = this.servicioGrabadoImagen.descripcion;
+        this.item.producto = { ...this.servicioGrabadoImagen };
+        this.item.imagenUri = environment.API_URL_VER_IMAGEN + this.item.imagen
 
-      if (!this.itemService.existItemInItems(this.items, this.item.producto.id)
-        && this.item.cantidad <= this.item.producto.maxCantidadPedido) {
-        this.items = [...this.items, { ...this.item }];
-        this.itemService.setItems(this.items);
-        //this.itemService.saveLocalStorageItems(this.items);
+        if (!this.itemService.existItemInItems(this.items, this.item.producto.id)
+          && this.item.cantidad <= this.item.producto.maxCantidadPedido) {
+          this.items = [...this.items, { ...this.item }];
+          this.itemService.setItems(this.items);
+        }
       }
-    } //else {
-    //this.deleteItem(this.items, this.item.producto.id);
-    //}
-  }
+    } */
 
   deleteItem(items: ItemPedido[], productoId: number) {
     this.items = this.itemService.deleteItemFromItems(items, productoId);
@@ -174,13 +154,14 @@ export class CustomizeItemProductoToClientComponent implements OnInit, OnChanges
   }
 
   sendOneItemProducto() {
-    //debugger;
     this.item.cantidad = (this.frm.get('cantidad')?.value ? this.frm.get('cantidad')?.value : 0)!;
     this.item.descripcion = (this.frm.get('descripcion')?.value ? this.frm.get('descripcion')?.value : '')!;
     this.item.producto = { ...this.producto };
-    this.item.imagenUri = environment.API_URL_VER_IMAGEN + this.item.imagen
+    this.item.imagen = this.producto.imagen;
+    //this.item.imagenUri = environment.API_URL_VER_IMAGEN + this.item.imagen
     if (this.itemService.existItemInItems(this.items, this.item.producto.id)) {
       this.items = this.itemService.UpdateAmountItemFromExterno(this.items, this.item.producto.id, this.item.cantidad);
+      // this.items = this.itemService.UpdateImageItemFromExterno(this.items, this.item.producto.id, this.item.imagen);
       this.itemService.setItems(this.items);
       //this.itemService.saveLocalStorageItems(this.items);
     }
@@ -188,7 +169,30 @@ export class CustomizeItemProductoToClientComponent implements OnInit, OnChanges
       this.items = [...this.items, { ...this.item }];
       this.addItem(this.items, this.item);
     }
-    this.addOneItemServicioGrabadoImagen2();
+
+    // esta parte vamos a rehacer para adicionar un servicio por cada producto seleccionado
+    if (this.isGrabarImagen) {
+      this.addOneItemServicioGrabadoImagen2();
+    }
+  }
+
+  deleteImageToProduct(imagen: string) {
+    this.mediosUtilsService.eliminarImagen(imagen).subscribe(resp => {
+      //this.verImagenItem = environment.API_URL_VER_IMAGEN + 'no-imagen.png';
+      this.frm.get('imagenProducto')!.setValue('no-imagen.png');
+    });
+
+  }
+
+  checkImagenToProduct(event: any) {
+    this.isGrabarImagen = event.target.checked;
+    if (!this.isGrabarImagen) {
+      this.deleteItem(this.items, this.servicioGrabadoImagen.id);
+      const nombreImagenUpload = this.frm.get('imagenProducto')!.value!;
+      if (nombreImagenUpload != 'no-imagen.png') {
+        this.deleteImageToProduct(nombreImagenUpload);
+      }
+    }
   }
 
   chatear(producto: Producto) {

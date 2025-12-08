@@ -12,7 +12,7 @@ import { Pedido } from '../../../../models/pedido';
 import { PageableResponse } from '../../../../models/pageable-response';
 import { PedidoService } from '../../../../services/pedido.service';
 import { AuthService } from '../../../../services/auth.service';
-import { ELEMENTOS_POR_PAGINA, PRIMERA_PAGINA, SIGUIENTE_PAGINA, ULTIMA_PAGINA } from '../../../../constants/constantes';
+import { COMPRA_TIPO_PEDIDO, ELEMENTOS_POR_PAGINA, PRIMERA_PAGINA, SIGUIENTE_PAGINA, ULTIMA_PAGINA } from '../../../../constants/constantes';
 import { COLOR_ESTADO_PEDIDO } from '../../../../constants/pedido.constants';
 
 @Component({
@@ -71,7 +71,7 @@ export class ListadoComprasComponent implements OnInit, AfterViewInit {
         query: !!this.querySearch ? this.querySearch : ''
       };
 
-      this.pedidoService.getAllPedidosPageable(params, 2).subscribe(response => {
+      this.pedidoService.getAllPedidosPageable(params, COMPRA_TIPO_PEDIDO).subscribe(response => {
         this.dataSource = response.content as Pedido[];
         this.dataSource.forEach((r: Pedido) => {
           r.createAt = moment(r.createAt).format('DD/MM/YYYY');

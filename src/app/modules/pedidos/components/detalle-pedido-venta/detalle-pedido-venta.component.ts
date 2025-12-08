@@ -5,19 +5,22 @@ import { ActivatedRoute, RouterModule } from '@angular/router';
 import { Pedido } from '../../../../models/pedido';
 import { PedidoService } from '../../../../services/pedido.service';
 import { AngularMaterialModule } from '../../../compartido/angular-material.module';
+import { environment } from '../../../../../environments/environment';
 
 @Component({
   selector: 'app-detalle-pedido-venta',
   templateUrl: './detalle-pedido-venta.component.html',
   styleUrl: './detalle-pedido-venta.component.css',
   standalone: true,
-  imports: [CommonModule, RouterModule, AngularMaterialModule, FormsModule, ReactiveFormsModule ]
+  imports: [CommonModule, RouterModule, AngularMaterialModule, FormsModule, ReactiveFormsModule]
 
 })
 export class DetallePedidoVentaComponent implements OnInit {
 
   pedido!: Pedido;
   titulo: string = 'Pedido de venta';
+  API_URL_VER_IMAGEN = environment.API_URL_VER_IMAGEN;
+
   //razonSocialActivate:boolean=false;
 
   constructor(private pedidoService: PedidoService,

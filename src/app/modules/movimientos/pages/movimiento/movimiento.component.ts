@@ -173,8 +173,8 @@ export class MovimientoComponent implements OnInit {
   onSubmitForm(form: NgForm) {
     this.movimiento.pedido = this.pedido
     this.movimiento.pedido.createAt = "";
-    this.movimiento.pedido.entregadoEn = "";
-    this.movimiento.pedido.adquiridoEn = "";
+    //this.movimiento.pedido.entregadoEn = "";
+    //this.movimiento.pedido.adquiridoEn = "";
     this.movimiento.pedido.items = [];
     this.movimiento.pedido.movimientos = [];
 

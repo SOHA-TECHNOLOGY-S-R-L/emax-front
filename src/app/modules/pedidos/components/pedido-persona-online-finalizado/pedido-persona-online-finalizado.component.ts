@@ -26,6 +26,7 @@ import { PrimeNgModule } from '../../../compartido/prime-ng.module';
 import { PagoPedidoPersonaOnlineComponent } from '../pago-pedido-persona-online/pago-pedido-persona-online.component';
 import { AlertService } from './../../../../services/alert.service';
 import { StringToTitleWithAccents } from '../../../../pipes/StringToTitleWithAccents.pipe';
+import { MediosUtilsService } from '../../../../services/medios-utils.service';
 
 @Component({
   selector: 'pedido-persona-online-finalizado',
@@ -42,6 +43,7 @@ export class PedidoPersonaOnlineFinalizadoComponent implements OnInit {
   private pedidoService = inject(PedidoService);
   private productoService = inject(ProductoService);
   private alertService = inject(AlertService);
+    mediosUtilsService = inject(MediosUtilsService);
   readonly dialog = inject(MatDialog);
   private router = inject(Router);
   itemService = inject(ItemService)
@@ -61,7 +63,7 @@ export class PedidoPersonaOnlineFinalizadoComponent implements OnInit {
   //personaOnline!: boolean;
   isEnvio: boolean = false;
   formaEnvio!: string;
-
+  API_URL_VER_IMAGEN = environment.API_URL_VER_IMAGEN;
   SERVICIO_ENTREGA_LOCAL = SERVICIO_ENTREGA_LOCAL;
   SERVICIO_ENTREGA_CIUDAD = SERVICIO_ENTREGA_CIUDAD;
   SERVICIO_ENTREGA_PROVINCIAL = SERVICIO_ENTREGA_PROVINCIAL;
@@ -130,13 +132,24 @@ export class PedidoPersonaOnlineFinalizadoComponent implements OnInit {
   }
 
 
-/*   findIndexDocument(tipoDocumentoId: number): number {
-    return findIndex(this.tipoDocumentos, (td) => td.id == tipoDocumentoId)
-  }
- */
+  /*   findIndexDocument(tipoDocumentoId: number): number {
+      return findIndex(this.tipoDocumentos, (td) => td.id == tipoDocumentoId)
+    }
+   */
 
-  eliminarItemPedido(id: number): void {
-    this.items = this.itemService.deleteItemFromItems(this.items, id);
+  eliminarItemPedido(item: ItemPedido): void {
+    this.productoService.getProductoByImage(item.imagen).subscribe(
+      prod => { console.log("Producto encontrado", prod) },
+      err => { //Producto no encontrado
+        console.log("Producto no encontrado ...", err);
+        if (err.status === 404) {
+          this.mediosUtilsService.eliminarImagen(item.imagen).subscribe(resp => {
+            console.log("Eliminado correctamente:", resp);
+          });
+        }
+      }
+    );
+    this.items = this.itemService.deleteItemFromItems(this.items, item.producto.id);
     this.itemService.setItems(this.items);
     //this.itemService.saveLocalStorageItems(this.items);
   }
@@ -215,7 +228,7 @@ export class PedidoPersonaOnlineFinalizadoComponent implements OnInit {
       this.item.cantidad = envioSelected[0].minCantidadPedido;
       this.item.descripcion = envioSelected[0].descripcion;
       this.item.producto = { ...envioSelected[0] };
-      this.item.imagenUri = environment.API_URL_VER_IMAGEN + this.item.producto.imagen
+      //  this.item.imagenUri = environment.API_URL_VER_IMAGEN + this.item.producto.imagen
 
       /*       if (this.itemService.existItemInItems(this.items, envioNoSelected[0].id)) {
               this.items = this.itemService.deleteItemFromItems(this.items, this.item.producto.id);

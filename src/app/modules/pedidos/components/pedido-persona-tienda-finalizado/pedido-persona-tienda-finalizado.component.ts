@@ -23,6 +23,7 @@ import { PrimeNgModule } from '../../../compartido/prime-ng.module';
 import { TipoPedido } from './../../../../models/tipo-pedido';
 import { AlertService } from './../../../../services/alert.service';
 import { StringToTitleWithAccents } from '../../../../pipes/StringToTitleWithAccents.pipe';
+import { MediosUtilsService } from '../../../../services/medios-utils.service';
 
 @Component({
   selector: 'pedido-persona-tienda-finalizado',
@@ -39,6 +40,7 @@ export class PedidoPersonaTiendaFinalizadoComponent implements OnInit {
   private pedidoService = inject(PedidoService);
   private productoService = inject(ProductoService);
   private alertService = inject(AlertService);
+  mediosUtilsService = inject(MediosUtilsService);
 
   private router = inject(Router);
   itemService = inject(ItemService)
@@ -58,6 +60,7 @@ export class PedidoPersonaTiendaFinalizadoComponent implements OnInit {
   //personaOnline!: boolean;
   isEnvio: boolean = false;
   formaEnvio!: string;
+  API_URL_VER_IMAGEN = environment.API_URL_VER_IMAGEN;
   SERVICIO_ENTREGA_LOCAL = SERVICIO_ENTREGA_LOCAL;
   SERVICIO_ENTREGA_CIUDAD = SERVICIO_ENTREGA_CIUDAD;
   SERVICIO_ENTREGA_PROVINCIAL = SERVICIO_ENTREGA_PROVINCIAL;
@@ -133,21 +136,32 @@ export class PedidoPersonaTiendaFinalizadoComponent implements OnInit {
   }
 
 
-/*   findIndexDocument(tipoDocumentoId: number): number {
-    return findIndex(this.tipoDocumentos, (td) => td.id == tipoDocumentoId)
-  } */
+  /*   findIndexDocument(tipoDocumentoId: number): number {
+      return findIndex(this.tipoDocumentos, (td) => td.id == tipoDocumentoId)
+    } */
 
-/*   compararDocumento(o1: TipoDocumento, o2: TipoDocumento): boolean {
-    if (o1 === undefined && o2 === undefined) {
-      return true;
-    }
+  /*   compararDocumento(o1: TipoDocumento, o2: TipoDocumento): boolean {
+      if (o1 === undefined && o2 === undefined) {
+        return true;
+      }
 
-    return o1 === null || o2 === null || o1 === undefined || o2 === undefined ? false : o1.id === o2.id;
-  } */
+      return o1 === null || o2 === null || o1 === undefined || o2 === undefined ? false : o1.id === o2.id;
+    } */
 
 
-  eliminarItemPedido(id: number): void {
-    this.items = this.itemService.deleteItemFromItems(this.items, id);
+  eliminarItemPedido(item: ItemPedido): void {
+    this.productoService.getProductoByImage(item.imagen).subscribe(
+      prod => { console.log("Producto encontrado", prod) },
+      err => { //Producto no encontrado
+        console.log("Producto no encontrado ...", err);
+        if (err.status === 404) {
+          this.mediosUtilsService.eliminarImagen(item.imagen).subscribe(resp => {
+            console.log("Eliminado correctamente:", resp);
+          });
+        }
+      }
+    );
+    this.items = this.itemService.deleteItemFromItems(this.items, item.producto.id);
     this.itemService.setItems(this.items);
     //this.itemService.saveLocalStorageItems(this.items);
   }
@@ -182,9 +196,10 @@ export class PedidoPersonaTiendaFinalizadoComponent implements OnInit {
       this.pedido.precioNetoTotal = this.total
       this.pedido.tipoPedido = this.tipoPedidoVentaPersonas
       this.pedidoService.createPedidoTienda(this.pedido).subscribe(p => {
+        this.itemService.setItems([]);
         //this.pedidoService.setPedido(p);
         //this.itemService.removeLocalStorageItems();
-        this.pedido.items = [];
+        //this.pedido.items = [];
         this.alertService.info(`Pedido de  ${p.tipoPedido.nombre} con N° ${p.id} a caja`, "Finalizar pedido");
         if (p.tipoPedido.id == VENTA_TIPO_PEDIDO) {
           this.router.navigate(['/pedidos/listado-ventas']);
@@ -207,7 +222,7 @@ export class PedidoPersonaTiendaFinalizadoComponent implements OnInit {
       this.item.cantidad = envioSelected[0].minCantidadPedido;
       this.item.descripcion = envioSelected[0].descripcion;
       this.item.producto = { ...envioSelected[0] };
-      this.item.imagenUri = environment.API_URL_VER_IMAGEN + this.item.producto.imagen
+      //this.item.imagenUri = environment.API_URL_VER_IMAGEN + this.item.producto.imagen
 
       /*       if (this.itemService.existItemInItems(this.items, envioNoSelected[0].id)) {
               this.items = this.itemService.deleteItemFromItems(this.items, this.item.producto.id);

@@ -1,9 +1,9 @@
 <div class="row mt-2">
-<!--   <div class="col-6">
+  <!--   <div class="col-6">
  -->
-    <h3>{{titulo}}</h3>
+  <h3>{{titulo}}</h3>
 
-<!--   </div>
+  <!--   </div>
   <div class="col-6 d-flex flex-row justify-content-end">
     <button type="button" class="btn btn-success" [routerLink]="['/pedidos/listado-ventas']">
       Volver
@@ -27,6 +27,9 @@
           <span class="cabecera">Costo Unitario:</span> {{item.costoUnitarioItem}}<br>
           <span class="cabecera">Cantidad:</span> {{item.cantidad}}<br>
           <span class="cabecera">Sub total:</span> {{item.importe| currency: 'PEN'}}<br>
+        </div>
+        <div>
+          <img [src]="API_URL_VER_IMAGEN+item.imagen" width="100" alt={{item.imagen}} />
         </div>
       </li>
     </ul>

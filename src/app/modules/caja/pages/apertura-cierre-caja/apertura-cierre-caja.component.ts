@@ -93,15 +93,17 @@ export class AperturaCierreCajaComponent implements OnInit {
   asignarCajaUsuario(caja: Caja) {
     this.cajaService.getCajaUsuarioInactivoByCajaId(caja.id).subscribe(result => {
 
-      if (result != null) {
+/*       if (result != null) {
         if (result.saldoCaja > 0 && result.activa == true) {
           this.alertService.success(`${result.caja.nombre}, debe estar cerrada y sin saldo para ser asignada.`, "Caja",)
           return;
         }
-      }
+      } */
       this.cajaUsuario.caja = caja
       this.cajaUsuario.ingresoEsperado = 0;
       this.cajaUsuario.egresoEsperado = 0;
+      this.cajaUsuario.saldoInicial = result.saldoFinal;
+      this.cajaUsuario.saldoFinal = result.saldoFinal;
       this.formCaja.get("ubicacionCaja")?.setValue(caja.ubicacion);
     })
   }
@@ -114,6 +116,7 @@ export class AperturaCierreCajaComponent implements OnInit {
   abrirCaja() {
     this.usuarioService.getUsuarioByUsername(this.username).subscribe(resp => {
       this.cajaUsuario.usuario = resp;
+
       //this.cajaUsuario.fechaApertura = '';
       //this.cajaUsuario.fechaCierre = '';
       //this.cajaUsuario.usuario.password = "";
@@ -128,12 +131,12 @@ export class AperturaCierreCajaComponent implements OnInit {
 
   cerrarCaja() {
     const saldoPorConteo = this.formCaja.get('saldoPorConteo')!.value;
-    const saldoCaja = this.cajaUsuario.saldoCaja;
+    const saldoFinal = this.cajaUsuario.saldoFinal;
     this.cajaUsuario.fechaApertura = '';
     this.cajaUsuario.fechaCierre = '';
     //this.cajaUsuario.usuario.password = "";
 
-    if (saldoPorConteo == saldoCaja) {
+    if (saldoPorConteo == saldoFinal) {
       this.cajaUsuario.saldoPorConteo = saldoPorConteo!;
       /*this.cajaUsuario.ingresoEsperado = 0;
       this.cajaUsuario.egresoEsperado = 0;

@@ -3,14 +3,14 @@
   </div>
   }
   <div class="row mt-2">
-    <div class="col-12 col-md-5">
+    <div class="col-12 col-md-6">
       <div class="row">
         <div class="col {{producto.estadoProducto.color}}">
           <img [src]="verImagenProducto" [alt]="producto.imagen" class="img-fluid mx-auto d-block">
         </div>
       </div>
     </div>
-    <div class="col-12 col-md-7">
+    <div class="col-12 col-md-6">
       @if (producto) {
       <h5> {{producto.nombre | stringToTitleWithAccents }} ({{producto.codigo | uppercase}})</h5>
 
@@ -25,7 +25,7 @@
       <div class="row">
         <div class="col">
           <ul class="list-group" style="list-style-type: none;">
-<!--             <li style="margin-bottom: 6px;"><i class="fa fa-angle-right mr-2"></i><b>Cantidad en stock:
+            <!--             <li style="margin-bottom: 6px;"><i class="fa fa-angle-right mr-2"></i><b>Cantidad en stock:
               </b>{{producto.cantidadStock}} unid</li> -->
             <!--
             <li style="margin-bottom: 6px;"><i class="fa fa-angle-right mr-2"></i><b>Mín cantidad en pedido:
@@ -33,7 +33,7 @@
             <li style="margin-bottom: 6px;"><i class="fa fa-angle-right mr-2"></i><b>Máx cantidad en pedido:
               </b>{{producto.maxCantidadPedido}} unid </li> -->
 
-<!--             <li style="margin-bottom: 6px;"><i class="fa fa-angle-right mr-2"></i><b>En grupos de:
+            <!--             <li style="margin-bottom: 6px;"><i class="fa fa-angle-right mr-2"></i><b>En grupos de:
               </b>{{producto.gruposDe}} unid</li> -->
             <li style="margin-bottom: 6px;"><i class="fa fa-angle-right mr-2"></i><b>Color:
               </b>{{producto.color?.nombre}}
@@ -47,7 +47,7 @@
 
             <li style="margin-bottom: 6px;"><i class="fa fa-angle-right mr-2"></i><b>Grupos de:
               </b>{{producto.gruposDe}} unid, <i><b>Stock:
-              </b></i>{{producto.cantidadStock}} unid </li>
+                </b></i>{{producto.cantidadStock}} unid </li>
 
           </ul>
         </div>
@@ -56,32 +56,35 @@
       <form id="frmAddToCart" [formGroup]="frm" (ngSubmit)="sendOneItemProducto()">
         <div class="container-fluid">
           <div class="row mb-2">
-            <label for="clicUploadImageToClient" class="col-6"><b>¿GRABAR IMAGEN EN PRODUCTOS?</b> </label>
-            <div class="input-group col-6">
-              <input #file type="file" (change)="subirImagen(file)" name="imagen" class="form-control"
+            <label for="clicUploadImageToClient" class="col-10"><b>¿GRABAR IMAGEN EN PRODUCTOS?</b> </label>
+            <div class="input-group col-2">
+              <input class="form-check-input" type="checkbox"
+                 (click)="checkImagenToProduct($event)">
+              <!--               <input #file type="file" (change)="subirImagen(file)" name="imagen" class="form-control"
                 style="display: none;" id="clicUploadImageToClient" aria-describedby="clicUploadImageToClient">
-              <label for="clicUploadImageToClient" class="btn btn-secondary">📁 Elegir imagen</label>
+              <label for="clicUploadImageToClient" class="btn btn-secondary">📁 Elegir imagen</label> -->
             </div>
           </div>
-
+          @if(isGrabarImagen){
+          <div class="row mb-2">
+            <div class="d-flex justify-content-center">
+              <input #file type="file" (change)="subirImagenToProducto(file)" name="imagen" class="form-control"
+                style="display: none;" id="clicUploadImageToClient" aria-describedby="clicUploadImageToClient">
+              <label for="clicUploadImageToClient" class="btn btn-secondary">📁 Subir imagen (opcional)</label>
+            </div>
+          </div>
+          }
           <div class="row mb-2">
             <div class="input-group col-12">
               <textarea formControlName="descripcion" name="descripcion" class="form-control"
-                [ngStyle]="{'resize': 'none'}" placeholder="¿Algo que debamos conciderar en su pedido?" maxlength="250"
+                [ngStyle]="{'resize': 'none'}" placeholder="¿Tienes algún texto para adicionar? ¿Algo mas para la pesonalización? " maxlength="250"
                 rows="5"></textarea>
             </div>
           </div>
           <div class="row">
-            <img class="col-4" [src]="verImagenItem">
-            <div class="col-8">
+<!--             <img class="col-4" [src]="verImagenItem">
+            <div class="col-8"> -->
               <div class="d-flex flex-column">
-                <!--                 <label for="cantidad" class="form-label"><b>Cantidad:</b></label>
-                <div class="mb-2">
-                  <input type="number" formControlName="cantidad" class="form-control" name="cantidad" [step]="gruposDe"
-                    [min]="minCantidadPedido" [max]="maxCantidadPedido" />
-                </div> -->
-
-
                 <div class="input-group mb-2">
                   <div class="input-group-prepend">
                     <span class="input-group-text" id="inputCantidadItemProducto">Cantidad:</span>
@@ -89,9 +92,6 @@
                   <input type="number" formControlName="cantidad" class="form-control" name="cantidad" [step]="gruposDe"
                     [min]="minCantidadPedido" [max]="maxCantidadPedido" aria-describedby="inputCantidadItemProducto">
                 </div>
-
-
-
                 <div class="d-flex flex-wrap flex-column flex-sm-row justify-content-sm-evenly">
                   <button type="button" class="btn btn-secondary mb-2" (click)="chatear(producto)"><i
                       class="fa-brands fa-whatsapp mr-1"></i>Chatear</button>
@@ -99,8 +99,8 @@
                     carrito</button>
                 </div>
               </div>
-            </div>
-          </div>
+<!--             </div>
+ -->          </div>
         </div>
       </form>
 

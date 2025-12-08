@@ -7,3 +7,12 @@
   font-weight: bolder;
   color:darkblue;
 }
+
+.carrito {
+  display: block;
+}
+@media (max-width: 991px) {
+  .carrito {
+    display: none;
+  }
+}

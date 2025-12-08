@@ -154,12 +154,12 @@
                 <!--                 <p-button severity="danger" icon="pi pi-trash" (click)="eliminarItemPedido(item.producto.id)" />
  -->
                 <button type="button" id="btnDeleteFromPedidoTienda" class="btn btn-danger icon-square"
-                  title="Eliminar item" (click)="$event.stopPropagation(); eliminarItemPedido(item.producto.id)">
+                  title="Eliminar item" (click)="$event.stopPropagation(); eliminarItemPedido(item)">
                   <i class="fa-regular fa-trash-can"></i> </button>
 
               </td>
               <td>
-                <img [src]="item.imagenUri" width="86" alt={{item.imagen}} />
+                <img [src]="API_URL_VER_IMAGEN+item.imagen" width="86" alt={{item.imagen}} />
               </td>
               <td>
                 <b>{{item.producto.nombre | stringToTitleWithAccents}}</b>

@@ -148,11 +148,11 @@
           <tr *ngFor="let item of items">
             <td>
               <button type="button" id="btnDeleteFromPedidoOnline" class="btn btn-danger icon-square"
-                title="Eliminar item" (click)="$event.stopPropagation(); eliminarItemPedido(item.producto.id)">
+                title="Eliminar item" (click)="$event.stopPropagation(); eliminarItemPedido(item)">
                 <i class="fa-regular fa-trash-can"></i> </button>
             </td>
             <td>
-              <img [src]="item.imagenUri" width="86" alt={{item.imagen}} />
+              <img [src]="API_URL_VER_IMAGEN+item.imagen" width="86" alt={{item.imagen}} />
             </td>
             <td>
               <b>{{item.producto.nombre | stringToTitleWithAccents}}</b>
@@ -226,12 +226,12 @@
         <li class="list-group-item active d-flex justify-content-between">
           <span>{{item.producto.nombre | stringToTitleWithAccents}}</span>
           <button type="button" id="btnDeleteFromPedidoOnline" class="btn btn-danger icon-square" title="Eliminar item"
-            (click)="$event.stopPropagation(); eliminarItemPedido(item.producto.id)">
+            (click)="$event.stopPropagation(); eliminarItemPedido(item)">
             <i class="fa-regular fa-trash-can"></i> </button>
         </li>
         <li class="list-group-item d-flex justify-content-between align-items-start">
           <div class="me-auto">
-            <span class="cabecera">Imágen:</span> <img [src]="item.imagenUri" width="86" alt={{item.imagen}} /><br>
+            <span class="cabecera">Imágen:</span> <img [src]="API_URL_VER_IMAGEN+item.imagen" width="86" alt={{item.imagen}} /><br>
           </div>
         </li>
         <li class="list-group-item d-flex justify-content-between align-items-start">

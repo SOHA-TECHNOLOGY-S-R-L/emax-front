@@ -191,6 +191,30 @@ export class ProductoService {
       }));
   }
 
+  getProductoByImage(imagen: string): Observable<Producto> {
+    return this.http.get<Producto>(`${environment.apiUrl}/producto/imagen/${imagen}`
+      /*, {headers: this.agregarAuthorizationHeader()}*/
+    ).pipe(
+      catchError(e => {
+        let errorMsg = '';
+        if (e.status === 404) {
+          console.log(e.error.mensaje);
+          errorMsg = 'prd-no-ecnontrado';
+        }
+        else if (e.status === 500) {
+          errorMsg = 'Error interno en el servidor.';
+        }
+        else {
+          errorMsg = 'Error inesperado.';
+        }
+
+        console.error('Error HTTP:', e.status, e.message);
+        //return throwError(() => new Error(errorMsg));
+        return throwError(() => e);
+
+      }));
+  }
+
   getLstProductoServicioEnvio(): Observable<Producto[]> {
     return this.http.get<Producto[]>(`${environment.apiUrl}/productos/servicio/envio`
       /*, {headers: this.agregarAuthorizationHeader()}*/
@@ -291,7 +315,7 @@ export class ProductoService {
     )
   }
 
-    productosPorCategoriaNombre(categoriaNombre: string): Observable<Producto[]> {
+  productosPorCategoriaNombre(categoriaNombre: string): Observable<Producto[]> {
     return this.http.get<Producto[]>(`${environment.apiUrl}/productos/categoria/${categoriaNombre}`).pipe(
       catchError(e => {
         if (e.error?.mensaje) {
@@ -302,7 +326,7 @@ export class ProductoService {
     )
   }
 
-    productoCategoria(productoCodigo: string, categoriaNombre: string): Observable<Producto> {
+  productoCategoria(productoCodigo: string, categoriaNombre: string): Observable<Producto> {
     return this.http.get<Producto>(`${environment.apiUrl}/producto/${productoCodigo}/categoria/${categoriaNombre}`).pipe(
       catchError(e => {
         if (e.error?.mensaje) {

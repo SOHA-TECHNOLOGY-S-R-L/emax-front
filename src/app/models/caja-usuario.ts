@@ -12,7 +12,8 @@ export class CajaUsuario {
 	ingresoEsperado!:number;
 	ingresoPorConteo!:number;
 	egresoEsperado!:number;
-	saldoCaja:number = 0;
+  saldoInicial:number = 0;
+	saldoFinal:number = 0;
   saldoPorConteo!:number;
   activa:boolean=false;
   color!:string;

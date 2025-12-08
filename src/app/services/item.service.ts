@@ -122,6 +122,17 @@ export class ItemService {
     return items
   }
 
+  UpdateImageItemFromExterno(items: Array<ItemPedido>, productoId: number, imagen: string): Array<ItemPedido> {
+    items = items.map((item: ItemPedido) => {
+      if (productoId === item.producto.id) {
+        item.imagen = imagen;
+      }
+      return item;
+    });
+
+    return items
+  }
+
 
   deleteItemFromItems(items: Array<ItemPedido>, productoId: number): Array<ItemPedido> {
     const indice = findIndex(items, (item: ItemPedido) => item.producto.id === productoId);

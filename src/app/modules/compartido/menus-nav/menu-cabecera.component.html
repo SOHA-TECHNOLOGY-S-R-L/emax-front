@@ -1,4 +1,4 @@
-<nav class="navbar navbar-light navbar-expand-lg bg-white justify-content-evenly justify-content-lg-end">
+<nav class="navbar navbar-light navbar-expand-lg bg-white justify-content-end justify-content-lg-end">
   <div class="navbar-nav d-none d-lg-flex">
     <a [routerLink]="['/']" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact: true}"
       class="d-lg-flex nav-item nav-link active">Inicio</a>
@@ -19,12 +19,13 @@
 
   </div>
   }
+      <button type="button" (click)="openModalCart()" class="btn btn-primary mr-2">
+    <i class="fa-solid fa-cart-plus mr-2"></i>Carrito
+    </button>
   @if (isAutenticado()) {
   <button type="button" (click)="sideNavToggle()" class="btn btn-primary mr-2">
     <i class="fa-solid fa-bars mr-2"></i>Menú</button>
   }
-    <button type="button" (click)="openModalCart()" class="btn btn-primary">
-    <i class="fa-solid fa-cart-plus mr-2"></i>Carrito
-    </button>
+
 
 </nav>

@@ -1,3 +1,4 @@
+import { VENTA_TIPO_PEDIDO } from './../../../../constants/constantes';
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { PersonaService } from '../../../../services/persona.service';
 import { SearchBoxTableComponent } from './../../../compartido/search-box-table/search-box-table.component';
@@ -82,7 +83,7 @@ export class ListadoVentasComponent implements OnInit, AfterViewInit {
         query: !!this.querySearch ? this.querySearch : ''
       };
       if (this.authService.hasRole('ROLE_LIST_VENTAS')) {
-        this.pedidoService.getAllPedidosPageable(params, 1).subscribe(response => {
+        this.pedidoService.getAllPedidosPageable(params, VENTA_TIPO_PEDIDO).subscribe(response => {
           this.dataSource = response.content as Pedido[];
           this.dataSource.forEach((r: Pedido) => {
             r.createAt = moment(r.createAt).format('DD/MM/YYYY');

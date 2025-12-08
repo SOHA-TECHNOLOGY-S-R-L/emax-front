@@ -71,12 +71,12 @@
     </mat-autocomplete>
   </mat-form-field>
   <div *ngIf="producto != undefined && producto.id" class="row">
-    <div class="col-12 col-md-9">
+    <div class="col-12 col-lg-9">
       <customize-item-producto-to-client [producto]="producto" />
     </div>
-    <div class="col-12 col-md-3">
-      <h2>Carrito</h2>
-      <carrito-item-producto [personaId]="persona.id" />
+    <div class="carrito col-12 col-md-3">
+<!--       <h2>Carrito</h2>
+ -->      <carrito-item-producto [personaId]="persona.id" />
     </div>
 
   </div>

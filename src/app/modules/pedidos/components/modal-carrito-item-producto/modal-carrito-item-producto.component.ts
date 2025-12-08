@@ -24,7 +24,7 @@ export class ModalCarritoItemProductoComponent {
     //this.isOpen = false; // cierra el modal
   }
 
-/*   onNoClick(): void {
+  onNoClick(): void {
     this.dialogRef.close();
-  } */
+  }
 }
