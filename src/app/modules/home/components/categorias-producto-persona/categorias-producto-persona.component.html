@@ -1,7 +1,7 @@
-<div class="container py-5">
-  <div class="row m-0 portfolio-container">
+<div class="container">
+  <div class="row">
     @for (categoria of lstCategoria; track $index) {
-    <div class="col-lg-3 col-md-6 col-sm-12 p-0 portfolio-item">
+    <div class="col-6 col-md-4 col-lg-3 p-0 portfolio-item">
       <div class="position-relative overflow-hidden">
         <div class="portfolio-img">
           <img class="categorias-producto-persona-img" [src]="API_URL_VER_IMAGEN+categoria.imagen"

@@ -1,7 +1,7 @@
-<p-carousel [value]="lstProductos" [numVisible]="4" [numScroll]="1" [circular]="true" [showNavigators]="true"
+<p-carousel [value]="lstProductos" [numVisible]="4" [numScroll]="2" [circular]="true" [showNavigators]="false"
   [showIndicators]="false" [responsiveOptions]="responsiveOptions" autoplayInterval="4000">
   <ng-template let-product #item>
-    <div class="border border-surface-200 dark:border-surface-700 rounded m-2 p-2">
+    <div class="border border-surface-200 dark:border-surface-700 rounded m-1 p-2">
       <div class="mb-4">
         <div class="relative mx-auto">
           <a class="{{product.estadoProducto.color}}"
@@ -20,7 +20,13 @@
             [routerLink]="['/tienda/productos-categoria',product.categoria.nombre, 'item-producto-persona-online', product.codigo]" /> -->
 
           <a class="btn btn-secondary icon-square mb-2" [routerLink]="['/tienda/productos-categoria',product.categoria.nombre, 'item-producto-persona-online', product.codigo]">
-            <i class="fa-solid fa-cart-arrow-down"></i></a>
+<!--             <i class="fa-solid fa-cart-arrow-down"></i>
+ -->
+            <i class="fa fa-eye"></i>
+
+          </a>
+
+
         </div>
       </div>
     </div>
