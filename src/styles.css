@@ -2717,7 +2717,7 @@ fieldset:disabled a.btn {
 }
 
 .btn-primary:hover {
-  color: #212529;
+  color: black;
   background-color: #d9a800;
   border-color: #cc9e00;
 }
@@ -2758,9 +2758,9 @@ fieldset:disabled a.btn {
 }
 
 .btn-secondary:hover {
-  color: #fff;
-  background-color: #1c812b;
-  border-color: #1a7628;
+  color: white;
+  background-color: #3668a5;
+  border-color: #20589C;
 }
 
 .btn-secondary:focus,
@@ -2774,7 +2774,7 @@ fieldset:disabled a.btn {
 .btn-secondary.disabled,
 .btn-secondary:disabled {
   color: #fff;
-  background-color: #20589C;
+  background-color: #4c79af;
   border-color: #20589C;
 }
 
@@ -5048,8 +5048,9 @@ input[type="button"].btn-block {
 }
 
 .card-footer {
-/*   padding: 0.75rem 1.25rem;
- */  background-color: rgba(0, 0, 0, 0.03);
+  /*   padding: 0.75rem 1.25rem;
+ */
+  background-color: rgba(0, 0, 0, 0.03);
   border-top: 1px solid rgba(0, 0, 0, 0.125);
 }
 
@@ -11419,15 +11420,14 @@ body {
     display: block;
     width: 40%;
     background-color: rgb(91, 197, 0);
-    font-size: 10px;
+    font-size: 12px;
     height: auto;
     position: absolute;
-    font-size: 14px;
     font-weight: bolder;
     font-style: italic;
     color: white;
     text-align: center;
-    padding: 3px 5px;
+    padding: 2px 4px;
   }
 }
 
@@ -11441,16 +11441,16 @@ body {
   &::before {
     content: 'POR AGOTARSE';
     display: block;
-    width: 40%;
+    width: 70%;
     background-color: #EC624B;
     height: auto;
     position: absolute;
-    font-size: 14px;
+    font-size: 12px;
     font-weight: bolder;
     font-style: italic;
     color: white;
     text-align: center;
-    padding: 3px 5px;
+    padding: 2px 2px;
   }
 }
 
@@ -11464,7 +11464,7 @@ body {
   &::before {
     content: 'AGOTADO';
     display: block;
-    width: 40%;
+    width: 60%;
     background-color: red;
     height: auto;
     position: absolute;
@@ -11473,7 +11473,7 @@ body {
     font-style: italic;
     color: white;
     text-align: center;
-    padding: 3px 5px;
+    padding: 2px 4px;
   }
 }
 
@@ -11487,22 +11487,39 @@ body {
   &::before {
     content: 'PRÓXIMO';
     display: block;
-    width: 40%;
+    width: 45%;
     background-color: #20589C;
     height: auto;
     position: absolute;
-    font-size: 14px;
+    font-size: 12px;
     font-weight: bolder;
     font-style: italic;
     color: white;
     text-align: center;
-    padding: 3px 5px;
+    padding: 2px 4px;
   }
 }
 
 .en-stock {
+  position: relative;
+
   img {
     border-radius: 0 10px 0px 0px;
+  }
+
+  &::before {
+    content: 'EN STOCK';
+    display: block;
+    width: 50%;
+    background-color: #FFF212;
+    height: auto;
+    position: absolute;
+    font-size: 12px;
+    font-weight: bold;
+    font-style: italic;
+    color: #1c812b;
+     text-align: center;
+    padding: 2px 4px;
   }
 }
 
