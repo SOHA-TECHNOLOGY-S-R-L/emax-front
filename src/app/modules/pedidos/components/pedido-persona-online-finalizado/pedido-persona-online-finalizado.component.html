@@ -1,300 +1,239 @@
-@if (!pedidoTiendaForm.form.valid) {
-<div class="row mt-2 col-12 alert alert-dark">
-  <p>Completar los datos requeridos para <b>FINALIZAR PEDIDO</b></p>
+@if(isAuthenticated() ) {
+@if (!formPersonaValid || !formEnvioPedidoValid) {
+<div class="row alert alert-danger mt-2">
+  <p>Completar los datos correctamente para <b>FINALIZAR PEDIDO</b></p>
 </div>
 }
-<form id="frmPedidoPersonaOnlineFinalizado" #pedidoTiendaForm="ngForm" (ngSubmit)="crearPedidoTienda(pedidoTiendaForm)">
-  <div class="row">
-    <div class="col-12 col-md-6">
-      <div class="row">
-        <label for="tipoDocumentoId" class="form-label col-12 col-md-4"><b>Datos del cliente:</b></label>
-        <div class="col-12 col-md">
-          <select name="tipoDocumentoId" [(ngModel)]="persona.tipoDocumento.id" class="form-control"
-            #tipoDocumentoId="ngModel" required>
-            <option *ngFor="let documento of tipoDocumentos" [value]="documento.id">
-              {{documento.nombre}}</option>
-          </select>
-          <div *ngIf="formUtils.isValidFieldFp(tipoDocumentoId)" class="alert alert-danger">
-            {{formUtils.getFieldErrorFp(tipoDocumentoId)}}
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-12 col-md">
-          <input type="text" [(ngModel)]="persona.numeroDocumento" class="form-control" name="numeroDocumento"
-            #numeroDocumento="ngModel" required minlength="8" maxlength="11" pattern="^\d+$"
-            placeholder="Número documento">
-          <div *ngIf="formUtils.isValidFieldFp(numeroDocumento)" class="alert alert-danger">
-            {{formUtils.getFieldErrorFp(numeroDocumento)}}
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-12 col-md">
-          <input type="text" [(ngModel)]="persona.nomApellRz" class="form-control" name="nomApellRz"
-            placeholder="Nombres y apellidos o Razon S." #nomApellRz="ngModel" required minlength="2">
-          <div *ngIf="formUtils.isValidFieldFp(nomApellRz)" class="alert alert-danger">
-            {{formUtils.getFieldErrorFp(nomApellRz)}}
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-12 col-md">
-          <input type="text" [(ngModel)]="persona.direccion" class="form-control" name="direccionPrincipal"
-            placeholder="Dirección" #direccionPrincipal="ngModel" minlength="4">
-          <div *ngIf="formUtils.isValidFieldFp(direccionPrincipal)" class="alert alert-danger">
-            {{formUtils.getFieldErrorFp(direccionPrincipal)}}
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-12 col-md">
-          <input type="text" [(ngModel)]="persona.celular" class="form-control" name="celular" #celular="ngModel"
-            placeholder="Celular" minlength="6" maxlength="14" pattern="^\d+$">
-          <div *ngIf="formUtils.isValidFieldFp(celular)" class="alert alert-danger">
-            {{formUtils.getFieldErrorFp(celular)}}
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-12 col-md">
-          <input type="email" [(ngModel)]="persona.email" class="form-control" name="email"
-            placeholder="Correo electrónico" #email="ngModel" minlength="6"
-            pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$">
-          <div *ngIf="formUtils.isValidFieldFp(email)" class="alert alert-danger">
-            {{formUtils.getFieldErrorFp(email)}}
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="col-12 col-md-6">
-      <div class="row mb-2">
-        <div class="col-12">
-          <div class="form-check form-check-inline">
-            <label class="form-check-label" for="chkAddEnvio"><b>¿Adicionar envio al pedido?:</b> </label>
-            <input class="form-check-input" type="checkbox" [(ngModel)]="isEnvio" name="chkAddEnvio" id="chkAddEnvio"
-              (click)="addItemsServicioEnvio($event, SERVICIO_ENTREGA_LOCAL)">
-          </div>
-        </div>
-      </div>
-      @if(isEnvio){
-      <div class="row mb-2">
-        <div class="d-flex justify-content-between">
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="envio" [(ngModel)]="formaEnvio" id="envioLocal"
-              [value]="SERVICIO_ENTREGA_LOCAL" (click)="addItemsServicioEnvio($event, SERVICIO_ENTREGA_LOCAL)" checked>
-            <label class="form-check-label" for="envioLocal">Envío local</label>
-          </div>
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="envio" [(ngModel)]="formaEnvio" id="envioProvincial"
-              [value]="SERVICIO_ENTREGA_PROVINCIAL" (click)="addItemsServicioEnvio($event, SERVICIO_ENTREGA_PROVINCIAL)"
-              checked>
-            <label class="form-check-label" for="envioProvincial">Envío provincial</label>
-          </div>
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="envio" [(ngModel)]="formaEnvio" id="envioOtraCiudad"
-              [value]="SERVICIO_ENTREGA_CIUDAD" (click)="addItemsServicioEnvio($event,SERVICIO_ENTREGA_CIUDAD)">
-            <label class="form-check-label" for="envioOtraCiudad">Envío ciudad</label>
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-12 col-md">
-          <input type="text" [(ngModel)]="pedido.nomApellRzEnvio" class="form-control" name="nomApellRzEnvio"
-            placeholder="Persona envío" #nomApellRzEnvio="ngModel" minlength="2">
-          <div *ngIf="formUtils.isValidFieldFp(nomApellRzEnvio)" class="alert alert-danger">
-            {{formUtils.getFieldErrorFp(nomApellRzEnvio)}}
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-12 col-md">
-          <textarea [(ngModel)]="pedido.direccionEnvio" class="form-control" name="direccionEnvio"
-            #direccionEnvio="ngModel" minlength="2" maxlength="250" rows="3"
-            placeholder="Dirección de envío, colocar tambien referencias..."></textarea>
 
-          <div *ngIf="formUtils.isValidFieldFp(direccionEnvio)" class="alert alert-danger">
-            {{formUtils.getFieldErrorFp(direccionEnvio)}}
-          </div>
-        </div>
+@if (tipoPedidoId()===3) { <!--3 Pedido de tiendaa-->
+<div class="row mt-2">
+  <autocomplete-resource [placeholder]="'Buscar cliente'" [searchFn]="buscarPersonas" [displayWith]="mostrarPersona"
+    (selected)="personSelecToInForm($event)">
+    <ng-template let-persona>
+      <div>
+        {{ persona.nomApellRz }}
+        <span class="text-bold-italic">Documento:</span> {{ persona.numeroDocumento }}
+        <span class="text-bold-italic">Celular:</span> {{ persona.celular }}
       </div>
-      <div class="row">
-        <div class="col-12 col-md">
-          <input type="text" [(ngModel)]="pedido.celularEnvio" class="form-control" name="celularEnvio"
-            placeholder="Celular envío" #celularEnvio="ngModel" minlength="6" maxlength="14" pattern="^\d+$">
-          <div *ngIf="formUtils.isValidFieldFp(celularEnvio)" class="alert alert-danger">
-            {{formUtils.getFieldErrorFp(celularEnvio)}}
-          </div>
-        </div>
-      </div>
-      }
-    </div>
+    </ng-template>
+  </autocomplete-resource>
+</div>
+}
+<!-- <form id="frmPedidoPersonaOnlineFinalizado" #pedidoTiendaForm="ngForm" (ngSubmit)="crearPedidoTienda(pedidoTiendaForm)">
+ -->
+<div class="row">
+  <div class="col-12 col-md-6">
+    <form-datos-persona [inPersona]="inPersona()" (outPersona)="outPersonSelect($event)"></form-datos-persona>
   </div>
-  <div id="itemsPedidoOnlineFinalizadoToDesktop" class="row">
-    <div class="col-12">
-      <table class="tabla-desktop table table-striped table-hover table-sm" cellspacing="1" cellpadding="1">
-        <thead>
-          <tr>
-            <th>Eliminar</th>
-            <th>Imagen</th>
-            <th>Producto</th>
-            <th>Descripcion</th>
-            <th>Cantidad</th>
-            <th>S/.Precio</th>
-            <th>Subtotal</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let item of items">
-            <td>
-              <button type="button" id="btnDeleteFromPedidoOnline" class="btn btn-danger icon-square"
-                title="Eliminar item" (click)="$event.stopPropagation(); eliminarItemPedido(item)">
-                <i class="fa-regular fa-trash-can"></i> </button>
-            </td>
-            <td>
-              <img [src]="API_URL_VER_IMAGEN+item.imagen" width="86" alt={{item.imagen}} />
-            </td>
-            <td>
-              <b>{{item.producto.nombre | stringToTitleWithAccents}}</b>
-              @if(item.producto.codigo != SERVICIO_ENTREGA_LOCAL &&
-              item.producto.codigo != SERVICIO_ENTREGA_CIUDAD &&
-              item.producto.codigo != SERVICIO_ENTREGA_PROVINCIAL){
-              <ul>
-                <li><b>Medidas: </b>{{item.producto.medidas}}
-                  <b>Color: </b>{{item.producto.color?.nombre}}
-                </li>
-                <li><b>Material: </b>{{item.producto.material?.nombre}}
-                  <b>Peso: </b>{{item.producto.peso}}
-                </li>
-              </ul>
-              }
-            </td>
-            <td> <textarea name="descripcion" class="form-control" [ngStyle]="{'resize': 'none'}" maxlength="250"
-                [value]="item.descripcion" rows="3"
-                (change)="actualizarDescripcion(item.producto.id, $event)"></textarea></td>
-            <td>
-              <input style="width:80px" type="number" name="cantidad" aria-describedby="cantidad"
-                [step]="item.producto.gruposDe.toString()" [min]="item.producto.minCantidadPedido.toString()"
-                [max]="item.producto.maxCantidadPedido.toString()" [value]="item.cantidad"
-                (input)="actualizarCantidad(item.producto.id, $event);calcularTotal() "
-                (keydown.enter)="$event.preventDefault()" />
-            </td>
-            <td>{{item.producto.precioNetoNumberShow| currency:'PEN'}}</td>
-
-            <td>
-              <input style="width:90px" type="number" name="importe" min="1" [value]="item.importe" disabled
-                (input)="actualizarImporte(item.producto.id, $event); calcularTotal()"
-                (keydown.enter)="$event.preventDefault()" />
-            </td>
-          </tr>
-        </tbody>
-        <tfoot>
-          <tr>
-            <td colspan="7">
-              <div class="col-12 col-md">
-                <textarea [(ngModel)]="pedido.observacion" class="form-control" name="observacion"
-                  #observacion="ngModel" minlength="2" maxlength="250" rows="2"
-                  placeholder="Coloca aquí datos adicionales al pedido..."></textarea>
-                <div *ngIf="formUtils.isValidFieldFp(observacion)" class="alert alert-danger">
-                  {{formUtils.getFieldErrorFp(observacion)}}
-                </div>
-              </div>
-            </td>
-          </tr>
-          <tr>
-            <td colspan="2"><b>Entregar El:</b></td>
-            <td colspan="2">
-              <input type="datetime-local" [(ngModel)]="pedido.entregadoEn" class="form-control" #entregadoEn="ngModel"
-                name="entregadoEn" required disabled>
-              <div *ngIf="formUtils.isValidFieldFp(entregadoEn)" class="alert alert-danger">
-                {{formUtils.getFieldErrorFp(entregadoEn)}}
-              </div>
-            </td>
-            <td colspan="1" class="text-end fw-bold">TOTAL</td>
-            <td colspan="2" class="text-center fw-bold">{{total | currency:'PEN'}}</td>
-          </tr>
-
-        </tfoot>
-      </table>
-    </div>
+  <div class="col-12 col-md-6">
+    <ul class="list-group my-1">
+      <li class="list-group-item active d-flex justify-content-between">
+        <div class="form-check form-check-inline">
+          <label class="form-check-label" for="chkAddEnvio"><span>¿Adicionar envio al pedido?:</span>
+          </label>&nbsp;&nbsp;
+          <input class="form-check-input" type="checkbox" [checked]="isEnvio()" (change)="toggleIsEnvio($event)"
+            name="chkAddEnvio" id="chkAddEnvio" />
+        </div>
+      </li>
+    </ul>
+    @if(isEnvio()){
+    <form-envio-pedido (outEnvioPedido)="outEnvioPedidoSelect($event)"></form-envio-pedido>
+    }
   </div>
+</div>
+<div id="itemsPedidoOnlineFinalizadoToDesktop" class="row">
+  <div class="col-12">
+    <table class="tabla-desktop table table-striped table-hover table-sm" cellspacing="1" cellpadding="1">
+      <thead>
+        <tr>
+          <th>Eliminar</th>
+          <th>Imagen</th>
+          <th>Producto</th>
+          <th>Cantidad</th>
+          <th>S/.Precio</th>
+          <th>Subtotal</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (item of items(); track item.producto.id) {
+        <tr>
+          <td>
+            <button type="button" id="btnDeleteFromPedidoOnline" class="btn btn-danger icon-square"
+              title="Eliminar item" (click)="$event.stopPropagation(); eliminarItemPedido(item)">
+              <i class="fa-regular fa-trash-can"></i> </button>
+          </td>
+          <td>
+            <img [src]="item.imagenShow" width="86" alt={{item.producto.nombre}} />
+          </td>
+          <td>
+            <b>{{item.producto.nombre | stringToTitleWithAccents}}</b>
+            @if(item.producto.codigo != SERVICIO_ENTREGA_LOCAL &&
+            item.producto.codigo != SERVICIO_ENTREGA_CIUDAD &&
+            item.producto.codigo != SERVICIO_ENTREGA_PROVINCIAL){
+            <ul>
+              <li><b>Medidas: </b>{{item.producto.medidas}}
+                <b>Color: </b>{{item.producto.color?.nombre}}
+              </li>
+              <li><b>Material: </b>{{item.producto.material?.nombre}}
+                <b>Peso: </b>{{item.producto.peso}}
+              </li>
+            </ul>
+            }
+          </td>
+          <td>
+            <input style="width:80px" type="number" name="cantidad" aria-describedby="cantidad"
+              [step]="item.producto.gruposDe" [min]="item.producto.minCantidadPedido"
+              [max]="item.producto.maxCantidadPedido" [value]="item.cantidad"
+              (input)="actualizarCantidad(item.producto.id, $event); " (keydown.enter)="$event.preventDefault()" />
+          </td>
+          <td>{{item.producto.precioMasBajoProductoShow| currency:'PEN'}}</td>
 
-  <div id="itemsPedidoOnlineFinalizadoToMovil" class="row">
-    @for (item of items; track $index) {
-    <div class="col">
-      <ul class="list-group my-1">
-        <li class="list-group-item active d-flex justify-content-between">
-          <span>{{item.producto.nombre | stringToTitleWithAccents}}</span>
-          <button type="button" id="btnDeleteFromPedidoOnline" class="btn btn-danger icon-square" title="Eliminar item"
-            (click)="$event.stopPropagation(); eliminarItemPedido(item)">
-            <i class="fa-regular fa-trash-can"></i> </button>
-        </li>
-        <li class="list-group-item d-flex justify-content-between align-items-start">
-          <div class="me-auto">
-            <span class="cabecera">Imágen:</span> <img [src]="API_URL_VER_IMAGEN+item.imagen" width="86" alt={{item.imagen}} /><br>
-          </div>
-        </li>
-        <li class="list-group-item d-flex justify-content-between align-items-start">
-          <div class="me-auto">
-            <span class="cabecera">Descripción:</span>
-            <textarea name="descripcion" [ngStyle]="{'resize': 'none'}" maxlength="250" [value]="item.descripcion"
-              rows="3" (change)="actualizarDescripcion(item.producto.id, $event)"></textarea>
-          </div>
-        </li>
-        <li class="list-group-item d-flex justify-content-between align-items-start">
-          <div class="me-auto">
-            <span class="cabecera">Cantidad:</span>
-            <input style="width:90px" type="number" name="cantidad" aria-describedby="cantidad"
-              [step]="item.producto.gruposDe.toString()" [min]="item.producto.minCantidadPedido.toString()"
-              [max]="item.producto.maxCantidadPedido.toString()" [value]="item.cantidad"
-              (input)="actualizarCantidad(item.producto.id, $event);calcularTotal() "
-              (keydown.enter)="$event.preventDefault()" />
-          </div>
-        </li>
-        <li class="list-group-item d-flex justify-content-between align-items-start">
-          <div class="me-auto">
-            <span class="cabecera">S/.Precio:</span> {{item.producto.precioNetoNumberShow| currency:'PEN'}}<br>
-          </div>
-        </li>
-        <li class="list-group-item d-flex justify-content-between align-items-start">
-          <div class="me-auto">
-            <span class="cabecera">S/. Subtotal:</span>
+          <td>
+            @if(tipoPedidoId()===4) { <!-- 4-VENTA POR ONLINE -->
             <input style="width:90px" type="number" name="importe" min="1" [value]="item.importe" disabled
-              (input)="actualizarImporte(item.producto.id, $event); calcularTotal()"
-              (keydown.enter)="$event.preventDefault()" />
-          </div>
-        </li>
-      </ul>
-    </div>
-    }
-    <div class="col">
-      <ul class="list-group my-1">
+              (input)="actualizarImporte(item.producto.id, $event); " (keydown.enter)="$event.preventDefault()" />
+            } @else {
+            <input style="width:90px" type="number" name="importe" min="1" [value]="item.importe"
+              (input)="actualizarImporte(item.producto.id, $event); " (keydown.enter)="$event.preventDefault()" />
+            }
 
-        <li class="list-group-item d-flex justify-content-between align-items-start">
-          <div class="me-auto">
-            <span class="cabecera">Entregar El:</span>
-            <input type="datetime-local" [(ngModel)]="pedido.entregadoEn" class="form-control" #entregadoEn="ngModel"
-              name="entregadoEn" required disabled>
-            <div *ngIf="formUtils.isValidFieldFp(entregadoEn)" class="alert alert-danger">
-              {{formUtils.getFieldErrorFp(entregadoEn)}}
+          </td>
+        </tr>
+        }
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="6">
+            <div class="col-12 col-md">
+              <textarea class="form-control" name="observacion"
+                minlength="2" maxlength="250" rows="2"
+                placeholder="Coloca aquí datos adicionales al pedido..."
+                (input)="actualizarObservacion($any($event.target).value)"></textarea>
+<!--               <div *ngIf="formUtils.isValidFieldFp(observacion)" class="alert alert-danger">
+                {{formUtils.getFieldErrorFp(observacion)}}
+              </div> -->
             </div>
-          </div>
-        </li>
-
-        <li class="list-group-item active align-items-start">
-          <span class="cabecera">TOTAL S/:</span> {{total | currency:'PEN'}}
-        </li>
-
-      </ul>
-    </div>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="1"><b>Entregar:</b></td>
+          <td colspan="2">
+            @if(tipoPedidoId()===4) { <!-- 4-VENTA POR ONLINE -->
+            <input type="datetime-local" [value]="fechaEntrega()" (input)="actualizarFecha($any($event.target).value)"
+              class="form-control" disabled name="entregadoEn" required>
+            <!--            <div *ngIf="formUtils.isValidFieldFp(entregadoEn)" class="alert alert-danger">
+              {{formUtils.getFieldErrorFp(entregadoEn)}}
+            </div> -->
+            } @else {
+            <input type="datetime-local" [value]="fechaEntrega()" (input)="actualizarFecha($any($event.target).value)"
+              class="form-control" name="entregadoEn" required>
+            }
+          </td>
+          <td colspan="1" class="text-end fw-bold">TOTAL</td>
+          <td colspan="2" class="text-center fw-bold">{{total() | currency:'PEN'}}</td>
+        </tr>
+      </tfoot>
+    </table>
   </div>
-  <div class="row mb-2">
-    @if(items.length > 0 && authService.hasRole('ROLE_CREATE_VENTA')){
-    <button type="submit" class="btn btn-dark btn-lg" [disabled]="!pedidoTiendaForm.form.valid">Finalizar
-      pedido</button>
+</div>
 
-    } @else {
-    <button type="submit" class="btn btn-dark btn-lg" disabled>Finalizar pedido</button>
-    }
+<div id="itemsPedidoOnlineFinalizadoToMovil" class="row">
+  @for (item of items(); track $index) {
+  <div class="col">
+    <ul class="list-group my-1">
+      <li class="list-group-item active d-flex justify-content-between">
+        <span>{{item.producto.nombre | stringToTitleWithAccents}}</span>
+        <button type="button" id="btnDeleteFromPedidoOnline" class="btn btn-danger icon-square" title="Eliminar item"
+          (click)="$event.stopPropagation(); eliminarItemPedido(item)">
+          <i class="fa-regular fa-trash-can"></i> </button>
+      </li>
+      <li class="list-group-item d-flex justify-content-between align-items-start">
+        <div class="me-auto">
+          <span class="cabecera">Imágen:</span> <img [src]="item.imagenShow" width="86"
+            alt={{item.producto.nombre}} /><br>
+        </div>
+      </li>
+      <li class="list-group-item d-flex justify-content-between align-items-start">
+        <div class="me-auto">
+          <span class="cabecera">Cantidad:</span>
+          <input style="width:90px" type="number" name="cantidad" aria-describedby="cantidad"
+            [step]="item.producto.gruposDe" [min]="item.producto.minCantidadPedido"
+            [max]="item.producto.maxCantidadPedido" [value]="item.cantidad"
+            (input)="actualizarCantidad(item.producto.id, $event); " (keydown.enter)="$event.preventDefault()" />
+        </div>
+      </li>
+      <li class="list-group-item d-flex justify-content-between align-items-start">
+        <div class="me-auto">
+          <span class="cabecera">S/.Precio:</span> {{item.producto.precioMasBajoProductoShow| currency:'PEN'}}<br>
+        </div>
+      </li>
+      <li class="list-group-item d-flex justify-content-between align-items-start">
+        <div class="me-auto">
+          <span class="cabecera">S/. Subtotal:</span>
+          @if(tipoPedidoId()===4) { <!-- 4-VENTA POR ONLINE -->
+          <input style="width:90px" type="number" name="importe" min="1" [value]="item.importe" disabled
+            (input)="actualizarImporte(item.producto.id, $event); " (keydown.enter)="$event.preventDefault()" />
+          } @else {
+          <input style="width:90px" type="number" name="importe" min="1" [value]="item.importe"
+            (input)="actualizarImporte(item.producto.id, $event); " (keydown.enter)="$event.preventDefault()" />
+          }
+
+        </div>
+      </li>
+    </ul>
   </div>
-</form>
+  }
+  <div class="col">
+    <ul class="list-group my-1">
+      <li class="list-group-item active d-flex justify-content-between">
+        <span class="cabecera">Entrega:</span>
+        @if(tipoPedidoId()===4) { <!-- 4-VENTA POR ONLINE -->
+        <input type="datetime-local" [value]="fechaEntrega()" (input)="actualizarFecha($any($event.target).value)"
+          class="form-control" name="entregadoEn" required disabled>
+        <!--           <div *ngIf="formUtils.isValidFieldFp(entregadoEn)" class="alert alert-danger">
+            {{formUtils.getFieldErrorFp(entregadoEn)}}
+          </div> -->
+        } @else {
+        <input type="datetime-local" [value]="fechaEntrega()" (input)="actualizarFecha($any($event.target).value)"
+          class="form-control" name="entregadoEn" required>
+        }
+      </li>
+    </ul>
+  </div>
+
+  <div class="col">
+    <ul class="list-group my-1">
+      <li class="list-group-item active align-items-start">
+        <span class="cabecera">TOTAL S/:</span> {{total() | currency:'PEN'}}
+      </li>
+    </ul>
+  </div>
+</div>
+<div class="row mb-2">
+  @if(items().length > 0){
+  <button class="btn btn-dark btn-lg" [disabled]="(!formPersonaValid || !formEnvioPedidoValid)"
+    (click)="crearPedidoTienda()">Finalizar
+    pedido</button>
+
+  } <!-- @else {
+  <button type="submit" class="btn btn-dark btn-lg" disabled>Finalizar pedido</button>
+  } -->
+</div>
+<!-- </form>
+ -->
+}
+@else {
+
+<div class="row alert alert-danger mt-3">
+  <div class="col-12 d-inline-flex">
+    <div>Para finalizar el pedido, debes</div>&nbsp;
+    <div>
+      <b><a [routerLink]="['/login']">Iniciar sesión</a></b>
+    </div><!--&nbsp;despues de&nbsp;
+     <div>
+      <b><a [routerLink]="['/crear-cuenta']">Crear cuenta</a></b>
+    </div> -->
+  </div>
+</div>
+
+}

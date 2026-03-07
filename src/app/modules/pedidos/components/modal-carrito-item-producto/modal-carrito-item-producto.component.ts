@@ -12,19 +12,13 @@ import { AngularMaterialModule } from '../../../compartido/angular-material.modu
 })
 export class ModalCarritoItemProductoComponent {
   readonly dialogRef = inject(MatDialogRef<ModalCarritoItemProductoComponent>);
-  //isOpen = true; // cierra el modal
-
-  //readonly data = inject<number>(MAT_DIALOG_DATA);
-  //readonly animal = model(this.data.animal);
-
   onCloseModal() {
     if (this.dialogRef) {
       this.dialogRef.close();
     }
-    //this.isOpen = false; // cierra el modal
   }
 
-  onNoClick(): void {
+/*   onNoClick(): void {
     this.dialogRef.close();
-  }
+  } */
 }

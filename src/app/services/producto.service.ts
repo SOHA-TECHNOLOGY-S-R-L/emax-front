@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { lastValueFrom, Observable, throwError } from 'rxjs';
+import { lastValueFrom, Observable, of, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
 import { Router } from '@angular/router';
@@ -82,7 +82,12 @@ export class ProductoService {
 
 
   filtrarProductos(term: string): Observable<Producto[]> {
-    return this.http.get<Producto[]>(`${environment.apiUrl}/producto/filtrar-productos/${term}`
+    const filtro = term?.trim();
+    if (!filtro || filtro.length < 2) {
+      return of([]);
+    }
+    return this.http.get<Producto[]>(
+      `${environment.apiUrl}/producto/filtrar-productos/${encodeURIComponent(filtro)}`
     );
   }
 
@@ -106,7 +111,7 @@ export class ProductoService {
   }
 
 
-  createProductoImagen(formData: FormData): Observable<Producto> {
+/*   createProductoImagen(formData: FormData): Observable<Producto> {
     let httpHeaders = new HttpHeaders()
     let token = this.authService.token;
     if (token != null) {
@@ -127,7 +132,7 @@ export class ProductoService {
           }
           return throwError(e);
         }));
-  }
+  } */
 
   updateProductoImagen(formData: FormData, productoId: number): Observable<Producto> {
     let httpHeaders = new HttpHeaders()
@@ -315,14 +320,16 @@ export class ProductoService {
     )
   }
 
-  productosPorCategoriaNombre(categoriaNombre: string): Observable<Producto[]> {
-    return this.http.get<Producto[]>(`${environment.apiUrl}/productos/categoria/${categoriaNombre}`).pipe(
-      catchError(e => {
+  productosPorCategoriaNombre(params: any): Observable<PageableResponse> {
+    return this.http.get<any>(`${environment.apiUrl}/productos/categoria/pageable`, { params: params }).pipe(
+      //map(res => res || []),
+      //catchError(() => of([]))
+/*       catchError(e => {
         if (e.error?.mensaje) {
           this.alertService.error(e.error.mensaje, e.error.err);
         }
         return throwError(e);
-      })
+      }) */
     )
   }
 

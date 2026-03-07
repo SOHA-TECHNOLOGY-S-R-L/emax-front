@@ -1,0 +1,46 @@
+
+@if(multimediaPrincipal() != null && multimediaPrincipal().multimedia.mimeType.startsWith('image/')) {
+<div class="image-principal-wrapper">
+  <img #imgPrincipal [src]="API_URL_VER_IMAGEN+multimediaPrincipal().multimedia.nombre"
+    [alt]="multimediaPrincipal().multimedia.nombre" (mousemove)="onMouseMove($event, imgPrincipal)"
+    (mouseleave)="resetZoom(imgPrincipal)" class="image-principal">
+</div>
+}
+@if(multimediaPrincipal() != null &&multimediaPrincipal().multimedia.mimeType.startsWith('video/')) {
+<div>
+  <video controls autoplay crossorigin="anonymous" class="video-principal">
+    <source [src]="API_URL_VER_IMAGEN+multimediaPrincipal().multimedia.nombre"
+      type="{{multimediaPrincipal().multimedia.mimeType}}">
+    Tu navegador no soporta el tipo de video {{multimediaPrincipal().multimedia.mimeType}}
+  </video>
+</div>
+}
+@if(multimediaPrincipal() == null){
+<div class="image-principal-wrapper">
+  <img src="no-imagen.png" class="multimedia-principal" class="image-principal">
+</div>
+}
+<!------------carrusel horizontal-------------->
+@if(multimediasProducto().length > 1) {
+<p-carousel autoplayInterval="8000" [value]="multimediasProducto()" [numVisible]="4" [numScroll]="1"
+  [circular]="inCircular()" [showNavigators]="inShowNavigators()" [showIndicators]="inShowIndicators()"
+  orientation="horizontal" [responsiveOptions]="responsiveOptions">
+  <ng-template let-mulProd #item>
+    @if (mulProd){
+    <div class="rounded m-1 p-1 item-carousel" [class.item-activo]="mulProd.esPrincipal"
+      (mouseenter)="setMultimediaPrincipal(mulProd)">
+
+      <div class="relative mx-auto">
+        @if(mulProd.multimedia.mimeType.startsWith('image/')) {
+        <img [src]="API_URL_VER_IMAGEN+mulProd.multimedia.nombre" [alt]="mulProd.multimedia.nombre"
+          class="w-full rounded-border" />
+        }
+        @if(mulProd.multimedia.mimeType.startsWith('video/')) {
+        <img src="video-reproducir.png" class="w-full rounded-border" />
+        }
+      </div>
+    </div>
+    }
+  </ng-template>
+</p-carousel>
+}

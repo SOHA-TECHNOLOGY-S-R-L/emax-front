@@ -48,7 +48,9 @@ export class RpteMovimientoEnCajaPorUsuarioComponent implements OnInit {
 
   ngOnInit(): void {
     this.titulo = "Reporte movimiento en caja por usuario";
-    this.usuarioService.getUsuarioByUsername( this.authService.usuario.username)
+        const usuario = this.authService.usuario()
+    if (!usuario) {return}
+    this.usuarioService.getUsuarioByUsername( usuario.username)
       .subscribe(res => { this.usuario = res}
     );    this.cargarCajas();
 

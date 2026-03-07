@@ -5,9 +5,10 @@ import { AuthService } from "../services/auth.service";
 
 export function tokenIntercept(req: HttpRequest<any>, next: HttpHandlerFn):
   Observable<HttpEvent<any>> {
-  let token = inject(AuthService).token;
+  const authService = inject(AuthService);
+  let token = authService.token();
 
-  if (token != null) {
+  if (token) {
     const authReq = req.clone({
       headers: req.headers.set('Authorization', 'Bearer ' + token)
     });

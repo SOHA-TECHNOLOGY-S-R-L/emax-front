@@ -1,0 +1,31 @@
+<mat-form-field>
+  <mat-icon matPrefix>search</mat-icon>
+  <input
+    matInput
+    [placeholder]="placeholder"
+    [formControl]="control"
+    [matAutocomplete]="auto"/>
+    <button
+    *ngIf="control.value"
+    mat-icon-button
+    matSuffix
+    type="button"
+    (click)="clear()">
+    <mat-icon>close</mat-icon>
+  </button>
+  <mat-autocomplete
+    #auto="matAutocomplete"
+    [displayWith]="displayWith"
+    (optionSelected)="seleccionar($event)">
+    <mat-option *ngFor="let item of resultados()" [value]="item">
+      <ng-container
+        *ngIf="optionTemplate; else defaultTemplate"
+        [ngTemplateOutlet]="optionTemplate"
+        [ngTemplateOutletContext]="{ $implicit: item }">
+      </ng-container>
+      <ng-template #defaultTemplate>
+        {{ displayWith(item) }}
+      </ng-template>
+    </mat-option>
+  </mat-autocomplete>
+</mat-form-field>

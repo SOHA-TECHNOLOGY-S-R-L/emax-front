@@ -1,275 +1,365 @@
-import { SERVICIO_ENTREGA_PROVINCIAL } from './../../../../constants/constantes';
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, computed, effect, inject, signal } from '@angular/core';
+import { rxResource, toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule, NgForm, ReactiveFormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { findIndex, forEach } from 'lodash-es';
 import moment from 'moment';
-import { Subscription } from 'rxjs';
+import { map, switchMap } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
-import { SERVICIO_ENTREGA_CIUDAD, SERVICIO_ENTREGA_LOCAL } from '../../../../constants/constantes';
+import { COMPRA_TIPO_PEDIDO, SERVICIO_ENTREGA_CIUDAD, SERVICIO_ENTREGA_LOCAL, VENTA_TIPO_PEDIDO } from '../../../../constants/constantes';
 import { ItemPedido } from '../../../../models/item-pedido';
 import { Pedido } from '../../../../models/pedido';
 import { Persona } from '../../../../models/persona';
-import { Producto } from '../../../../models/producto';
-import { TipoDocumento } from '../../../../models/tipo-documento';
-import { TipoPedido } from '../../../../models/tipo-pedido';
+import { StringToTitleWithAccents } from '../../../../pipes/StringToTitleWithAccents.pipe';
 import { AuthService } from '../../../../services/auth.service';
 import { ItemService } from '../../../../services/item.service';
 import { PedidoService } from '../../../../services/pedido.service';
 import { PersonaService } from '../../../../services/persona.service';
 import { ProductoService } from '../../../../services/producto.service';
+import { UsuarioService } from '../../../../services/usuario.service';
 import { ChatUtils } from '../../../../utils/chat-utils';
 import { FormUtils } from '../../../../utils/form-utils';
+import { AutocompleteResourceComponent } from '../../../compartido/autocomplete-resource/autocomplete-resource.component';
 import { PrimeNgModule } from '../../../compartido/prime-ng.module';
+import { FormDatosPersonaComponent } from '../../../personas/components/form-datos-persona/form-datos-persona.component';
 import { PagoPedidoPersonaOnlineComponent } from '../pago-pedido-persona-online/pago-pedido-persona-online.component';
+import { SERVICIO_ENTREGA_PROVINCIAL } from './../../../../constants/constantes';
 import { AlertService } from './../../../../services/alert.service';
-import { StringToTitleWithAccents } from '../../../../pipes/StringToTitleWithAccents.pipe';
-import { MediosUtilsService } from '../../../../services/medios-utils.service';
+import { FormEnvioPedidoComponent } from '../form-envio-pedido/form-envio-pedido.component';
+import { EnvioPedido } from '../../../../models/envio-pedido';
 
 @Component({
   selector: 'pedido-persona-online-finalizado',
   templateUrl: './pedido-persona-online-finalizado.component.html',
   styleUrl: './pedido-persona-online-finalizado.component.css',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, ReactiveFormsModule, PrimeNgModule, StringToTitleWithAccents]
+  imports: [CommonModule, RouterModule, FormsModule, ReactiveFormsModule, PrimeNgModule, StringToTitleWithAccents, FormDatosPersonaComponent, FormEnvioPedidoComponent, AutocompleteResourceComponent]
 
 })
-export class PedidoPersonaOnlineFinalizadoComponent implements OnInit {
+export class PedidoPersonaOnlineFinalizadoComponent {
+
   public authService = inject(AuthService);
-  private activatedRoute = inject(ActivatedRoute);
+  private ar = inject(ActivatedRoute);
   private personaService = inject(PersonaService);
+  private usuarioService = inject(UsuarioService);
   private pedidoService = inject(PedidoService);
   private productoService = inject(ProductoService);
   private alertService = inject(AlertService);
-    mediosUtilsService = inject(MediosUtilsService);
-  readonly dialog = inject(MatDialog);
   private router = inject(Router);
+  readonly dialog = inject(MatDialog);
   itemService = inject(ItemService)
-  itemServiceSuscription$!: Subscription;
-  persona!: Persona;
-  pedido = new Pedido();
-  tipoDocumentos: TipoDocumento[] = [];
-  //tipoDocumentoSelected!: TipoDocumento;
-  tipoPedidoVentaPersonas!: TipoPedido;
-  tipoPedidos: TipoPedido[] = [];
-  items: ItemPedido[] = [];
+  // 4 es el tipo pedido venta online - 3 pedido de tienda
+  tipoPedidoId = toSignal(this.ar.paramMap.pipe(map(params => +(params.get('tipoPedidoId') ?? 4))), { initialValue: 4 });
+  rawItems = toSignal(this.itemService.getItems(), { initialValue: [] });
+  isEnvio = signal<boolean>(false);
+  inPersona = signal<Persona | undefined>(undefined);
+  personSelect = signal<Persona | undefined>(undefined);
+  pedido = signal(new Pedido());
+  fechaEntrega = signal<string>(this.obtenerFechaDefecto());
+  observaciones = signal<string>('');
+  //itemServiceSuscription$!: Subscription;
+  serviciosEnvioResource = rxResource({ stream: () => this.productoService.getLstProductoServicioEnvio() });
+  tipoPedidosResource = rxResource({ stream: () => this.pedidoService.getAllTipoPedido() });
+  serviciosEnvio = computed(() => this.serviciosEnvioResource.value() ?? []);
+  tipoPedidos = computed(() => {
+    const tipos = this.tipoPedidosResource.value() ?? [];
+    return tipos.map(t => ({
+      ...t,
+      activo: t.id === 1
+    }));
+  });
+  items = computed(() => this.itemService.importePorMargenCantidad(this.rawItems()));
+  total = computed(() => this.itemService.calculateTotalFromItems(this.items()));
+  tipoPedidoVentaPersonas = computed(() => this.tipoPedidos()[0]);
+  formPersonaValid: boolean = false;
+  formEnvioPedidoValid: boolean = true;
+
+  private personFromOnlineEffect = effect(() => {
+    const tipoPedidoId = this.tipoPedidoId();
+    if (tipoPedidoId === 4) {
+      this.cargarPersonaOnline();
+    }
+  });
+
   item = new ItemPedido();
-  serviciosEnvio: Producto[] = [];
   formUtils = FormUtils;
   chatUtils = ChatUtils;
-  total: number = 0;
-  //personaOnline!: boolean;
-  isEnvio: boolean = false;
-  formaEnvio!: string;
   API_URL_VER_IMAGEN = environment.API_URL_VER_IMAGEN;
   SERVICIO_ENTREGA_LOCAL = SERVICIO_ENTREGA_LOCAL;
   SERVICIO_ENTREGA_CIUDAD = SERVICIO_ENTREGA_CIUDAD;
   SERVICIO_ENTREGA_PROVINCIAL = SERVICIO_ENTREGA_PROVINCIAL;
-  //SERVICIO_DISENIO = SERVICIO_DISENIO;
-  //SERVICIO_GRABADO_IMAGEN = SERVICIO_GRABADO_IMAGEN;
 
+  constructor() { }
 
-  constructor() {
-    this.itemServiceSuscription$ = this.itemService.getItems().subscribe({
-      next: items => {
-        this.items = this.itemService.importePorMargenCantidad(items);
-        this.calcularTotal();
-      },
-      error: error => {
-        console.error('Error al obtener el item:', error);
-      }
-    })
+  buscarPersonas = (term: string) =>
+    this.personaService.filtrarPersonas(term);
+
+  mostrarPersona = (persona: Persona) =>
+    persona.nomApellRz
+
+  personSelecToInForm(persona: Persona) {
+    //debugger;
+    console.log("personSelecToInForm -->persona para update", persona);
+    this.inPersona.set(persona);
   }
 
-  ngOnInit(): void {
-    this.personaService.getTipoDocumento().subscribe(doc => {
-      this.tipoDocumentos = doc
-    });
+  outPersonSelect($event: any) {
+    //debugger;
+    this.formPersonaValid = $event.formValid
+    if (!this.formPersonaValid) { return }
 
-    this.activatedRoute.paramMap.subscribe(params => {
-      let personaId = +params.get('personaId')!;
-      this.personaService.getPersona(personaId).subscribe(cli => {
-        const now = new Date();
-        this.persona = cli;
-        //const index = this.findIndexDocument(this.persona.tipoDocumento.id);
-        //this.tipoDocumentoSelected = this.tipoDocumentos[index];
-        this.pedido.persona = this.persona;
-        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-        this.pedido.entregadoEn = moment(now).add(2, 'days').toISOString().slice(0, 16);
-      });
-    });
-
-    /*     this.activatedRoute.queryParams.subscribe(params => {
-          const value = params['personaOnline'];
-          this.personaOnline = value.toLocaleLowerCase() === 'true' ? value : false;
-        }) */
-
-    //  if (this.items.length === 0) {
-    //   this.items = this.itemService.importePorMargenCantidad(this.itemService.getLocalStorageItems());
-    this.calcularTotal();
-    // }
-
-    this.productoService.getLstProductoServicioEnvio().subscribe(resp => {
-      this.serviciosEnvio = resp
-      console.log("this.serviciosEnvio", this.serviciosEnvio);
-
-    });
-
-    this.pedidoService.getAllTipoPedido().subscribe(result => {
-      this.tipoPedidos = result
-      this.tipoPedidos.forEach(r =>
-        r.activo = r.id == 1 ? true : false
-      )
-      this.tipoPedidoVentaPersonas = this.tipoPedidos[0];
-    });
-
+    const persona = $event.persona as Persona;
+    //aqui puede salir persona con ID (para update)y sin ID(para crear)
+    this.personSelect.set(persona);
   }
 
-  calcularTotal() {
-    this.total = this.itemService.calculateTotalFromItems(this.items)
+  private obtenerFechaDefecto(): string {
+    const now = new Date();
+    now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+    return moment(now).add(2, 'days').toISOString().slice(0, 16);
   }
 
+  actualizarFecha(nuevaFecha: string) {
+    this.fechaEntrega.set(nuevaFecha);
+  }
 
-  /*   findIndexDocument(tipoDocumentoId: number): number {
-      return findIndex(this.tipoDocumentos, (td) => td.id == tipoDocumentoId)
-    }
-   */
+  actualizarObservacion(text: string) {
+    this.observaciones.set(text);
+  }
 
   eliminarItemPedido(item: ItemPedido): void {
-    this.productoService.getProductoByImage(item.imagen).subscribe(
-      prod => { console.log("Producto encontrado", prod) },
-      err => { //Producto no encontrado
-        console.log("Producto no encontrado ...", err);
-        if (err.status === 404) {
-          this.mediosUtilsService.eliminarImagen(item.imagen).subscribe(resp => {
-            console.log("Eliminado correctamente:", resp);
-          });
-        }
-      }
-    );
-    this.items = this.itemService.deleteItemFromItems(this.items, item.producto.id);
-    this.itemService.setItems(this.items);
+    const updated = this.itemService.deleteItemFromItems(this.items(), item.producto.id);
+    this.itemService.setItems(updated);
     //this.itemService.saveLocalStorageItems(this.items);
   }
 
   actualizarDescripcion(productoId: number, event: any): void {
     const descripcion: string = event.target.value;
-    this.items = this.itemService.UpdateDescripcionItemFromItemsCliete(this.items, productoId, descripcion);
-    this.itemService.setItems(this.items);
+    const updated = this.itemService.UpdateDescripcionItemFromItemsCliete(this.items(), productoId, descripcion);
+    this.itemService.setItems(updated);
     //this.itemService.saveLocalStorageItems(this.items);
   }
 
   actualizarCantidad(productoId: number, event: any): void {
     const cantidad: number = parseInt(event.target.value);
-    this.items = this.itemService.UpdateAmountItemFromItems(this.items, productoId, cantidad);
-    this.itemService.setItems(this.items);
+    const updated = this.itemService.UpdateAmountItemFromItems(this.items(), productoId, cantidad);
+    this.itemService.setItems(updated);
     //this.itemService.saveLocalStorageItems(this.items);
   }
 
   actualizarImporte(productoId: number, event: any): void {
     const precio: number = parseFloat(event.target.value);
-    this.items = this.itemService.UpdatePrecioItemFromItemsCliete(this.items, productoId, precio);
-    this.calcularTotal();
-
-    this.itemService.setItems(this.items);
+    const updated = this.itemService.UpdatePrecioItemFromItemsCliete(this.items(), productoId, precio);
+    //this.calcularTotal();
+    this.itemService.setItems(updated);
     //this.itemService.saveLocalStorageItems(this.items);
   }
 
-  crearPedidoTienda(pedidoTiendaForm: NgForm) {
-    this.pedido.items = [...this.items];
-    if (pedidoTiendaForm.form.valid && this.pedido.items.length > 0) {
-      this.calcularTotal();
-      this.pedido.precioNetoTotal = this.total
-      this.pedido.tipoPedido = this.tipoPedidoVentaPersonas
-      this.pedidoService.createPedidoTienda(this.pedido).subscribe(p => {
-        this.openDialog(p)
-        this.itemService.setItems([]);
+  toggleIsEnvio(event: Event) {
+    const checkbox = event.target as HTMLInputElement;
+    this.isEnvio.set(checkbox.checked);
+    if (checkbox.checked) { return } //si no esta activo el formulario
+    this.sinCheckEnvioPedido()
+    this.formEnvioPedidoValid = true
+  }
 
-        //this.pedidoService.setPedido(p);
-        //this.itemService.removeLocalStorageItems();
-        //this.router.navigate(['/pedidos/contactanos']);
-      });
+  private sinCheckEnvioPedido() {
+    //debugger;
+    const envio = this.isEnvio();
+    if (envio) { return }
+
+    const itemsActuales = this.items();
+    const serviciosEnvio = this.serviciosEnvio();
+    this.pedido.update(p => ({
+      ...p,
+      direccionEnvio: "",
+      celularEnvio: "",
+      nomApellRzEnvio: ""
+    }));
+
+    let nuevosItems = itemsActuales;
+    serviciosEnvio.forEach(servicio => {
+      if (this.itemService.existItemInItems(nuevosItems, servicio.id)) {
+        nuevosItems = this.itemService.deleteItemFromItems(
+          nuevosItems,
+          servicio.id
+        );
+      }
+    });
+    this.itemService.setItems(nuevosItems);
+  };
+
+
+  crearPedidoTienda() {
+    if (!this.authService.isAuthenticated()) {
+      return;
+    }
+    //debugger;
+    const persona = this.personSelect();
+    if (!this.formPersonaValid && !persona) { return }
+    const personaId = persona!.id
+    if (personaId) {
+      this.personaService.update(personaId, persona!).subscribe(result => {
+        console.log('persona actualziada')
+        this.personSelect.set(result.persona)
+        this.actualizarPedido()
+      })
+    } else {
+      this.personaService.create(persona!).subscribe(result => {
+        console.log("persona creada", persona)
+        this.personSelect.set(result)
+        this.actualizarPedido()
+      })
     }
   }
+
+  actualizarPedido() {
+    /*     debugger;
+
+
+        const usuario = this.authService.usuario()
+        if (!usuario) { return }
+
+        console.log("dsfsffffffffff", usuario) */
+
+    if (!this.formEnvioPedidoValid || this.items().length === 0) return;
+    //debugger;
+    //const per = this.personSelect();
+    this.pedido.update(p => ({
+      ...p,
+      persona: this.personSelect(),
+      observacion: this.observaciones(),
+      entregadoEn: this.fechaEntrega(),
+      items: [...this.items()],
+      precioNetoTotal: this.total(),
+      tipoPedido: this.tipoPedidoVentaPersonas(),
+    }));
+    //debugger;
+    this.pedidoService.createPedidoTienda(this.pedido())
+      .subscribe(p => {
+        this.itemService.setItems([]);
+        if (this.tipoPedidoId() === 4) {
+          this.openDialog(p);
+        } else {
+          this.alertService.info(`Pedido ${p.tipoPedido.nombre} N° ${p.id}`, "Finalizado");
+
+          if (p.tipoPedido.id == VENTA_TIPO_PEDIDO) {
+            this.router.navigate(['/pedidos/listado-ventas']);
+          }
+          if (p.tipoPedido.id == COMPRA_TIPO_PEDIDO) {
+            this.router.navigate(['/pedidos/listado-compras']);
+          }
+        }
+      });
+  }
+
 
   openDialog(pedido: Pedido): void {
     const dialogRef = this.dialog.open(PagoPedidoPersonaOnlineComponent, {
       data: pedido,
       height: 'auto',
-/*       width: '90%',
- */      disableClose: false
+      disableClose: false
     });
 
     dialogRef.afterClosed().subscribe(result => {
       this.router.navigate(['/']);
 
-      //console.log('The dialog was closed');
       if (result) {
         this.alertService.success("Pagado! Si enviaste tu pago ya estamos atendiendo tu pedido.", "Pagado")
-        //this.animal.set(result);
       } else {
         this.alertService.warning("Pago pendiente! Si enviaste el pago puedes omitir el mensaje.", "Pago pendiente")
-
       }
 
     });
   }
 
-  addItemsServicioEnvio(event: any, formaEnvio: string) {
-    this.isEnvio = event.target.checked;
-    let envioSelected = this.serviciosEnvio.filter(ser => ser.codigo == formaEnvio);
-    let envioNoSelected = this.serviciosEnvio.filter(ser => ser.codigo != formaEnvio);
-    this.formaEnvio = formaEnvio;
+  outEnvioPedidoSelect($event: any) {
+    this.formEnvioPedidoValid = $event.formValid
+    if (!this.formEnvioPedidoValid) { return }
 
-    if (this.isEnvio) {
-      //console.log(envioSelected[0].minCantidadPedido);
-      this.item.cantidad = envioSelected[0].minCantidadPedido;
-      this.item.descripcion = envioSelected[0].descripcion;
-      this.item.producto = { ...envioSelected[0] };
-      //  this.item.imagenUri = environment.API_URL_VER_IMAGEN + this.item.producto.imagen
+    const envioPedido = $event.envioPedido as EnvioPedido;
+    if (!this.isEnvio()) { return }
 
-      /*       if (this.itemService.existItemInItems(this.items, envioNoSelected[0].id)) {
-              this.items = this.itemService.deleteItemFromItems(this.items, this.item.producto.id);
-              this.itemService.setItems(this.items);
-              this.itemService.saveLocalStorageItems(this.items);
-            } */
-
-      envioNoSelected.forEach(servicio => {
-        if (this.itemService.existItemInItems(this.items, servicio.id)) {
-          this.items = this.itemService.deleteItemFromItems(this.items, servicio.id);
-        }
-      })
-      this.itemService.setItems(this.items);
+    this.checkEnvioPedido(envioPedido);
+  }
 
 
-      if (!this.itemService.existItemInItems(this.items, this.item.producto.id)
-        && this.item.cantidad <= this.item.producto.maxCantidadPedido) {
-        this.items = [...this.items, { ...this.item }];
-        this.itemService.setItems(this.items);
-        //this.itemService.saveLocalStorageItems(this.items);
+  private checkEnvioPedido(datos: EnvioPedido) {
+    const itemsActuales = this.items();
+
+    let envioSelected = this.serviciosEnvio().find(ser => ser.codigo == datos.formaEnvio);
+    let envioNoSelected = this.serviciosEnvio().filter(ser => ser.codigo != datos.formaEnvio);
+
+    if (!envioSelected) return;
+    let lstMultimediaServicioEnvio = envioSelected?.multimediasProducto
+    lstMultimediaServicioEnvio = lstMultimediaServicioEnvio ?
+      lstMultimediaServicioEnvio.filter(lst => lst.multimedia.mimeType.startsWith('image')) : [];
+
+
+    let nuevosItems = itemsActuales;
+    envioNoSelected!.forEach(servicio => {
+      if (this.itemService.existItemInItems(nuevosItems, servicio.id)) {
+        nuevosItems = this.itemService.deleteItemFromItems(nuevosItems, servicio.id);
       }
+    })
+    const yaExiste = this.itemService.existItemInItems(nuevosItems, envioSelected.id);
 
-    } else {
-      this.pedido.direccionEnvio = "";
-      this.pedido.celularEnvio = "";
-      this.pedido.nomApellRzEnvio = "";
-      this.serviciosEnvio.forEach(servicio => {
-        if (this.itemService.existItemInItems(this.items, servicio.id)) {
-          this.items = this.itemService.deleteItemFromItems(this.items, this.item.producto.id);
-          this.itemService.setItems(this.items);
-          //this.itemService.saveLocalStorageItems(this.items);
-        }
-      })
+    if (!yaExiste) {
+
+      const nuevoItem: ItemPedido = {
+        ...new ItemPedido(),
+        cantidad: envioSelected.minCantidadPedido,
+        descripcion: envioSelected.descripcion,
+        imagenShow: lstMultimediaServicioEnvio.length > 0 ?
+          this.API_URL_VER_IMAGEN.concat(
+            lstMultimediaServicioEnvio[0].multimedia.nombre) : 'no-imagen.png',
+        producto: { ...envioSelected }
+      };
+
+      if (nuevoItem.cantidad <= envioSelected.maxCantidadPedido) {
+        nuevosItems = [...nuevosItems, nuevoItem];
+      }
     }
+
+    this.itemService.setItems(nuevosItems);
+    this.pedido.update(p => ({
+      ...p,
+      //persona: this.personSelect() ?? undefined,
+      direccionEnvio: datos.direccionEnvio ?? "",
+      celularEnvio: datos.celularEnvio ?? "",
+      nomApellRzEnvio: datos.nomApellRzEnvio ?? "",
+      entregadoEn: this.fechaEntrega()
+    }));
+  };
+
+
+  isAuthenticated(): boolean {
+    return this.authService.isAuthenticated();
   }
 
-  ngOnDestroy(): void {
-    if (this.itemServiceSuscription$) {
-      this.itemServiceSuscription$.unsubscribe();
+  cargarPersonaOnline() {
+    if (!this.authService.isAuthenticated()) {
+      return;
     }
+
+    const usuario = this.authService.usuario()
+    if (!usuario) { return }
+
+    this.usuarioService.getUsuarioByUsername(usuario.username)
+      .pipe(
+        switchMap(usr => this.personaService.getPersonaByUsuarioId(usr.id))
+      )
+      .subscribe({
+        next: (persona) => {
+          //aqui persona es update
+          console.log('cargarPersonaOnline-->persona para update', persona)
+          this.inPersona.set(persona);
+        },
+        error: (err) => console.error('Error en la carga:', err)
+      });
   }
+
 
 
 }

@@ -44,7 +44,10 @@ export class RpteCajaPorUsuarioComponent implements OnInit {
 
     this.titulo = "Reporte cierre de caja por usuario"
 
-    this.usuarioService.getUsuarioByUsername(this.authService.usuario.username)
+    const usuario = this.authService.usuario()
+    if (!usuario) {return}
+
+    this.usuarioService.getUsuarioByUsername(usuario.username)
       .subscribe(res => { this.usuario = res }
       );
 

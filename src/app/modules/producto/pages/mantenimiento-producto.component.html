@@ -7,11 +7,11 @@
         <div class="ms-auto">
           <button color="primary" mat-raised-button [routerLink]="'/productos'">Cancelar</button>
 
-          @if (producto.id && authService.hasRole('ROLE_UPDATE_PRODUCTO')) {
+          @if (producto().id && authService.hasRole('ROLE_UPDATE_PRODUCTO')) {
           <button color="primary" mat-raised-button (click)='guardarProducto()'
             [disabled]="!formProducto.valid">Actualizar producto</button>
           }
-          @if (!producto.id && authService.hasRole('ROLE_REGISTER_PRODUCTO')) {
+          @if (!producto().id && authService.hasRole('ROLE_REGISTER_PRODUCTO')) {
           <button color="primary" mat-raised-button (click)='guardarProducto()' [disabled]="!formProducto.valid">Crear
             producto</button>
           }
@@ -246,7 +246,7 @@
                   tienda</label>
                 <div class="input-group col-sm">
                   <select formControlName="categoriaId" name="categoriaId" class="form-control">
-                    <option *ngFor="let categoria of categorias" [value]="categoria.id">{{categoria.nombre}}</option>
+                    <option *ngFor="let categoria of categorias()" [value]="categoria.id">{{categoria.nombre}}</option>
                   </select>
                   @if(formUtils.isValidField(formProducto,'categoriaId')){
                   <div class="alert alert-danger">
@@ -258,7 +258,7 @@
                 <label for="materialId" class="form-label col-sm-5">Material del producto:</label>
                 <div class="input-group col-sm">
                   <select formControlName="materialId" name="materialId" class="form-control">
-                    <option *ngFor="let material of materiales" [value]="material.id">{{material.nombre}}</option>
+                    <option *ngFor="let material of materiales()" [value]="material.id">{{material.nombre}}</option>
                   </select>
                   @if(formUtils.isValidField(formProducto,'materialId')){
                   <div class="alert alert-danger">
@@ -270,7 +270,7 @@
                 <label for="colorId" class="form-label col-sm-5">Color del producto:</label>
                 <div class="input-group col-sm">
                   <select formControlName="colorId" name="colorId" class="form-control">
-                    <option *ngFor="let color of colores" [value]="color.id">{{color.nombre}}</option>
+                    <option *ngFor="let color of colores()" [value]="color.id">{{color.nombre}}</option>
                   </select>
                   @if(formUtils.isValidField(formProducto,'colorId')){
                   <div class="alert alert-danger">
@@ -282,7 +282,7 @@
                 <label for="usoId" class="form-label col-sm-5">Uso del producto:</label>
                 <div class="input-group col-sm">
                   <select formControlName="usoId" name="usoId" class="form-control">
-                    <option *ngFor="let uso of usos" [value]="uso.id">{{uso.nombre}}</option>
+                    <option *ngFor="let uso of usos()" [value]="uso.id">{{uso.nombre}}</option>
                   </select>
                   @if(formUtils.isValidField(formProducto,'usoId')){
                   <div class="alert alert-danger">
@@ -296,7 +296,7 @@
                 <label for="activo" class="form-label col-sm-4"><b>Producto activo</b></label>
                 <div class="form-check form-switch col-sm-2">
                   <input class="form-check-input" type="checkbox" formControlName="activo" name="activo"
-                    [checked]="producto.activo">
+                    [checked]="producto().activo">
                   @if(formUtils.isValidField(formProducto,'activo')){
                   <div class="alert alert-danger">
                     {{formUtils.getFieldError(formProducto,'activo')}}
@@ -307,7 +307,7 @@
                 <label for="visibleEnTienda" class="form-label col-sm-4"><b>Visible en tienda</b></label>
                 <div class="form-check form-switch col-sm-2">
                   <input class="form-check-input" type="checkbox" formControlName="visibleEnTienda"
-                    name="visibleEnTienda" [checked]="producto.visibleEnTienda">
+                    name="visibleEnTienda" [checked]="producto().visibleEnTienda">
                   @if(formUtils.isValidField(formProducto,'visibleEnTienda')){
                   <div class="alert alert-danger">
                     {{formUtils.getFieldError(formProducto,'visibleEnTienda')}}
@@ -316,32 +316,63 @@
                 }
               </div>
               @if (authService.hasRole('ROLE_IMAGE_PRODUCTO')) {
+              <!--               <div class="row mb-2">
+                <label for="clicUploadImageToProduct" class="form-label col-sm-5"><b>Imágen principal:</b><br>Visible
+                  en
+                  tienda</label>
+                <div class="input-group col-7">
+                  <input #file type="file" (change)="subirImagen(file)" name="imagen" class="form-control"
+                    style="display: none;" id="clicUploadImageToProduct" aria-describedby="clicUploadImageToProduct">
+                  <label for="clicUploadImageToProduct" class="btn btn-secondary">📁 Elegir imagen principal</label>
+                </div>
+              </div> -->
+
               <div class="row mb-2">
-                <!--            <label for="formFile" class="form-label col-sm-4"><b>Imágen del producto:</b><br>Visible en
+                <!--                 <div class="col-6">
+                  <button id="clicUploadImageToProduct" matFab extended (click)='openDialog(producto, true)'>Elegir
+                    multimedia principal</button>
+                </div> -->
+                <label for="clicUploadImageToProduct" class="form-label col-sm-5"><b>Multimedia:</b><br>Visible
+                  en
+                  tienda</label>
+                <div class="col-7">
+                  <button id="clicUploadImagesToProduct" matFab extended (click)='openDialog()'>Elegir
+                    multimedia para producto</button>
+                </div>
+
+              </div>
+   <!--            <div class="row mb-2">
+                <div class="col-sm">
+                  <img *ngIf="producto()?.imagen" [src]="verImagenProducto" alt="{{producto.imagen}}"
+                    class="img-fluid img-thumbnail rounded mx-auto d-block">
+                </div>
+              </div> -->
+
+
+              <ver-multimedia-producto
+              [inMultimediasProducto]="producto().multimediasProducto"
+              [inCircular]="false"
+              [inShowNavigators]="true"
+              [inShowIndicators]="false"
+              (outMultimediasProducto)="multimediaProductoToProducto($event)"
+              ></ver-multimedia-producto>
+
+
+
+              <!-- <div class="row mb-2">
+                           <label for="formFile" class="form-label col-sm-4"><b>Imágen del producto:</b><br>Visible en
                   tienda</label>
                 <div class="input-group col-sm">
                   <input #file (change)="this.isImage(file)" type="file" name="imagen" class="form-control"
                     style="padding: 25px;" id="inputGroupFile04" aria-describedby="inputGroupFileAddon04">
                   <button (click)="subirImagen(file)" class="btn btn-primary" type="button"
                     [disabled]="!this.isImage(file)" id="inputGroupFileAddon04">Subir</button>
-                </div> -->
-                <label for="clicUploadImageToProduct" class="form-label col-sm-5"><b>Imágen del producto:</b><br>Visible
-                  en
-                  tienda</label>
-                <div class="input-group col-7">
-                  <input #file type="file" (change)="subirImagen(file)" name="imagen" class="form-control"
-                    style="display: none;" id="clicUploadImageToProduct" aria-describedby="clicUploadImageToProduct">
-                  <label for="clicUploadImageToProduct" class="btn btn-secondary">📁 Elegir imagen del producto</label>
                 </div>
 
 
-              </div>
-              <div class="row mb-2">
-                <div class="col-sm">
-                  <img *ngIf="producto?.imagen" [src]="verImagenProducto" alt="{{producto.imagen}}"
-                    class="img-fluid img-thumbnail rounded mx-auto d-block">
-                </div>
-              </div>
+
+
+              </div>-->
               }
               <!--             <div class="row mb-2">
               <div class="ol-sm-6">
@@ -467,11 +498,11 @@
         <div class="ms-auto">
           <button color="primary" mat-raised-button [routerLink]="'/productos'">Cancelar</button>
 
-          @if (producto.id && authService.hasRole('ROLE_UPDATE_PRODUCTO')) {
+          @if (producto().id && authService.hasRole('ROLE_UPDATE_PRODUCTO')) {
           <button color="primary" mat-raised-button (click)='guardarProducto()'
             [disabled]="!formProducto.valid">Actualizar producto</button>
           }
-          @if (!producto.id && authService.hasRole('ROLE_REGISTER_PRODUCTO')) {
+          @if (!producto().id && authService.hasRole('ROLE_REGISTER_PRODUCTO')) {
           <button color="primary" mat-raised-button (click)='guardarProducto()' [disabled]="!formProducto.valid">Crear
             producto</button>
           }

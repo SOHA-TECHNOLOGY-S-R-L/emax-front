@@ -3,6 +3,8 @@ import { Color } from "./color"
 import { EstadoProducto } from "./estado-producto"
 import { MargenProducto } from "./margen-producto"
 import { Material } from "./material"
+import { Multimedia } from "./multimedia"
+import { MultimediaProducto } from "./multimedia-producto"
 import { Uso } from "./uso"
 
 export class Producto {
@@ -12,7 +14,6 @@ export class Producto {
   descripcion!: string;
   medidas?: string
   peso?: string
-  // galeriaProducto: GaleriaProducto[]=[]
   umbralPocaCantidad: number = 5;
   umbralCantidadAgotada: number = 0;
   cantidadVendidos: number = 0;
@@ -34,7 +35,6 @@ export class Producto {
   //fechaPrecioRebajadoHasta!:string;
   //productosRelacionados!:string; //ventas dirigidas(prod sustituto por la calidad, mas caros)
   //productosPromocion!:string;
-  imagen: string = 'no-imagen.png';
   visibleEnTienda: boolean = false;
   activo: boolean = true;
   color?: Color;
@@ -43,10 +43,12 @@ export class Producto {
   uso?: Uso;
   estadoProducto!: EstadoProducto;
   margenesProducto: MargenProducto[] = [];
-  precioNetoNumberShow?: number;
+  multimediasProducto: MultimediaProducto[] = [];
+  //campos utilitarios
+  //multimediaPrincipal?: string;
   colorActivo!: string;
   colorVisibleEnTienda!: string;
-  //precioNetoStringShow?: string;
+  precioMasBajoProductoShow: number = 0;
 }
 
 

@@ -63,6 +63,8 @@ export class PedidoService {
     });
   }
 
+
+
     getPedidosPersonaPageable(params: any, personaId: number): Observable<PageableResponse> {
     return this.http.get<any>(`${environment.apiUrl}/pedidos/persona/${personaId}/pageable`, {
       /*headers: this.agregarAuthorizationHeader(),*/

@@ -1,13 +1,43 @@
 <div class="container py-5">
   <div class="row align-items-center">
     <div class="col-lg-6">
-      <h6 class="text-primary font-weight-semi-bold text-uppercase mb-3">Personalización, retoque profesional y entrega</h6>
+      <h6 class="text-primary font-weight-semi-bold text-uppercase mb-3">Personalización, retoque profesional y entrega
+      </h6>
       <h1 class="mb-4 section-title text-white">Servicios de valor</h1>
-      <p class="text-white">La personalización se trata de la impresión de una imagen en los productos seleccionados, con un diseño y retoque profesional,con un acabado de alta
-calidad, finalmente te entregamos tu pedido en tu puerta y a nivel nacional.</p>
+      <p class="text-white">La personalización se trata de la impresión de una imagen en los servicioos seleccionados,
+        con un diseño y retoque profesional,con un acabado de alta
+        calidad, finalmente te entregamos tu pedido en tu puerta y a nivel nacional.</p>
     </div>
-    <div class="col-lg-6 pt-5 pt-lg-0">
+    <div class="col-lg-6 pt-5 pt-lg-0 text-white">
+      <p-carousel [value]="servicios" [numVisible]="2" [numScroll]="1" [circular]="true"
+        [responsiveOptions]="responsiveOptions" autoplayInterval="3000">
+        <ng-template let-servicio #item>
+          <div class="border border-surface-200 dark:border-surface-700 rounded m-2 p-4">
+            <div class="mb-4 font-medium text-center">{{ servicio.producto.nombre | stringToTitleWithAccents }}</div>
+            <div class="mb-4">
+              <div class="relative mx-auto">
+                <img [src]="API_URL_VER_IMAGEN+servicio.multimedia.nombre" [alt]="servicio.multimedia.nombre" class="w-full rounded-border"
+                  width="150px" />
+              </div>
+            </div>
+          </div>
+        </ng-template>
+      </p-carousel>
+
+
+
+
+
+      <!--
+
+            <carrusel-img-serv-prod
+      [inMultimediasProducto]="servicios"
+      [inCircular]="true"
+      [inShowNavigators]="false"
+      [inShowIndicators]="false"
+      ></carrusel-img-serv-prod>
       <carrusel-servicios class="text-white"></carrusel-servicios>
+ -->
     </div>
   </div>
 </div>

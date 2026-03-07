@@ -1,22 +1,24 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, inject, OnInit } from '@angular/core';
+import { Component, computed, effect, inject, signal } from '@angular/core';
+import { rxResource, toSignal } from '@angular/core/rxjs-interop';
 import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { find } from 'lodash-es';
-import { environment } from '../../../../environments/environment';
-import { Categoria } from '../../../models/categoria';
-import { Color } from '../../../models/color';
+import { map } from 'rxjs';
 import { MargenProducto } from '../../../models/margen-producto';
-import { Material } from '../../../models/material';
 import { Producto } from '../../../models/producto';
-import { Uso } from '../../../models/uso';
 import { AlertService } from '../../../services/alert.service';
 import { AuthService } from '../../../services/auth.service';
-import { MediosUtilsService } from '../../../services/medios-utils.service';
+import { CategoriaService } from '../../../services/categoria.service';
 import { ProductoService } from '../../../services/producto.service';
 import { FormUtils } from '../../../utils/form-utils';
 import { AngularMaterialModule } from '../../compartido/angular-material.module';
-import { CategoriaService } from '../../../services/categoria.service';
+import { VerMultimediaProductoComponent } from '../../compartido/ver-multimedia-producto/ver-multimedia-producto.component';
+import { ListMultimediaComponent } from '../../multimedia/pages/list-multimedia/list-multimedia.component';
+import { MultimediaProducto } from './../../../models/multimedia-producto';
+import { MultimediaHttpService } from './../../../services/multimedia-http.service';
+import { MultimediaProductoService } from './../../../services/multimedia-producto.service';
 
 
 @Component({
@@ -24,21 +26,68 @@ import { CategoriaService } from '../../../services/categoria.service';
   templateUrl: './mantenimiento-producto.component.html',
   styleUrl: './mantenimiento-producto.component.css',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, ReactiveFormsModule, AngularMaterialModule]
+  imports: [CommonModule, RouterModule, FormsModule, ReactiveFormsModule, AngularMaterialModule, VerMultimediaProductoComponent]
 
 })
-export class MantenimientoProductoComponent implements OnInit, AfterViewInit {
+export class MantenimientoProductoComponent {
 
-  public mediosUtilsService = inject(MediosUtilsService);
+  public multimediaHttpService = inject(MultimediaHttpService);
   private productoService = inject(ProductoService);
+  private multimediaProductoService = inject(MultimediaProductoService);
   private categoriaService = inject(CategoriaService);
+  private activatedRoute = inject(ActivatedRoute);
 
-  producto: Producto = new Producto();
+  readonly dialog = inject(MatDialog);
+
+  coloresResource = rxResource({
+    stream: () => this.productoService.getColoresProducto()
+  });
+
+  materialesResource = rxResource({
+    stream: () => this.productoService.getMaterialesProducto()
+  });
+
+  categoriasResource = rxResource({
+    stream: () => this.categoriaService.getCategoriasProducto()
+  });
+
+  usosResource = rxResource({
+    stream: () => this.productoService.getUsosInternoProducto()
+  });
+
+  colores = computed(() => this.coloresResource.value() ?? []);
+  materiales = computed(() => this.materialesResource.value() ?? []);
+  categorias = computed(() => this.categoriasResource.value() ?? []);
+  usos = computed(() => this.usosResource.value() ?? []);
+  //multimediasProducto = signal<MultimediaProducto[]>([]);
+  producto = signal<Producto>(new Producto());
+  productoId = toSignal<number>(this.activatedRoute.paramMap.pipe(map(r => Number(r.get('productoId')!))));
+
+  private productoEffect = effect(() => {
+    const id = this.productoId();
+    if (id) {
+      this.cargarProducto(id);
+    } else {
+      this.producto.set(new Producto());
+    }
+  });
+
+  /*   private multimediasProductoEffect = effect(() => {
+      const pr = this.producto();
+      if (!pr) { return }
+      this.cargarMultimediaProducto(pr.id, pr.multimediasProducto);
+    }); */
+
+
+  private formEffect = effect(() => {
+    const producto = this.producto();
+    if (!producto) return;
+    this.createForm();
+  });
+
+  //producto: Producto = new Producto();
   formProducto!: FormGroup;
-  colores: Color[] = [];
-  materiales: Material[] = [];
-  categorias: Categoria[] = [];
-  usos: Uso[] = [];
+
   verImagenProducto!: string;
   formUtils = FormUtils;
 
@@ -53,133 +102,110 @@ export class MantenimientoProductoComponent implements OnInit, AfterViewInit {
     private router: Router,
     private alertService: AlertService,
     public authService: AuthService,
-    private formBuilder: FormBuilder,
-    private activatedRoute: ActivatedRoute) { }
+    private formBuilder: FormBuilder) {
 
-
-
-  ngOnInit(): void {
-
-    this.createForm();
-    this.cargarDatosAuxiliares();
-
-    //console.log("ngAfterViewInit",this.genericosDeProducto);
-    this.activatedRoute.paramMap.subscribe(params => {
-      let id = +params.get('productoId')!;
-      if (id) {
-        this.productoService.getProducto(id).subscribe(resp => {
-          this.producto = resp;
-          this.createForm();
-
-          this.verImagenProducto = environment.API_URL_VER_IMAGEN + this.producto.imagen;
-        });
-      } else {
-        this.verImagenProducto = environment.API_URL_VER_IMAGEN + this.producto.imagen;
-        this.createForm();
-      }
-    });
-
-    /*     let colores =  this.producto.genericos.filter(p => p.id>=10 && p.id<30);
-    let materiales = this.producto.genericos.filter(p => p.id>=30 && p.id<50);
-    let origenes = this.producto.genericos.filter(p => p.id>=50 && p.id<70);
-    let empaques = this.producto.genericos.filter(p => p.id>=70 && p.id<90);
-    let categorias = this.producto.genericos.filter(p => p.id>=90 && p.id<100);
-    let usos = this.producto.genericos.filter(p => p.id>=100 && p.id<120);
-    this.colores = [...colores];
-    this.materiales=[...materiales]
-    this.origenes=[...origenes]
-    this.empaques=[...empaques]
-    this.categorias=[...categorias]
-    this.usos=[...usos] */
-
-    //console.log("categorias",this.categorias);
   }
 
-  ngAfterViewInit(): void {
+  cargarProducto(id: number) {
+    this.productoService.getProducto(id).subscribe(resp => {
+      this.producto.set(resp);
+    });
+  }
 
+  cargarMultimediaProducto(id: number) {
+    this.multimediaProductoService.multimediasProductoByProductoId(id).subscribe(resp => {
+      this.multimediaProductoToProducto(resp)
+      //this.multimediasProducto.set(resp);
+    });
+  }
+
+  multimediaProductoToProducto(multimediaProducto: MultimediaProducto[]) {
+    //this.multimediasProducto.update(() => multimediaProducto);
+    this.producto().multimediasProducto = [...multimediaProducto]
   }
 
   createForm(): void {
+    const pr = this.producto();
     this.formProducto = this.formBuilder.group({
-      nombre: [this.producto?.nombre, Validators.required],
-      codigo: [this.producto?.codigo,
+      nombre: [pr.nombre, Validators.required],
+      codigo: [pr.codigo,
       //Pateon letras, números y guion . Al menos un número o letra en la cadena.
       { validators: [Validators.required, Validators.minLength(2)] }
 
         /*       { validators: [Validators.required, Validators.minLength(2), Validators.pattern('^[A-Z0-9-]*[A-Z0-9][A-Z0-9-]*$')] }
          */
       ],
-      descripcion: [this.producto?.descripcion,
+      descripcion: [pr.descripcion,
       { validators: [Validators.required, Validators.minLength(2)] }
       ],
-      medidas: [this.producto?.medidas,
+      medidas: [pr.medidas,
       { validators: [Validators.minLength(2), Validators.pattern('^[0-9]{1,3}([\\.][0-9]{2})?(x|X)?([0-9]{1,3}([\\.][0-9]{2})?)?(x|X)?([0-9]{1,3}([\\.][0-9]{2})?)?\\s(cm|CM|mt|MT)$')] }
       ],
-      peso: [this.producto?.peso,
+      peso: [pr.peso,
       { validators: [Validators.minLength(4), Validators.pattern('^[0-9]{1,3}([(\\.)][0-9]{2})?\\s(kg|KG)$')] }
       ],
-      umbralPocaCantidad: [this.producto?.umbralPocaCantidad,
+      umbralPocaCantidad: [pr.umbralPocaCantidad,
       { validators: [Validators.required, Validators.min(1)] }
       ],
 
-      umbralCantidadAgotada: [this.producto?.umbralCantidadAgotada,
+      umbralCantidadAgotada: [pr.umbralCantidadAgotada,
       { validators: [Validators.required, Validators.min(0)] }
       ],
-      /*       cantidadStock: [this.producto?.cantidadStock,
+      /*       cantidadStock: [pr.cantidadStock,
             { validators: [Validators.required, Validators.min(0)] }
             ], */
       cantidadStock: [
-        { value: this.producto?.cantidadStock, disabled: true },
+        { value: pr.cantidadStock, disabled: true },
         { validators: [Validators.required, Validators.min(0)] }
       ],
       cantidadVendidos: [
-        { value: this.producto?.cantidadVendidos, disabled: true },
+        { value: pr.cantidadVendidos, disabled: true },
         { validators: [Validators.required, Validators.min(0)] }
       ],
-      minCantidadPedido: [this.producto?.minCantidadPedido,
+      minCantidadPedido: [pr.minCantidadPedido,
       { validators: [Validators.required, Validators.min(1)] }
       ],
-      maxCantidadPedido: [this.producto?.maxCantidadPedido,
+      maxCantidadPedido: [pr.maxCantidadPedido,
       { validators: [Validators.required, Validators.min(1)] }
       ],
-      gruposDe: [this.producto?.gruposDe,
+      gruposDe: [pr.gruposDe,
       { validators: [Validators.required, Validators.min(1)] }
       ],
-      costoUnitario: [this.producto?.costoUnitario,
-       { validators: [Validators.required, Validators.min(0)] }
-       ],
+      costoUnitario: [pr.costoUnitario,
+      { validators: [Validators.required, Validators.min(0)] }
+      ],
 
-      //costoPersonalizacion: [this.producto?.costoPersonalizacion, Validators.min(0)],
-      //costoUnitarioEmpaque: [this.producto?.costoUnitarioEmpaque, Validators.min(0)],
-      //precioBruto: [this.producto?.precioBruto, Validators.min(3)],
-      impuestoIgv: [this.producto?.impuestoIgv,
+      //costoPersonalizacion: [pr.costoPersonalizacion, Validators.min(0)],
+      //costoUnitarioEmpaque: [pr.costoUnitarioEmpaque, Validators.min(0)],
+      //precioBruto: [pr.precioBruto, Validators.min(3)],
+      impuestoIgv: [pr.impuestoIgv,
       { validators: [Validators.required, Validators.min(18)] }
       ],
 
-      //margenGanancia: [this.producto?.margenGanancia, [Validators.required, Validators.min(0)]],
-      //precioNeto: [this.producto?.precioNeto, [Validators.required, Validators.min(0)]],
-      //precioBrutoRebajado: [this.producto?.precioBrutoRebajado, Validators.min(2)],
-      //precioNetoRabajado: [this.producto?.precioNetoRabajado, Validators.min(3)],
-      //fechaPrecioRebajadoDesde: [this.producto?.fechaPrecioRebajadoDesde],
-      //fechaPrecioRebajadoHasta: [this.producto?.fechaPrecioRebajadoHasta],
-      //imagen: [this.producto?.imagen],
+      //margenGanancia: [pr.margenGanancia, [Validators.required, Validators.min(0)]],
+      //precioNeto: [pr.precioNeto, [Validators.required, Validators.min(0)]],
+      //precioBrutoRebajado: [pr.precioBrutoRebajado, Validators.min(2)],
+      //precioNetoRabajado: [pr.precioNetoRabajado, Validators.min(3)],
+      //fechaPrecioRebajadoDesde: [pr.fechaPrecioRebajadoDesde],
+      //fechaPrecioRebajadoHasta: [pr.fechaPrecioRebajadoHasta],
+      //imagen: [pr.imagen],
 
       margenesGanancia: this.formBuilder.array([], Validators.minLength(1)),
 
       /*       margenesGanancia: this.formBuilder.array([
-              minCantidad: [this.producto?.margenProducto?.minCantidad, Validators.min(1)],
-              maxCantidad: [this.producto?.margenProducto?.maxCantidad],
-              margenGanancia: [this.producto?.margenProducto?.margenGanancia, [Validators.required, Validators.min(1)]],
-              precioNeto: [this.producto?.margenProducto?.precioNeto, [Validators.required, Validators.min(1)]],
+              minCantidad: [pr.margenProducto?.minCantidad, Validators.min(1)],
+              maxCantidad: [pr.margenProducto?.maxCantidad],
+              margenGanancia: [pr.margenProducto?.margenGanancia, [Validators.required, Validators.min(1)]],
+              precioNeto: [pr.margenProducto?.precioNeto, [Validators.required, Validators.min(1)]],
             ], Validators.minLength(1)), */
 
-      activo: [this.producto?.activo],
-      visibleEnTienda: [this.producto?.visibleEnTienda],
+      activo: [pr.activo],
+      visibleEnTienda: [pr.visibleEnTienda],
 
-      categoriaId: [this.producto?.categoria?.id, Validators.required],
-      materialId: [this.producto?.material?.id, Validators.required],
-      colorId: [this.producto?.color?.id, Validators.required],
-      usoId: [this.producto?.uso?.id, Validators.required],
+      categoriaId: [pr.categoria?.id, Validators.required],
+      materialId: [pr.material?.id, Validators.required],
+      colorId: [pr.color?.id, Validators.required],
+      usoId: [pr.uso?.id, Validators.required],
 
     });
 
@@ -191,8 +217,8 @@ export class MantenimientoProductoComponent implements OnInit, AfterViewInit {
   }
 
   defaultMargenProducto() {
-    if (this.producto.margenesProducto.length > 0) {
-      this.producto.margenesProducto.forEach(m => {
+    if (this.producto().margenesProducto.length > 0) {
+      this.producto().margenesProducto.forEach(m => {
         this.agregrarMargenProducto(this.existMargenProducto(m));
       })
     } /*else {
@@ -230,43 +256,47 @@ export class MantenimientoProductoComponent implements OnInit, AfterViewInit {
 
   eliminarMargenProducto(index: number) {
     const id: number = + this.margenesGanancia.controls[index].get('id')?.value
-    if (id) {
+/*     if (id) {
       this.productoService.deleteMargenProducto(id).subscribe(m => {
         this.margenesGanancia.removeAt(index);
       })
-    } else {
+    } else { */
       this.margenesGanancia.removeAt(index);
-    }
+    //}
   }
 
 
   recuperarValForm() {
-    this.producto.nombre = this.formProducto.get('nombre')?.value;
-    this.producto.codigo = this.formProducto.get('codigo')?.value;
-    this.producto.descripcion = this.formProducto.get('descripcion')?.value;
-    this.producto.medidas = this.formProducto.get('medidas')?.value;
-    this.producto.peso = this.formProducto.get('peso')?.value;
-    this.producto.umbralPocaCantidad = this.formProducto.get('umbralPocaCantidad')?.value;
-    this.producto.umbralCantidadAgotada = this.formProducto.get('umbralCantidadAgotada')?.value;
-    this.producto.cantidadStock = this.formProducto.get('cantidadStock')?.value;
-    this.producto.minCantidadPedido = this.formProducto.get('minCantidadPedido')?.value;
-    this.producto.maxCantidadPedido = this.formProducto.get('maxCantidadPedido')?.value;
-    this.producto.gruposDe = this.formProducto.get('gruposDe')?.value;
-    this.producto.costoUnitario = this.formProducto.get('costoUnitario')?.value;
-    //this.producto.costoPersonalizacion = this.formProducto.get('costoPersonalizacion')?.value;
-    this.producto.impuestoIgv = this.formProducto.get('impuestoIgv')?.value;
-    this.producto.margenesProducto = this.margenesGanancia.value
-    //this.producto.precioBrutoRebajado = this.formProducto.get('precioBrutoRebajado')?.value;
-    //this.producto.precioNetoRabajado = this.formProducto.get('precioNetoRabajado')?.value;
-    //this.producto.fechaPrecioRebajadoDesde = this.formProducto.get('fechaPrecioRebajadoDesde')?.value;
-    //this.producto.fechaPrecioRebajadoHasta = this.formProducto.get('fechaPrecioRebajadoHasta')?.value;
-    this.producto.color = find(this.colores, { 'id': +this.formProducto.get('colorId')?.value });
-    this.producto.material = find(this.materiales, { 'id': +this.formProducto.get('materialId')?.value });
-    this.producto.uso = find(this.usos, { 'id': +this.formProducto.get('usoId')?.value });
-    this.producto.categoria = find(this.categorias, { 'id': +this.formProducto.get('categoriaId')?.value });
-    //this.producto.imagen = this.formProducto.get('imagen')?.value;
-    this.producto.activo = this.formProducto.get('activo')?.value;
-    this.producto.visibleEnTienda = this.formProducto.get('visibleEnTienda')?.value;
+    const p = { ...this.producto() };
+
+    p.nombre = this.formProducto.get('nombre')?.value;
+    p.codigo = this.formProducto.get('codigo')?.value;
+    p.descripcion = this.formProducto.get('descripcion')?.value;
+    p.medidas = this.formProducto.get('medidas')?.value;
+    p.peso = this.formProducto.get('peso')?.value;
+    p.umbralPocaCantidad = this.formProducto.get('umbralPocaCantidad')?.value;
+    p.umbralCantidadAgotada = this.formProducto.get('umbralCantidadAgotada')?.value;
+    p.cantidadStock = this.formProducto.get('cantidadStock')?.value;
+    p.minCantidadPedido = this.formProducto.get('minCantidadPedido')?.value;
+    p.maxCantidadPedido = this.formProducto.get('maxCantidadPedido')?.value;
+    p.gruposDe = this.formProducto.get('gruposDe')?.value;
+    p.costoUnitario = this.formProducto.get('costoUnitario')?.value;
+    //p.costoPersonalizacion = this.formProducto.get('costoPersonalizacion')?.value;
+    p.impuestoIgv = this.formProducto.get('impuestoIgv')?.value;
+    p.margenesProducto = this.margenesGanancia.value
+    //p.precioBrutoRebajado = this.formProducto.get('precioBrutoRebajado')?.value;
+    //p.precioNetoRabajado = this.formProducto.get('precioNetoRabajado')?.value;
+    //p.fechaPrecioRebajadoDesde = this.formProducto.get('fechaPrecioRebajadoDesde')?.value;
+    //p.fechaPrecioRebajadoHasta = this.formProducto.get('fechaPrecioRebajadoHasta')?.value;
+    p.color = find(this.colores(), { 'id': +this.formProducto.get('colorId')?.value });
+    p.material = find(this.materiales(), { 'id': +this.formProducto.get('materialId')?.value });
+    p.uso = find(this.usos(), { 'id': +this.formProducto.get('usoId')?.value });
+    p.categoria = find(this.categorias(), { 'id': +this.formProducto.get('categoriaId')?.value });
+    //p.imagen = this.formProducto.get('imagen')?.value;
+    p.activo = this.formProducto.get('activo')?.value;
+    p.visibleEnTienda = this.formProducto.get('visibleEnTienda')?.value;
+    this.producto.set(p);
+
   }
 
   calcularPrecioNeto() {
@@ -301,31 +331,57 @@ export class MantenimientoProductoComponent implements OnInit, AfterViewInit {
   guardarProducto() {
     //console.log("this.formProducto", this.formProducto.value);
     this.recuperarValForm();
-    if (this.producto.margenesProducto.length == 0) {
+    const pr = this.producto()
+
+    if (pr.margenesProducto.length == 0) {
       this.alertService.warning(`Debe agregar margenes al producto`, 'Margenes de ganancia');
       return;
     }
 
-    const costoUnitario: number = + this.producto.costoUnitario;
-    const impuestoIgv: number = + this.producto.impuestoIgv;
+    const costoUnitario: number = + pr.costoUnitario;
+    const impuestoIgv: number = + pr.impuestoIgv;
     const costoMasImpuesto: number = costoUnitario * (100 + impuestoIgv) / 100;
 
-    const tienePrecioInsuficiente = this.producto.margenesProducto
+    const tienePrecioInsuficiente = pr.margenesProducto
       .some(margen => margen.precioNeto < costoMasImpuesto);
     if (tienePrecioInsuficiente) {
       this.alertService.error(`Precio Neto no cubre costo con impuesto. Corregir!`, 'Margenes de ganancia');
       return;
     }
 
-    if (this.producto.id) {
-      this.productoService.updateProducto(this.producto).subscribe(
+    const newPr: any = {
+      ...pr,
+      categoria: pr.categoria
+        ? { ...pr.categoria, productos: [] }
+        : null,
+
+      multimediasProducto: pr.multimediasProducto?.map(mp => ({
+        id: {
+          productoId: pr.id,
+          multimediaId: mp.multimedia.id
+        },
+        visibleEnTienda: mp.visibleEnTienda,
+        esPrincipal: mp.esPrincipal
+      })) ?? [],
+
+      margenesProducto: pr.margenesProducto?.map(m => ({
+        ...m,
+        precioNetoSugerido: Number(m.precioNetoSugerido),
+        precioNeto: Number(m.precioNeto),
+        margen: Number(m.margen)
+      })) ?? []
+    };
+    //debugger;
+    //console.log(JSON.stringify(newPr));
+    if (newPr.id) {
+      this.productoService.updateProducto(newPr).subscribe(
         json => {
           this.alertService.success(`${json?.mensaje}: ${json.producto.nombre}`, 'Producto');
           this.router.navigate(['/productos']);
         }
       )
     } else {
-      this.productoService.createProducto(this.producto).subscribe(resp => {
+      this.productoService.createProducto(newPr).subscribe(resp => {
         this.alertService.success('Producto ha sido creado exitosamente', 'Producto');
         this.router.navigate(['/productos']);
       })
@@ -333,34 +389,48 @@ export class MantenimientoProductoComponent implements OnInit, AfterViewInit {
   }
 
 
-  /*   isImage(fileInput: HTMLInputElement): boolean {
-      return this.mediosUtilsService.isImage(fileInput);
-    } */
+  openDialog(): void {
+    const dialogRef = this.dialog.open(ListMultimediaComponent, {
+      data: {
+        multimediaPrincipal: true,
+      },
+      height: 'auto',
+      disableClose: false
+    });
 
-  subirImagen(fileInput: HTMLInputElement) {
-    if (fileInput && fileInput.files && fileInput.files.length > 0) {
-      const imagen: File = fileInput.files[0];
-      if (imagen.type.indexOf('image') >= 0) {
-        this.mediosUtilsService.subirImagen(imagen, false).subscribe(resp => {
-          this.verImagenProducto = environment.API_URL_VER_IMAGEN + resp.imagen;
-          this.producto.imagen = resp.imagen;
-        })
-      } else {
-        this.alertService.error('El archivo debe ser del tipo imagen', 'Imagen');
-        return;
+    dialogRef.afterClosed().subscribe(result => {
+      let indice = 0;
+      let multimediaProducto: MultimediaProducto = new MultimediaProducto();
+      let lstMultimediaProducto: MultimediaProducto[] = [];
+      for (const multimedia of result) {
+        multimediaProducto.multimedia = multimedia
+        multimediaProducto.esPrincipal = false;
+        multimediaProducto.visibleEnTienda = true;
+
+        if (indice === 0) { multimediaProducto.esPrincipal = true; }
+        lstMultimediaProducto = [...lstMultimediaProducto, { ...multimediaProducto }];
+        indice++;
       }
-
-    }
+      console.log(result);
+      this.multimediaProductoToProducto(lstMultimediaProducto);
+    });
   }
 
 
-  cargarDatosAuxiliares(): void {
-    this.productoService.getColoresProducto().subscribe(resp => this.colores = resp);
-    this.productoService.getMaterialesProducto().subscribe(resp => this.materiales = resp);
-    this.categoriaService.getCategoriasProducto().subscribe(resp => this.categorias = resp);
-    this.productoService.getUsosInternoProducto().subscribe(resp => this.usos = resp);
+  /*   cargarDatosAuxiliares(): void {
+      this.productoService.getColoresProducto()
+        .subscribe(resp => this.colores.set(resp));
 
-  }
+      this.productoService.getMaterialesProducto()
+        .subscribe(resp => this.materiales.set(resp));
+
+      this.categoriaService.getCategoriasProducto()
+        .subscribe(resp => this.categorias.set(resp));
+
+      this.productoService.getUsosInternoProducto()
+        .subscribe(resp => this.usos.set(resp));
+
+    } */
 
 
 

@@ -1,19 +1,6 @@
 <div class="row mt-2">
-  <!--   <div class="col-6">
- -->
   <h3>{{titulo}}</h3>
-
-  <!--   </div>
-  <div class="col-6 d-flex flex-row justify-content-end">
-    <button type="button" class="btn btn-success" [routerLink]="['/pedidos/listado-ventas']">
-      Volver
-    </button>
-  </div> -->
 </div>
-
-<!-- <mat-card-content class="d-flex flex-column">
- -->
-
 <div class="row">
   <div class="col-12 col-sm-6">
     <ul class="list-group my-2">
@@ -29,7 +16,7 @@
           <span class="cabecera">Sub total:</span> {{item.importe| currency: 'PEN'}}<br>
         </div>
         <div>
-          <img [src]="API_URL_VER_IMAGEN+item.imagen" width="100" alt={{item.imagen}} />
+          <img [src]="item.imagenShow" width="100" alt={{item.producto.nombre}} />
         </div>
       </li>
     </ul>

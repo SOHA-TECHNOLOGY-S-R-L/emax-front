@@ -25,7 +25,7 @@ import { SearchBoxTableComponent } from '../../compartido/search-box-table/searc
 })
 export class PersonasComponent implements OnInit, AfterViewInit {
 
-  displayedColumns: string[] = ['nomApellRz', 'createAt', 'numeroDocumento', 'celular', 'tipoPersona',  'acciones'];
+  displayedColumns: string[] = ['nomApellRz', 'numeroDocumento', 'celular',  'acciones'];
   //dataSource!: MatTableDataSource<Persona>;
   dataSource: Persona[] = [];
   //personas: Persona[]=[];

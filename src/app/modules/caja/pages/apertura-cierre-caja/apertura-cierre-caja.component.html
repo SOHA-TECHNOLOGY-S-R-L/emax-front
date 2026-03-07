@@ -44,7 +44,7 @@
         </mat-form-field>
 
         <div class="d-flex justify-content-end">
-          <button *ngIf="!cajaActiva && authService.hasRole('ROLE_OPEN_CJU')" (click)="abrirCaja()" mat-raised-button
+          <button *ngIf="!cajaActiva && authService.hasRole('ROLE_CLOSE_CJU')" (click)="abrirCaja()" mat-raised-button
             color="primary">Abrir CAJA</button>
           <button *ngIf="cajaActiva && authService.hasRole('ROLE_CLOSE_CJU')" (click)="cerrarCaja()" mat-raised-button
             color="primary">Cerrar CAJA</button>

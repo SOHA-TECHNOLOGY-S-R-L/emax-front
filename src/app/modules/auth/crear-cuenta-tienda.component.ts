@@ -131,7 +131,7 @@ export class CrearCuentaTiendaComponent {
 
     this.setValueControls()
     this.persona.pedidos = [];
-    this.personaService.update(this.persona)
+    this.personaService.update(this.persona.id, this.persona)
       .subscribe(
         json => {
           this.alertService.success(`${json?.mensaje}`, 'Cliente Actualizado')

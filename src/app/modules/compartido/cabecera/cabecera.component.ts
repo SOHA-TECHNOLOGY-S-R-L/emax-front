@@ -17,9 +17,9 @@ export class CabeceraComponent implements OnInit {
   @Output()
   clickMenuEvent = new EventEmitter<any>();
 
-  private activateRoute = inject(ActivatedRoute)
+  //private activateRoute = inject(ActivatedRoute)
   public authService = inject(AuthService)
-  public whatsapp!: string;
+  //public whatsapp!: string;
   modoTienda!: boolean;
 
   constructor() { }
@@ -33,9 +33,9 @@ export class CabeceraComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.genericosService.getGenericos().subscribe(resp => {
+/*     this.genericosService.getGenericos().subscribe(resp => {
       this.whatsapp = resp.filter( g => g.codigo === "WHATSAPP")[0].valor1;
-    })
+    }) */
   }
 
 }

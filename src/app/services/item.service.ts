@@ -32,131 +32,202 @@ export class ItemService {
 
   //adiciona cantidad a un item especifico de un array de items
   addItemtoItems(items: Array<ItemPedido>, productoId: number, cantidad: number): Array<ItemPedido> {
-    return items = items.map((item: ItemPedido) => {
-      //if (productoId === item.producto.id) {
-      // ++item.cantidad;
-      item.cantidad = cantidad;
-      //item.importe = cantidad * item.producto.precioNeto;
-      //}
-      return item;
-    });
-
-    //     this.items = [...this.items, { ...item }];
-
+    /*     return items = items.map((item: ItemPedido) => {
+          item.cantidad = cantidad;
+          return item;
+        });
+           */
+    return items.map(item =>
+      item.producto.id === productoId
+        ? { ...item, cantidad }
+        : item
+    );
   }
 
   UpdateAmountItemFromItems(items: Array<ItemPedido>, productoId: number, cantidad: number): Array<ItemPedido> {
-    if (cantidad == 0) {
+    /*     if (cantidad == 0) {
+          return this.deleteItemFromItems(items, productoId);
+        }
+        items = items.map((item: ItemPedido) => {
+          if (productoId === item.producto.id) {
+            item.cantidad = cantidad;
+          }
+          return item;
+        });
+
+        return items */
+    if (cantidad === 0) {
       return this.deleteItemFromItems(items, productoId);
     }
-    items = items.map((item: ItemPedido) => {
-      if (productoId === item.producto.id) {
-        item.cantidad = cantidad;
-      }
-      return item;
-    });
 
-    return items
+    return items.map(item =>
+      item.producto.id === productoId
+        ? { ...item, cantidad }
+        : item
+    );
   }
 
   UpdateAmountItemFromItemsProveedor(items: Array<ItemPedido>, productoId: number, cantidad: number): Array<ItemPedido> {
-    if (cantidad == 0) {
+    /*     if (cantidad == 0) {
+          return this.deleteItemFromItems(items, productoId);
+        }
+        items = items.map((item: ItemPedido) => {
+          if (productoId === item.producto.id) {
+            item.cantidad = cantidad;
+          }
+          return item;
+        });
+
+        return items */
+    if (cantidad === 0) {
       return this.deleteItemFromItems(items, productoId);
     }
-    items = items.map((item: ItemPedido) => {
-      if (productoId === item.producto.id) {
-        item.cantidad = cantidad;
-        //item.importe = item.producto.costoUnitario;
-      }
-      return item;
-    });
 
-    return items
+    return items.map(item =>
+      item.producto.id === productoId
+        ? { ...item, cantidad }
+        : item
+    );
   }
 
   UpdateCostItemFromItemsProveedor(items: Array<ItemPedido>, productoId: number, costo: number): Array<ItemPedido> {
-    items = items.map((item: ItemPedido) => {
-      if (productoId === item.producto.id) {
-        item.importe = costo;
-      }
-      return item;
-    });
-
-    return items
+    return items.map(item =>
+      item.producto.id === productoId
+        ? { ...item, importe: costo }
+        : item
+    );
   }
 
   UpdatePrecioItemFromItemsCliete(items: Array<ItemPedido>, productoId: number, precio: number): Array<ItemPedido> {
-    items = items.map((item: ItemPedido) => {
-      if (productoId === item.producto.id) {
-        item.importe = precio;
-      }
-      return item;
-    });
+    /*     items = items.map((item: ItemPedido) => {
+          if (productoId === item.producto.id) {
+            item.importe = precio;
+          }
+          return item;
+        });
 
-    return items
+        return items */
+    return items.map(item =>
+      item.producto.id === productoId
+        ? { ...item, importe: precio }
+        : item
+    );
   }
 
   UpdateDescripcionItemFromItemsCliete(items: Array<ItemPedido>, productoId: number, descripcion: string): Array<ItemPedido> {
-    items = items.map((item: ItemPedido) => {
-      if (productoId === item.producto.id) {
-        item.descripcion = descripcion;
-      }
-      return item;
-    });
+    /*     items = items.map((item: ItemPedido) => {
+          if (productoId === item.producto.id) {
+            item.descripcion = descripcion;
+          }
+          return item;
+        });
 
-    return items
+        return items */
+    return items.map(item =>
+      item.producto.id === productoId
+        ? { ...item, descripcion }
+        : item
+    );
   }
 
   UpdateAmountItemFromExterno(items: Array<ItemPedido>, productoId: number, cantidad: number): Array<ItemPedido> {
-    items = items.map((item: ItemPedido) => {
-      if (productoId === item.producto.id) {
-        item.cantidad += cantidad;
-        //si excede la cantidad maxima del pedido lo quita
-        if (item.cantidad > item.producto.maxCantidadPedido) {
-          item.cantidad -= cantidad;
-        }
-      }
-      return item;
-    });
+    /*     items = items.map((item: ItemPedido) => {
+          if (productoId === item.producto.id) {
+            item.cantidad += cantidad;
+            if (item.cantidad > item.producto.maxCantidadPedido) {
+              item.cantidad -= cantidad;
+            }
+          }
+          return item;
+        });
+        return items */
+    return items.map(item => {
 
-    return items
+      if (item.producto.id !== productoId) {
+        return item;
+      }
+
+      const nuevaCantidad = item.cantidad + cantidad;
+
+      if (nuevaCantidad > item.producto.maxCantidadPedido) {
+        return item;
+      }
+
+      return {
+        ...item,
+        cantidad: nuevaCantidad
+      };
+    });
   }
 
-  UpdateImageItemFromExterno(items: Array<ItemPedido>, productoId: number, imagen: string): Array<ItemPedido> {
-    items = items.map((item: ItemPedido) => {
-      if (productoId === item.producto.id) {
-        item.imagen = imagen;
-      }
-      return item;
-    });
+  /*  UpdateImageItemFromExterno(items: Array<ItemPedido>, productoId: number, imagen: string): Array<ItemPedido> {
+     items = items.map((item: ItemPedido) => {
+       if (productoId === item.producto.id) {
+         item.imagen = imagen;
+       }
+       return item;
+     });
 
-    return items
-  }
+     return items
+   } */
 
 
   deleteItemFromItems(items: Array<ItemPedido>, productoId: number): Array<ItemPedido> {
-    const indice = findIndex(items, (item: ItemPedido) => item.producto.id === productoId);
-    //return items = items.filter((item: ItemPedido) => productoId !== item.producto.id);
-    return items.splice(indice, 1) ? items : [];
+    //const indice = findIndex(items, (item: ItemPedido) => item.producto.id === productoId);
+    //return items.splice(indice, 1) ? items : [];
+    return items.filter(item => item.producto.id !== productoId);
+
   }
 
   importePorMargenCantidad(items: ItemPedido[]) {
+    console.log('aqui', items)
     return items.map(item => {
+
+      let precioAplicado = 0;
       for (let margen of item.producto.margenesProducto) {
-        if (margen.maxCantidad &&
-          (item.cantidad >= margen.minCantidad) &&
-          (item.cantidad <= margen.maxCantidad)) {
-          item.producto.precioNetoNumberShow = margen.precioNeto;
-          item.importe = item.cantidad * margen.precioNeto;
+        if (
+          margen.maxCantidad &&
+          item.cantidad >= margen.minCantidad &&
+          item.cantidad <= margen.maxCantidad
+        ) {
+          precioAplicado = margen.precioNeto;
         }
-        if (!margen.maxCantidad &&
-          (item.cantidad >= margen.minCantidad)) {
-          item.producto.precioNetoNumberShow = margen.precioNeto;
-          item.importe = item.cantidad * margen.precioNeto;
+
+        if (
+          !margen.maxCantidad &&
+          item.cantidad >= margen.minCantidad
+        ) {
+          precioAplicado = margen.precioNeto;
         }
       }
-      return item;
-    })
+
+      return {
+        ...item,
+        importe: item.cantidad * precioAplicado,
+        producto: {
+          ...item.producto,
+          precioMasBajoProductoShow: precioAplicado
+        }
+      };
+    });
+    /*
+        console.log("aqui",items);
+        return items.map(item => {
+          for (let margen of item.producto.margenesProducto) {
+            if (margen.maxCantidad &&
+              (item.cantidad >= margen.minCantidad) &&
+              (item.cantidad <= margen.maxCantidad)) {
+              item.producto.precioMasBajoProductoShow = margen.precioNeto;
+              item.importe = item.cantidad * margen.precioNeto;
+            }
+            if (!margen.maxCantidad &&
+              (item.cantidad >= margen.minCantidad)) {
+              item.producto.precioMasBajoProductoShow = margen.precioNeto;
+              item.importe = item.cantidad * margen.precioNeto;
+            }
+          }
+          return item;
+        }) */
   }
 
   //cacula el total del un array de tipo items

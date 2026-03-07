@@ -23,7 +23,7 @@
                         <td><button type="button" mat-icon-button color="warn" (click)="$event.stopPropagation(); eliminarItemPedido(item.producto.id)"
                                 matTooltip="Elimnar item"><mat-icon>delete</mat-icon></button></td>
                         <td>
-                            <img [src]="item.imagen" width="86" alt={{item.imagen}} />
+                            <img [src]="item.imagenShow" width="86" alt={{item.producto.nombre}} />
                         </td>
                         <td><a
                           [routerLink]="['/tienda/productos-categoria', item.producto.categoria?.nombre, 'item-producto-persona-online',item.producto.codigo]"

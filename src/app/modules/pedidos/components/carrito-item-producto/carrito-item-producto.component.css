@@ -16,3 +16,10 @@ input[type="number"] {
   align-items: center;
   justify-content: center;
 }
+
+.texto-recortado {
+  width: 210px;           /* El contenedor debe tener un ancho definido */
+  white-space: wrap;    /* Evita que el texto salte a la siguiente línea */
+  overflow: hidden;       /* Esconde el texto que sobra */
+  text-overflow: ellipsis; /* Agrega los puntos suspensivos (...) */
+}

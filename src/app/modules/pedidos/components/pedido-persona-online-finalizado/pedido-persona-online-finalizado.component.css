@@ -1,6 +1,7 @@
 .icon-square {
-/*   background-color: #fff;
- */  padding: 10px;
+  /*   background-color: #fff;
+ */
+  padding: 10px;
   border-radius: 6px;
   font-size: 16px;
   display: inline-flex;
@@ -15,7 +16,13 @@
 }
 
 #itemsPedidoOnlineFinalizadoToMovil {
-    display: none;
+  display: none;
+}
+
+.text-bold-italic {
+  font-style: italic;
+  font-weight: bolder;
+  color: darkblue;
 }
 
 
@@ -26,8 +33,7 @@
     display: none;
   }
 
-#itemsPedidoOnlineFinalizadoToMovil {
-    display:block;
+  #itemsPedidoOnlineFinalizadoToMovil {
+    display: block;
+  }
 }
-}
-

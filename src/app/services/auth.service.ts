@@ -1,16 +1,105 @@
-import { Injectable } from '@angular/core';
+import { computed, inject, Injectable, PLATFORM_ID, signal } from '@angular/core';
 import { Observable } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Usuario } from '../models/usuario';
-import { findIndex } from 'lodash-es';
+import { findIndex, includes } from 'lodash-es';
 import { environment } from '../../environments/environment';
+import { isPlatformBrowser } from '@angular/common';
+import { Role } from '../models/role';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
+  private platformId = inject(PLATFORM_ID);
+  private isBrowser = isPlatformBrowser(this.platformId);
 
-  private _usuario!: Usuario |null;
+  private _usuario = signal<Usuario | null>(null);
+  private _token = signal<string | null>(null);
+
+  constructor(private http: HttpClient) {
+    if (this.isBrowser) {
+      this.restoreSession();
+    }
+  }
+
+  readonly usuario = computed(() => this._usuario());
+  readonly token = computed(() => this._token());
+
+  readonly roles = computed(() =>
+    this._usuario()?.roles ?? []
+  );
+
+  readonly isAuthenticated = computed(() => {
+    const token = this._token();
+    if (!token) return false;
+
+    const payload = this.obtenerDatosToken(token);
+    return !!payload?.username;
+  });
+
+  login(usuario: Usuario) {
+    return this.http.post<any>(environment.apiLogin, usuario);
+  }
+
+  guardarUsuario(accessToken: string): void {
+    const payload = this.obtenerDatosToken(accessToken);
+
+    const user = new Usuario();
+    user.id = payload.id;
+    user.username = payload.username;
+    user.roles = payload.authorities as Role[];
+
+    this._usuario.set(user);
+    if (this.isBrowser) {
+      sessionStorage.setItem('usuario', JSON.stringify(user));
+    }
+  }
+
+  guardarToken(accessToken: string): void {
+    this._token.set(accessToken);
+    if (this.isBrowser) {
+      sessionStorage.setItem('token', accessToken);
+    }
+  }
+
+  hasRole(role: string) {
+    const user = this._usuario();
+    if (!user?.roles) return false;
+    return user.roles.toString().includes(role);
+  }
+
+
+  hasAnyRole(...roles: string[]) {
+      const userRoles = this._usuario()?.roles ? this._usuario()?.roles.toString() : "";
+      if (!userRoles) return false
+      return roles.some(r => userRoles.includes(r));
+  }
+
+  logout(): void {
+    this._usuario.set(null);
+    this._token.set(null);
+    sessionStorage.clear();
+  }
+
+  // -------------------------
+
+  private restoreSession() {
+    const token = sessionStorage.getItem('token');
+    const usuario = sessionStorage.getItem('usuario');
+
+    if (token) this._token.set(token);
+    if (usuario) this._usuario.set(JSON.parse(usuario));
+  }
+
+  obtenerDatosToken(accessToken: string | null): any {
+    if (!accessToken) return null;
+    return JSON.parse(atob(accessToken.split('.')[1]));
+  }
+
+
+
+  /* private _usuario!: Usuario |null;
   private _token!: string | null;
 
   constructor(private http: HttpClient) { }
@@ -18,20 +107,14 @@ export class AuthService {
   public get usuario(): Usuario {
     if (this._usuario != null) {
       return this._usuario;
-    } /*else if (this._usuario == null && sessionStorage.getItem('usuario') != null) {
-      this._usuario = JSON.parse(sessionStorage.getItem('usuario')!) as Usuario;
-      return this._usuario;
-    }*/
+    }
     return new Usuario();
   }
 
   public get token(): string | null {
     if (this._token != null) {
       return this._token;
-    } /* else if (this._token == null && sessionStorage.getItem('token') != null) {
-      this._token = sessionStorage.getItem('token');
-      return this._token;
-    } */
+    }
     return null;
   }
 
@@ -43,12 +126,8 @@ export class AuthService {
     let payload = this.obtenerDatosToken(accessToken);
     this._usuario = new Usuario();
     this._usuario.id = payload.id;
-    //this._usuario.nombre = payload.nombre;
-    //this._usuario.apellido = payload.apellido;
-    //this._usuario.email = payload.email;
     this._usuario.username = payload.username;
     this._usuario.roles = payload.authorities;
-    //this._usuario.authorities = payload.authorities;
     sessionStorage.setItem('usuario', JSON.stringify(this._usuario));
   }
 
@@ -87,5 +166,5 @@ export class AuthService {
     sessionStorage.clear();
     sessionStorage.removeItem('token');
     sessionStorage.removeItem('usuario');
-  }
+  } */
 }

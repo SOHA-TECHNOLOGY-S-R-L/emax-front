@@ -25,10 +25,10 @@
             <td mat-cell *matCellDef="let element"> {{element.nomApellRz}} </td>
           </ng-container>
 
-          <ng-container matColumnDef="createAt">
+<!--           <ng-container matColumnDef="createAt">
             <th mat-header-cell *matHeaderCellDef mat-sort-header> Fecha creacion </th>
             <td mat-cell *matCellDef="let element"> {{element.createAt | date: 'dd/MM/yyyy HH:mm:ss' }} </td>
-          </ng-container>
+          </ng-container> -->
 
           <ng-container matColumnDef="numeroDocumento">
             <th mat-header-cell *matHeaderCellDef> Documento </th>
@@ -40,10 +40,10 @@
             <td mat-cell *matCellDef="let element"> {{element.celular}} </td>
           </ng-container>
 
-          <ng-container matColumnDef="tipoPersona">
+<!--           <ng-container matColumnDef="tipoPersona">
             <th mat-header-cell *matHeaderCellDef> Tipo Persona </th>
             <td mat-cell *matCellDef="let element"> {{element.tipoPersona.persona }} </td>
-          </ng-container>
+          </ng-container> -->
 
           <ng-container matColumnDef="acciones">
             <th mat-header-cell *matHeaderCellDef> Acciones </th>
@@ -62,10 +62,10 @@
                   [routerLink]="['/pedidos/item-producto-proveedor-tienda', element.id]" matTooltip="Compra proveedor">
                   <mat-icon>dashboard_customize</mat-icon>
                 </button>
-                <button mat-icon-button color="primary" *ngIf="authService.hasRole('ROLE_CREATE_VENTA')"
+<!--                 <button mat-icon-button color="primary" *ngIf="authService.hasRole('ROLE_REGISTER_VENTA')"
                   [routerLink]="['/pedidos/item-producto-persona-tienda', element.id]" matTooltip="Venta a cliente">
                   <mat-icon>shopping_cart</mat-icon>
-                </button>
+                </button> -->
               </div>
             </td>
           </ng-container>

@@ -1,197 +1,139 @@
-import { StringToTitleWithAccents } from './../../../../pipes/StringToTitleWithAccents.pipe';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { CommonModule, UpperCasePipe } from '@angular/common';
-import { Component, inject, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { Component, computed, effect, EventEmitter, inject, input, Output, Signal } from '@angular/core';
+import { rxResource, toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute, RouterModule } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { RouterModule } from '@angular/router';
+import { map } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
 import { COLOR_ESTADO_PRODUCTO } from '../../../../constants/color-estado-producto';
-import { SERVICIO_GRABADO_IMAGEN } from '../../../../constants/constantes';
 import { ItemPedido } from '../../../../models/item-pedido';
 import { Producto } from '../../../../models/producto';
 import { AuthService } from '../../../../services/auth.service';
 import { ItemService } from '../../../../services/item.service';
-import { MediosUtilsService } from '../../../../services/medios-utils.service';
-import { ProductoService } from '../../../../services/producto.service';
+import { MultimediaHttpService } from '../../../../services/multimedia-http.service';
 import { ChatUtils } from '../../../../utils/chat-utils';
 import { FormUtils } from '../../../../utils/form-utils';
 import { AngularMaterialModule } from '../../../compartido/angular-material.module';
-import { AlertService } from './../../../../services/alert.service';
+import { VerMultimediaProductoComponent } from "../../../compartido/ver-multimedia-producto/ver-multimedia-producto.component";
+import { MultimediaProductoService } from './../../../../services/multimedia-producto.service';
 
 @Component({
   selector: 'customize-item-producto-to-client',
   templateUrl: './customize-item-producto-to-client.component.html',
   styleUrl: './customize-item-producto-to-client.component.css',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, ReactiveFormsModule, AngularMaterialModule, StringToTitleWithAccents, UpperCasePipe]
+  imports: [CommonModule, RouterModule, FormsModule, ReactiveFormsModule, AngularMaterialModule, UpperCasePipe, VerMultimediaProductoComponent]
 
 })
-export class CustomizeItemProductoToClientComponent implements OnInit, OnChanges {
-  public mediosUtilsService = inject(MediosUtilsService);
+export class CustomizeItemProductoToClientComponent {
+  public multimediaHttpService = inject(MultimediaHttpService);
+  private multimediaProductoService = inject(MultimediaProductoService);
   private formBuilder = inject(FormBuilder);
-  private productoService = inject(ProductoService);
   private itemService = inject(ItemService);
-  private activatedRoute = inject(ActivatedRoute);
   public authService = inject(AuthService);
-  private alertService = inject(AlertService);
+  private breakpointObserver = inject(BreakpointObserver);
 
-  @Input() producto!: Producto;
+  //readonly dialog = inject(MatDialog);
 
-  itemServiceSuscription$!: Subscription;
-  formUtils = FormUtils;
-  chatUtils = ChatUtils;
-  verImagenProducto!: string;
-  //verImagenItem!: string;
-  servicioGrabadoImagen!: Producto;
+  @Output() clickVerCarrito = new EventEmitter();
 
+  producto = input.required<Producto>();
+  gruposDe = computed(() => this.producto().gruposDe);
+  minCantidadPedido = computed(() => this.producto().minCantidadPedido);
+  maxCantidadPedido = computed(() => this.producto().maxCantidadPedido);
+  estadoProductoColor = computed(() => COLOR_ESTADO_PRODUCTO[('' + this.producto().estadoProducto.id) as keyof typeof COLOR_ESTADO_PRODUCTO])
+  API_URL_VER_IMAGEN = environment.API_URL_VER_IMAGEN;
+
+  readonly multimediasFromProducto = rxResource({
+    params: () => {
+      const p = this.producto();
+      return { productoId: p.id };
+    },
+    stream: ({ params }) =>
+      this.multimediaProductoService.multimediasProductoByProductoId(
+        params.productoId
+      ),
+  });
+
+  setCantidad = effect(() => {
+    const producto = this.producto();
+    if (!producto) return;
+    this.frm.get('cantidad')!.setValue(this.minCantidadPedido());
+  });
+
+  //itemServiceSuscription$!: Subscription;
   item = new ItemPedido()
-  items: ItemPedido[] = [];
-  gruposDe!: number;
-  minCantidadPedido!: number;
-  maxCantidadPedido!: number;
-  isGrabarImagen!: boolean;
+
+  readonly items = toSignal(
+    this.itemService.getItems(),
+    { initialValue: [] }
+  );
 
   frm = this.formBuilder.group({
-    imagenProducto: ['no-imagen.png'],
+    // imagenProducto: [],
     descripcion: [''],
     cantidad: [0]
-    //isGrabarImagen: [false]
   })
-  constructor() {
-    this.itemServiceSuscription$ = this.itemService.getItems().subscribe({
-      next: items => {
-        this.items = items;
-      },
-      error: error => {
-        console.error('Error al obtener el item:', error);
-      }
-    })
-  }
 
-  ngOnInit(): void {
-    this.productoService.getProductoByCod(SERVICIO_GRABADO_IMAGEN).subscribe(prd => {
-      this.servicioGrabadoImagen = prd;
-    });
-  }
+  // Creamos un Signal (Angular Moderno) que nos diga si es móvil
+  // Detecta Handset (celulares) en Portrait o Landscape
+  public isMobile: Signal<boolean> = toSignal(
+    this.breakpointObserver
+      .observe([Breakpoints.Handset])
+      .pipe(map(result => result.matches)),
+    { initialValue: false }
+  );
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['producto'].currentValue != changes['producto'].previousValue) {
-      this.producto.estadoProducto.color = COLOR_ESTADO_PRODUCTO[('' + this.producto.estadoProducto.id) as keyof typeof COLOR_ESTADO_PRODUCTO];
-      this.gruposDe = this.producto.gruposDe
-      this.minCantidadPedido = this.producto.minCantidadPedido
-      this.maxCantidadPedido = this.producto.maxCantidadPedido
-      this.verImagenProducto = environment.API_URL_VER_IMAGEN + this.producto.imagen;
-      //this.verImagenItem = environment.API_URL_VER_IMAGEN + this.item.imagen;
-      this.frm.get('cantidad')?.setValue(this.minCantidadPedido);
-    }
-  }
+  formUtils = FormUtils;
+  chatUtils = ChatUtils;
+
+
+  constructor() { }
 
   isAuthenticated(): boolean {
     return this.authService.isAuthenticated();
   }
 
-  subirImagenToProducto(fileInput: HTMLInputElement) {
-    if (fileInput && fileInput.files && fileInput.files.length > 0) {
-      const imagen: File = fileInput.files[0];
-      if (imagen.type.indexOf('image') >= 0) {
-        this.mediosUtilsService.subirImagen(imagen, true).subscribe(resp => {
-          this.frm.get('imagenProducto')?.setValue(resp.imagen);
-          this.alertService.success("Se ha subido la imágen correctamente","Imágen");
-          //error('El archivo debe ser del tipo imagen', 'Imagen');
-          //this.verImagenItem = environment.API_URL_VER_IMAGEN + resp.imagen;
-        })
-      } else {
-        this.alertService.error('El archivo debe ser del tipo imagen', 'Imagen');
-        return;
-      }
-    }
-  }
-
-
-  addOneItemServicioGrabadoImagen2() {
-
-    this.item.cantidad = (this.frm.get('cantidad')?.value ? this.frm.get('cantidad')?.value : 0)!;
-    this.item.descripcion = this.servicioGrabadoImagen.descripcion;
-    this.item.producto = { ...this.servicioGrabadoImagen };
-    this.item.imagen = this.frm.get('imagenProducto')!.value!
-    if (this.itemService.existItemInItems(this.items, this.item.producto.id)) {
-      this.items = this.itemService.UpdateAmountItemFromExterno(this.items, this.item.producto.id, this.item.cantidad);
-      this.items = this.itemService.UpdateImageItemFromExterno(this.items, this.item.producto.id, this.item.imagen);
-      this.itemService.setItems(this.items);
-      //this.itemService.saveLocalStorageItems(this.items);
-    }
-    else if (this.item.cantidad <= this.item.producto.maxCantidadPedido) {
-      this.items = [...this.items, { ...this.item }];
-      this.addItem(this.items, this.item);
-    }
-  }
-
-  /*   addOneItemServicioGrabadoImagen() {
-      if (this.isGrabarImagen) {
-        this.item.cantidad = (this.frm.get('cantidad')?.value ? this.frm.get('cantidad')?.value : 0)!;
-        this.item.descripcion = this.servicioGrabadoImagen.descripcion;
-        this.item.producto = { ...this.servicioGrabadoImagen };
-        this.item.imagenUri = environment.API_URL_VER_IMAGEN + this.item.imagen
-
-        if (!this.itemService.existItemInItems(this.items, this.item.producto.id)
-          && this.item.cantidad <= this.item.producto.maxCantidadPedido) {
-          this.items = [...this.items, { ...this.item }];
-          this.itemService.setItems(this.items);
-        }
-      }
-    } */
-
   deleteItem(items: ItemPedido[], productoId: number) {
-    this.items = this.itemService.deleteItemFromItems(items, productoId);
-    this.itemService.setItems(items);
+    this.itemService.setItems(this.itemService.deleteItemFromItems(items, productoId));
     //this.itemService.saveLocalStorageItems(items);
   }
 
   addItem(items: ItemPedido[], item: ItemPedido) {
-    this.items = [...items, { ...item }];
-    this.itemService.setItems(items);
+    this.itemService.setItems([...items, { ...item }])
     //this.itemService.saveLocalStorageItems(items);
   }
 
   sendOneItemProducto() {
-    this.item.cantidad = (this.frm.get('cantidad')?.value ? this.frm.get('cantidad')?.value : 0)!;
-    this.item.descripcion = (this.frm.get('descripcion')?.value ? this.frm.get('descripcion')?.value : '')!;
-    this.item.producto = { ...this.producto };
-    this.item.imagen = this.producto.imagen;
-    //this.item.imagenUri = environment.API_URL_VER_IMAGEN + this.item.imagen
-    if (this.itemService.existItemInItems(this.items, this.item.producto.id)) {
-      this.items = this.itemService.UpdateAmountItemFromExterno(this.items, this.item.producto.id, this.item.cantidad);
-      // this.items = this.itemService.UpdateImageItemFromExterno(this.items, this.item.producto.id, this.item.imagen);
-      this.itemService.setItems(this.items);
+    const items = this.items();
+    const mp = this.multimediasFromProducto.value()
+    if (!mp) {
+      this.item.imagenShow = 'no-imagen.png'
+    }
+    else {
+      //para item siempre se muestra una imagen y no video
+      const primerElemento = mp.find(mp => mp.multimedia.mimeType.startsWith('image'))
+      this.item.imagenShow = primerElemento ? this.API_URL_VER_IMAGEN.concat(primerElemento.multimedia.nombre) : 'no-imagen.png';
+    }
+    this.item.cantidad = this.frm.get('cantidad')!.value ?? 0;
+    this.item.descripcion = this.frm.get('descripcion')!.value ?? '';
+    if (this.itemService.existItemInItems(items, this.producto().id)) {
+      this.itemService.setItems(
+        this.itemService.UpdateAmountItemFromExterno(items, this.producto().id, this.item.cantidad)
+      );
       //this.itemService.saveLocalStorageItems(this.items);
-    }
-    else if (this.item.cantidad <= this.item.producto.maxCantidadPedido) {
-      this.items = [...this.items, { ...this.item }];
-      this.addItem(this.items, this.item);
-    }
 
-    // esta parte vamos a rehacer para adicionar un servicio por cada producto seleccionado
-    if (this.isGrabarImagen) {
-      this.addOneItemServicioGrabadoImagen2();
-    }
-  }
-
-  deleteImageToProduct(imagen: string) {
-    this.mediosUtilsService.eliminarImagen(imagen).subscribe(resp => {
-      //this.verImagenItem = environment.API_URL_VER_IMAGEN + 'no-imagen.png';
-      this.frm.get('imagenProducto')!.setValue('no-imagen.png');
-    });
-
-  }
-
-  checkImagenToProduct(event: any) {
-    this.isGrabarImagen = event.target.checked;
-    if (!this.isGrabarImagen) {
-      this.deleteItem(this.items, this.servicioGrabadoImagen.id);
-      const nombreImagenUpload = this.frm.get('imagenProducto')!.value!;
-      if (nombreImagenUpload != 'no-imagen.png') {
-        this.deleteImageToProduct(nombreImagenUpload);
+    } else if (this.item.cantidad <= this.producto().maxCantidadPedido) {
+      const item = {
+        ...this.item,
+        producto: this.producto()
       }
+      this.itemService.setItems([...items, { ...item }]);
+    } else { return }
+
+    if (this.isMobile()) {
+      this.clickVerCarrito.emit()
     }
   }
 
@@ -199,12 +141,4 @@ export class CustomizeItemProductoToClientComponent implements OnInit, OnChanges
     const url = encodeURI(`${environment.apiFront}/tienda/productos-categoria/${producto.categoria?.nombre}/item-producto-persona-online/${producto.codigo}`);
     this.chatUtils.infoFromEmpleadoVenta(url);
   }
-
-  ngOnDestroy(): void {
-    if (this.itemServiceSuscription$) {
-      this.itemServiceSuscription$.unsubscribe();
-    }
-  }
-
-
 }

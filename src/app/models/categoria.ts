@@ -1,10 +1,10 @@
+import { Multimedia } from "./multimedia";
 import { Producto } from "./producto";
 
 export class Categoria {
   id!: number;
   nombre!: string;
   descripcion!: string;
-  imagen: string = 'no-imagen.png';
   activa!: boolean
   visibleEnTienda!: boolean
   colorActiva!: string;
@@ -12,4 +12,5 @@ export class Categoria {
   orden!: number;
   productos: Producto[] = [];
   cantidadProductos!: number;
+  multimedia!: Multimedia;
 }

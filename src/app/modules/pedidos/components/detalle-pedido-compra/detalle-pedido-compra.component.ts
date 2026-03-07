@@ -30,7 +30,17 @@ export class DetallePedidoCompraComponent implements OnInit {
     this.activatedRoute.paramMap.subscribe(params => {
       let pedidoId = +params.get('pedidoId')!;
       this.pedidoService.getPedido(pedidoId).subscribe(pedido => {
-        this.pedido = pedido
+        const newItems = pedido.items.map(item => {
+          const mp = item.producto.multimediasProducto;
+          if (!mp) {
+            item.imagenShow = 'no-imagen.png'
+          } else {
+            const primerElemento = mp.find(mp => mp.multimedia.mimeType.startsWith('image'))
+            item.imagenShow = primerElemento ? this.API_URL_VER_IMAGEN.concat(primerElemento.multimedia.nombre) : 'no-imagen.png';
+          }
+          return item;
+        });
+        this.pedido = { ...pedido, items: newItems };
 
       });
     });

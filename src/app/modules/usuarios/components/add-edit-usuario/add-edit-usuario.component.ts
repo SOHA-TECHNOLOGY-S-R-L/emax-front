@@ -118,8 +118,8 @@ export class AddEditUsuarioComponent {
       tipoPersonaId: [this.frmDefault.tipoPersonaId, Validators.required],
 
 
-      username: [this.frmDefault.username, [Validators.required, Validators.minLength(8), Validators.maxLength(12)]],
-
+      /*       username: [this.frmDefault.username, [Validators.required, Validators.minLength(8), Validators.maxLength(12)]],
+       */
 
       confirmaClave: null,
 
@@ -132,7 +132,7 @@ export class AddEditUsuarioComponent {
     const indPer = this.findIndexTipoPersona(this.personaForm.get('tipoPersonaId')?.value);
     this.tipoPersonaSelected = this.tipoPersonas[indPer];
 
-    this.usuario.username = this.personaForm.get('username')?.value;
+    this.usuario.username = this.personaForm.get('numeroDocumento')?.value;
     this.usuario.password = this.personaForm.get('confirmaClave.clave')?.value
     this.usuario.noBloqueado = true
     this.usuario.activo = true;
@@ -165,33 +165,34 @@ export class AddEditUsuarioComponent {
     const numero = event.target.value;
     const tipoDocumentoId = this.personaForm.get('tipoDocumentoId')?.value;
     this.personaService.getNumeroDocumento(numero).subscribe(resp => {
-      if (resp) {
-        this.persona = resp;
-        this.frmDefault.tipoDocumentoId = resp.tipoDocumento?.id;
-        this.frmDefault.numDocumento = resp.numeroDocumento;
-        this.frmDefault.nomApellRz = resp.nomApellRz;
-        this.frmDefault.correo = resp.email;
-        //this.isPersona = true
-        //this.isUsuario = (resp.usuario) ? true : false;
-      }
-      this.createForm();
+      this.isEmpleadoEdit = false;
 
+      if (!resp) { return }
+      this.persona = resp;
+      this.frmDefault.tipoDocumentoId = resp.tipoDocumento?.id;
+      this.frmDefault.numDocumento = resp.numeroDocumento;
+      this.frmDefault.nomApellRz = resp.nomApellRz;
+      this.frmDefault.correo = resp.email;
+      this.frmDefault.direccion = resp.direccion
+      this.isEmpleadoEdit = true;
+      //this.isPersona = true
+      //this.isUsuario = (resp.usuario) ? true : false;
+      this.createForm();
     }, err => {
       console.log("Entro")
     }, () => {
       this.personaForm.get('tipoDocumentoId')?.setValue(tipoDocumentoId);
     })
-
   }
 
   update(): void {
     //this.isLoading = true;
     this.setValueControls()
     this.persona.pedidos = [];
-    this.personaService.update(this.persona)
+    this.personaService.update(this.persona.id, this.persona)
       .subscribe(
         json => {
-         // this.isLoading = false;
+          // this.isLoading = false;
           this.router.navigate(['/usuarios']);
           this.alertServie.success(`${json?.mensaje}`, 'Usuario actualizado')
         },
@@ -199,7 +200,7 @@ export class AddEditUsuarioComponent {
           this.errores = err.error.errors as string[];
           console.error('Código del error desde el backend: ' + err.status);
           console.error(err.error.errors);
-         // this.isLoading = false;
+          // this.isLoading = false;
 
         }
       )

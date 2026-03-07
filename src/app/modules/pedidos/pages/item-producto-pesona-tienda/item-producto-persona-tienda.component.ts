@@ -1,104 +1,70 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
-import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
-import { ActivatedRoute, RouterModule } from '@angular/router';
-import { map, Observable, switchMap } from 'rxjs';
+import { Component, inject, signal } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import { ItemPedido } from '../../../../models/item-pedido';
-import { Persona } from '../../../../models/persona';
 import { Producto } from '../../../../models/producto';
-import { TipoDocumento } from '../../../../models/tipo-documento';
-import { AuthService } from '../../../../services/auth.service';
-import { PedidoService } from '../../../../services/pedido.service';
-import { PersonaService } from '../../../../services/persona.service';
 import { ProductoService } from '../../../../services/producto.service';
-import { FormUtils } from '../../../../utils/form-utils';
 import { AngularMaterialModule } from '../../../compartido/angular-material.module';
+import { AutocompleteResourceComponent } from '../../../compartido/autocomplete-resource/autocomplete-resource.component';
 import { CarritoItemProductoComponent } from '../../components/carrito-item-producto/carrito-item-producto.component';
 import { CustomizeItemProductoToClientComponent } from '../../components/customize-item-producto-to-client/customize-item-producto-to-client.component';
+import { MediaMatcher } from '@angular/cdk/layout';
 
 @Component({
   selector: 'item-producto-persona-tienda',
   templateUrl: './item-producto-persona-tienda.component.html',
   styleUrl: './item-producto-persona-tienda.component.css',
   standalone: true,
-  imports: [CustomizeItemProductoToClientComponent, CarritoItemProductoComponent, CommonModule, RouterModule, FormsModule, ReactiveFormsModule, AngularMaterialModule]
+  imports: [CustomizeItemProductoToClientComponent, CarritoItemProductoComponent, CommonModule, RouterModule, FormsModule, ReactiveFormsModule, AngularMaterialModule, AutocompleteResourceComponent]
 
 })
-export class ItemProductoPersonaTiendaComponent implements OnInit {
+export class ItemProductoPersonaTiendaComponent {
+  private productoService = inject(ProductoService);
 
-  persona!: Persona;
-  autocompleteControl = new FormControl();
-  //tipoPedidoVentaPersonas!: TipoPedido;
-  //tipoPedidos: TipoPedido[] = [];
-  productosFiltrados!: Observable<Producto[]>;
-  producto!: Producto;
-  formUtils = FormUtils
-  tipoDocumentos: TipoDocumento[] = [];
-  items: ItemPedido[] = [];
+  producto = signal<Producto | null>(null);
+  items = signal<ItemPedido[]>([]);
 
-  constructor(private personaService: PersonaService,
-    private pedidoService: PedidoService,
-    private productoService: ProductoService,
-    public authService: AuthService,
-    private activatedRoute: ActivatedRoute) { }
+  /******propeidades para el drawner container**********/
+  // 2 propiedades
+  // El constructor
+  // El ondestroy
+  //mobileQuery: MediaQueryList;
+  //private _mobileQueryListener: () => void;
+  protected readonly isMobile = signal(true);
 
-  ngOnInit() {
-    this.activatedRoute.paramMap.subscribe(params => {
-      let personaId = +params.get('personaId')!;
-      this.personaService.getPersona(personaId).subscribe(persona => {
-        this.persona = persona
-      }
-      );
-    });
+  private readonly _mobileQuery: MediaQueryList;
+  private readonly _mobileQueryListener: () => void;
+  constructor() {
+    const media = inject(MediaMatcher);
 
-    this.productosFiltrados = this.autocompleteControl.valueChanges
-      .pipe(
-        map(value => typeof value === 'string' ? value : value.nombre),
-        switchMap(value => value ? this._filter(value) : [])
-      );
-
-/*     this.pedidoService.getAllTipoPedido().subscribe(result => {
-      this.tipoPedidos = result
-      this.tipoPedidos.forEach(r =>
-        r.activo = r.id == 1 ? true : false
-      )
-      this.tipoPedidoVentaPersonas = this.tipoPedidos[0];
-    }); */
-
-    this.personaService.getTipoDocumento().subscribe(doc => {
-      this.tipoDocumentos = doc
-    });
-    //console.log("this.producto", this.producto.id);
+    this._mobileQuery = media.matchMedia('(max-width: 600px)');
+    this.isMobile.set(this._mobileQuery.matches);
+    this._mobileQueryListener = () => this.isMobile.set(this._mobileQuery.matches);
+    this._mobileQuery.addEventListener('change', this._mobileQueryListener);
   }
 
-  private _filter(value: string): Observable<Producto[]> {
-    const filterValue = value.toLowerCase();
-
-    return this.productoService.filtrarProductos(filterValue);
+  ngOnDestroy(): void {
+    this._mobileQuery.removeEventListener('change', this._mobileQueryListener);
   }
+  /**************************************************/
 
-  mostrarNombre(producto: Producto): string {
-    return producto ? producto.nombre : '';
+  buscarProductos = (term: string) =>
+    this.productoService.filtrarProductos(term);
+
+  mostrarProducto = (producto: Producto) =>
+    producto.nombre
+
+  onProductoSeleccionado(producto: Producto) {
+    this.producto.set(producto);
+    const nuevoItem = new ItemPedido();
+    nuevoItem.producto = producto;
+    this.items.update(items => [...items, nuevoItem]);
 
   }
 
-  seleccionarProducto(event: MatAutocompleteSelectedEvent): void {
-    this.producto = event.option.value as Producto;
-    //this.productoService.setProductoToSeo(this.producto);
-    //if (!this.tipoPedidoVentaPersonas) {
-      let nuevoItem = new ItemPedido();
-      nuevoItem.producto = this.producto;
-      this.items.push(nuevoItem);
 
-      this.items = [...this.items, { ...nuevoItem }]
 
-    //}
 
-    this.autocompleteControl.setValue('');
-    event.option.focus();
-    event.option.deselect();
-
-  }
 
 }

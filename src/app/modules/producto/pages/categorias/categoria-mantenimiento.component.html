@@ -7,11 +7,11 @@
         <div class="ms-auto">
           <button class="btn btn-secondary" [routerLink]="'/productos/categorias'">Cancelar</button>
 
-          @if (!categoria.id && authService.hasRole('ROLE_REGISTER_CATEGORIA')) {
+          @if (!categoria().id && authService.hasRole('ROLE_REGISTER_CATEGORIA')) {
           <button class="btn btn-primary" (click)='guardarCategoria()' [disabled]="!formCategoria.valid">Crear
             categoria</button>
           }
-          @if (categoria.id && authService.hasRole('ROLE_UPDATE_CATEGORIA')) {
+          @if (categoria().id && authService.hasRole('ROLE_UPDATE_CATEGORIA')) {
           <button class="btn btn-primary" (click)='guardarCategoria()' [disabled]="!formCategoria.valid">Actualizar
             categoria</button>
           }
@@ -45,11 +45,21 @@
                 </div>
               </div>
               <div class="row mb-2">
+                <label for="orden" class="col-form-label col-sm-4"><b>Orden:</b><br>Visible menú de tienda</label>
+                <div class="input-group col-sm">
+                  <input formControlName="orden" type="number" class="form-control" name="orden" placeholder="Orden">
+                  @if(formUtils.isValidField(formCategoria,'orden')){
+                  <div class="alert alert-danger">
+                    {{formUtils.getFieldError(formCategoria,'orden')}}
+                  </div>}
+                </div>
+              </div>
+              <div class="row mb-2">
                 @if (authService.hasRole('ROLE_ACTIVE_CATEGORIA')) {
                 <label for="activa" class="form-label col-sm-4"><b>Categoria activa</b></label>
                 <div class="form-check form-switch col-sm-2">
                   <input class="form-check-input" type="checkbox" formControlName="activa" name="activa"
-                    [checked]="categoria.activa">
+                    [checked]="categoria().activa">
                   @if(formUtils.isValidField(formCategoria,'activa')){
                   <div class="alert alert-danger">
                     {{formUtils.getFieldError(formCategoria,'activa')}}
@@ -60,7 +70,7 @@
                 <label for="visibleEnTienda" class="form-label col-sm-4"><b>Visible en tienda</b></label>
                 <div class="form-check form-switch col-sm-2">
                   <input class="form-check-input" type="checkbox" formControlName="visibleEnTienda"
-                    name="visibleEnTienda" [checked]="categoria.visibleEnTienda">
+                    name="visibleEnTienda" [checked]="categoria().visibleEnTienda">
                   @if(formUtils.isValidField(formCategoria,'visibleEnTienda')){
                   <div class="alert alert-danger">
                     {{formUtils.getFieldError(formCategoria,'visibleEnTienda')}}
@@ -68,11 +78,12 @@
                 </div>
                 }
               </div>
+
             </div>
             <div class="col-sm">
               <div class="row mb-2">
                 @if (authService.hasRole('ROLE_IMAGE_CATEGORIA')) {
-                <div class="row mb-2">
+                <!--                 <div class="row mb-2">
                   <label for="clicUploadImageToCategoria" class="col-5"><b>Imágen de categoria:</b><br>Visible en
                     tienda</label>
                   <div class="input-group col-7">
@@ -80,40 +91,28 @@
                       style="display: none;" id="clicUploadImageToCategoria" aria-describedby="clicUploadImageToCategoria">
                     <label for="clicUploadImageToCategoria" class="btn btn-secondary">📁 Elegir imagen de categoría</label>
                   </div>
-
-
-                  <!--                   <div class="input-group col-sm">
-                    <input #file (change)="this.isImage(file)" type="file" name="imagen" class="form-control"
-                      style="padding: 25px;" id="inputGroupFile04" aria-describedby="inputGroupFileAddon04">
-                    <button (click)="subirImagen(file)" class="btn btn-primary" type="button"
-                      [disabled]="!this.isImage(file)" id="inputGroupFileAddon04">Subir</button>
-                  </div> -->
+                </div> -->
+                <div class="row mb-2">
+                  <label for="clicUploadImageToCategoria" class="form-label col-sm-5"><b>Imágen de
+                      categoria::</b><br>Visible
+                    en
+                    tienda</label>
+                  <div class="col-7">
+                    <button id="clicUploadImageToCategoria" class="btn btn-primary" (click)='openDialog()'>Elegir
+                      imágen para categoria</button>
+                  </div>
                 </div>
                 <div class="row mb-2">
                   <div class="col-sm">
-                    <img *ngIf="categoria?.imagen" [src]="verImagenCategoria" alt="{{categoria.imagen}}"
+                    @if (categoria().multimedia) {
+                    <img [src]="categoria().multimedia.urlMultimediaShow" alt="{{categoria().nombre}}"
                       class="img-fluid img-thumbnail rounded mx-auto d-block">
+                    } @else {
+                    <img src="no-imagen.png" alt="No imagen" class="img-fluid img-thumbnail rounded mx-auto d-block">
+                    }
                   </div>
                 </div>
-
                 }
-                <!--             <div class="row mb-2">
-              <div class="ol-sm-6">
-                <span>Valid:</span>
-                <pre>{{formProducto.valid | json}}</pre>
-                <span>pristine:</span>
-                <pre>{{formProducto.pristine| json}}</pre>
-                <span>touched:</span>
-                <pre>{{formProducto.touched| json}}</pre>
-                <span>value:</span>
-                <pre>{{formProducto.value| json}}</pre>
-                <span>errores</span>
-                <pre>{{formProducto.errors| json}}</pre>
-                <br>
-                <pre>{{margenesGanancia.controls[0].get('minCantidad')?.errors}}</pre>
-
-              </div>
-            </div> -->
               </div>
             </div>
           </div>

@@ -5,7 +5,7 @@
       INICIO</a>
   </div> -->
   <!----------------------1-------------------->
-  <div mat-subheader *ngIf="authService.hasRole('ROLE_LIST_PERSONAS') || authService.hasRole('ROLE_REGISTER_PERSONA')">
+  <div mat-subheader *ngIf="authService.hasAnyRole('ROLE_LIST_PERSONAS','ROLE_REGISTER_PERSONA')">
     <mat-icon>diversity_3</mat-icon>PERSONAS
   </div>
   <ng-container *ngIf="authService.hasRole('ROLE_LIST_PERSONAS')">
@@ -20,10 +20,15 @@
   </ng-container>
   <!----------------------2-------------------->
   <div mat-subheader
-    *ngIf="authService.hasRole('ROLE_LIST_VENTAS') || authService.hasRole('ROLE_REPORT_VENTA') || authService.hasRole('ROLE_LIST_MY_ORDERS')">
+    *ngIf="authService.hasAnyRole('ROLE_LIST_VENTAS','ROLE_REPORT_VENTA','ROLE_LIST_MY_ORDERS')">
     <mat-icon>insert_chart</mat-icon>PEDIDOS VENTA
   </div>
-  <ng-container *ngIf="authService.hasRole('ROLE_LIST_VENTAS') || authService.hasRole('ROLE_LIST_MY_ORDERS')">
+  <ng-container *ngIf="authService.hasRole('ROLE_REGISTER_VENTA')">
+    <a mat-list-item [routerLink]="['pedidos/item-producto-persona-tienda']" [routerLinkActive]="['active']"
+      [routerLinkActiveOptions]="{exact: true}">
+      Registrar venta</a>
+  </ng-container>
+  <ng-container *ngIf="authService.hasAnyRole('ROLE_LIST_VENTAS','ROLE_LIST_MY_ORDERS')">
     <a mat-list-item [routerLink]="['pedidos/listado-ventas']" [routerLinkActive]="['active']"
       [routerLinkActiveOptions]="{exact: true}">
       Listado de pedidos</a>
@@ -33,7 +38,7 @@
       Reporte Ventas</a>
   </ng-container>
 
-  <div mat-subheader *ngIf="authService.hasRole('ROLE_LIST_COMPRAS') || authService.hasRole('ROLE_REPORT_COMPRA')">
+  <div mat-subheader *ngIf="authService.hasAnyRole('ROLE_LIST_COMPRAS','ROLE_REPORT_COMPRA')">
     <mat-icon>insert_chart</mat-icon>PEDIDOS COMPRA
   </div>
   <ng-container *ngIf="authService.hasRole('ROLE_LIST_COMPRAS')">
@@ -47,7 +52,7 @@
   </ng-container>
   <!----------------------3-------------------->
   <div mat-subheader
-    *ngIf="authService.hasRole('ROLE_REGISTER_PAGO_PEDIDO') || authService.hasRole('ROLE_REGISTER_MOVCAJA') || authService.hasRole('ROLE_REPORT_MOVCAJA') || authService.hasRole('ROLE_RPTE_MOVCAJA_USUARIO')">
+    *ngIf="authService.hasAnyRole('ROLE_REGISTER_PAGO_PEDIDO','ROLE_REGISTER_MOVCAJA','ROLE_REPORT_MOVCAJA','ROLE_RPTE_MOVCAJA_USUARIO')">
     <mat-icon>currency_exchange</mat-icon>MOVIMIENTOS CAJA
   </div>
   <ng-container *ngIf="authService.hasRole('ROLE_REGISTER_PAGO_PEDIDO')">
@@ -70,10 +75,10 @@
   </ng-container>
   <!----------------------4-------------------->
   <div mat-subheader
-    *ngIf="authService.hasRole('ROLE_OPEN_CJU') || authService.hasRole('ROLE_CLOSE_CJU') || authService.hasRole('ROLE_REPORT_USUARIO_CJU') || authService.hasRole('ROLE_REPORT_CJU')">
+    *ngIf="authService.hasAnyRole('ROLE_OPEN_CJU','ROLE_CLOSE_CJU','ROLE_REPORT_USUARIO_CJU','ROLE_REPORT_CJU')">
     <mat-icon>assignment_ind</mat-icon>CAJA USUARIO
   </div>
-  <ng-container *ngIf="authService.hasRole('ROLE_OPEN_CJU') || authService.hasRole('ROLE_CLOSE_CJU')">
+  <ng-container *ngIf="authService.hasAnyRole('ROLE_OPEN_CJU','ROLE_CLOSE_CJU')">
     <a mat-list-item [routerLink]="['cajas']" [routerLinkActive]="['active']"
       [routerLinkActiveOptions]="{exact: true}">Apertura/Cierre caja</a>
   </ng-container>
@@ -86,7 +91,7 @@
   </ng-container>
   <!----------------------5-------------------->
   <div mat-subheader
-    *ngIf="authService.hasRole('ROLE_LIST_PRODUCTOS') || authService.hasRole('ROLE_REGISTER_PRODUCTO')">
+    *ngIf="authService.hasAnyRole('ROLE_LIST_PRODUCTOS','ROLE_REGISTER_PRODUCTO')">
     <mat-icon>list_alt_check</mat-icon>PRODUCTOS
   </div>
   <ng-container *ngIf="authService.hasRole('ROLE_LIST_PRODUCTOS')">
@@ -109,7 +114,20 @@
       [routerLinkActiveOptions]="{exact: true}">
       Registrar categoria</a>
   </ng-container>
+
+
+
   <!----------------------6-------------------->
+  <div mat-subheader *ngIf="authService.hasRole('ROLE_LIST_MULTIMEDIA') ">
+    <mat-icon>emergency_recording</mat-icon>MULTIMEDIA
+  </div>
+  <ng-container *ngIf="authService.hasRole('ROLE_LIST_MULTIMEDIA')">
+    <a mat-list-item [routerLink]="['multimedia']" [routerLinkActive]="['active']"
+      [routerLinkActiveOptions]="{exact: true}">
+      Listado de multimedia</a>
+  </ng-container>
+
+  <!----------------------7-------------------->
   <div mat-subheader><mat-icon>list_alt_check</mat-icon>USUARIOS
   </div>
   <ng-container *ngIf="authService.hasRole('ROLE_LIST_USUARIOS')">

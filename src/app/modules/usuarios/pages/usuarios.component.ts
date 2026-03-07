@@ -28,7 +28,7 @@ import { PersonaService } from '../../../services/persona.service';
 })
 export class UsuariosComponent implements OnInit, AfterViewInit {
 
-  displayedColumns: string[] = ['nomApellRz', 'numeroDocumento','celular','email','usuario', 'acciones'];
+  displayedColumns: string[] = ['nomApellRz', 'tipoPersona','celular','usuario', 'acciones'];
   dataSource: Persona[] = [];
   usuarioSeleccionado!: Usuario;
   pageable: PageableResponse = new PageableResponse();

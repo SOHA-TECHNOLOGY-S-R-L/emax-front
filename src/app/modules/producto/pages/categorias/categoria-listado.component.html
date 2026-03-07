@@ -25,9 +25,14 @@
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let cat of categorias">
+              @for (cat of categorias; track $index) {
+              <tr>
                 <td>
-                  <img [src]="cat.imagen" width="86" alt={{cat.imagen}} />
+                  @if(cat.multimedia){
+                  <img [src]="cat.multimedia.urlMultimediaShow" width="86" alt={{cat.nombre}} />
+                  } @else {
+                  <img src="no-imagen.png" width="86" alt={{cat.nombre}} />
+                  }
                 </td>
                 <td>
                   {{cat.nombre | stringToTitleWithAccents }}
@@ -45,7 +50,8 @@
                     }}</span>
                 </td>
                 <td>
-                  <span class="celda-estado {{cat.colorVisibleEnTienda}}">{{cat.visibleEnTienda + '' | i18nSelect: estadoActivoCategoria
+                  <span class="celda-estado {{cat.colorVisibleEnTienda}}">{{cat.visibleEnTienda + '' | i18nSelect:
+                    estadoActivoCategoria
                     }}</span>
                 </td>
                 <td>
@@ -57,6 +63,7 @@
                   }
                 </td>
               </tr>
+              }
             </tbody>
           </table>
         </div>

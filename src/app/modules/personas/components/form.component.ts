@@ -1,104 +1,92 @@
-import { TipoPersona } from './../../../models/tipo-persona';
 import { CommonModule } from '@angular/common';
-import { Component, model, OnInit } from '@angular/core';
+import { Component, effect, inject, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { findIndex } from 'lodash-es';
+import { map } from 'rxjs';
 import { Persona } from '../../../models/persona';
 import { TipoDocumento } from '../../../models/tipo-documento';
+import { Usuario } from '../../../models/usuario';
 import { AlertService } from '../../../services/alert.service';
 import { AuthService } from '../../../services/auth.service';
 import { PersonaService } from '../../../services/persona.service';
-import { FormUtils } from '../../../utils/form-utils';
 import { AngularMaterialModule } from '../../compartido/angular-material.module';
-import { Usuario } from '../../../models/usuario';
+import { TipoPersona } from './../../../models/tipo-persona';
+import { FormDatosPersonaComponent } from './form-datos-persona/form-datos-persona.component';
 
 @Component({
   selector: 'app-form',
   templateUrl: './form.component.html',
   standalone: true,
-  imports: [CommonModule, AngularMaterialModule, FormsModule, RouterModule],
+  imports: [CommonModule, AngularMaterialModule, FormsModule, RouterModule, FormDatosPersonaComponent],
 })
-export class FormComponent implements OnInit {
+export class FormComponent {
 
-  persona: Persona = new Persona();
+  private personaService = inject(PersonaService);
+  private router = inject(Router);
+  private activatedRoute = inject(ActivatedRoute);
+  private alertServie = inject(AlertService);
+  public authService = inject(AuthService);
+
+  personaId = toSignal<number>(this.activatedRoute.paramMap.pipe(map(r => Number(r.get('id')))));
+  persona = signal(new Persona());
+  titulo = signal<string>("Editar persona");
+  formValid = signal<boolean>(false);
+
+  private personaEffect = effect(() => {
+    const personaId = this.personaId();
+    if (personaId) {
+      this.cargarPersona(personaId);
+    } else {
+      this.persona.set(new Persona());
+      this.titulo.set("Registro persona");
+
+    }
+  });
+
   usuario: Usuario = new Usuario();
   tipoDocumentos: TipoDocumento[] = [];
   tipoPersonas: TipoPersona[] = [];
   tipoDocumentoSelected!: TipoDocumento;
   tipoPersonaSelected!: TipoPersona;
-  titulo: string = "Crear persona o proveedor";
-  formUtils = FormUtils;
-  //empleado!: Empleado;
-  //listEmpleado: Empleado[]=[];
 
-  //readonly labelPosition = model<'Si' | 'No'>('No');
+  constructor() { }
 
+  buscarPersonas = (term: string) =>
+    this.personaService.filtrarPersonas(term);
 
-  errores: string[] = [];
+  mostrarPersona = (persona: Persona) =>
+    persona.nomApellRz
 
-  constructor(private personaService: PersonaService,
-    private router: Router,
-    private activatedRoute: ActivatedRoute,
-    private alertServie: AlertService,
-    public authService: AuthService,
-  ) { }
-
-  ngOnInit() {
-    this.personaService.getTipoDocumento().subscribe(doc => {
-      this.tipoDocumentos = doc
-    });
-
-    this.personaService.getTipoPersona().subscribe(per => {
-      this.tipoPersonas = per.filter(per => per.persona.includes("Cliente") || per.persona.includes("Proveedor"))
-    });
-
-    this.activatedRoute.paramMap.subscribe(params => {
-      let id = +params.get('id')!;
-      if (id) {
-        this.titulo = "Editar cleinte o proveedor"
-
-        this.personaService.getPersona(id).subscribe((persona) => {
-          this.persona = persona
-          const indDoc = this.findIndexDocument(this.persona.tipoDocumento.id);
-          this.tipoDocumentoSelected = this.tipoDocumentos[indDoc];
-
-
-          const indPer = this.findIndexPerson(this.persona.tipoPersona.id);
-          this.tipoPersonaSelected = this.tipoPersonas[indPer];
-        });
-      }
-    });
-    //this.listEmpleado = [{ id: 0, empleado: "No" }, { id: 1, empleado: "Si" }];
-    //this.empleado = this.listEmpleado[0];
+  onPersonaSeleccionada(persona: Persona) {
+    console.log(persona);
+    this.persona.set(persona);
   }
 
-
-  findIndexDocument(tipoDocumentoId: number): number {
-    return findIndex(this.tipoDocumentos, (td) => td.id == tipoDocumentoId)
+  onDatosPersona($event: any) {
+    const persona = $event.persona as Persona;
+    this.formValid.set($event.formValid);
+    this.persona.set(persona);
   }
 
-  findIndexPerson(tipoPersonaId: number): number {
-    return findIndex(this.tipoPersonas, (td) => td.id == tipoPersonaId)
+  cargarPersona(personaId: number) {
+    this.personaService.getPersona(personaId).subscribe((result) => {
+      this.persona.set(result);
+    });
   }
 
   create(): void {
+    /*        this.usuario.username = this.persona.numeroDocumento;
+          this.usuario.noBloqueado = true
+          this.usuario.activo = true;
+          this.usuario.reintentos = 0
 
-    this.usuario.username = this.persona.numeroDocumento;
-    this.usuario.noBloqueado = true
-    this.usuario.activo = true;
-    this.usuario.reintentos = 0
+          this.persona.tipoDocumento = this.tipoDocumentoSelected
+          this.persona.tipoPersona = this.tipoPersonaSelected
 
-    this.persona.tipoDocumento = this.tipoDocumentoSelected
-    this.persona.tipoPersona = this.tipoPersonaSelected
+          this.persona.usuario = { ...this.usuario } */
 
-    /*     this.persona.usuario.username = this.persona.numeroDocumento;
-        this.persona.usuario.activo = false;
-        this.persona.usuario.noBloqueado = true;
-        this.persona.usuario.reintentos = 0 */
-    this.persona.usuario = { ...this.usuario }
-
-    this.personaService.create(this.persona)
+    this.personaService.create(this.persona())
       .subscribe(
         persona => {
           this.router.navigate(['/personas']);
@@ -108,43 +96,21 @@ export class FormComponent implements OnInit {
   }
 
   update(): void {
-    this.persona.tipoDocumento = this.tipoDocumentoSelected
-    this.persona.tipoPersona = this.tipoPersonaSelected
-    this.persona.pedidos = [];
-    //console.log(this.persona);
-    this.personaService.update(this.persona)
+    const personaId = this.personaId();
+    const personaUpdate = this.persona();
+
+    if(!personaId) {return }
+
+    this.personaService.update(personaId, personaUpdate)
       .subscribe(
         json => {
           this.router.navigate(['/personas']);
           this.alertServie.success(`${json?.mensaje}`, 'Persona Actualizado')
-        },
-        err => {
-          this.errores = err.error.errors as string[];
-          console.error('Código del error desde el backend: ' + err.status);
-          console.error(err.error.errors);
         }
       )
   }
 
-  compararDocumento(o1: TipoDocumento, o2: TipoDocumento): boolean {
-    if (o1 === undefined && o2 === undefined) {
-      return true;
-    }
 
-    return o1 === null || o2 === null || o1 === undefined || o2 === undefined ? false : o1.id === o2.id;
-  }
-
-  compararPersona(o1: TipoPersona, o2: TipoPersona): boolean {
-    if (o1 === undefined && o2 === undefined) {
-      return true;
-    }
-
-    return o1 === null || o2 === null || o1 === undefined || o2 === undefined ? false : o1.id === o2.id;
-  }
 
 }
 
-interface Empleado {
-  id: number,
-  empleado: string
-}

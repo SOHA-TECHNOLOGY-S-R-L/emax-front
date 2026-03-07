@@ -9,9 +9,9 @@ import { CajaUsuario } from '../../../../models/caja-usuario';
 import { AlertService } from '../../../../services/alert.service';
 import { AuthService } from '../../../../services/auth.service';
 import { CajaService } from '../../../../services/caja.service';
+import { UsuarioService } from '../../../../services/usuario.service';
 import { AngularMaterialModule } from '../../../compartido/angular-material.module';
 import { InfoCajaUsuarioComponent } from "../../components/info-caja-usuario/info-caja-usuario.component";
-import { UsuarioService } from '../../../../services/usuario.service';
 
 
 @Component({
@@ -61,7 +61,7 @@ export class AperturaCierreCajaComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.authService.isAuthenticated()) {
-      this.username = this.authService.usuario.username;
+      this.username = this.authService.usuario()!.username;
       //this.usuarioService.getUsuarioByUsername(username).subscribe(resp => this.cajaUsuario.usuario = resp)
 
       this.cajaService.getCajaUsuarioActiveByUserName(this.username).subscribe(

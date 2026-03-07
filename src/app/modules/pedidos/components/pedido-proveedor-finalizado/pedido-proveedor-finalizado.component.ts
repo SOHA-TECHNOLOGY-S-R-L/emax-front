@@ -85,17 +85,6 @@ export class PedidoProveedorFinalizadoComponent implements OnInit, OnChanges {
       //this.pedido.adquiridoEn = moment(now).add(2, 'days').toISOString().slice(0, 16);
     });
 
-
-    /*     this.activatedRoute.queryParams.subscribe(params => {
-          const value = params['personaOnline'];
-          this.personaOnline = value ? value.toLocaleLowerCase() === 'true' : false;
-        }) */
-
-    /*     if (this.lstItemPedido.length === 0) {
-          this.lstItemPedido = this.itemService.getLocalStorageItems();
-          this.calcularTotal();
-        } */
-
     this.pedidoService.getAllTipoPedido().subscribe(result => {
       this.tipoPedidos = result
       this.tipoPedidos.forEach(r =>
@@ -106,29 +95,17 @@ export class PedidoProveedorFinalizadoComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    // if (changes['producto'].currentValue != changes['producto'].previousValue) {
 
-    //this.item.cantidad = (this.frm.get('cantidad')?.value ? this.frm.get('cantidad')?.value : 0)!;
     this.item.cantidad = this.producto.cantidadStock;
     this.item.importe = this.item.cantidad * this.producto.costoUnitario;
-    this.item.imagen = environment.API_URL_VER_IMAGEN + this.producto.imagen
+    // esta linea debe de ir
+    //this.item.imagen = environment.API_URL_VER_IMAGEN + this.producto.imagen
     this.item.descripcion = '';
     this.item.producto = { ...this.producto };
     if (!this.itemService.existItemInItems(this.lstItemPedido, this.producto.id)) {
       this.lstItemPedido = [...this.lstItemPedido, { ...this.item }];
     }
     this.calcularTotal();
-
-    //this.itemService.setItems(this.items);
-    //this.itemService.saveLocalStorageItems(this.items);
-
-
-    /*       if (this.items.length === 0) {
-            this.items = this.itemService.getLocalStorageItems()
-          } */
-
-    // this.verImagenItem = environment.API_URL_VER_IMAGEN + this.item.imagen;
-    //}
   }
 
   findIndexDocument(tipoDocumentoId: number): number {

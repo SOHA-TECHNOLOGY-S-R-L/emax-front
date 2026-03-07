@@ -1,0 +1,50 @@
+<ul class="list-group my-1">
+  <li class="list-group-item active d-flex justify-content-between">
+    <span>Datos del cliente</span>
+  </li>
+</ul>
+
+<form [formGroup]="personaForm" autocomplete="off" class="d-flex flex-column">
+  <div class="mb-2">
+    <select class="form-control" formControlName="tipoDocumento">
+      <option [ngValue]="null">---Seleccionar tipo documento ---</option>
+      <option *ngFor="let documento of tipoDocumentos()" [ngValue]="documento">
+        {{ documento.nombre }}
+      </option>
+    </select>
+    <div *ngIf="formUtils.isValidField(personaForm,'tipoDocumento')" class="alert alert-danger">
+      {{ formUtils.getFieldError(personaForm,'tipoDocumento') }}
+    </div>
+  </div>
+  <div class="mb-2">
+    <input type="text" class="form-control" placeholder="Número documento" formControlName="numeroDocumento">
+    <div *ngIf="formUtils.isValidField(personaForm,'numeroDocumento')" class="alert alert-danger">
+      {{ formUtils.getFieldError(personaForm,'numeroDocumento') }}
+    </div>
+  </div>
+  <div class="mb-2">
+    <input type="text" class="form-control" placeholder="Nombres y apellidos o Razon S." formControlName="nomApellRz">
+    <div *ngIf="formUtils.isValidField(personaForm,'nomApellRz')" class="alert alert-danger">
+      {{ formUtils.getFieldError(personaForm,'nomApellRz') }}
+    </div>
+  </div>
+  <div class="mb-2">
+    <input type="email" class="form-control" placeholder="Correo electrónico" formControlName="email">
+    <div *ngIf="formUtils.isValidField(personaForm,'email')" class="alert alert-danger">
+      {{ formUtils.getFieldError(personaForm,'email') }}
+    </div>
+  </div>
+  <div class="mb-2">
+    <input type="text" class="form-control" placeholder="Celular" formControlName="celular">
+    <div *ngIf="formUtils.isValidField(personaForm,'celular')" class="alert alert-danger">
+      {{ formUtils.getFieldError(personaForm,'celular') }}
+    </div>
+  </div>
+  <div class="mb-2">
+    <input type="text" class="form-control" placeholder="Dirección" formControlName="direccion">
+    <div *ngIf="formUtils.isValidField(personaForm,'direccion')" class="alert alert-danger">
+      {{ formUtils.getFieldError(personaForm,'direccion') }}
+    </div>
+  </div>
+
+</form>

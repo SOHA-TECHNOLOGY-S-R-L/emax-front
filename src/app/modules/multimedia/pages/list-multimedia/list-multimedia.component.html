@@ -1,0 +1,125 @@
+<div class="container-fluid">
+  <div class="row mt-2">
+    <div class="d-flex flex-row column-gap-2">
+      <mat-form-field>
+        <mat-label>Ancho</mat-label>
+        <mat-select matNativeControl [value]="selectedAncho()" (valueChange)="onAnchoChange($event)">
+          <mat-option value="">Todos</mat-option>
+          <mat-option value="ancho.-600">Menos de 600 pixeles</mat-option>
+          <mat-option value="ancho.600">Mas de 600 pixeles</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>Alto</mat-label>
+        <mat-select matNativeControl [value]="selectedAlto()" (valueChange)="onAltoChange($event)">
+          <mat-option value="">Todos</mat-option>
+          <mat-option value="alto.-600">Menos de 600 pixeles</mat-option>
+          <mat-option value="alto.600">Mas de 600 pixeles</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>Tamaño</mat-label>
+        <mat-select matNativeControl [value]="selectedTamanio()" (valueChange)="onTamanioChange($event)">
+          <mat-option value="">Todos</mat-option>
+          <mat-option value="tamanio.-31">Menos de 30 Kb</mat-option>
+          <mat-option value="tamanio.30">Mas de 30 Kb</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Filtros multimedia</mat-label>
+        <mat-select multiple [value]="selectedExtensiones()" (valueChange)="onMultimediaOptionsChange($event)">
+          <mat-option value="ALL">Todas</mat-option>
+          <mat-optgroup label="Extensión de imagen">
+            <mat-option value="extension.jpg">jpg</mat-option>
+            <mat-option value="extension.jpeg">jpeg</mat-option>
+            <mat-option value="extension.png">png</mat-option>
+            <mat-option value="extension.gif">gif</mat-option>
+          </mat-optgroup>
+          <mat-optgroup label="Extensión de video">
+            <mat-option value="extension.mp4">mp4</mat-option>
+            <mat-option value="extension.mpeg">mpeg</mat-option>
+          </mat-optgroup>
+        </mat-select>
+      </mat-form-field>
+
+      <search-box-table (searchEvent)="searchEvent($event)"></search-box-table>
+
+      @if (!multimediaPrincipal && this.lstMultimediaChecked().length==0) {
+      <input type="file" multiple hidden #fileInput (change)="onFilesMultimediaSelected($event)">
+      <button matFab extended (click)="fileInput.click()" [disabled]="!authService.hasRole('ROLE_UPLOAD_MULTIMEDIAS')">
+        <mat-icon>upload</mat-icon>Subir
+        multimedia
+      </button>
+      }
+
+      @if (!multimediaPrincipal && this.lstMultimediaChecked().length > 0) {
+      <button matFab extended (click)="eliminarMultimedias()"
+        [disabled]="!authService.hasRole('ROLE_DELETE_MULTIMEDIAS')">
+        Eliminar multimedia
+      </button>
+      }
+
+      @if (multimediaPrincipal) {
+      <button matFab extended (click)="asignarMultimediasProducto()" [disabled]="!authService.hasRole('ROLE_CHOOSE_MULTIMEDIAS')">
+        Elegir multimedia(s)
+      </button>
+      }
+
+    </div>
+  </div>
+  @if(authService.hasRole("ROLE_LIST_MULTIMEDIA")){
+  <div class="row">
+    @for (multimedia of lstMultimedia(); track multimedia.id) {
+    <div class="col-6 col-sm-4 col-md-2">
+      <div class="d-flex justify-content-center">
+        <section class="position-absolute top-0 end-0">
+          <mat-checkbox [checked]="isChecked(multimedia)" (change)="onCheckChange($event.checked, multimedia)"></mat-checkbox>
+        </section>
+
+        @if(multimedia.mimeType.startsWith('image/')) {
+        <img [src]="API_URL_VER_IMAGEN+multimedia.nombre" [alt]="multimedia.nombre" loading="lazy" width="120"
+          height="120" decoding="async" priority="false">
+        }
+        @if(multimedia.mimeType.startsWith('video/')) {
+        <video controls crossorigin="anonymous" width="120" height="120" class="video-principal">
+          <source [src]="API_URL_VER_IMAGEN+multimedia.nombre" [type]="multimedia.mimeType">
+          Tu navegador no soporta el tipo de video {{multimedia.mimeType}}
+        </video>}
+      </div>
+
+      <ul style="list-style-type: none; text-align: center; font-size:14px; padding: 0; margin: 0; ">
+        <li>{{multimedia.nombre}}</li>
+        <li>{{multimedia.ancho}} x {{multimedia.alto}}</li>
+        <li>{{multimedia.tamanioKb}} KB
+          <div class="tooltip-container">
+            @if(multimedia.tamanioKb < 30){ <span style="color: rgb(91, 197, 0);">
+              <mat-icon>check_circle</mat-icon></span>
+              <span class="tooltip-text">Ok rápido</span>
+              }
+              @if(multimedia.tamanioKb > 30){
+              <span style="color: #EC624B">
+                <mat-icon>warning</mat-icon>
+              </span>
+              <span class="tooltip-text">Afecta rendimiento</span>
+              }
+          </div>
+        </li>
+      </ul>
+    </div>
+    }
+  </div>
+  <div class="row">
+    <mat-paginator [length]="pageable().totalElements" [ngClass]="{'d-none': !lstMultimedia().length}"
+      [pageSizeOptions]="pageSizeOptions" [pageSize]="pageSize()" (page)="handlePageEvent($event)" showFirstLastButtons>
+    </mat-paginator>
+  </div>
+  } @else {
+  <div class="row alert alert-danger mt-2">
+    <p>Necesitas permisos para el listado de archivos multimedia</p>
+  </div>
+  }
+  <!--   </div>
+ -->
+</div>

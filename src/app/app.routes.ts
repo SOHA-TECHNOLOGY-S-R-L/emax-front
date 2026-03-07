@@ -42,6 +42,10 @@ export const routes: Routes = [
         loadChildren: () => import("./modules/producto/producto.routes").then((r) => r.routes),
       },
       {
+        path: 'multimedia',
+        loadChildren: () => import("./modules/multimedia/multimedia.routes").then((r) => r.routes),
+      },
+      {
         path: 'usuarios',
         loadChildren: () => import("./modules/usuarios/usuarios.routes").then((r) => r.routes),
       },
@@ -58,8 +62,11 @@ export const routes: Routes = [
              path: 'item-producto-persona-online/:productoId', component: ItemProductoPersonaOnlineComponent,
            }, */
           {
-            path: 'pedido-persona-online-finalizado/:personaId', component: PedidoPersonaOnlineFinalizadoComponent,
+            path: 'pedido-persona-online-finalizado/:tipoPedidoId', component: PedidoPersonaOnlineFinalizadoComponent,
           },
+          /*           {
+                      path: 'pedido-persona-online-finalizado', component: PedidoPersonaOnlineFinalizadoComponent,
+                    }, */
         ]
 
       },

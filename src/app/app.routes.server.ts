@@ -25,10 +25,10 @@ export const serverRoutes: ServerRoute[] = [
     path: 'ubicanos-cliente',
     renderMode: RenderMode.Server,
   },
-  {
+/*   {
     path: 'pedidos/pedido-persona-tienda-finalizado/:personaId',
     renderMode: RenderMode.Server,
-  },
+  }, */
   {
     path: 'tienda',
     renderMode: RenderMode.Server,

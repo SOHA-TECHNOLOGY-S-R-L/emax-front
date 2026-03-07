@@ -1,18 +1,72 @@
-:host {
-  display: block;
+/*  .carrito {
+   display: block;
+ }
+
+ @media (max-width: 991px) {
+   .carrito {
+     display: none;
+   }
+ }
+ */
+
+.example-container {
+  display: flex;
+  flex-direction: column;
+  /*   position: absolute;
+ */
+  top: 0;
+  bottom: 0;
+  left: 10px;
+  right: 10px;
 }
 
-.text-bold-italic{
+.example-is-mobile .example-toolbar {
+  position: fixed;
+  /* Make sure the toolbar will stay on top of the content as it scrolls past. */
+  z-index: 2;
+}
+
+/* h1.example-app-name {
+  margin-left: 8px;
+} */
+
+.example-sidenav-container {
+  /* When the sidenav is not fixed, stretch the sidenav container to fill the available space. This
+     causes `<mat-sidenav-content>` to act as our scrolling element for desktop layouts. */
+  overflow-x: hidden;
+  /* Elimina el scroll horizontal */
+  flex: 1;
+}
+
+/* Forzar el contenido interno a no desbordar */
+::ng-deep .mat-drawer-content {
+  overflow-x: hidden !important;
+}
+
+/* Evitar que el drawer mismo genere scroll si el contenido es ancho */
+::ng-deep .mat-drawer {
+  overflow-x: hidden !important;
+}
+
+::ng-deep .mat-drawer-inner-container {
+  overflow-x: hidden !important;
+  width: 100% !important;
+}
+
+.example-is-mobile .example-sidenav-container {
+  /* When the sidenav is fixed, don't constrain the height of the sidenav container. This allows the
+     `<body>` to be our scrolling element for mobile layouts. */
+  flex: 1 0 auto;
+}
+
+.main-drawer {
+  background-color: #FAFAFA !important;
+  color: black !important;
+}
+
+.text-bold-italic {
   font-style: italic;
   font-weight: bolder;
-  color:darkblue;
+  color: darkblue;
 }
 
-.carrito {
-  display: block;
-}
-@media (max-width: 991px) {
-  .carrito {
-    display: none;
-  }
-}

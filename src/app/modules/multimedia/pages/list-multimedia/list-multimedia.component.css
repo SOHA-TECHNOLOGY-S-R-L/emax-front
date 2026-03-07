@@ -1,0 +1,26 @@
+.tooltip-container {
+  position: relative; /* Necesario para posicionar el tooltip */
+  display: inline-block; /* Para que ocupe solo el espacio necesario */
+  cursor: pointer; /* Indica que es interactivo */
+}
+.tooltip-text {
+  visibility: hidden; /* Oculto por defecto */
+  width: 130px;
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 2px 0;
+  position: absolute;
+  z-index: 1;
+  bottom: 100%; /* Posición arriba del texto */
+  left: 50%;
+  margin-left: -60px; /* Centrar el tooltip */
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+/* Mostrar el tooltip al pasar el cursor sobre el contenedor */
+.tooltip-container:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+}

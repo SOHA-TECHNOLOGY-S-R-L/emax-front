@@ -1,47 +1,67 @@
 <div class="row">
-  @for (producto of lstProductos; track $index) {
+  @for (producto of lstProductos(); track $index) {
   <div class="col-6 col-lg-3">
     <div class="card">
-      <a class="{{producto.estadoProducto.color}}"
-        [routerLink]="['/tienda/productos-categoria', producto.categoria?.nombre, 'item-producto-persona-online', producto.codigo]">
-        <img *ngIf="producto?.imagen" [src]="API_URL_VER_IMAGEN+producto.imagen" [alt]="producto.imagen" loading="lazy"
-          decoding="async" priority="false" class="productos-por-categoria-img">
-        <!--         <img *ngIf="producto?.imagen"
-        ngOptimizedImage
-        [ngSrc]="API_URL_VER_IMAGEN+producto.imagen"
-        [alt]="producto.imagen"
-        width="300"
-        height="300"
-        loading="lazy"
-        decoding="async"
-        class="card-img-top"> -->
-      </a>
+      @for (mp of producto.multimediasProducto; track $index) {<!--Siempre será de un solo elemento-->
+      @if(mp.multimedia.mimeType.startsWith('image/')) {
+      <div>
+        <a class="{{producto.estadoProducto.color}}"
+          [routerLink]="['/tienda/productos-categoria', producto.categoria?.nombre, 'item-producto-persona-online', producto.codigo]">
+          <img [src]="mp.multimedia.urlMultimediaShow" [alt]="producto.nombre" loading="lazy" decoding="async"
+            priority="false" class="productos-por-categoria-img">
+        </a>
+      </div>
+      } @else if(mp.multimedia.mimeType.startsWith('video/')) {
+      <div>
+        <video controls crossorigin="anonymous" class="productos-por-categoria-img">
+          <source [src]="mp.multimedia.urlMultimediaShow" type="{{mp.multimedia.mimeType}}">
+          Tu navegador no soporta el tipo de video {{mp.multimedia.mimeType}}
+        </video>
+      </div>
+      }
+      } @empty {
+      <div>
+        <a class="{{producto.estadoProducto.color}}"
+          [routerLink]="['/tienda/productos-categoria', producto.categoria?.nombre, 'item-producto-persona-online', producto.codigo]">
+          <img src="no-imagen.png" loading="lazy" decoding="async" priority="false" class="productos-por-categoria-img">
+        </a>
+      </div>
+      }
       <div class="card-body">
-<!--         <p class="card-title"> {{producto.nombre | stringToTitleWithAccents }}</p>
- -->        <p class="card-subtitle text-muted">{{producto.descripcion}} ({{producto.codigo | uppercase }}). <i>Vendidos:</i> {{producto.cantidadVendidos}}</p>
+        <!--         <p class="card-title"> {{producto.nombre | stringToTitleWithAccents }}</p> -->
+        <p class="card-subtitle text-muted">{{producto.descripcion}} ({{producto.codigo | uppercase }}).
+          <i>Vendidos:</i> {{producto.cantidadVendidos}}
+        </p>
         <!--         <div class="row">
           <div class="col-12 col-sm-7 text-sm-start">
             <span><i>Stock: </i>{{producto.cantidadStock}}</span>
           </div>
           <div class="col-12 col-sm-5 text-sm-end">
-            <span class="precio">{{producto.precioNetoNumberShow | currency: 'PEN'}}</span>
+            <span class="precio">{{producto.precioMasBajoProductoShow | currency: 'PEN'}}</span>
           </div>
         </div> -->
       </div>
       <ul class="list-group list-group-flush">
-        <li class="list-group-item"><i>Stock:</i> {{producto.cantidadStock}}, <span class="precio">{{producto.precioNetoNumberShow | currency: 'PEN'}}</span></li>
+        <li class="list-group-item"><i>Stock:</i> {{producto.cantidadStock}}, <span
+            class="precio">{{producto.precioMasBajoProductoShow | currency: 'PEN'}}</span></li>
       </ul>
       <div class="card-footer">
         <div class="d-flex justify-content-evenly">
-          <button type="button" class="btn btn-primary"
-            [routerLink]="['/tienda/productos-categoria', producto.categoria?.nombre, 'item-producto-persona-online',producto.codigo]">Detalles</button>
+
 
           <button type="button" class="btn btn-secondary"
             (click)="chatear(producto.categoria!.nombre, producto.codigo)"><i
               class="fa-brands fa-whatsapp  mr-1"></i>Chatear</button>
+          <button type="button" class="btn btn-primary"
+            [routerLink]="['/tienda/productos-categoria', producto.categoria?.nombre, 'item-producto-persona-online',producto.codigo]">Detalles</button>
         </div>
       </div>
     </div>
   </div>
   }
+</div>
+<div class="row">
+  <mat-paginator [length]="pageable.totalElements" [ngClass]="{'d-none': !lstProductos().length}"
+    [pageSizeOptions]="pageSizeOptions" [pageSize]="pageSize" (page)="handlePageEvent($event)" showFirstLastButtons>
+  </mat-paginator>
 </div>

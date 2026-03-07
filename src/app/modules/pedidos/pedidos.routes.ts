@@ -3,7 +3,6 @@ import { isAuthenticatedGuard } from '../../guards/is-authenticated.guard';
 import { RoleGuard } from '../../guards/role.guard';
 import { DetallePedidoCompraComponent } from './components/detalle-pedido-compra/detalle-pedido-compra.component';
 import { DetallePedidoVentaComponent } from './components/detalle-pedido-venta/detalle-pedido-venta.component';
-import { PedidoPersonaTiendaFinalizadoComponent } from './components/pedido-persona-tienda-finalizado/pedido-persona-tienda-finalizado.component';
 import { ItemProductoPersonaTiendaComponent } from './pages/item-producto-pesona-tienda/item-producto-persona-tienda.component';
 import { ItemProductoProveedorTiendaComponent } from './pages/item-producto-proveedor-tienda/item-producto-proveedor-tienda.component';
 import { ListadoComprasComponent } from './pages/listado-compras/listado-compras.component';
@@ -35,41 +34,17 @@ export const routes: Routes = [
       data: { role: 'ROLE_CREATE_PEDIDO' }
     }, */
   {
-    path: 'item-producto-persona-tienda/:personaId',
+    path: 'item-producto-persona-tienda',
     component: ItemProductoPersonaTiendaComponent,
     canActivate: [isAuthenticatedGuard],
-    /*data: { role: 'ROLE_CREATE_VENTA' }*/
+    data: { role: 'ROLE_REGISTER_VENTA' }
   },
   {
     path: 'item-producto-proveedor-tienda/:personaId',
     component: ItemProductoProveedorTiendaComponent,
     canActivate: [isAuthenticatedGuard],
-    /*data: { role: 'ROLE_CREATE_VENTA' }*/
+    /*data: { role: 'ROLE_REGISTER_VENTA' }*/
   },
-  /*
-    {
-      path: 'item-producto-persona-online/:productoId',
-      component: ItemProductoPersonaOnlineComponent,
-           canActivate: [isAuthenticatedGuard, RoleGuard],
-          data: { role: 'ROLE_CREATE_PEDIDO' }
-    },
-    */
-
-  {
-    path: 'pedido-persona-tienda-finalizado/:personaId',
-    component: PedidoPersonaTiendaFinalizadoComponent,
-    /* canActivate: [isAuthenticatedGuard, RoleGuard],
-    data: { role: 'ROLE_CREATE_PEDIDO' }*/
-  },
-/*
-  {
-    path: 'contactanos',
-    component: ContactanosComponent,
-         canActivate: [isAuthenticatedGuard, RoleGuard],
-        data: { role: 'ROLE_CREATE_PEDIDO' }
-  },*/
-
-
   {
     path: 'detalle-venta/:pedidoId',
     component: DetallePedidoVentaComponent,

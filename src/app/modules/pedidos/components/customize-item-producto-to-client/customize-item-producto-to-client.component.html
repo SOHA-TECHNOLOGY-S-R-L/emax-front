@@ -1,21 +1,21 @@
-@if(producto.cantidadStock < producto.umbralCantidadAgotada ) { <div class="row col-12 alert alert-danger mt-2 ">
+@if(producto().cantidadStock < producto().umbralCantidadAgotada ) { <div class="row col-12 alert alert-danger mt-2 ">
   SIN STOCK! No podrá concluir su pedido.
   </div>
   }
-  <div class="row mt-2">
+  <div class="row">
     <div class="col-12 col-md-6">
-      <div class="row">
-        <div class="col {{producto.estadoProducto.color}}">
-          <img [src]="verImagenProducto" [alt]="producto.imagen" class="img-fluid mx-auto d-block">
-        </div>
+      <div class="{{estadoProductoColor()}}">
+        <ver-multimedia-producto [inMultimediasProducto]="multimediasFromProducto!.value()!" [inCircular]="true"
+          [inShowNavigators]="true" [inShowIndicators]="false"></ver-multimedia-producto>
       </div>
     </div>
     <div class="col-12 col-md-6">
-      @if (producto) {
-      <h5> {{producto.nombre | stringToTitleWithAccents }} ({{producto.codigo | uppercase}})</h5>
-
+      @if (producto()) {
+      <h5> {{producto().descripcion }} ({{producto().codigo | uppercase}})</h5>
+      <!--       <p>{{producto().cantidadVendidos}} vendidos</p>
+ -->
       <div class="row">
-        @for (margen of producto.margenesProducto; track $index) {
+        @for (margen of producto().margenesProducto; track $index) {
         <div class="col-4">
           <p> {{margen.minCantidad}} - {{margen.maxCantidad}} unid</p>
           <span class="precio">{{margen.precioNeto | currency:'PEN'}}</span>
@@ -36,36 +36,35 @@
             <!--             <li style="margin-bottom: 6px;"><i class="fa fa-angle-right mr-2"></i><b>En grupos de:
               </b>{{producto.gruposDe}} unid</li> -->
             <li style="margin-bottom: 6px;"><i class="fa fa-angle-right mr-2"></i><b>Color:
-              </b>{{producto.color?.nombre}}
+              </b>{{producto().color?.nombre}}
             </li>
-            <li style="margin-bottom: 6px;"><i class="fa fa-angle-right mr-2"></i><b>Medidas: </b>{{producto.medidas}}
+            <li style="margin-bottom: 6px;"><i class="fa fa-angle-right mr-2"></i><b>Medidas: </b>{{producto().medidas}}
             </li>
-            <li style="margin-bottom: 6px;"><i class="fa fa-angle-right mr-2"></i><b>Peso: </b>{{producto.peso}}</li>
+            <li style="margin-bottom: 6px;"><i class="fa fa-angle-right mr-2"></i><b>Peso: </b>{{producto().peso}}</li>
 
             <li style="margin-bottom: 6px;"><i class="fa fa-angle-right mr-2"></i><b>Material:
-              </b>{{producto.material?.nombre}}</li>
+              </b>{{producto().material?.nombre}}</li>
 
             <li style="margin-bottom: 6px;"><i class="fa fa-angle-right mr-2"></i><b>Grupos de:
-              </b>{{producto.gruposDe}} unid, <i><b>Stock:
-                </b></i>{{producto.cantidadStock}} unid </li>
-
+              </b>{{producto().gruposDe}} unid</li>
+            <li style="margin-bottom: 6px;"><i class="fa fa-angle-right mr-2"></i><b>Mín cantidad en pedido:
+              </b>{{producto().minCantidadPedido}} unid </li>
+            <li style="margin-bottom: 6px;"><i class="fa fa-angle-right mr-2"></i><b>Stock:
+              </b>{{producto().cantidadStock}} unid</li>
           </ul>
         </div>
       </div>
       }
-      <form id="frmAddToCart" [formGroup]="frm" (ngSubmit)="sendOneItemProducto()">
+      <form id="frmAddToCart" [formGroup]="frm" (ngSubmit)="sendOneItemProducto();">
         <div class="container-fluid">
-          <div class="row mb-2">
+          <!--           <div class="row mb-2">
             <label for="clicUploadImageToClient" class="col-10"><b>¿GRABAR IMAGEN EN PRODUCTOS?</b> </label>
             <div class="input-group col-2">
               <input id="clicChkGrabarImageToClient" class="form-check-input" type="checkbox"
-                 (click)="checkImagenToProduct($event)">
-              <!--               <input #file type="file" (change)="subirImagen(file)" name="imagen" class="form-control"
-                style="display: none;" id="clicUploadImageToClient" aria-describedby="clicUploadImageToClient">
-              <label for="clicUploadImageToClient" class="btn btn-secondary">📁 Elegir imagen</label> -->
+                (click)="checkImagenToProduct($event)">
             </div>
           </div>
-          @if(isGrabarImagen){
+          @if(isGrabarImagen()){
           <div class="row mb-2">
             <div class="d-flex justify-content-center">
               <input #file type="file" (change)="subirImagenToProducto(file)" name="imagen" class="form-control"
@@ -77,30 +76,28 @@
           <div class="row mb-2">
             <div class="input-group col-12">
               <textarea formControlName="descripcion" name="descripcion" class="form-control"
-                [ngStyle]="{'resize': 'none'}" placeholder="¿Tienes algún texto para adicionar? ¿Algo mas para la pesonalización? " maxlength="250"
+                [ngStyle]="{'resize': 'none'}"
+                placeholder="¿Tienes algún texto para adicionar? ¿Algo mas para la pesonalización? " maxlength="250"
                 rows="5"></textarea>
             </div>
-          </div>
+          </div> -->
           <div class="row">
-<!--             <img class="col-4" [src]="verImagenItem">
-            <div class="col-8"> -->
-              <div class="d-flex flex-column">
-                <div class="input-group mb-2">
-                  <div class="input-group-prepend">
-                    <span class="input-group-text" id="inputCantidadItemProducto">Cantidad:</span>
-                  </div>
-                  <input type="number" formControlName="cantidad" class="form-control" name="cantidad" [step]="gruposDe"
-                    [min]="minCantidadPedido" [max]="maxCantidadPedido" aria-describedby="inputCantidadItemProducto">
+            <div class="d-flex flex-column">
+              <div class="input-group mb-2">
+                <div class="input-group-prepend">
+                  <span class="input-group-text" id="inputCantidadItemProducto">Cantidad:</span>
                 </div>
-                <div class="d-flex flex-wrap flex-column flex-sm-row justify-content-sm-evenly">
-                  <button type="button" class="btn btn-secondary mb-2" (click)="chatear(producto)"><i
-                      class="fa-brands fa-whatsapp mr-1"></i>Chatear</button>
-                  <button id="btnAddToCart" type="submit" class="btn btn-primary mb-2">Añadir
-                    carrito</button>
-                </div>
+                <input type="number" formControlName="cantidad" class="form-control" name="cantidad" [step]="gruposDe()"
+                  [min]="minCantidadPedido()" [max]="maxCantidadPedido()" aria-describedby="inputCantidadItemProducto">
               </div>
-<!--             </div>
- -->          </div>
+              <div class="d-flex flex-wrap flex-column flex-sm-row justify-content-sm-evenly">
+                <button type="button" class="btn btn-secondary mb-2" (click)="chatear(producto())"><i
+                    class="fa-brands fa-whatsapp mr-1"></i>Chatear</button>
+                <button id="btnAddToCart" type="submit" class="btn btn-primary mb-2"><i class="fa-solid fa-cart-plus mr-1"></i>Añadir
+                  carrito</button>
+              </div>
+            </div>
+          </div>
         </div>
       </form>
 

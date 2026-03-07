@@ -2,10 +2,18 @@
   <div class="row">
     @for (categoria of lstCategoria; track $index) {
     <div class="col-6 col-md-4 col-lg-3 p-0 portfolio-item">
+      @if(categoria.multimedia){
+      <div class="multimedia-image-wrapper">
+        <a [routerLink]="['/tienda/productos-categoria' ,categoria.nombre]" [routerLinkActive]="['active']"
+          [routerLinkActiveOptions]="{exact: true}">
+          <img class="multimedia-image" [src]="categoria.multimedia.urlMultimediaShow" [alt]="categoria.nombre"
+            loading="lazy" decoding="async" priority="false">
+        </a>
+      </div>
+      } @else {
       <div class="position-relative overflow-hidden">
         <div class="portfolio-img">
-          <img class="categorias-producto-persona-img" [src]="API_URL_VER_IMAGEN+categoria.imagen"
-            [alt]="categoria.descripcion">
+          <img class="multimedia-no-image" src="no-imagen.png" [alt]="categoria.nombre">
         </div>
         <div class="portfolio-text bg-primary">
           <h5 class="font-weight-bold mb-4">{{categoria.nombre | stringToTitleWithAccents}}</h5>
@@ -17,6 +25,7 @@
           </div>
         </div>
       </div>
+      }
     </div>
     }
   </div>

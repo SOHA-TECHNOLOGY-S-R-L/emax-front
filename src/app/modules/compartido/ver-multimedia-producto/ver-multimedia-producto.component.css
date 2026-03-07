@@ -1,0 +1,52 @@
+.item-carousel {
+  border: 2px solid #ddd;
+  transition: border 0.2s ease;
+}
+
+.item-carousel:hover {
+  border-color: #999;
+}
+
+.item-activo {
+  border: 2px solid #000;
+  /* más negrita */
+}
+
+
+/*+++++++css image +++++++++++++*/
+
+.image-principal-wrapper {
+/*   width: 100%;
+ */  overflow: hidden;
+  cursor: pointer
+}
+
+.image-principal {
+  width: 100%;
+/*   height: 100%;
+ */  object-fit: cover;
+  transition: transform 0.3s ease 0.5s;/*1-propiedad que se le aplica, 2-tiempo de transformacion, 3-modo transformacion, 4-tiempo antes de empezar transforamcion*/
+}
+
+.image-principal-wrapper:hover .image-principal {
+  transform: scale(1.5);
+}
+
+/*+++++++css video +++++++++++++*/
+
+/* .video-principal-wrapper {
+   width: 100%;
+   overflow: hidden;
+  cursor: pointer
+}
+ */
+.video-principal {
+  width: 100%;
+   height: 100%;
+   object-fit: contain;
+/*   transition: transform 0.2s ease;
+ */}
+
+/* .image-principal-wrapper:hover .image-principal {
+  transform: scale(1.5);
+} */

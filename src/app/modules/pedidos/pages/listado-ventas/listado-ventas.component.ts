@@ -96,7 +96,10 @@ export class ListadoVentasComponent implements OnInit, AfterViewInit {
         });
 
       } else if (this.authService.hasRole('ROLE_LIST_MY_ORDERS')) {
-        this.usuarioService.getUsuarioByUsername(this.authService.usuario.username).pipe(
+        const usuario = this.authService.usuario()
+        if (!usuario) {return}
+
+        this.usuarioService.getUsuarioByUsername(usuario.username).pipe(
           concatMap(usr => this.personaService.getPersonaByUsuarioId(usr.id)),
           concatMap(cli => this.pedidoService.getPedidosPersonaPageable(params, cli.id))
         ).subscribe(response => {

@@ -3,8 +3,8 @@ import { CustomizeItemProductoToClientComponent } from '../../components/customi
 
 
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { ChangeDetectorRef, Component, computed, effect, inject, signal } from '@angular/core';
+import { rxResource, toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { map } from 'rxjs';
@@ -13,6 +13,7 @@ import { Producto } from '../../../../models/producto';
 import { ProductoService } from '../../../../services/producto.service';
 import { SeoService } from '../../../../services/seo.service';
 import { AngularMaterialModule } from '../../../compartido/angular-material.module';
+import { MediaMatcher } from '@angular/cdk/layout';
 
 
 @Component({
@@ -23,31 +24,83 @@ import { AngularMaterialModule } from '../../../compartido/angular-material.modu
   imports: [CarritoItemProductoComponent, CustomizeItemProductoToClientComponent, CommonModule, RouterModule, FormsModule, ReactiveFormsModule, AngularMaterialModule]
 
 })
-export class ItemProductoPersonaOnlineComponent implements OnInit {
+export class ItemProductoPersonaOnlineComponent {
   private activatedRoute = inject(ActivatedRoute);
   private productoService = inject(ProductoService);
   private seo = inject(SeoService);
-  //public authService = inject(AuthService);
-  public categoriaNombre = toSignal<string>(this.activatedRoute.paramMap.pipe(map(r =>  (r.get('nombre')!))));
-  public productoCodigo = toSignal<string>(this.activatedRoute.paramMap.pipe(map(r => (r.get('productoCodigo')!))));
-  //public productoId = toSignal<number>(this.activatedRoute.paramMap.pipe(map(r => + (r.get('productoId')!))));
-  producto!: Producto;
+  API_URL_VER_IMAGEN = environment.API_URL_VER_IMAGEN;
+
+  readonly categoriaNombre = toSignal(
+    this.activatedRoute.paramMap.pipe(map(p => p.get('nombre'))), { initialValue: null }
+  );
+
+  readonly productoCodigo = toSignal(
+    this.activatedRoute.paramMap.pipe(map(p => p.get('productoCodigo'))), { initialValue: null }
+  );
+
+  readonly producto = rxResource({
+    params: () => {
+      const codigo = this.productoCodigo();
+      const categoria = this.categoriaNombre();
+
+      if (!codigo || !categoria) return null;
+
+      return { codigo, categoria };
+    },
+    stream: ({ params }) =>
+      this.productoService.productoCategoria(
+        params!.codigo,
+        params!.categoria
+      )
+
+  });
+
+  readonly multimediaPrincipal = computed(() => {
+    const prd = this.producto.value();
+    if (!prd) return;
+    if (prd.multimediasProducto.length > 0) {
+      const primerElemento = prd.multimediasProducto.find(m => m.esPrincipal) || prd.multimediasProducto[0];
+      return this.API_URL_VER_IMAGEN.concat(primerElemento.multimedia.nombre)
+    }
+    return 'no-imagen.png';
+    /* a ?? b. Devuelve "a" si a NO es null ni undefined. Si "a" es null o undefined, devuelve "b" */
+    //return lista.find(m => m.esPrincipal) ?? lista[0].multimedia.nombre ?? 'no-imagen.png';
+  });
+
+  doSeoEffect = effect(() => {
+    const producto = this.producto.value();
+    const categoria = this.categoriaNombre();
+
+    if (!producto || !categoria) return;
+
+    this.seoProducto(producto, categoria);
+  });
+
+
+
+  /******propeidades para el drawner container**********/
+  // 2 propiedades
+  // El constructor
+  // El ondestroy
+  //mobileQuery: MediaQueryList;
+  //private _mobileQueryListener: () => void;
+  protected readonly isMobile = signal(true);
+
+  private readonly _mobileQuery: MediaQueryList;
+  private readonly _mobileQueryListener: () => void;
   constructor() {
+    const media = inject(MediaMatcher);
+
+    this._mobileQuery = media.matchMedia('(max-width: 600px)');
+    this.isMobile.set(this._mobileQuery.matches);
+    this._mobileQueryListener = () => this.isMobile.set(this._mobileQuery.matches);
+    this._mobileQuery.addEventListener('change', this._mobileQueryListener);
   }
 
-  ngOnInit(): void {
-    console.log("productoId()", this.categoriaNombre())
-    this.loadProducto( this.productoCodigo()! , this.categoriaNombre()!);
+  ngOnDestroy(): void {
+    this._mobileQuery.removeEventListener('change', this._mobileQueryListener);
   }
-
-  loadProducto(productoCodigo: string ,categoriaNombre: string) {
-
-    this.productoService.productoCategoria(productoCodigo,categoriaNombre)
-      .subscribe(prd => {
-        this.producto = prd;
-        this.seoProducto(this.producto, categoriaNombre )
-      })
-  }
+  /**************************************************/
 
   seoProducto(producto: Producto, categoriaNombre: string) {
     const tittle = `${producto.nombre}(${producto.codigo}) ${categoriaNombre}`;
@@ -59,7 +112,7 @@ export class ItemProductoPersonaOnlineComponent implements OnInit {
     this.seo.meta.updateTag({ property: "og:description", content: descripcion })
     this.seo.meta.updateTag({ property: "og:url", content: `${environment.apiFront}/tienda/productos-categoria/${categoriaNombre}/item-producto-persona-online/${producto.codigo}` })
     this.seo.meta.updateTag({ property: "og:title", content: tittle })
-    this.seo.meta.updateTag({ property: "og:image", content: `${environment.API_URL_VER_IMAGEN}${producto.imagen}` })
+    this.seo.meta.updateTag({ property: "og:image", content: `${this.multimediaPrincipal()}` })
     //this.seo.serCanonicalURL(`${environment.apiFront}/tienda/item-producto-persona-online`)
     this.seo.setIndexFollow(true);
   }

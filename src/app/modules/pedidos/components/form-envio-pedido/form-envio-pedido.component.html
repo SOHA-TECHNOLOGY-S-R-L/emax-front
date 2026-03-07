@@ -1,0 +1,42 @@
+<form [formGroup]="envioPedidoForm" autocomplete="off" class="d-flex flex-column">
+  <div class="mb-2">
+    <div class="d-flex justify-content-between">
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" formControlName="formaEnvio" id="envioLocal"
+          [value]="SERVICIO_ENTREGA_LOCAL">
+        <label class="form-check-label" for="envioLocal">Envío local</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" formControlName="formaEnvio" id="envioProvincial"
+          [value]="SERVICIO_ENTREGA_PROVINCIAL" checked>
+        <label class="form-check-label" for="envioProvincial">Envío provincial</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" formControlName="formaEnvio" id="envioOtraCiudad"
+          [value]="SERVICIO_ENTREGA_CIUDAD">
+        <label class="form-check-label" for="envioOtraCiudad">Envío ciudad</label>
+      </div>
+    </div>
+  </div>
+  <div class="mb-2">
+    <textarea formControlName="direccionEnvio" class="form-control" name="direccionEnvio" rows="3"
+      placeholder="Dirección de envío, colocar tambien referencias..."></textarea>
+    <div *ngIf="formUtils.isValidField(envioPedidoForm, 'direccionEnvio')" class="alert alert-danger">
+      {{formUtils.getFieldError(envioPedidoForm, 'direccionEnvio')}}
+    </div>
+  </div>
+  <div class="mb-2">
+    <input type="text" formControlName="nomApellRzEnvio" class="form-control" name="nomApellRzEnvio"
+      placeholder="Persona que recibe el envío">
+    <div *ngIf="formUtils.isValidField(envioPedidoForm,'nomApellRzEnvio')" class="alert alert-danger">
+      {{formUtils.getFieldError(envioPedidoForm,'nomApellRzEnvio')}}
+    </div>
+  </div>
+  <div class="mb-2">
+    <input type="text" formControlName="celularEnvio" class="form-control" name="celularEnvio"
+      placeholder="Celular del que recibe el envío">
+    <div *ngIf="formUtils.isValidField(envioPedidoForm, 'celularEnvio')" class="alert alert-danger">
+      {{formUtils.getFieldError(envioPedidoForm, 'celularEnvio')}}
+    </div>
+  </div>
+</form>

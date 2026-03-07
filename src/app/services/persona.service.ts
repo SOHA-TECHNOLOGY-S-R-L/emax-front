@@ -158,8 +158,8 @@ export class PersonaService {
       }));
   }
 
-  update(persona: Persona): Observable<any> {
-    return this.http.put<any>(`${environment.apiUrl}/personas/${persona.id}`, persona
+  update(personaId: number, persona: Persona): Observable<any> {
+    return this.http.put<any>(`${environment.apiUrl}/personas/${personaId}`, persona
       /*, {headers: this.agregarAuthorizationHeader()}*/
     ).pipe(
       catchError(e => {
@@ -198,7 +198,11 @@ export class PersonaService {
   }
 
   filtrarPersonas(term: string): Observable<Persona[]> {
-    return this.http.get<Persona[]>(`${environment.apiUrl}/personas/filtrar-persona/${term}`
+    const filtro = term?.trim();
+    if (!filtro || filtro.length < 2) {
+      return of([]);
+    }
+    return this.http.get<Persona[]>(`${environment.apiUrl}/personas/filtrar-persona/${encodeURIComponent(filtro)}`
     );
   }
 

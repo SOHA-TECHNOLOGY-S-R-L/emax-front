@@ -5766,8 +5766,8 @@ a.badge-dark.focus {
 .list-group-item {
   position: relative;
   display: block;
-  padding: 0.75rem 1.25rem;
-  background-color: #fff;
+/*   padding: 0.75rem 1.25rem;
+ */  background-color: #fff;
   border: 1px solid rgba(0, 0, 0, 0.125);
 }
 
@@ -11411,8 +11411,8 @@ body {
 .nuevo {
   position: relative;
 
-  img {
-    border-radius: 0 10px 0px 0px;
+   img {
+    border-radius: 0 6px 6px 6px;
   }
 
   &::before {
@@ -11422,12 +11422,12 @@ body {
     background-color: rgb(91, 197, 0);
     font-size: 12px;
     height: auto;
-    position: absolute;
-    font-weight: bolder;
+     position: absolute;
+     font-weight: bolder;
     font-style: italic;
     color: white;
     text-align: center;
-    padding: 2px 4px;
+     padding: 2px 4px;
   }
 }
 
@@ -11435,7 +11435,7 @@ body {
   position: relative;
 
   img {
-    border-radius: 0 10px 0px 0px;
+    border-radius: 0 6px 6px 6px;
   }
 
   &::before {
@@ -11458,7 +11458,7 @@ body {
   position: relative;
 
   img {
-    border-radius: 0 10px 0px 0px;
+    border-radius: 0 6px 6px 6px;
   }
 
   &::before {
@@ -11481,7 +11481,7 @@ body {
   position: relative;
 
   img {
-    border-radius: 0 10px 0px 0px;
+    border-radius: 0 6px 6px 6px;
   }
 
   &::before {
@@ -11504,7 +11504,7 @@ body {
   position: relative;
 
   img {
-    border-radius: 0 10px 0px 0px;
+    border-radius: 0 6px 6px 6px;
   }
 
   &::before {

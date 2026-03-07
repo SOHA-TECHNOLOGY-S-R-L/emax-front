@@ -64,7 +64,7 @@ export class MovimientoCajaComponent implements OnInit {
 
   getCajaUsuario(): void {
     if (this.authService.isAuthenticated()) {
-      const username = this.authService.usuario.username;
+      const username = this.authService.usuario()!.username;
       this.cajasService.getCajaUsuarioActiveByUserName(username).subscribe(
         result => {
           if (result !== null && result.activa) {
