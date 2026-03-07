@@ -4,7 +4,6 @@ import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
 import { switchMap } from 'rxjs';
-import { environment } from '../../../../../environments/environment.development';
 import { Multimedia } from '../../../../models/multimedia';
 import { PageableResponse } from '../../../../models/pageable-response';
 import { AlertService } from '../../../../services/alert.service';
@@ -13,6 +12,7 @@ import { MultimediaService } from '../../../../services/multimedia.service';
 import { AngularMaterialModule } from '../../../compartido/angular-material.module';
 import { SearchBoxTableComponent } from '../../../compartido/search-box-table/search-box-table.component';
 import { AuthService } from './../../../../services/auth.service';
+import { environment } from '../../../../../environments/environment';
 
 @Component({
   selector: 'app-list-multimedia',
