@@ -16,12 +16,12 @@
   @if(producto()) {
 
   <div class="example-container" [class.example-is-mobile]="isMobile()">
-    <mat-drawer-container class="example-sidenav-container" [style.marginTop.px]="isMobile() ? 56 : 0">
+    <mat-drawer-container autosize class="example-sidenav-container" [style.marginTop.px]="isMobile() ? 56 : 0">
       <mat-drawer-content class="main-sidenav-content">
-        <customize-item-producto-to-client (clickVerCarrito)="drawnerRight.toggle()" [producto]="producto()!" />
+        <customize-item-producto-to-client (clickVerCarrito)="drawnerRight.open()" [producto]="producto()!" />
       </mat-drawer-content>
       <mat-drawer position="end" class="main-drawer" #drawnerRight [mode]="isMobile() ? 'over' : 'side'"
-        [opened]="isMobile() ? 'false' : 'true'" fixedTopGap="56">
+        [opened]="!isMobile()" fixedTopGap="56">
         <carrito-item-producto [tipoPedidoId]=3 /> <!-- 3-VENTA POR TIENDA -->
         <!-- 4-VENTA POR ONLINE -->
       </mat-drawer>

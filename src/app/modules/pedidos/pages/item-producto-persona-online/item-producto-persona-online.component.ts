@@ -2,7 +2,7 @@ import { CarritoItemProductoComponent } from '../../components/carrito-item-prod
 import { CustomizeItemProductoToClientComponent } from '../../components/customize-item-producto-to-client/customize-item-producto-to-client.component';
 
 
-import { BreakpointObserver } from '@angular/cdk/layout';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { CommonModule } from '@angular/common';
 import { Component, computed, effect, inject } from '@angular/core';
 import { rxResource, toSignal } from '@angular/core/rxjs-interop';
@@ -79,37 +79,18 @@ export class ItemProductoPersonaOnlineComponent {
   });
 
   readonly isMobile = toSignal(
-    this.breakpointObserver.observe('(max-width: 992px)')
+    /*Breakpoint	Media Query
+      XSmall(max - width: 599.98px)
+      Small(min - width: 600px) and(max - width: 959.98px)
+      Medium(min - width: 960px) and(max - width: 1279.98px)
+      Large(min - width: 1280px) and(max - width: 1919.98px)
+      XLarge(min - width: 1920px)*/
+    this.breakpointObserver.observe(Breakpoints.Large)
       .pipe(map(result => result.matches)),
     { initialValue: false }
   );
 
 
-
-
-  /******propeidades para el drawner container**********/
-  // 2 propiedades
-  // El constructor
-  // El ondestroy
-  //mobileQuery: MediaQueryList;
-  //private _mobileQueryListener: () => void;
-  //protected readonly isMobile = signal(true);
-
-  /*   private readonly _mobileQuery: MediaQueryList;
-    private readonly _mobileQueryListener: () => void;
-    constructor() {
-      const media = inject(MediaMatcher);
-
-      this._mobileQuery = media.matchMedia('(max-width: 600px)');
-      this.isMobile.set(this._mobileQuery.matches);
-      this._mobileQueryListener = () => this.isMobile.set(this._mobileQuery.matches);
-      this._mobileQuery.addEventListener('change', this._mobileQueryListener);
-    } */
-
-  /*   ngOnDestroy(): void {
-      this._mobileQuery.removeEventListener('change', this._mobileQueryListener);
-    } */
-  /**************************************************/
 
   seoProducto(producto: Producto, categoriaNombre: string) {
     const tittle = `${producto.nombre}(${producto.codigo}) ${categoriaNombre}`;

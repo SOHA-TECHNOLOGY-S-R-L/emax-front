@@ -9,7 +9,9 @@ import { AngularMaterialModule } from '../../../compartido/angular-material.modu
 import { AutocompleteResourceComponent } from '../../../compartido/autocomplete-resource/autocomplete-resource.component';
 import { CarritoItemProductoComponent } from '../../components/carrito-item-producto/carrito-item-producto.component';
 import { CustomizeItemProductoToClientComponent } from '../../components/customize-item-producto-to-client/customize-item-producto-to-client.component';
-import { MediaMatcher } from '@angular/cdk/layout';
+import { BreakpointObserver, Breakpoints, MediaMatcher } from '@angular/cdk/layout';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { map } from 'rxjs';
 
 @Component({
   selector: 'item-producto-persona-tienda',
@@ -21,33 +23,22 @@ import { MediaMatcher } from '@angular/cdk/layout';
 })
 export class ItemProductoPersonaTiendaComponent {
   private productoService = inject(ProductoService);
+  private breakpointObserver = inject(BreakpointObserver);
 
   producto = signal<Producto | null>(null);
   items = signal<ItemPedido[]>([]);
 
-  /******propeidades para el drawner container**********/
-  // 2 propiedades
-  // El constructor
-  // El ondestroy
-  //mobileQuery: MediaQueryList;
-  //private _mobileQueryListener: () => void;
-  protected readonly isMobile = signal(true);
-
-  private readonly _mobileQuery: MediaQueryList;
-  private readonly _mobileQueryListener: () => void;
-  constructor() {
-    const media = inject(MediaMatcher);
-
-    this._mobileQuery = media.matchMedia('(max-width: 720px)');
-    this.isMobile.set(this._mobileQuery.matches);
-    this._mobileQueryListener = () => this.isMobile.set(this._mobileQuery.matches);
-    this._mobileQuery.addEventListener('change', this._mobileQueryListener);
-  }
-
-  ngOnDestroy(): void {
-    this._mobileQuery.removeEventListener('change', this._mobileQueryListener);
-  }
-  /**************************************************/
+  readonly isMobile = toSignal(
+    /*Breakpoint	Media Query
+      XSmall(max - width: 599.98px)
+      Small(min - width: 600px) and(max - width: 959.98px)
+      Medium(min - width: 960px) and(max - width: 1279.98px)
+      Large(min - width: 1280px) and(max - width: 1919.98px)
+      XLarge(min - width: 1920px)*/
+    this.breakpointObserver.observe(Breakpoints.Large)
+      .pipe(map(result => result.matches)),
+    { initialValue: false }
+  );
 
   buscarProductos = (term: string) =>
     this.productoService.filtrarProductos(term);
