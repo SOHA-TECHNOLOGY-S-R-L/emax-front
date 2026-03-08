@@ -103,19 +103,6 @@
       </tbody>
       <tfoot>
         <tr>
-          <td colspan="6">
-            <div class="col-12 col-md">
-              <textarea class="form-control" name="observacion"
-                minlength="2" maxlength="250" rows="2"
-                placeholder="Coloca aquí datos adicionales al pedido..."
-                (input)="actualizarObservacion($any($event.target).value)"></textarea>
-<!--               <div *ngIf="formUtils.isValidFieldFp(observacion)" class="alert alert-danger">
-                {{formUtils.getFieldErrorFp(observacion)}}
-              </div> -->
-            </div>
-          </td>
-        </tr>
-        <tr>
           <td colspan="1"><b>Entregar:</b></td>
           <td colspan="2">
             @if(tipoPedidoId()===4) { <!-- 4-VENTA POR ONLINE -->
@@ -131,6 +118,19 @@
           </td>
           <td colspan="1" class="text-end fw-bold">TOTAL</td>
           <td colspan="2" class="text-center fw-bold">{{total() | currency:'PEN'}}</td>
+        </tr>
+        <tr>
+          <td colspan="1"><b>Texto:</b></td>
+          <td colspan="5">
+<!--             <div class="col-12 col-md">
+ -->              <textarea class="form-control" name="observacion" minlength="2" maxlength="250" rows="2"
+                placeholder="Coloca aquí datos adicionales al pedido..."
+                (input)="actualizarObservacion($any($event.target).value)"></textarea>
+              <!--               <div *ngIf="formUtils.isValidFieldFp(observacion)" class="alert alert-danger">
+                {{formUtils.getFieldErrorFp(observacion)}}
+              </div> -->
+<!--             </div>
+ -->          </td>
         </tr>
       </tfoot>
     </table>
@@ -200,6 +200,23 @@
       </li>
     </ul>
   </div>
+  <div class="col">
+    <ul class="list-group my-1">
+      <li class="list-group-item active d-flex justify-content-between">
+        <span>Observaciones o texto</span>
+      </li>
+      <li>
+        <!--         <div class="mb-2">
+ --> <textarea class="form-control" name="observacion" minlength="2" maxlength="250" rows="2"
+          placeholder="Coloca aquí datos adicionales al pedido..."
+          (input)="actualizarObservacion($any($event.target).value)"></textarea>
+        <!--         </div>
+ -->
+      </li>
+    </ul>
+
+  </div>
+
 
   <div class="col">
     <ul class="list-group my-1">

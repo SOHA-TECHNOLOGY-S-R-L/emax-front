@@ -2,8 +2,9 @@ import { CarritoItemProductoComponent } from '../../components/carrito-item-prod
 import { CustomizeItemProductoToClientComponent } from '../../components/customize-item-producto-to-client/customize-item-producto-to-client.component';
 
 
+import { BreakpointObserver } from '@angular/cdk/layout';
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, computed, effect, inject, signal } from '@angular/core';
+import { Component, computed, effect, inject } from '@angular/core';
 import { rxResource, toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterModule } from '@angular/router';
@@ -13,7 +14,6 @@ import { Producto } from '../../../../models/producto';
 import { ProductoService } from '../../../../services/producto.service';
 import { SeoService } from '../../../../services/seo.service';
 import { AngularMaterialModule } from '../../../compartido/angular-material.module';
-import { MediaMatcher } from '@angular/cdk/layout';
 
 
 @Component({
@@ -27,6 +27,8 @@ import { MediaMatcher } from '@angular/cdk/layout';
 export class ItemProductoPersonaOnlineComponent {
   private activatedRoute = inject(ActivatedRoute);
   private productoService = inject(ProductoService);
+  private breakpointObserver = inject(BreakpointObserver);
+
   private seo = inject(SeoService);
   API_URL_VER_IMAGEN = environment.API_URL_VER_IMAGEN;
 
@@ -76,6 +78,13 @@ export class ItemProductoPersonaOnlineComponent {
     this.seoProducto(producto, categoria);
   });
 
+  readonly isMobile = toSignal(
+    this.breakpointObserver.observe('(max-width: 600px)')
+      .pipe(map(result => result.matches)),
+    { initialValue: false }
+  );
+
+
 
 
   /******propeidades para el drawner container**********/
@@ -84,22 +93,22 @@ export class ItemProductoPersonaOnlineComponent {
   // El ondestroy
   //mobileQuery: MediaQueryList;
   //private _mobileQueryListener: () => void;
-  protected readonly isMobile = signal(true);
+  //protected readonly isMobile = signal(true);
 
-  private readonly _mobileQuery: MediaQueryList;
-  private readonly _mobileQueryListener: () => void;
-  constructor() {
-    const media = inject(MediaMatcher);
+  /*   private readonly _mobileQuery: MediaQueryList;
+    private readonly _mobileQueryListener: () => void;
+    constructor() {
+      const media = inject(MediaMatcher);
 
-    this._mobileQuery = media.matchMedia('(max-width: 600px)');
-    this.isMobile.set(this._mobileQuery.matches);
-    this._mobileQueryListener = () => this.isMobile.set(this._mobileQuery.matches);
-    this._mobileQuery.addEventListener('change', this._mobileQueryListener);
-  }
+      this._mobileQuery = media.matchMedia('(max-width: 600px)');
+      this.isMobile.set(this._mobileQuery.matches);
+      this._mobileQueryListener = () => this.isMobile.set(this._mobileQuery.matches);
+      this._mobileQuery.addEventListener('change', this._mobileQueryListener);
+    } */
 
-  ngOnDestroy(): void {
-    this._mobileQuery.removeEventListener('change', this._mobileQueryListener);
-  }
+  /*   ngOnDestroy(): void {
+      this._mobileQuery.removeEventListener('change', this._mobileQueryListener);
+    } */
   /**************************************************/
 
   seoProducto(producto: Producto, categoriaNombre: string) {

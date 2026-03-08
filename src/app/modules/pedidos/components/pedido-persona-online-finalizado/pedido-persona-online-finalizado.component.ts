@@ -215,13 +215,6 @@ export class PedidoPersonaOnlineFinalizadoComponent {
   }
 
   actualizarPedido() {
-    /*     debugger;
-
-
-        const usuario = this.authService.usuario()
-        if (!usuario) { return }
-
-        console.log("dsfsffffffffff", usuario) */
 
     if (!this.formEnvioPedidoValid || this.items().length === 0) return;
     //debugger;

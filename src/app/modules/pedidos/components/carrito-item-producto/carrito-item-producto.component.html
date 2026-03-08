@@ -1,13 +1,5 @@
 <div class="container">
   <h5>Carrito</h5>
-  <!-- @if(!isAuthenticated() ) {
-<div class="row alert alert-danger">
-  <div class="col-12 d-inline-flex">
-    <div>Para realizar pedido</div>&nbsp;&nbsp;
-    <div><b><a [routerLink]="['/login/']" (click)="closeModal()"> Iniciar sesión</a></b></div>
-  </div>
-</div>
-} -->
   @for (item of lstItemPedido(); track $index) {
   <div style="border-bottom: 1px solid #ccc; padding-top: 2px;">
     <div class="d-flex justify-content-between align-items-center">
@@ -32,23 +24,6 @@
       </div>
 
     </div>
-
-
-<!--     <div class="row">
-      <div class="d-flex flex-row justify-content-evenly align-items-center">
-        <div>
-          {{item.producto.precioMasBajoProductoShow | currency: 'PEN'}}
-        </div>
-        <div>
-          <input type="number" name="cantidad" class="form-control" [step]="item.producto.gruposDe"
-            [min]="item.producto.minCantidadPedido" [max]="item.producto.maxCantidadPedido" [value]="item.cantidad"
-            (input)="actualizarCantidad(item.producto.id, $event);" />
-        </div>
-        <div>
-          {{item.importe| currency:'PEN'}}
-        </div>
-      </div>
-    </div> -->
   </div>
   }
 
@@ -61,7 +36,7 @@
     </div>
   </div>
 
-  <div class="d-flex flex-wrap flex-column flex-sm-row justify-content-sm-evenly">
+  <div class="d-flex flex-wrap flex-column">
     <button (click)=" closeModal(); seguirComprando();" class="btn btn-secondary mb-1 ml-2">Seguir comprando</button>
 
     <button (click)=" closeModal(); irRealizarPedido();" class="btn btn-primary mb-1 ml-2"
