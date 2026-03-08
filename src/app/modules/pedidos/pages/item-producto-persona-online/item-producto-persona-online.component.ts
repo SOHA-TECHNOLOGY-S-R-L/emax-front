@@ -79,7 +79,7 @@ export class ItemProductoPersonaOnlineComponent {
   });
 
   readonly isMobile = toSignal(
-    this.breakpointObserver.observe('(max-width: 1140px)')
+    this.breakpointObserver.observe('(max-width: 992px)')
       .pipe(map(result => result.matches)),
     { initialValue: false }
   );

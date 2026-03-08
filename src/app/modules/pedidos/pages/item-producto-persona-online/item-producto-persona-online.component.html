@@ -1,12 +1,13 @@
 @if (producto != undefined && producto.hasValue()) {
 
 <div class="example-container" [class.example-is-mobile]="isMobile()">
-  <mat-drawer-container class="example-sidenav-container" [style.marginTop.px]="isMobile() ? 56 : 0">
+  <mat-drawer-container autosize class="example-sidenav-container" [style.marginTop.px]="isMobile() ? 56 : 0">
     <mat-drawer-content class="main-sidenav-content">
-      <customize-item-producto-to-client (clickVerCarrito)="drawnerRight.toggle()" [producto]="producto.value()" />
+      <!--        <customize-item-producto-to-client (clickVerCarrito)="drawnerRight.toggle()" [producto]="producto.value()" />  -->
+      <customize-item-producto-to-client (clickVerCarrito)="drawnerRight.open()" [producto]="producto.value()" />
     </mat-drawer-content>
-    <mat-drawer position="end" class="main-drawer" #drawnerRight [mode]="isMobile() ? 'over' : 'side'" [opened] = "isMobile() ? 'false' : 'true'"
-       fixedTopGap="56">
+    <mat-drawer position="end" class="main-drawer" #drawnerRight [mode]="isMobile() ? 'over' : 'side'"
+      [opened]="!isMobile()" fixedTopGap="56">
       <carrito-item-producto [tipoPedidoId]=4 />
       <!-- 4-VENTA POR ONLINE -->
     </mat-drawer>
