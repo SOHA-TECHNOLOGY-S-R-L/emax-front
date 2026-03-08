@@ -65,13 +65,13 @@ export class CarritoItemProductoComponent {
 
   // Creamos un Signal (Angular Moderno) que nos diga si es móvil
   // Detecta Handset (celulares) en Portrait o Landscape
-  public isMobile: Signal<boolean> = toSignal(
+/*   public isMobile: Signal<boolean> = toSignal(
     this.breakpointObserver
       .observe([Breakpoints.Handset])
       .pipe(map(result => result.matches)),
     { initialValue: false }
   );
-
+ */
 
   constructor() { }
 

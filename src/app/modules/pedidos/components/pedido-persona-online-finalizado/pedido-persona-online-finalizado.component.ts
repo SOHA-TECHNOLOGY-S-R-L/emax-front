@@ -99,18 +99,15 @@ export class PedidoPersonaOnlineFinalizadoComponent {
     persona.nomApellRz
 
   personSelecToInForm(persona: Persona) {
-    //debugger;
     console.log("personSelecToInForm -->persona para update", persona);
     this.inPersona.set(persona);
   }
 
   outPersonSelect($event: any) {
-    //debugger;
     this.formPersonaValid = $event.formValid
     if (!this.formPersonaValid) { return }
 
     const persona = $event.persona as Persona;
-    //aqui puede salir persona con ID (para update)y sin ID(para crear)
     this.personSelect.set(persona);
   }
 
@@ -345,7 +342,6 @@ export class PedidoPersonaOnlineFinalizadoComponent {
       )
       .subscribe({
         next: (persona) => {
-          //aqui persona es update
           console.log('cargarPersonaOnline-->persona para update', persona)
           this.inPersona.set(persona);
         },
