@@ -28,14 +28,14 @@ export class ItemProductoPersonaTiendaComponent {
   producto = signal<Producto | null>(null);
   items = signal<ItemPedido[]>([]);
 
+  /*Breakpoint	Media Query
+  XSmall(max - width: 599.98px)
+  Small(min - width: 600px) and(max - width: 959.98px)
+  Medium(min - width: 960px) and(max - width: 1279.98px)
+  Large(min - width: 1280px) and(max - width: 1919.98px)
+  XLarge(min - width: 1920px)*/
   readonly isMobile = toSignal(
-    /*Breakpoint	Media Query
-      XSmall(max - width: 599.98px)
-      Small(min - width: 600px) and(max - width: 959.98px)
-      Medium(min - width: 960px) and(max - width: 1279.98px)
-      Large(min - width: 1280px) and(max - width: 1919.98px)
-      XLarge(min - width: 1920px)*/
-    this.breakpointObserver.observe(Breakpoints.Large)
+    this.breakpointObserver.observe('(max-width: 1279.98px)')
       .pipe(map(result => result.matches)),
     { initialValue: false }
   );

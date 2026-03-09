@@ -80,7 +80,7 @@ export class CustomizeItemProductoToClientComponent {
   // Detecta Handset (celulares) en Portrait o Landscape
   public isMobile: Signal<boolean> = toSignal(
     this.breakpointObserver
-      .observe([Breakpoints.Handset])
+      .observe('(max-width: 1279.98px)')
       .pipe(map(result => result.matches)),
     { initialValue: false }
   );
