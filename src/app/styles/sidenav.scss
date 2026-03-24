@@ -62,14 +62,15 @@
   }
 
   .mdc-list-item__primary-text {
-    color: var.$emax-gray1;
-  }
+    color: white;
+     font-weight: 600;
+   }
 
   .mdc-list-item:hover,
   .mdc-list-item.active {
-/*     background-color: var.$emax-pink;
- */        background-color:  rgba(255, 242, 18, 0.6);
-
+    background-color: #fff212;
+    color: black;
+    font-weight: 600;
   }
 }
 
