@@ -10,9 +10,12 @@ export class MultimediaService {
 
   private multimediaHttpService = inject(MultimediaHttpService);
 
+  readonly ALLOWED_MULTIMEDIA_MIME_TYPES =  ["image/jpg", "image/jpeg", "image/png", "image/gif", "image/webp", "image/bmp", "image/tiff",
+    "video/mp4", "video/mpeg", "video/quicktime", "video/x-msvideo", "video/x-matroska"];
+
   readonly MAX_FILE_SIZE_KB = 30; // 🔧 ajustable
-  readonly EXTENSIONS_IMAGES = ["jpg", "jpeg", "png", "gif", "webp", "bmp", "tiff"];
-  readonly EXTENSIONS_VIDEOS = ["mp4", "mpeg", "quicktime", "x-msvideo", "x-matroska"];
+  //readonly EXTENSIONS_IMAGES = ["jpg", "jpeg", "png", "gif", "webp", "bmp", "tiff"];
+  //readonly EXTENSIONS_VIDEOS = ["mp4", "mpeg", "quicktime", "x-msvideo", "x-matroska"];
   readonly ALLOWED_IMAGES_MIME_TYPES = ["image/jpg", "image/jpeg", "image/png", "image/gif", "image/webp", "image/bmp", "image/tiff"];
   readonly ALLOWED_VIDEO_MIME_TYPES = ["video/mp4", "video/mpeg", "video/quicktime", "video/x-msvideo", "video/x-matroska"]
 
@@ -58,10 +61,9 @@ export class MultimediaService {
 
   isMultimediaFile(file: File): boolean {
     let result: boolean = true;
-    const isValidType =
-      this.ALLOWED_IMAGES_MIME_TYPES.includes(file.type) ||
-      this.ALLOWED_VIDEO_MIME_TYPES.includes(file.type);
-    if (!isValidType) {
+    //const isValidType =
+    //  this.ALLOWED_MULTIMEDIA_MIME_TYPES.includes(file.type);
+    if (!this.ALLOWED_MULTIMEDIA_MIME_TYPES.includes(file.type)) {
       result = false;
     }
     return result;
@@ -114,7 +116,7 @@ export class MultimediaService {
     }
 
     if (validMultimediaFiles.length === 0) {
-      this.alertService.warning(`No hay archivos multimedia validos para subir`, 'Subir multimedia');
+      //this.alertService.warning(`No hay archivos multimedia validos para subir`, 'Subir multimedia');
       return;
     }
 
