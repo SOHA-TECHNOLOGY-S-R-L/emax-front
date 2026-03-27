@@ -34,19 +34,8 @@
     align-items: center;
     margin-left: 2px;
     color: white;
-
   }
 
-  /*   .headers-align .mat-mdc-form-field + .mat-mdc-form-field {
-    margin-left: 8px;
-  } */
-
-
-
-  /*   .mat-expansion-panel-header{
-    background-color:inherit;
-    color: var.$emax-pink;
-  } */
 
   * .mat-icon,
   .mat-subheader {
@@ -63,21 +52,23 @@
 
   .mdc-list-item__primary-text {
     color: white;
-     font-weight: 600;
-   }
+    font-weight: 600;
+  }
 
   .mdc-list-item:hover,
   .mdc-list-item.active {
-    background-color: #fff212;
-    color: black;
+    background-color: #20589C;
+  }
+
+  .mdc-list-item:hover .mdc-list-item__primary-text,
+  .mdc-list-item.active .mdc-list-item__primary-text {
+    color: white !important;
+    background-color: #20589C;
     font-weight: 600;
+
   }
 }
 
 .spacer {
   flex: 1 1 auto;
 }
-
-/* .main-sidenav-content {
-  height: 1000px;
-} */

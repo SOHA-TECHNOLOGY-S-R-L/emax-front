@@ -12,12 +12,12 @@
       </mat-card-header>
       <mat-card-content>
         <mat-form-field>
-          <mat-label for="fchTimeDesde">Desde</mat-label>
+          <mat-label for="fchTimeDesde">Fecha Apertura Desde</mat-label>
           <input matInput type="datetime-local" #fchTimeDesde name="fchTimeDesde" formControlName="fchTimeDesde">
           <button (click)="fchTimeDesde.showPicker()" mat-icon-button matIconSuffix><mat-icon>today</mat-icon></button>
         </mat-form-field>
         <mat-form-field>
-          <mat-label>Hasta</mat-label>
+          <mat-label>Fecha Apertura Hasta</mat-label>
           <input matInput type="datetime-local" #fchTimeHasta name="fchTimeHasta" formControlName="fchTimeHasta">
           <button (click)="fchTimeHasta.showPicker()" mat-icon-button matIconSuffix><mat-icon>today</mat-icon></button>
         </mat-form-field>

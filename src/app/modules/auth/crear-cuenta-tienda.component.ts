@@ -14,7 +14,7 @@ import { FormUtils } from '../../utils/form-utils';
 import { AngularMaterialModule } from '../compartido/angular-material.module';
 import { ConfirmarClaveComponent } from "./confirmar-clave.component";
 import { TipoPersona } from '../../models/tipo-persona';
-import { CLIENTE } from '../../constants/constantes';
+import { CLIENTE_PROVEEDOR } from '../../constants/constantes';
 
 @Component({
   selector: 'app-crear-cuenta-tienda',
@@ -114,7 +114,7 @@ export class CrearCuentaTiendaComponent {
     if (this.formNewCuenta.valid) {
       //this.isLoading = true;
       this.setValueControls();
-      this.tipoPersonaSelected = this.tipoPersonas[this.findIndexTipoPersona(CLIENTE)];
+      this.tipoPersonaSelected = this.tipoPersonas[this.findIndexTipoPersona(CLIENTE_PROVEEDOR)];
       this.persona.tipoPersona = this.tipoPersonaSelected
 
       this.personaService.create(this.persona).subscribe(resp => {
@@ -177,7 +177,7 @@ export class CrearCuentaTiendaComponent {
         this.createForm();
 
       } else {
-        this.tipoPersonaSelected = this.tipoPersonas[this.findIndexTipoPersona(CLIENTE)];
+        this.tipoPersonaSelected = this.tipoPersonas[this.findIndexTipoPersona(CLIENTE_PROVEEDOR)];
         this.persona.tipoPersona = this.tipoPersonaSelected
         this.isCliente = false
       }

@@ -1,22 +1,19 @@
 import { CommonModule } from '@angular/common';
 import { HttpHeaders } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import * as fileSaver from 'file-saver-es';
 import moment from 'moment';
-import { Observable } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
+import { CLIENTE_PROVEEDOR } from '../../../../constants/constantes';
 import { Caja } from '../../../../models/caja';
 import { Persona } from '../../../../models/persona';
-import { Usuario } from '../../../../models/usuario';
 import { CajaService } from '../../../../services/caja.service';
-import { PersonaService } from '../../../../services/persona.service';
 import { MovimientoService } from '../../../../services/movimiento.service';
+import { PersonaService } from '../../../../services/persona.service';
 import { UsuarioService } from '../../../../services/usuario.service';
 import { AngularMaterialModule } from '../../../compartido/angular-material.module';
-import { CLIENTE, PROVEEDOR } from '../../../../constants/constantes';
 
 @Component({
   selector: 'app-rpte-movimiento-en-caja',
@@ -35,8 +32,8 @@ export class RpteMovimientoEnCajaComponent implements OnInit {
   cajaLst: Caja[] = []
   caja!: Caja;
 
-  autocompleteControl = new FormControl();
-  filteredOptions!: Observable<Persona[]>;
+  //autocompleteControl = new FormControl();
+  //&filteredOptions!: Observable<Persona[]>;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -62,20 +59,20 @@ export class RpteMovimientoEnCajaComponent implements OnInit {
       fecha_transaccion1: [moment(now).subtract(1, 'days').toISOString().slice(0, 16)],
       fecha_transaccion2: [now.toISOString().slice(0, 16)],
       caja_id: [],
-      usuario_id: [],
-      persona_id: []
+      usuario_id: []
+      //persona_id: []
     }
 
     this.createForm();
 
-    this.filteredOptions = this.autocompleteControl.valueChanges
+/*     this.filteredOptions = this.autocompleteControl.valueChanges
       .pipe(
         map(value => typeof value === 'string' ? value : value.apellNomRz),
         switchMap(value => value ? this._filter(value) : [])
-      );
+      ); */
 
   }
-
+/*
   private _filter(value: string): Observable<Persona[]> {
     const filterValue = value.toLowerCase();
     return this.personaService.filtrarPersonas(filterValue);
@@ -85,11 +82,11 @@ export class RpteMovimientoEnCajaComponent implements OnInit {
     return persona && persona.nomApellRz ? persona.nomApellRz : '';
   }
 
-  seleccionar(event: MatAutocompleteSelectedEvent): void {
+   seleccionar(event: MatAutocompleteSelectedEvent): void {
     let persona = event.option.value as Persona;
     //console.log(persona);
     this.filtrosReporte.persona_id = [persona.id]
-  }
+  } */
 
   generarReporte() {
     this.filtrosReporte.fecha_transaccion1 = [moment(this.formMov.get("fchTimeDesde")?.value).format("YYYY-MM-DD HH:mm")];
@@ -127,10 +124,10 @@ export class RpteMovimientoEnCajaComponent implements OnInit {
   cargarUsuarios() {
 
     this.personaService.getAllPersonas().pipe(
-        map(personas => personas.filter(p => p.tipoPersona.id !== CLIENTE && p.tipoPersona.id !== PROVEEDOR))
+        map(personas => personas.filter(p => p.tipoPersona.id !== CLIENTE_PROVEEDOR))
     ).subscribe(resp => this.personasLst = resp);
 
-   // this.usuarioService.getAllUsers().subscribe(res => this.usuarioLst = res);
+    // this.usuarioService.getAllUsers().subscribe(res => this.usuarioLst = res);
   }
 
   createForm() {
@@ -140,7 +137,7 @@ export class RpteMovimientoEnCajaComponent implements OnInit {
         fchTimeHasta: [this.filtrosReporte.fecha_transaccion2[0]],
         cajasId: [this.filtrosReporte.caja_id[0]],
         usuariosId: [this.filtrosReporte.usuario_id[0]],
-        cleintesId: [this.filtrosReporte.persona_id[0]]
+       // cleintesId: [this.filtrosReporte.persona_id[0]]
       }
     )
   }
@@ -151,8 +148,8 @@ interface FiltrosReporte {
   fecha_transaccion1: string[],
   fecha_transaccion2: string[],
   caja_id: string[],
-  usuario_id: number[],
-  persona_id: number[]
+  usuario_id: number[]
+  // persona_id: number[]
 
 }
 

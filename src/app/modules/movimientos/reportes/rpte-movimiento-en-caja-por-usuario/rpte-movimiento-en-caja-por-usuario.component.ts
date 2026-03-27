@@ -23,7 +23,7 @@ import { AngularMaterialModule } from '../../../compartido/angular-material.modu
   templateUrl: './rpte-movimiento-en-caja-por-usuario.component.html',
   styleUrl: './rpte-movimiento-en-caja-por-usuario.component.css',
   standalone: true,
-  imports: [CommonModule, AngularMaterialModule ,RouterModule, FormsModule, ReactiveFormsModule ]
+  imports: [CommonModule, AngularMaterialModule, RouterModule, FormsModule, ReactiveFormsModule]
 })
 export class RpteMovimientoEnCajaPorUsuarioComponent implements OnInit {
   titulo!: string;
@@ -33,8 +33,8 @@ export class RpteMovimientoEnCajaPorUsuarioComponent implements OnInit {
   cajaLst: Caja[] = []
   caja!: Caja;
 
-  autocompleteControl = new FormControl();
-  filteredOptions!: Observable<Persona[]>;
+  //autocompleteControl = new FormControl();
+  //filteredOptions!: Observable<Persona[]>;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -48,11 +48,11 @@ export class RpteMovimientoEnCajaPorUsuarioComponent implements OnInit {
 
   ngOnInit(): void {
     this.titulo = "Reporte movimiento en caja por usuario";
-        const usuario = this.authService.usuario()
-    if (!usuario) {return}
-    this.usuarioService.getUsuarioByUsername( usuario.username)
-      .subscribe(res => { this.usuario = res}
-    );    this.cargarCajas();
+    const usuario = this.authService.usuario()
+    if (!usuario) { return }
+    this.usuarioService.getUsuarioByUsername(usuario.username)
+      .subscribe(res => { this.usuario = res }
+      ); this.cargarCajas();
 
     /***********alista la fecha para el campo datetime-local******************* */
     //en un futuro puede sustituirse por timepicker
@@ -63,21 +63,21 @@ export class RpteMovimientoEnCajaPorUsuarioComponent implements OnInit {
       fecha_transaccion1: [moment(now).subtract(1, 'days').toISOString().slice(0, 16)],
       fecha_transaccion2: [now.toISOString().slice(0, 16)],
       caja_id: [],
-      usuario_id:[],
-      persona_id:[]
+      usuario_id: [],
+      // persona_id: []
     }
 
     this.createForm();
 
-    this.filteredOptions = this.autocompleteControl.valueChanges
+/*     this.filteredOptions = this.autocompleteControl.valueChanges
       .pipe(
         map(value => typeof value === 'string' ? value : value.apellNomRz),
         switchMap(value => value ? this._filter(value) : [])
-      );
+      ); */
 
   }
 
-  private _filter(value: string): Observable<Persona[]> {
+/*   private _filter(value: string): Observable<Persona[]> {
     const filterValue = value.toLowerCase();
     return this.personaService.filtrarPersonas(filterValue);
   }
@@ -88,9 +88,8 @@ export class RpteMovimientoEnCajaPorUsuarioComponent implements OnInit {
 
   seleccionar(event: MatAutocompleteSelectedEvent): void {
     let persona = event.option.value as Persona;
-    //console.log(persona);
     this.filtrosReporte.persona_id = [persona.id]
-  }
+  } */
 
   generarReporte() {
     this.filtrosReporte.fecha_transaccion1 = [moment(this.formMov.get("fchTimeDesde")?.value).format("YYYY-MM-DD HH:mm")];
@@ -106,10 +105,10 @@ export class RpteMovimientoEnCajaPorUsuarioComponent implements OnInit {
     }
 
     this.movimientoService.ceateReporteMovEnCaja(filtros)
-    .subscribe(response => {
-      fileSaver.saveAs(response.body!,
-        this.filenameFromHeader(response.headers)) //utilidad pra qeu descargue automaticamente
-    })
+      .subscribe(response => {
+        fileSaver.saveAs(response.body!,
+          this.filenameFromHeader(response.headers)) //utilidad pra qeu descargue automaticamente
+      })
   }
 
   private filenameFromHeader(headers: HttpHeaders): string {
@@ -132,7 +131,7 @@ export class RpteMovimientoEnCajaPorUsuarioComponent implements OnInit {
         fchTimeDesde: [this.filtrosReporte.fecha_transaccion1[0]],
         fchTimeHasta: [this.filtrosReporte.fecha_transaccion2[0]],
         cajasId: [this.filtrosReporte.caja_id[0]],
-        cleintesId: [this.filtrosReporte.persona_id[0]]
+       // cleintesId: [this.filtrosReporte.persona_id[0]]
       }
     )
   }
@@ -144,7 +143,7 @@ interface FiltrosReporte {
   fecha_transaccion2: string[],
   caja_id: string[],
   usuario_id: number[],
-  persona_id: number[]
+  // persona_id: number[]
 
 }
 

@@ -17,13 +17,12 @@ export const COTIZACION_VENTA = 3;
 export const COTIZACION_COMPRA = 4;
 
 //tipo persona
-export const CLIENTE = 1;
-export const PROVEEDOR = 2;
-export const EMPLEADO_PARA_VENTA = 3;
-export const EMPLEADO_PARA_CAJA = 4;
-export const EMPLEADO_PARA_COMPRA = 5;
-export const EMPLEADO_PARA_PRODUCTO = 6;
-export const EMPLEADO_PARA_ADMIN = 7;
+export const CLIENTE_PROVEEDOR = 1;
+export const EMPLEADO_PARA_VENTA = 2;
+export const EMPLEADO_PARA_CAJA = 3;
+export const EMPLEADO_PARA_COMPRA = 4;
+export const EMPLEADO_PARA_PRODUCTO = 5;
+export const EMPLEADO_PARA_ADMIN = 6;
 
 
 

@@ -26,7 +26,7 @@ export class RptePedidoComponent implements OnInit {
   filtrosReporte!: FiltrosReporte;
   estadoPedidoLst: EstadoPedido[] = [];
   tipoPedido!: TipoPedido;
-  pagadoLst: Pagado[] = [];
+  //pagadoLst: Pagado[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -45,13 +45,13 @@ export class RptePedidoComponent implements OnInit {
       );
     });
 
-    this.cargarPagado();
+    //this.cargarPagado();
     this.cargarEstadoPedido();
     this.filtrosReporte = {
       create_at1: moment(new Date()).subtract(7, 'days').toISOString(),
       create_at2: new Date().toISOString(),
       estado_pedido_id:-1,
-      pagado:-1
+      //pagado:-1
     }
     this.createForm();
 
@@ -61,7 +61,7 @@ export class RptePedidoComponent implements OnInit {
     this.filtrosReporte.create_at1 = moment(this.formVenta.get("fchDesde")?.value).format("YYYY-MM-DD");
     this.filtrosReporte.create_at2 = moment(this.formVenta.get("fchHasta")?.value).format("YYYY-MM-DD");
     this.filtrosReporte.estado_pedido_id =  this.formVenta.get("estadoPedidoId")?.value
-    this.filtrosReporte.pagado = this.formVenta.get("pagado")?.value;
+    //this.filtrosReporte.pagado = this.formVenta.get("pagado")?.value;
 
     const filtros = {
       nombre: this.titulo.replaceAll(" ",""),
@@ -78,11 +78,11 @@ export class RptePedidoComponent implements OnInit {
   }
 
 
-  cargarPagado() {
-    this.pagadoLst = [/*{ id: -1, pagado: '--Seleccione' },*/
+/*   cargarPagado() {
+    this.pagadoLst = [
     { id: 1, pagado: 'Si' },
     { id: 0, pagado: 'No' }]
-  }
+  } */
 
   cargarEstadoPedido() {
     this.pedidoService.getAllEstadoPedido().subscribe(res => { this.estadoPedidoLst = res; })
@@ -94,7 +94,7 @@ export class RptePedidoComponent implements OnInit {
         fchDesde: [this.filtrosReporte.create_at1],
         fchHasta: [this.filtrosReporte.create_at2],
         estadoPedidoId: [this.filtrosReporte.estado_pedido_id],
-        pagado: [this.filtrosReporte.pagado]
+        //pagado: [this.filtrosReporte.pagado]
       }
     )
   }
@@ -105,10 +105,10 @@ interface FiltrosReporte {
   create_at1?: string,
   create_at2?: string,
   estado_pedido_id?: number,
-  pagado?: number,
+  //pagado?: number,
 }
 
-interface Pagado {
+/* interface Pagado {
   id: number,
   pagado: string
-}
+} */

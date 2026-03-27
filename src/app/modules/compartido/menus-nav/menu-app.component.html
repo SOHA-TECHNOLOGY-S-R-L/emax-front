@@ -19,8 +19,7 @@
       Registro personas</a>
   </ng-container>
   <!----------------------2-------------------->
-  <div mat-subheader
-    *ngIf="authService.hasAnyRole('ROLE_LIST_VENTAS','ROLE_REPORT_VENTA','ROLE_LIST_MY_ORDERS')">
+  <div mat-subheader *ngIf="authService.hasAnyRole('ROLE_LIST_VENTAS','ROLE_REPORT_VENTA','ROLE_LIST_MY_ORDERS')">
     <mat-icon>insert_chart</mat-icon>PEDIDOS VENTA
   </div>
   <ng-container *ngIf="authService.hasRole('ROLE_REGISTER_VENTA')">
@@ -82,16 +81,16 @@
     <a mat-list-item [routerLink]="['cajas']" [routerLinkActive]="['active']"
       [routerLinkActiveOptions]="{exact: true}">Apertura/Cierre caja</a>
   </ng-container>
+  <ng-container *ngIf="authService.hasRole('ROLE_REPORT_CJU')">
+    <a mat-list-item [routerLink]="['cajas/rpte-caja']" [routerLinkActive]="['active']">Reporte caja</a>
+  </ng-container>
   <ng-container *ngIf="authService.hasRole('ROLE_REPORT_USUARIO_CJU')">
     <a mat-list-item [routerLink]="['cajas/rpte-caja-por-usuario']" [routerLinkActive]="['active']">Reporte caja por
       cajero</a>
   </ng-container>
-  <ng-container *ngIf="authService.hasRole('ROLE_REPORT_CJU')">
-    <a mat-list-item [routerLink]="['cajas/rpte-caja']" [routerLinkActive]="['active']">Reporte caja</a>
-  </ng-container>
+
   <!----------------------5-------------------->
-  <div mat-subheader
-    *ngIf="authService.hasAnyRole('ROLE_LIST_PRODUCTOS','ROLE_REGISTER_PRODUCTO')">
+  <div mat-subheader *ngIf="authService.hasAnyRole('ROLE_LIST_PRODUCTOS','ROLE_REGISTER_PRODUCTO')">
     <mat-icon>list_alt_check</mat-icon>PRODUCTOS
   </div>
   <ng-container *ngIf="authService.hasRole('ROLE_LIST_PRODUCTOS')">

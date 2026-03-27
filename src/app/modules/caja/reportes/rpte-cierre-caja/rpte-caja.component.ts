@@ -6,15 +6,15 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angul
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import * as fileSaver from 'file-saver-es';
 import moment from 'moment';
+import { map } from 'rxjs';
 import { Caja } from '../../../../models/caja';
+import { Persona } from '../../../../models/persona';
 import { Usuario } from '../../../../models/usuario';
 import { CajaService } from '../../../../services/caja.service';
+import { PersonaService } from '../../../../services/persona.service';
 import { UsuarioService } from '../../../../services/usuario.service';
 import { AngularMaterialModule } from '../../../compartido/angular-material.module';
-import { Persona } from '../../../../models/persona';
-import { PersonaService } from '../../../../services/persona.service';
-import { map } from 'rxjs';
-import { CLIENTE, PROVEEDOR } from '../../../../constants/constantes';
+import { CLIENTE_PROVEEDOR } from '../../../../constants/constantes';
 
 @Component({
   selector: 'app-rpte-caja',
@@ -110,7 +110,7 @@ export class RpteCajaComponent implements OnInit {
   cargarUsuarios() {
 
     this.personaService.getAllPersonas().pipe(
-      map(personas => personas.filter(p => p.tipoPersona.id !== CLIENTE && p.tipoPersona.id !== PROVEEDOR))
+      map(personas => personas.filter(p => p.tipoPersona.id !== CLIENTE_PROVEEDOR))
     ).subscribe(resp => this.personasLst = resp);
 
     //this.usuarioService.getAllUsers().subscribe(res => this.usuarioLst = res);

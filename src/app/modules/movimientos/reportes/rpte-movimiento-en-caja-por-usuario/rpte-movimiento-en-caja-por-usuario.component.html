@@ -30,7 +30,7 @@
             <mat-option *ngFor="let e of cajaLst" value={{e.id}}>{{e.nombre}}</mat-option>
           </mat-select>
         </mat-form-field>
-        <mat-form-field>
+<!--         <mat-form-field>
           <input matInput placeholder="Busca por persona o proveedor" [formControl]="autocompleteControl"
             aria-label="Number" [matAutocomplete]="auto">
           <mat-autocomplete #auto="matAutocomplete" [displayWith]="mostrarApellidoPersona"
@@ -39,7 +39,7 @@
               {{option.nomApellRz}}
             </mat-option>
           </mat-autocomplete>
-        </mat-form-field>
+        </mat-form-field> -->
 
       </mat-card-content>
     </form>
