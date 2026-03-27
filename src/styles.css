@@ -3638,7 +3638,7 @@ input[type="button"].btn-block {
 
 .dropdown-item.active,
 .dropdown-item:active {
-  color: #fff;
+  color: #16181b;
   text-decoration: none;
   background-color: #FFF212;
 }
@@ -4003,7 +4003,7 @@ input[type="button"].btn-block {
 }
 
 .custom-control-input:checked~.custom-control-label::before {
-  color: #fff;
+  color: #16181b;
   border-color: #FFF212;
   background-color: #FFF212;
 }
@@ -5266,7 +5266,7 @@ input[type="button"].btn-block {
   margin-left: -1px;
   line-height: 1.25;
   color: #FFF212;
-  background-color: #fff;
+  background-color: black;
   border: 1px solid #dee2e6;
 }
 
@@ -5297,7 +5297,7 @@ input[type="button"].btn-block {
 
 .page-item.active .page-link {
   z-index: 3;
-  color: #fff;
+  color: black;
   background-color: #FFF212;
   border-color: #FFF212;
 }

@@ -154,10 +154,10 @@ export class PedidoProveedorFinalizadoComponent implements OnInit, OnChanges {
       this.pedidoService.createPedidoTienda(this.pedido).subscribe(p => {
         this.pedidoService.setPedido(p);
         this.alertService.info("Pedido Compra N°:" + p.id + " a caja", "Finalizar pedido");
-        //if (p.tipoPedido.id == VENTA_TIPO_PEDIDO) {
+        //if (p.tipoPedido.id == PEDIDO_VENTA) {
         //  this.router.navigate(['/pedidos/listado-ventas']);
         //}
-        //if (p.tipoPedido.id == COMPRA_TIPO_PEDIDO) {
+        //if (p.tipoPedido.id == PEDIDO_COMPRA) {
           this.router.navigate(['/pedidos/listado-compras']);
         //}
         //this.router.navigate(['/movimientos']);

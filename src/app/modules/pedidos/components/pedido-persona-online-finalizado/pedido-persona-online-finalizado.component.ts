@@ -7,7 +7,7 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import moment from 'moment';
 import { map, switchMap } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
-import { COMPRA_TIPO_PEDIDO, SERVICIO_ENTREGA_CIUDAD, SERVICIO_ENTREGA_LOCAL, VENTA_TIPO_PEDIDO } from '../../../../constants/constantes';
+import { PEDIDO_COMPRA, PEDIDO_VENTA, SERVICIO_ENTREGA_CIUDAD, SERVICIO_ENTREGA_LOCAL } from '../../../../constants/constantes';
 import { ItemPedido } from '../../../../models/item-pedido';
 import { Pedido } from '../../../../models/pedido';
 import { Persona } from '../../../../models/persona';
@@ -234,10 +234,10 @@ export class PedidoPersonaOnlineFinalizadoComponent {
         } else {
           this.alertService.info(`Pedido ${p.tipoPedido.nombre} N° ${p.id}`, "Finalizado");
 
-          if (p.tipoPedido.id == VENTA_TIPO_PEDIDO) {
+          if (p.tipoPedido.id == PEDIDO_VENTA) {
             this.router.navigate(['/pedidos/listado-ventas']);
           }
-          if (p.tipoPedido.id == COMPRA_TIPO_PEDIDO) {
+          if (p.tipoPedido.id == PEDIDO_COMPRA) {
             this.router.navigate(['/pedidos/listado-compras']);
           }
         }

@@ -21,7 +21,7 @@ export class PrincipalComponent {
 
   private router = inject(Router);
   public authService = inject(AuthService);
-    private breakpointObserver = inject(BreakpointObserver);
+  private breakpointObserver = inject(BreakpointObserver);
 
 
   readonly isMobile = toSignal(

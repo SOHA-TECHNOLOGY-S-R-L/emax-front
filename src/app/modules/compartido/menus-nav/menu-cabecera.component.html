@@ -17,10 +17,9 @@
     <a [routerLink]="['/login']" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact: true}"
       class="nav-item nav-link mr-2"><i class="bi bi-person-fill mr-1"></i>Iniciar sesión</a>
     }
-    @if(isCliente()){
     <button type="button" (click)="openModalCart()" class="btn btn-primary mr-1">
       <i class="fa-solid fa-cart-plus mr-1"></i>Carrito <i><b>({{items().length}})</b></i>
-    </button>}
+    </button>
     @if (isAutenticado()) {
     <button type="button" (click)="sideNavToggle()" class="btn btn-primary">
       <i class="fa-solid fa-bars mr-1"></i>Menú

@@ -1,4 +1,3 @@
-import { VENTA_TIPO_PEDIDO } from './../../../../constants/constantes';
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { PersonaService } from '../../../../services/persona.service';
 import { SearchBoxTableComponent } from './../../../compartido/search-box-table/search-box-table.component';
@@ -11,11 +10,11 @@ import { MatSort } from '@angular/material/sort';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import moment from 'moment';
 import { concatMap } from 'rxjs';
-import { ELEMENTOS_POR_PAGINA, PRIMERA_PAGINA, SIGUIENTE_PAGINA, ULTIMA_PAGINA } from '../../../../constants/constantes';
+import { ELEMENTOS_POR_PAGINA, PEDIDO_VENTA, PRIMERA_PAGINA, SIGUIENTE_PAGINA, ULTIMA_PAGINA } from '../../../../constants/constantes';
 import { COLOR_ESTADO_PEDIDO } from '../../../../constants/pedido.constants';
-import { Persona } from '../../../../models/persona';
 import { PageableResponse } from '../../../../models/pageable-response';
 import { Pedido } from '../../../../models/pedido';
+import { Persona } from '../../../../models/persona';
 import { AuthService } from '../../../../services/auth.service';
 import { PedidoService } from '../../../../services/pedido.service';
 import { UsuarioService } from '../../../../services/usuario.service';
@@ -83,7 +82,7 @@ export class ListadoVentasComponent implements OnInit, AfterViewInit {
         query: !!this.querySearch ? this.querySearch : ''
       };
       if (this.authService.hasRole('ROLE_LIST_VENTAS')) {
-        this.pedidoService.getAllPedidosPageable(params, VENTA_TIPO_PEDIDO).subscribe(response => {
+        this.pedidoService.getAllPedidosPageable(params, PEDIDO_VENTA).subscribe(response => {
           this.dataSource = response.content as Pedido[];
           this.dataSource.forEach((r: Pedido) => {
             r.createAt = moment(r.createAt).format('DD/MM/YYYY');

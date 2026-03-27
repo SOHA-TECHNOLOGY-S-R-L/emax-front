@@ -9,7 +9,7 @@
         <li class="list-group-item active">Información de movimiento</li>
       </ul>
       <div class="d-flex flex-row justify-content-center">
-        <ng-container *ngIf="pedido.tipoPedido.nombre=='VENTA PERSONA' ">
+        <ng-container *ngIf="pedido.tipoPedido.id==PEDIDO_VENTA">
           <div *ngIf="iMovimiento=='I'" style="margin-right: 5px;">
             <mat-card>
               <mat-card-header>
@@ -31,7 +31,7 @@
             </mat-card>
           </div>
         </ng-container>
-        <ng-container *ngIf="pedido.tipoPedido.nombre=='COMPRA O ADQUISICION'">
+        <ng-container *ngIf="pedido.tipoPedido.id==PEDIDO_COMPRA">
           <div *ngIf="iMovimiento=='E'" style="margin-right: 5px;">
             <mat-card>
               <mat-card-header>
@@ -103,7 +103,7 @@
           </mat-select>
         </mat-form-field>
 
-        <ng-container *ngIf="pedido.tipoPedido.nombre=='VENTA PERSONA'">
+        <ng-container *ngIf="pedido.tipoPedido.id==PEDIDO_VENTA">
           <mat-form-field *ngIf="iMovimiento=='I'">
             <mat-label>SALDO NETO</mat-label>
             <input matInput type="text" name="saldoPedido" #saldoPedido="ngModel" [(ngModel)]="pedido.saldoPedido"
@@ -115,7 +115,7 @@
               [(ngModel)]="pedido.flujoEfectivoTotal" disabled>
           </mat-form-field>
         </ng-container>
-        <ng-container *ngIf="pedido.tipoPedido.nombre=='COMPRA O ADQUISICION'">
+        <ng-container *ngIf="pedido.tipoPedido.id==PEDIDO_COMPRA">
           <mat-form-field *ngIf="iMovimiento=='E'">
             <mat-label>SALDO NETO</mat-label>
             <input matInput type="text" name="saldoPedido" #saldoPedido="ngModel" [(ngModel)]="pedido.saldoPedido"

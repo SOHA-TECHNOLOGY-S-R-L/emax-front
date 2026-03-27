@@ -1,7 +1,8 @@
+import { AuthService } from './../../../services/auth.service';
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, computed, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { environment } from '../../../../environments/environment';
 import { GenericosService } from '../../../services/genericos.service';
 import { SeoService } from '../../../services/seo.service';
@@ -13,19 +14,72 @@ import { QuienesSomosComponent } from "../components/quienes-somos/quienes-somos
 //import { ServiciosPersonaComponent } from '../components/servicios-persona/servicios-persona.component';
 import { ProductoPersonaComponent } from "../components/producto-persona/producto-persona.component";
 import { ServiciosPersonaComponent } from '../components/servicios-persona/servicios-persona.component';
+import { rxResource } from '@angular/core/rxjs-interop';
+import { of } from 'rxjs';
+import { UsuarioService } from '../../../services/usuario.service';
+import { PersonaService } from '../../../services/persona.service';
+import { AlertService } from '../../../services/alert.service';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrl: './home.component.css',
   standalone: true,
-  imports: [CommonModule, FormsModule, CarruselEmpresaComponent, RouterModule, ExperienciaComponent, EmpresaComponent,  CategoriasProductoPersonaComponent, QuienesSomosComponent, ProductoPersonaComponent, ServiciosPersonaComponent]
+  imports: [CommonModule, FormsModule, CarruselEmpresaComponent, RouterModule, ExperienciaComponent, EmpresaComponent, CategoriasProductoPersonaComponent, QuienesSomosComponent, ProductoPersonaComponent, ServiciosPersonaComponent]
 })
 export class HomeComponent implements OnInit {
+  private authService = inject(AuthService);
+  private usuarioService = inject(UsuarioService);
+  private personaService = inject(PersonaService);
+  private alertService = inject(AlertService);
+
+  private router = inject(Router);
+
 
   private seoService = inject(SeoService);
   private genericosService = inject(GenericosService);
   public whatsapp!: string;
+
+  readonly usuarioResource = rxResource({
+    params: () => this.authService.usuario(),
+    stream: ({ params }) => {
+      if (!params?.username) return of(null);
+      return this.usuarioService.getUsuarioByUsername(params.username);
+    }
+  });
+
+  readonly personaResource = rxResource({
+    params: () => this.usuarioResource.value(),
+    stream: ({ params }) => {
+      if (!params?.id) return of(null);
+      return this.personaService.getPersonaByUsuarioId(params.id);
+    }
+  });
+
+  readonly isCliente = computed(() => {
+    const persona = this.personaResource.value();
+    if (!persona) return true;
+
+    return !persona.tipoPersona.persona.startsWith('Empleado');
+  });
+
+  readonly isAutenticado = computed(() =>
+    this.authService.isAuthenticated()
+  );
+
+  irTiendaPorTipoPersonaYRol() {
+    if (!this.isAutenticado() || this.isCliente()) {
+      this.router.navigate(['/tienda/productos-categoria', 'tienda']);
+      return;
+    }
+
+    if (this.authService.hasRole('ROLE_REGISTER_VENTA')) {
+      this.router.navigate(['pedidos/item-producto-persona-tienda']);
+    } else {
+      this.alertService.info("Usuario sin permisos para venta al cliente","Ir a tienda")
+    }
+
+  }
 
   ngOnInit(): void {
 

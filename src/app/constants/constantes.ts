@@ -11,8 +11,10 @@ export const SERVICIO_ENTREGA_PROVINCIAL = 'envio-2';
 export const SERVICIO_ENTREGA_CIUDAD = 'envio-3';
 
 //tipo pedido
-export const VENTA_TIPO_PEDIDO = 1;
-export const COMPRA_TIPO_PEDIDO = 2;
+export const PEDIDO_VENTA = 1;
+export const PEDIDO_COMPRA = 2;
+export const COTIZACION_VENTA = 3;
+export const COTIZACION_COMPRA = 4;
 
 //tipo persona
 export const CLIENTE = 1;

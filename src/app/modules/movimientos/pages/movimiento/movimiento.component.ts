@@ -5,7 +5,7 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import * as fileSaver from 'file-saver-es';
 import { find } from 'lodash-es';
 import { concatMap } from 'rxjs';
-import { ESTADO_CAJA_USUARIO } from '../../../../constants/caja-usuario.constants';
+import { PEDIDO_COMPRA, PEDIDO_VENTA } from '../../../../constants/constantes';
 import { CajaUsuario } from '../../../../models/caja-usuario';
 import { Movimiento } from '../../../../models/movimiento';
 import { Pedido } from '../../../../models/pedido';
@@ -16,10 +16,9 @@ import { AuthService } from '../../../../services/auth.service';
 import { CajaService } from '../../../../services/caja.service';
 import { MovimientoService } from '../../../../services/movimiento.service';
 import { PedidoService } from '../../../../services/pedido.service';
+import { UsuarioService } from '../../../../services/usuario.service';
 import { InfoCajaUsuarioComponent } from '../../../caja/components/info-caja-usuario/info-caja-usuario.component';
 import { AngularMaterialModule } from '../../../compartido/angular-material.module';
-import { SearchBoxTableComponent } from '../../../compartido/search-box-table/search-box-table.component';
-import { UsuarioService } from '../../../../services/usuario.service';
 
 
 @Component({
@@ -44,6 +43,8 @@ export class MovimientoComponent implements OnInit {
   iMovimiento: string = "I";
   pedidoIdSearch: string = '';
   isFromPedidos: boolean = false;
+  PEDIDO_VENTA = PEDIDO_VENTA;
+  PEDIDO_COMPRA= PEDIDO_COMPRA;
 
   @ViewChild("searchPedidoText") searchText!: ElementRef;
 
@@ -103,11 +104,11 @@ export class MovimientoComponent implements OnInit {
         tipoMov => {
           this.tipoMovPedidoIngresos = tipoMov.filter(f => f.tipo === "I")
           this.tipoMovPedidoEgresos = tipoMov.filter(f => f.tipo === "E")
-          if (this.pedido.tipoPedido.nombre === "VENTA PERSONA") {
+          if (this.pedido.tipoPedido.id === PEDIDO_VENTA) {
             this.iMovimiento = 'I'
             this.changeTipoMovimiento(this.iMovimiento);
           }
-          if (this.pedido.tipoPedido.nombre === "COMPRA O ADQUISICION") {
+          if (this.pedido.tipoPedido.id === PEDIDO_COMPRA) {
             this.iMovimiento = 'E'
             this.changeTipoMovimiento(this.iMovimiento);
           }
@@ -122,19 +123,19 @@ export class MovimientoComponent implements OnInit {
     this.movimiento.ingresoDinero = 0;
     if (tipo === "I") {
       this.tipoMovimientosPedidoLst = [...this.tipoMovPedidoIngresos]
-      if (this.pedido.tipoPedido.nombre === "VENTA PERSONA") {
+      if (this.pedido.tipoPedido.id === PEDIDO_VENTA) {
         this.movimiento.tipoMovimientoPedido = this.findTipoMovimientoPedido(1);
       }
-      if (this.pedido.tipoPedido.nombre === "COMPRA O ADQUISICION") {
+      if (this.pedido.tipoPedido.id === PEDIDO_COMPRA) {
         this.movimiento.tipoMovimientoPedido = this.findTipoMovimientoPedido(4);
       }
     }
     if (tipo === "E") {
       this.tipoMovimientosPedidoLst = [...this.tipoMovPedidoEgresos]
-      if (this.pedido.tipoPedido.nombre === "VENTA PERSONA") {
+      if (this.pedido.tipoPedido.id === PEDIDO_VENTA) {
         this.movimiento.tipoMovimientoPedido = this.findTipoMovimientoPedido(2);
       }
-      if (this.pedido.tipoPedido.nombre === "COMPRA O ADQUISICION") {
+      if (this.pedido.tipoPedido.id === PEDIDO_COMPRA) {
         this.movimiento.tipoMovimientoPedido = this.findTipoMovimientoPedido(3);
       }
     }
@@ -183,7 +184,7 @@ export class MovimientoComponent implements OnInit {
     this.cajaUsuario.movimientos = []
 
     this.movimiento.cajaUsuario = { ...this.cajaUsuario }
-    if (this.pedido.tipoPedido.nombre == "VENTA PERSONA") {
+    if (this.pedido.tipoPedido.id == PEDIDO_VENTA) {
       this.movimientoService.createMovimiento(this.movimiento).pipe(
         concatMap(mov => this.pedidoService.downloadOrderToPersonaInPDF(mov.pedido))
       ).subscribe(response => {
@@ -195,7 +196,7 @@ export class MovimientoComponent implements OnInit {
         this.alertService.success(`Se realizó la  ${this.pedido.tipoPedido.nombre} exitosamente`, "Exito");
       })
     }
-    if (this.pedido.tipoPedido.nombre == "COMPRA O ADQUISICION") {
+    if (this.pedido.tipoPedido.id == PEDIDO_COMPRA) {
       this.movimientoService.createMovimiento(this.movimiento).subscribe(response => {
         this.alertService.success(`Se realizó la  ${this.pedido.tipoPedido.nombre} exitosamente`, "Exito");
         if (this.isFromPedidos) {
