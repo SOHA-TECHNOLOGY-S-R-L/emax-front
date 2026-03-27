@@ -99,16 +99,17 @@ export class CarritoItemProductoComponent {
   item!: ItemPedido;
 
   modalEmitter = output<void>();
+  clickBuscarProductos = output<void>();
+  //@Output() clickBuscarProductos = new EventEmitter();
 
-  // Creamos un Signal (Angular Moderno) que nos diga si es móvil
-  // Detecta Handset (celulares) en Portrait o Landscape
-  /*   public isMobile: Signal<boolean> = toSignal(
-      this.breakpointObserver
-        .observe([Breakpoints.Handset])
-        .pipe(map(result => result.matches)),
-      { initialValue: false }
-    );
-   */
+  public isMobile: Signal<boolean> = toSignal(
+    this.breakpointObserver
+      .observe('(max-width: 1279.98px)')
+      .pipe(map(result => result.matches)),
+    { initialValue: false }
+  );
+
+
 
   constructor() { }
 
@@ -157,6 +158,9 @@ export class CarritoItemProductoComponent {
 
     if (this.authService.hasRole('ROLE_REGISTER_VENTA')) {
       this.router.navigate(['pedidos/item-producto-persona-tienda']);
+      if (this.isMobile()) {
+        this.clickBuscarProductos.emit();
+      }
     } else {
       this.alertService.info("Usuario sin permisos para venta al cliente", "Ir a tienda")
     }

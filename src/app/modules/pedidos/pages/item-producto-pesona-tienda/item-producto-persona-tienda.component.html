@@ -22,7 +22,7 @@
       </mat-drawer-content>
       <mat-drawer position="end" class="main-drawer" #drawnerRight [mode]="isMobile() ? 'over' : 'side'"
         [opened]="!isMobile()" fixedTopGap="56">
-        <carrito-item-producto /> <!-- 3-VENTA POR TIENDA -->
+        <carrito-item-producto (clickBuscarProductos)="drawnerRight.close()" /> <!-- 3-VENTA POR TIENDA -->
         <!-- 4-VENTA POR ONLINE -->
       </mat-drawer>
     </mat-drawer-container>

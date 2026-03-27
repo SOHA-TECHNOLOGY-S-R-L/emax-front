@@ -12,8 +12,7 @@
     <div class="col-12 col-md-6">
       @if (producto()) {
       <h5> {{producto().descripcion }} ({{producto().codigo | uppercase}})</h5>
-      <!--       <p>{{producto().cantidadVendidos}} vendidos</p>
- -->
+      <!--       <p>{{producto().cantidadVendidos}} vendidos</p> -->
       <div class="row">
         @for (margen of producto().margenesProducto; track $index) {
         <div class="col-4">
