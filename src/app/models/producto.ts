@@ -1,19 +1,19 @@
-import { Categoria } from "./categoria"
-import { Color } from "./color"
-import { EstadoProducto } from "./estado-producto"
-import { MargenProducto } from "./margen-producto"
-import { Material } from "./material"
-import { Multimedia } from "./multimedia"
-import { MultimediaProducto } from "./multimedia-producto"
-import { Uso } from "./uso"
+import { Categoria } from './categoria';
+import { Color } from './color';
+import { EstadoProducto } from './estado-producto';
+import { MargenProducto } from './margen-producto';
+import { Material } from './material';
+import { Multimedia } from './multimedia';
+import { MultimediaProducto } from './multimedia-producto';
+import { Uso } from './uso';
 
 export class Producto {
   id!: number;
   codigo!: string;
   nombre!: string;
   descripcion!: string;
-  medidas?: string
-  peso?: string
+  medidas?: string;
+  peso?: string;
   umbralPocaCantidad: number = 5;
   umbralCantidadAgotada: number = 0;
   cantidadVendidos: number = 0;
@@ -21,7 +21,7 @@ export class Producto {
   minCantidadPedido: number = 1;
   maxCantidadPedido: number = 999999999;
   gruposDe: number = 1;
-  costoUnitario: number = 0;// esto se actualiza al comprar
+  costoUnitario: number = 0; // esto se actualiza al comprar
   //costoPersonalizacion: number=0;
   impuestoIgv: number = 18;
   //margenGanancia:number=0;
@@ -42,6 +42,8 @@ export class Producto {
   categoria?: Categoria;
   uso?: Uso;
   estadoProducto!: EstadoProducto;
+  padre: Producto | undefined;
+  hijos: Producto[] = [];
   margenesProducto: MargenProducto[] = [];
   multimediasProducto: MultimediaProducto[] = [];
   //campos utilitarios
@@ -50,6 +52,5 @@ export class Producto {
   colorVisibleEnTienda!: string;
   precioMasBajoProductoShow: number = 0;
 }
-
 
 //
