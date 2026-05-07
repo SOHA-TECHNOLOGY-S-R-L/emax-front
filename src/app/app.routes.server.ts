@@ -157,7 +157,7 @@ export const serverRoutes: ServerRoute[] = [
     },
   },
   {
-    path: 'tienda/pedido-persona-online-finalizado/:personaId',
+    path: 'tienda/pedido-persona-online-finalizado/:origenPedidoId',
     renderMode: RenderMode.Server,
   },
 

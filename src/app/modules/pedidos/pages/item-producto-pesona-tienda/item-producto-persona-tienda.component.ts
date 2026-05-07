@@ -10,7 +10,7 @@ import { AutocompleteResourceComponent } from '../../../compartido/autocomplete-
 import { CarritoItemProductoComponent } from '../../components/carrito-item-producto/carrito-item-producto.component';
 import { CustomizeItemProductoToClientComponent } from '../../components/customize-item-producto-to-client/customize-item-producto-to-client.component';
 import { BreakpointObserver, Breakpoints, MediaMatcher } from '@angular/cdk/layout';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { rxResource, toSignal } from '@angular/core/rxjs-interop';
 import { map } from 'rxjs';
 
 @Component({
@@ -27,6 +27,8 @@ export class ItemProductoPersonaTiendaComponent {
 
   producto = signal<Producto | null>(null);
   items = signal<ItemPedido[]>([]);
+  coloresResource = rxResource({ stream: () => this.productoService.getColoresProducto() });
+
 
   /*Breakpoint	Media Query
   XSmall(max - width: 599.98px)
@@ -52,6 +54,13 @@ export class ItemProductoPersonaTiendaComponent {
     nuevoItem.producto = producto;
     this.items.update(items => [...items, nuevoItem]);
 
+  }
+
+  findColorById(colorId: number) {
+    const colores = this.coloresResource.value();
+    if (!colores) return null;
+    const color = colores.find((c) => c.id === colorId);
+    return color ? color.nombre : 'Sin color';
   }
 
 

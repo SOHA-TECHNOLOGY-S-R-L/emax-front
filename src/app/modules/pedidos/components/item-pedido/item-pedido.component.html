@@ -1,0 +1,166 @@
+<!-- <form id="frmPedidoPersonaOnlineFinalizado" #pedidoTiendaForm="ngForm" (ngSubmit)="crearPedidoTienda(pedidoTiendaForm)">
+ -->
+
+<div id="itemsPedidoOnlineFinalizadoToDesktop" class="row">
+  <div class="col-12">
+    <table class="table table-striped table-hover table-sm" cellspacing="1" cellpadding="1">
+      <thead>
+        <tr>
+          <th>Eliminar</th>
+          <th>Imagen</th>
+          <th>Producto</th>
+          <th>Cantidad</th>
+          @if(inTipoPedidoId() === PEDIDO_VENTA) {<th>Precio U</th>}
+          @if(inTipoPedidoId() === PEDIDO_COMPRA) {<th>Costo U</th>}
+          <th>Subtotal</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (item of items(); track item.producto.id) {
+        <tr>
+          <td>
+            <button type="button" id="btnDeleteFromPedidoOnline" class="btn btn-danger icon-square"
+              title="Eliminar item" (click)="$event.stopPropagation(); eliminarItemPedido(item)">
+              <i class="fa-regular fa-trash-can"></i> </button>
+          </td>
+          <td>
+            <img [src]="item.imagenShow" width="86" alt={{item.producto.nombre}} />
+          </td>
+          <td>
+            <b>{{item.producto.nombre | stringToTitleWithAccents}}</b>
+            @if(!inEnvioPedido()){
+            <ul>
+              <li><b>Medidas: </b>{{item.producto.medidas}}
+                <b>Color: </b>{{ findColorById( item.producto.colorId! ) }}
+              </li>
+              <li><b>Material: </b>{{ findMaterialById( item.producto.materialId! ) }}
+                <b>Peso: </b>{{item.producto.peso}}
+              </li>
+            </ul>
+            }
+          </td>
+          <td>
+            @if(inTipoPedidoId() === PEDIDO_VENTA) {
+            <input style="width:80px" type="number" name="cantidad" aria-describedby="cantidad"
+              [step]="item.producto.gruposDe" [min]="item.producto.minCantidadPedido"
+              [max]="item.producto.maxCantidadPedido" [value]="item.cantidad"
+              (input)="actualizarCantidad(item.producto.id, $event); " (keydown.enter)="$event.preventDefault()" />
+            }
+            @if(inTipoPedidoId() === PEDIDO_COMPRA) {
+            <input style="width:80px" type="number" name="cantidad" aria-describedby="cantidad" min="1"
+              [value]="item.cantidad" (input)="actualizarCantidad(item.producto.id, $event); "
+              (keydown.enter)="$event.preventDefault()" />
+            }
+          </td>
+          <td>
+            @if(inTipoPedidoId() === PEDIDO_VENTA) { {{item.producto.precioMasBajoProductoShow| currency:'PEN'}} }
+            @if(inTipoPedidoId() === PEDIDO_COMPRA) { {{item.producto.costoUnitario| currency:'PEN'}} }
+          </td>
+          <td>
+            @if(inTipoPedidoId() === PEDIDO_VENTA) { {{item.importe| currency:'PEN'}} }
+            @if(inTipoPedidoId() === PEDIDO_COMPRA) {
+            <input style="width:80px" type="number" name="importe" min="1" [value]="item.importe"
+              (input)="actualizarImporteWithCosto(item.producto.id, $event); "
+              (keydown.enter)="$event.preventDefault()" />
+            }
+          </td>
+        </tr>
+        }
+      </tbody>
+      <tfoot>
+        <tr>
+          @if(inTipoPedidoId() === PEDIDO_VENTA) {
+          <td colspan="2"><input class="form-control" name="codigoDescuento" placeholder="Código de descuento"
+              (keydown.enter)="$event.preventDefault()" /></td>
+          <td> <button class="btn btn-secondary">Aplicar descuento</button></td>
+          <td class="text-end fw-bold">TOTAL:</td>
+          <td colspan="2" class="text-center fw-bold">{{total() | currency:'PEN'}}</td>
+          }
+          @if(inTipoPedidoId() === PEDIDO_COMPRA) {
+          <td colspan="3"></td>
+          <td class="text-end fw-bold">TOTAL:</td>
+          <td colspan="2" class="text-center fw-bold">{{total() | currency:'PEN'}}</td>
+          }
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+</div>
+
+<div id="itemsPedidoOnlineFinalizadoToMovil" class="row">
+  @for (item of items(); track $index) {
+  <div class="col">
+    <ul class="list-group my-1">
+      <li class="list-group-item active d-flex justify-content-between">
+        <span>{{item.producto.nombre | stringToTitleWithAccents}}</span>
+        <button type="button" id="btnDeleteFromPedidoOnline" class="btn btn-danger icon-square" title="Eliminar item"
+          (click)="$event.stopPropagation(); eliminarItemPedido(item)">
+          <i class="fa-regular fa-trash-can"></i> </button>
+      </li>
+      <li class="list-group-item d-flex justify-content-between align-items-start">
+        <div class="me-auto">
+          <span class="cabecera">Imágen:</span> <img [src]="item.imagenShow" width="86"
+            alt={{item.producto.nombre}} /><br>
+        </div>
+      </li>
+      <li class="list-group-item d-flex justify-content-between align-items-start">
+        <div class="me-auto">
+          <span class="cabecera">Cantidad:</span>
+          @if(inTipoPedidoId() === PEDIDO_VENTA) {
+          <input style="width:80px" type="number" name="cantidad" aria-describedby="cantidad"
+            [step]="item.producto.gruposDe" [min]="item.producto.minCantidadPedido"
+            [max]="item.producto.maxCantidadPedido" [value]="item.cantidad"
+            (input)="actualizarCantidad(item.producto.id, $event); " (keydown.enter)="$event.preventDefault()" />
+          }
+          @if(inTipoPedidoId() === PEDIDO_COMPRA) {
+          <input style="width:80px" type="number" name="cantidad" aria-describedby="cantidad" min="1"
+            [value]="item.cantidad" (input)="actualizarCantidad(item.producto.id, $event); "
+            (keydown.enter)="$event.preventDefault()" />
+          }
+        </div>
+      </li>
+      <li class="list-group-item d-flex justify-content-between align-items-start">
+        <div class="me-auto">
+          <span class="cabecera">Precio: </span>
+          @if(inTipoPedidoId() === PEDIDO_VENTA) { {{item.producto.precioMasBajoProductoShow| currency:'PEN'}} }
+          @if(inTipoPedidoId() === PEDIDO_COMPRA) { {{item.producto.costoUnitario| currency:'PEN'}} }
+          <br>
+        </div>
+      </li>
+      <li class="list-group-item d-flex justify-content-between align-items-start">
+        <div class="me-auto">
+          <span class="cabecera">Subtotal: </span>
+          @if(inTipoPedidoId() === PEDIDO_VENTA) { {{item.importe| currency:'PEN'}} }
+          @if(inTipoPedidoId() === PEDIDO_COMPRA) {
+          <input style="width:80px" type="number" name="importe" min="1" [value]="item.importe"
+            (input)="actualizarImporteWithCosto(item.producto.id, $event); "
+            (keydown.enter)="$event.preventDefault()" />
+          }
+        </div>
+      </li>
+    </ul>
+  </div>
+  }
+  @if(inTipoPedidoId() === PEDIDO_VENTA) {
+  <div class="col">
+    <ul class="list-group my-1">
+      <li class="list-group-item d-flex justify-content-between align-items-start">
+        <input style="width:150px" class="form-control" name="codigoDescuento" placeholder="Código descuento"
+          (input)="ingresarCodigoDescuento($any($event.target).value)" (keydown.enter)="$event.preventDefault()" />
+        @if(codigoDescuento().trim.length > 0){
+        <button class="btn btn-secondary">Aplicar descuento</button>
+        } @else {
+        <button class="btn btn-secondary" disabled>Aplicar descuento</button>
+        }
+      </li>
+    </ul>
+  </div>
+  }
+  <div class="col">
+    <ul class="list-group my-1">
+      <li class="list-group-item active text-center fw-bold">
+        <span class="cabecera">TOTAL: </span> {{total() | currency:'PEN'}}
+      </li>
+    </ul>
+  </div>
+</div>

@@ -1,10 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, output } from '@angular/core';
+import { Component, inject, output, signal } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { debounceTime, distinctUntilChanged, startWith } from 'rxjs/operators';
-import { SERVICIO_ENTREGA_CIUDAD, SERVICIO_ENTREGA_LOCAL, SERVICIO_ENTREGA_PROVINCIAL } from '../../../../constants/constantes';
 import { FormUtils } from '../../../../utils/form-utils';
 import { EnvioPedido } from '../../../../models/envio-pedido';
+import { ENVIO_DEPARTAMENTO, ENVIO_DISTRITO, ENVIO_PROVINCIA } from '../../../../constants/constantes';
 
 @Component({
   selector: 'form-envio-pedido',
@@ -20,12 +20,12 @@ export class FormEnvioPedidoComponent {
   outEnvioPedido = output<any>();
 
   formUtils = FormUtils;
-  SERVICIO_ENTREGA_LOCAL = SERVICIO_ENTREGA_LOCAL;
-  SERVICIO_ENTREGA_CIUDAD = SERVICIO_ENTREGA_CIUDAD;
-  SERVICIO_ENTREGA_PROVINCIAL = SERVICIO_ENTREGA_PROVINCIAL;
+  SERVICIO_ENVIO_DISTRITO = ENVIO_DISTRITO;
+  SERVICIO_ENVIO_PROVINCIA = ENVIO_PROVINCIA;
+  SERVICIO_ENVIO_DEPARTAMENTO = ENVIO_DEPARTAMENTO;
 
   envioPedidoForm: FormGroup = this.fb.group({
-    formaEnvio: [SERVICIO_ENTREGA_LOCAL, Validators.required],
+    formaEnvio: [this.SERVICIO_ENVIO_DISTRITO, Validators.required],
     direccionEnvio: [
       null,
       [Validators.required, , Validators.minLength(2)]

@@ -48,6 +48,13 @@
           <th mat-header-cell *matHeaderCellDef> Costo </th>
           <td mat-cell *matCellDef="let element"> {{element.costoUnitario | currency: 'PEN'}} </td>
         </ng-container>
+        <ng-container matColumnDef="variante">
+          <th mat-header-cell *matHeaderCellDef> Variante </th>
+          <td mat-cell *matCellDef="let element">
+            <span class="celda-estado {{element.colorVariante}}">{{(element.padreId ? true : false) + '' | i18nSelect: estadoActivoProducto
+              }}</span>
+          </td>
+        </ng-container>
         <ng-container matColumnDef="activo">
           <th mat-header-cell *matHeaderCellDef> Activo </th>
           <td mat-cell *matCellDef="let element">

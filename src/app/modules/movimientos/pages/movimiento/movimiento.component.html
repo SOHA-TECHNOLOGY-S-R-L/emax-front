@@ -1,54 +1,64 @@
 <div class="container">
   <div class="row">
     <div class="col-12 col-sm-6">
-      @if(this.cajaUsuario.id != undefined && this.cajaUsuario != null){
-      <info-caja-usuario [inCajaUsuario]=cajaUsuario />
+      @if(cajaUsuarioResource.value()){
+      <info-caja-usuario [inCajaUsuario]=cajaUsuarioResource.value()! />
       }
-      @if(pedido) {
+      @if(pedidoResource.value()) {
       <ul class="list-group my-2">
         <li class="list-group-item active">Información de movimiento</li>
       </ul>
       <div class="d-flex flex-row justify-content-center">
-        <ng-container *ngIf="pedido.tipoPedido.id==PEDIDO_VENTA">
-          <div *ngIf="iMovimiento=='I'" style="margin-right: 5px;">
+        <ng-container *ngIf="pedidoResource.value()!.tipoPedidoId==PEDIDO_VENTA">
+          <div *ngIf="selectTipoMovimiento()=='I'" style="margin-right: 5px;">
             <mat-card>
               <mat-card-header>
                 <mat-card-title>SALDO NETO</mat-card-title>
               </mat-card-header>
               <mat-card-content>
-                <p class="black">{{pedido.saldoPedido| currency: 'PEN'}}</p>
+                <!--                 <p class="black">{{pedidoResource.value()!.saldoPedido| currency: 'PEN'}}</p>
+ -->
+                <p class="black">{{newSaldoCalculado() | currency: 'PEN'}}</p>
               </mat-card-content>
             </mat-card>
           </div>
-          <div *ngIf="iMovimiento=='E'" style="margin-right: 5px;">
+          <div *ngIf="selectTipoMovimiento()=='E'" style="margin-right: 5px;">
             <mat-card>
               <mat-card-header>
                 <mat-card-title>FLUJO EFECTIVO</mat-card-title>
               </mat-card-header>
               <mat-card-content>
-                <p class="black">{{pedido.flujoEfectivoTotal| currency: 'PEN'}}</p>
+                <!--                 <p class="black">{{pedidoResource.value()!.flujoEfectivoTotal| currency: 'PEN'}}</p>
+ -->
+                <p class="black">{{newSaldoCalculado() | currency: 'PEN'}}</p>
               </mat-card-content>
             </mat-card>
           </div>
         </ng-container>
-        <ng-container *ngIf="pedido.tipoPedido.id==PEDIDO_COMPRA">
-          <div *ngIf="iMovimiento=='E'" style="margin-right: 5px;">
+        <ng-container *ngIf="pedidoResource.value()!.tipoPedidoId==PEDIDO_COMPRA">
+          <div *ngIf="selectTipoMovimiento()=='E'" style="margin-right: 5px;">
             <mat-card>
               <mat-card-header>
                 <mat-card-title>SALDO NETO</mat-card-title>
               </mat-card-header>
               <mat-card-content>
-                <p class="black">{{pedido.saldoPedido| currency: 'PEN'}}</p>
+                <!--                 <p class="black">{{pedidoResource.value()!.saldoPedido| currency: 'PEN'}}</p>
+ -->
+                <p class="black">{{newSaldoCalculado() | currency: 'PEN'}}</p>
+
               </mat-card-content>
             </mat-card>
           </div>
-          <div *ngIf="iMovimiento=='I'" style="margin-right: 5px;">
+          <div *ngIf="selectTipoMovimiento()=='I'" style="margin-right: 5px;">
             <mat-card>
               <mat-card-header>
                 <mat-card-title>FLUJO EFECTIVO</mat-card-title>
               </mat-card-header>
               <mat-card-content>
-                <p class="black">{{pedido.flujoEfectivoTotal| currency: 'PEN'}}</p>
+                <!--                 <p class="black">{{pedidoResource.value()!.flujoEfectivoTotal| currency: 'PEN'}}</p>
+ -->
+                <p class="black">{{newSaldoCalculado() | currency: 'PEN'}}</p>
+
               </mat-card-content>
             </mat-card>
           </div>
@@ -59,7 +69,7 @@
               <mat-card-title>INGRESO</mat-card-title>
             </mat-card-header>
             <mat-card-content>
-              <p class="blue">{{movimiento.ingresoDinero| currency: 'PEN'}}</p>
+              <p class="blue">{{movimiento().ingresoDinero| currency: 'PEN'}}</p>
             </mat-card-content>
           </mat-card>
         </div>
@@ -69,7 +79,7 @@
               <mat-card-title>EGRESO</mat-card-title>
             </mat-card-header>
             <mat-card-content>
-              <p class="red">{{movimiento.egresoDinero| currency: 'PEN'}}</p>
+              <p class="red">{{movimiento().egresoDinero| currency: 'PEN'}}</p>
             </mat-card-content>
           </mat-card>
         </div>
@@ -77,101 +87,98 @@
       }
     </div>
     <div class="col-12 col-sm-6">
-      <ul class="list-group my-2">
-        <li class="list-group-item active">Registro de pago por: <b>{{titulo}}</b></li>
-      </ul>
-      <ng-container>
-        <mat-form-field>
-          <mat-icon matPrefix>search</mat-icon>
-          <input matInput type="text" #searchPedidoText [(ngModel)]="pedidoIdSearch" autocomplete="off"
-            (click)="searchByPedidoId($event.target.value)" (change)="searchByPedidoId($event.target.value)" placeholder="Buscar por N° pedido">
-        </mat-form-field>
-      </ng-container>
-      @if(pedido) {
-      <form #myForm="ngForm" (ngSubmit)="onSubmitForm(myForm)">
-        <mat-radio-group class="example-full-width" name="iMovimiento" [(ngModel)]="iMovimiento"
-          (change)="changeTipoMovimiento($event.value)">
+      <form [formGroup]="frm" (ngSubmit)="onSubmitForm()">
+        <ul class="list-group my-2">
+          <li class="list-group-item active">
+            <b>{{tituloTipoPedido()}}</b></li>
+        </ul>
+        <ng-container>
+          <mat-form-field>
+            <mat-icon matPrefix>search</mat-icon>
+            <input matInput type="text" name="pedidoIdSearch" formControlName="pedidoIdSearch" autocomplete="off"
+              (input)="searchByPedidoId($event.target.value)" placeholder="Buscar por N° pedido">
+          </mat-form-field>
+        </ng-container>
+        @if(pedidoResource.value()) {
+        <mat-radio-group class="example-full-width" name="iMovimiento" formControlName="iMovimiento"
+          (change)="selectTipoMovimiento.set($event.value)">
           <mat-radio-button value="I">Ingreso</mat-radio-button>
           <mat-radio-button value="E">Egreso</mat-radio-button>
         </mat-radio-group>
         <mat-form-field class="example-full-width">
           <mat-label>Tipo movimiento</mat-label>
-          <mat-select name="tipoMovimientoPedido" [disabled]="true" [(ngModel)]="movimiento.tipoMovimientoPedido">
-            <mat-option *ngFor="let tipoMovimientoPedido of tipoMovimientosPedidoLst" [value]="tipoMovimientoPedido">
+          <mat-select name="tipoMovimientoPedidoId" formControlName="tipoMovimientoPedidoId">
+            <mat-option *ngFor="let tipoMovimientoPedido of tipoMovimientosPedidoLst()"
+              [value]="tipoMovimientoPedido.id">
               {{tipoMovimientoPedido.movimiento}}
             </mat-option>
           </mat-select>
         </mat-form-field>
-
-        <ng-container *ngIf="pedido.tipoPedido.id==PEDIDO_VENTA">
-          <mat-form-field *ngIf="iMovimiento=='I'">
+        <ng-container *ngIf="pedidoResource.value()!.tipoPedidoId==PEDIDO_VENTA">
+          <mat-form-field *ngIf="this.selectTipoMovimiento()=='I'">
             <mat-label>SALDO NETO</mat-label>
-            <input matInput type="text" name="saldoPedido" #saldoPedido="ngModel" [(ngModel)]="pedido.saldoPedido"
-              disabled>
+            <input matInput type="text" name="saldoPedido" formControlName="saldoPedido">
           </mat-form-field>
-          <mat-form-field *ngIf="iMovimiento=='E'">
+          <mat-form-field *ngIf="this.selectTipoMovimiento()=='E'">
             <mat-label>FLUJO EFECTIVO</mat-label>
-            <input matInput type="text" name="flujoEfectivoTotal" #flujoEfectivoTotal="ngModel"
-              [(ngModel)]="pedido.flujoEfectivoTotal" disabled>
+            <input matInput type="text" name="flujoEfectivoTotal" formControlName="flujoEfectivoTotal">
           </mat-form-field>
         </ng-container>
-        <ng-container *ngIf="pedido.tipoPedido.id==PEDIDO_COMPRA">
-          <mat-form-field *ngIf="iMovimiento=='E'">
+        <ng-container *ngIf="pedidoResource.value()!.tipoPedidoId==PEDIDO_COMPRA">
+          <mat-form-field *ngIf="this.selectTipoMovimiento()=='E'">
             <mat-label>SALDO NETO</mat-label>
-            <input matInput type="text" name="saldoPedido" #saldoPedido="ngModel" [(ngModel)]="pedido.saldoPedido"
-              disabled>
+            <input matInput type="text" name="saldoPedido" formControlName="saldoPedido">
           </mat-form-field>
-          <mat-form-field *ngIf="iMovimiento=='I'">
+          <mat-form-field *ngIf="this.selectTipoMovimiento()=='I'">
             <mat-label>FLUJO EFECTIVO</mat-label>
-            <input matInput type="text" name="flujoEfectivoTotal" #flujoEfectivoTotal="ngModel"
-              [(ngModel)]="pedido.flujoEfectivoTotal" disabled>
+            <input matInput type="text" name="flujoEfectivoTotal" formControlName="flujoEfectivoTotal">
           </mat-form-field>
         </ng-container>
-
-        <ng-container *ngIf="pedido.persona">
-          <mat-form-field *ngIf="iMovimiento=='I'">
+        <ng-container *ngIf="pedidoResource.value()!.personaId">
+          <mat-form-field *ngIf="this.selectTipoMovimiento()=='I'">
             <mat-label>INGRESO DINERO</mat-label>
-            <input matInput type="number" name="ingresoDinero" #ingresoDinero="ngModel"
-              [(ngModel)]="movimiento.ingresoDinero" (keyup)="setMovimientoDinero(iMovimiento)" min="0" required>
-            <div *ngIf="ingresoDinero.invalid && (ingresoDinero.dirty || ingresoDinero.touched)">
-              <mat-error *ngIf="ingresoDinero?.errors?.['required']">
-                Pago es requerido
-              </mat-error>
-            </div>
+            <input matInput type="number" name="ingresoDinero" formControlName="ingresoDinero">
+            @if (formUtils.isValidField(frm, "ingresoDinero")) {
+            <mat-error>
+              {{ formUtils.getFieldError(frm, "ingresoDinero") }}
+            </mat-error>
+            }
           </mat-form-field>
-          <mat-form-field *ngIf="iMovimiento=='E'">
+          <mat-form-field *ngIf="this.selectTipoMovimiento()=='E'">
             <mat-label>EGRESO DINERO</mat-label>
-            <input matInput type="number" name="egresoDinero" #egresoDinero="ngModel"
-              [(ngModel)]="movimiento.egresoDinero" (keyup)="setMovimientoDinero(iMovimiento)" min="0" required>
-            <div *ngIf="egresoDinero.invalid && (egresoDinero.dirty || egresoDinero.touched)">
-              <mat-error *ngIf="egresoDinero?.errors?.['required']">
-                Pago es requerido
-              </mat-error>
-            </div>
+            <input matInput type="number" name="egresoDinero" formControlName="egresoDinero">
+            @if (formUtils.isValidField(frm, "egresoDinero")) {
+            <mat-error>
+              {{ formUtils.getFieldError(frm, "egresoDinero") }}
+            </mat-error>
+            }
           </mat-form-field>
         </ng-container>
         <mat-form-field class="example-full-width">
           <mat-label>Tipo pago</mat-label>
-          <mat-select name="tipoPago" [(ngModel)]="movimiento.tipoPago" required>
-            <mat-option *ngFor="let tipoPago of tipoPagos" [value]="tipoPago">
+          <mat-select name="tipoPagoId" formControlName="tipoPagoId">
+            <mat-option *ngFor="let tipoPago of tipoPagosResource.value()" [value]="tipoPago.id">
               {{tipoPago.nombre}}
             </mat-option>
           </mat-select>
+          @if (formUtils.isValidField(frm, "tipoPagoId")) {
+          <mat-error>
+            {{ formUtils.getFieldError(frm, "tipoPagoId") }}
+          </mat-error>
+          }
         </mat-form-field>
 
 
         <div class="d-flex justify-content-end">
-          <button type="submit" color="primary" mat-raised-button cdkFocusInitial [disabled]="!myForm.form.valid">
+          <button type="submit" color="primary" mat-raised-button cdkFocusInitial [disabled]="!frm.valid">
             Registrar movimiento</button>
           <!--           <button color="primary" mat-raised-button [routerLink]="['/pedidos']">
             Cancelar
           </button> -->
         </div>
+        }
 
       </form>
-
-
-      }
     </div>
   </div>
 </div>

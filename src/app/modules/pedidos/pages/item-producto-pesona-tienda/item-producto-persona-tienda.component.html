@@ -1,11 +1,11 @@
 <div class="container">
   <div class="row mt-3">
-    <autocomplete-resource [placeholder]="'Buscar producto...'" [searchFn]="buscarProductos"
+    <autocomplete-resource [placeholder]="'Buscar productos para VENTA'" [searchFn]="buscarProductos"
       [displayWith]="mostrarProducto" (selected)="onProductoSeleccionado($event)">
       <ng-template let-producto>
         <div>
-           {{ producto.nombre }}
-          <span class="text-bold-italic">Color:</span> {{ producto.color?.nombre }}
+          {{ producto.nombre }}
+          <span class="text-bold-italic">Color:</span> {{ findColorById(producto.colorId) }}
           <span class="text-bold-italic">Cant:</span> {{ producto.cantidadStock }} unid
           <span class="text-bold-italic">Cod:</span> {{ producto.codigo }}
 
@@ -18,12 +18,12 @@
   <div class="example-container" [class.example-is-mobile]="isMobile()">
     <mat-drawer-container autosize class="example-sidenav-container" [style.marginTop.px]="isMobile() ? 56 : 0">
       <mat-drawer-content class="main-sidenav-content">
-        <customize-item-producto-to-client (clickVerCarrito)="drawnerRight.open()" [producto]="producto()!" />
+        <customize-item-producto-to-client (clickVerCarrito)="drawnerRight.open()" [inProducto]="producto()!" />
       </mat-drawer-content>
       <mat-drawer position="end" class="main-drawer" #drawnerRight [mode]="isMobile() ? 'over' : 'side'"
         [opened]="!isMobile()" fixedTopGap="56">
-        <carrito-item-producto (clickBuscarProductos)="drawnerRight.close()" /> <!-- 3-VENTA POR TIENDA -->
-        <!-- 4-VENTA POR ONLINE -->
+        <carrito-item-producto (clickBuscarProductos)="drawnerRight.close()" /> <!-- 3-VENTA ORIGEN EN TIENDA -->
+        <!-- 4-VENTA ORIGEN ONLINE -->
       </mat-drawer>
     </mat-drawer-container>
   </div>

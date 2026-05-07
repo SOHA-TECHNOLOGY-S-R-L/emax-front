@@ -30,7 +30,7 @@
   <ng-container *ngIf="authService.hasAnyRole('ROLE_LIST_VENTAS','ROLE_LIST_MY_ORDERS')">
     <a mat-list-item [routerLink]="['pedidos/listado-ventas']" [routerLinkActive]="['active']"
       [routerLinkActiveOptions]="{exact: true}">
-      Listado de pedidos</a>
+      Listado de ventas</a>
   </ng-container>
   <ng-container *ngIf="authService.hasRole('ROLE_REPORT_VENTA')">
     <a mat-list-item [routerLink]="['pedidos/rpte-pedidos',1]" [routerLinkActive]="['active']">

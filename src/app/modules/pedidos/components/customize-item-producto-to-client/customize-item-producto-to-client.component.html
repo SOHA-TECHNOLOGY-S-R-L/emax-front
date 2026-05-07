@@ -24,29 +24,19 @@
       <div class="row">
         <div class="col">
           <ul class="list-group" style="list-style-type: none;">
-            <!--             <li style="margin-bottom: 6px;"><i class="fa fa-angle-right mr-2"></i><b>Cantidad en stock:
-              </b>{{producto.cantidadStock}} unid</li> -->
-            <!--
-            <li style="margin-bottom: 6px;"><i class="fa fa-angle-right mr-2"></i><b>Mín cantidad en pedido:
-              </b>{{producto.minCantidadPedido}} unid </li>
-            <li style="margin-bottom: 6px;"><i class="fa fa-angle-right mr-2"></i><b>Máx cantidad en pedido:
-              </b>{{producto.maxCantidadPedido}} unid </li> -->
-
-            <!--             <li style="margin-bottom: 6px;"><i class="fa fa-angle-right mr-2"></i><b>En grupos de:
-              </b>{{producto.gruposDe}} unid</li> -->
             <li style="margin-bottom: 6px;"><i class="fa fa-angle-right mr-2"></i><b>Color:
-              </b>{{producto().color?.nombre}}
+              </b>{{colorProductoResource.value()?.nombre}}
             </li>
             <li style="margin-bottom: 6px;"><i class="fa fa-angle-right mr-2"></i><b>Medidas: </b>{{producto().medidas}}
             </li>
             <li style="margin-bottom: 6px;"><i class="fa fa-angle-right mr-2"></i><b>Peso: </b>{{producto().peso}}</li>
 
             <li style="margin-bottom: 6px;"><i class="fa fa-angle-right mr-2"></i><b>Material:
-              </b>{{producto().material?.nombre}}</li>
+              </b>{{materialProductoResource.value()?.nombre}}</li>
 
             <li style="margin-bottom: 6px;"><i class="fa fa-angle-right mr-2"></i><b>Grupos de:
               </b>{{producto().gruposDe}} unid</li>
-            <li style="margin-bottom: 6px;"><i class="fa fa-angle-right mr-2"></i><b>Mín cantidad en pedido:
+            <li style="margin-bottom: 6px;"><i class="fa fa-angle-right mr-2"></i><b>Mín cantidad permitida:
               </b>{{producto().minCantidadPedido}} unid </li>
             <li style="margin-bottom: 6px;"><i class="fa fa-angle-right mr-2"></i><b>Disponible:
               </b>{{producto().cantidadStock}} unid</li>

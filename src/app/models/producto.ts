@@ -1,11 +1,7 @@
 import { Categoria } from './categoria';
-import { Color } from './color';
 import { EstadoProducto } from './estado-producto';
 import { MargenProducto } from './margen-producto';
-import { Material } from './material';
-import { Multimedia } from './multimedia';
 import { MultimediaProducto } from './multimedia-producto';
-import { Uso } from './uso';
 
 export class Producto {
   id!: number;
@@ -37,17 +33,18 @@ export class Producto {
   //productosPromocion!:string;
   visibleEnTienda: boolean = false;
   activo: boolean = true;
-  color?: Color;
-  material?: Material;
+  colorId: number | undefined;
+  materialId: number | undefined;
   categoria?: Categoria;
-  uso?: Uso;
+  usoId: number | undefined;;
   estadoProducto!: EstadoProducto;
-  padre: Producto | undefined;
+  padreId: number | undefined;
   hijos: Producto[] = [];
   margenesProducto: MargenProducto[] = [];
   multimediasProducto: MultimediaProducto[] = [];
   //campos utilitarios
   //multimediaPrincipal?: string;
+  colorVariante! : string;
   colorActivo!: string;
   colorVisibleEnTienda!: string;
   precioMasBajoProductoShow: number = 0;

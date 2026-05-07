@@ -93,13 +93,13 @@ export class AperturaCierreCajaComponent implements OnInit {
   asignarCajaUsuario(caja: Caja) {
     this.cajaService.getCajaUsuarioInactivoByCajaId(caja.id).subscribe(result => {
 
-/*       if (result != null) {
-        if (result.saldoCaja > 0 && result.activa == true) {
-          this.alertService.success(`${result.caja.nombre}, debe estar cerrada y sin saldo para ser asignada.`, "Caja",)
-          return;
-        }
-      } */
-      this.cajaUsuario.caja = caja
+      /*       if (result != null) {
+              if (result.saldoCaja > 0 && result.activa == true) {
+                this.alertService.success(`${result.caja.nombre}, debe estar cerrada y sin saldo para ser asignada.`, "Caja",)
+                return;
+              }
+            } */
+      this.cajaUsuario.cajaId = caja.id
       this.cajaUsuario.ingresoEsperado = 0;
       this.cajaUsuario.egresoEsperado = 0;
       this.cajaUsuario.saldoInicial = result.saldoFinal;
@@ -115,15 +115,16 @@ export class AperturaCierreCajaComponent implements OnInit {
 
   abrirCaja() {
     this.usuarioService.getUsuarioByUsername(this.username).subscribe(resp => {
-      this.cajaUsuario.usuario = resp;
+      this.cajaUsuario.usuarioId = resp.id;
 
       //this.cajaUsuario.fechaApertura = '';
       //this.cajaUsuario.fechaCierre = '';
       //this.cajaUsuario.usuario.password = "";
-      this.cajaUsuario.usuario.roles = [];
+      //this.cajaUsuario.usuario.roles = [];
       this.cajaService.create(this.cajaUsuario).subscribe(
         response => {
-          this.alertService.success(`Se habrió ${this.cajaUsuario.caja.nombre}, para ${this.cajaUsuario.usuario.username} con éxito!`, "Caja",)
+          //this.alertService.success(`Se habrió ${this.cajaUsuario.caja.nombre}, para ${this.cajaUsuario.usuario.username} con éxito!`, "Caja",)
+          this.alertService.success(`Se habrió la caja con éxito!`, "Caja",)
           this.router.navigate(['/']);
         })
     })
@@ -143,12 +144,14 @@ export class AperturaCierreCajaComponent implements OnInit {
       this.cajaUsuario.activa = false;*/
       this.cajaService.update(this.cajaUsuario).subscribe(
         response => {
-          this.alertService.success(`Se cerró ${this.cajaUsuario.caja.nombre}, para ${this.cajaUsuario.usuario.username} con éxito!`, "Caja")
+          //this.alertService.success(`Se cerró ${this.cajaUsuario.caja.nombre}, para ${this.cajaUsuario.usuario.username} con éxito!`, "Caja")
+          this.alertService.success(`Se cerró la caja con éxito!`, "Caja")
           this.router.navigate(['/']);
         }
       )
     } else {
-      this.alertService.warning(`No puede cerrar ${this.cajaUsuario.caja.nombre}, existe diferencias`, "Caja")
+      //this.alertService.warning(`No puede cerrar ${this.cajaUsuario.caja.nombre}, existe diferencias`, "Caja")
+      this.alertService.warning(`No se puede cerrar caja, existe diferencias`, "Caja")
     }
   }
 

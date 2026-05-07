@@ -15,54 +15,36 @@ import { AuthService } from './auth.service';
 import { Color } from '../models/color';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ProductoService {
-  constructor(private http: HttpClient,
+  constructor(
+    private http: HttpClient,
     private router: Router,
     private authService: AuthService,
-    private alertService: AlertService) { }
+    private alertService: AlertService,
+  ) {}
 
-  /*   private agregarAuthorizationHeader(){
-        let token = this.authService.token;
-        if(token != null){
-          return this.httpHeaders.append('Authorization', 'Bearer ' + token)
-        }
-        return this.httpHeaders
-      } */
-
-
-  /*   getCategoriasProducto(): Observable<Categoria[]> {
-      return this.http.get<Categoria[]>(environment.apiUrl + '/producto/categorias');
-    }
-
-    getCategoriasActivas(): Observable<Categoria[]> {
-      return this.http.get<Categoria[]>(environment.apiUrl + '/categorias/active');
-    }
-  */
   getColoresProducto(): Observable<Color[]> {
-    return this.http.get<Color[]>(`${environment.apiUrl}/producto/colores`
-    );
+    return this.http.get<Color[]>(`${environment.apiUrl}/producto/colores`);
   }
 
-  /*   getEmpaquesProducto(): Observable<Empaque[]> {
-      return this.http.get<Empaque[]>(`${environment.apiUrl}/producto/empaques`
-      );
-    } */
+  getColorProducto(colorId: number): Observable<Color> {
+    return this.http.get<Color>(`${environment.apiUrl}/color/${colorId}`);
+  }
 
   getMaterialesProducto(): Observable<Material[]> {
-    return this.http.get<Material[]>(`${environment.apiUrl}/producto/materiales`
+    return this.http.get<Material[]>(
+      `${environment.apiUrl}/producto/materiales`,
     );
   }
 
-  /*   getOrigenesProducto(): Observable<Origen[]> {
-      return this.http.get<Origen[]>(`${environment.apiUrl}/producto/origenes`
-      );
-    } */
+  getMaterialProducto(materialId: number): Observable<Material> {
+    return this.http.get<Material>(`${environment.apiUrl}/material/${materialId}`);
+  }
 
   getUsosInternoProducto(): Observable<Uso[]> {
-    return this.http.get<Uso[]>(`${environment.apiUrl}/producto/usos`
-    );
+    return this.http.get<Uso[]>(`${environment.apiUrl}/producto/usos`);
   }
 
   getAllProductosPageable(params: any): Observable<PageableResponse> {
@@ -75,11 +57,13 @@ export class ProductoService {
     return this.http.get<Producto[]>(`${environment.apiUrl}/productos`);
   }
 
+  /*   getAllProductosNoVarienteActivos(): Observable<Producto[]> {
+    return this.http.get<Producto[]>(`${environment.apiUrl}/productos/no-variente-activos`);
+  } */
+
   getIdsProductosActivos(): Observable<number[]> {
     return this.http.get<number[]>(`${environment.apiUrl}/productos/ids`);
   }
-
-
 
   filtrarProductos(term: string): Observable<Producto[]> {
     const filtro = term?.trim();
@@ -87,19 +71,20 @@ export class ProductoService {
       return of([]);
     }
     return this.http.get<Producto[]>(
-      `${environment.apiUrl}/producto/filtrar-productos/${encodeURIComponent(filtro)}`
+      `${environment.apiUrl}/producto/filtrar-productos/${encodeURIComponent(filtro)}`,
     );
   }
 
-
-
   createProducto(producto: Producto): Observable<Producto> {
-    return this.http.post(`${environment.apiUrl}/producto`, producto
-      /*,{headers: this.agregarAuthorizationHeader()}*/
-    )
+    return this.http
+      .post(
+        `${environment.apiUrl}/producto`,
+        producto,
+        /*,{headers: this.agregarAuthorizationHeader()}*/
+      )
       .pipe(
         map((response: any) => response.prodcuto as Producto),
-        catchError(e => {
+        catchError((e) => {
           if (e.status == 400) {
             return throwError(e);
           }
@@ -107,23 +92,29 @@ export class ProductoService {
             console.error(e.error.mensaje);
           }
           return throwError(e);
-        }));
+        }),
+      );
   }
 
-
-/*   createProductoImagen(formData: FormData): Observable<Producto> {
-    let httpHeaders = new HttpHeaders()
+  updateProductoImagen(
+    formData: FormData,
+    productoId: number,
+  ): Observable<Producto> {
+    let httpHeaders = new HttpHeaders();
     let token = this.authService.token;
     if (token != null) {
-      httpHeaders.append('Authorization', 'Bearer ' + token)
+      httpHeaders.append('Authorization', 'Bearer ' + token);
     }
 
-    return this.http.post(`${environment.apiUrl}/producto/imagen`, formData
-      , { headers: httpHeaders }
-    )
+    return this.http
+      .put<Producto>(
+        `${environment.apiUrl}/producto/imagen/${productoId}`,
+        formData,
+        { headers: httpHeaders },
+      )
       .pipe(
         map((response: any) => response.producto as Producto),
-        catchError(e => {
+        catchError((e) => {
           if (e.status == 400) {
             return throwError(e);
           }
@@ -131,42 +122,26 @@ export class ProductoService {
             console.error(e.error.mensaje);
           }
           return throwError(e);
-        }));
-  } */
-
-  updateProductoImagen(formData: FormData, productoId: number): Observable<Producto> {
-    let httpHeaders = new HttpHeaders()
-    let token = this.authService.token;
-    if (token != null) {
-      httpHeaders.append('Authorization', 'Bearer ' + token)
-    }
-
-    return this.http.put<Producto>(`${environment.apiUrl}/producto/imagen/${productoId}`, formData, { headers: httpHeaders })
-      .pipe(
-        map((response: any) => response.producto as Producto),
-        catchError(e => {
-          if (e.status == 400) {
-            return throwError(e);
-          }
-          if (e.error?.mensaje) {
-            console.error(e.error.mensaje);
-          }
-          return throwError(e);
-        }));
+        }),
+      );
   }
 
   getProducto(id: any): Observable<Producto> {
-    return this.http.get<Producto>(`${environment.apiUrl}/producto/id/${id}`
-      /*, {headers: this.agregarAuthorizationHeader()}*/
-    ).pipe(
-      catchError(e => {
-        if (e.status != 401 && e.error?.mensaje) {
-          // this.router.navigate(['/productos']);
-          console.error(e.error.mensaje);
-        }
+    return this.http
+      .get<Producto>(
+        `${environment.apiUrl}/producto/id/${id}`,
+        /*, {headers: this.agregarAuthorizationHeader()}*/
+      )
+      .pipe(
+        catchError((e) => {
+          if (e.status != 401 && e.error?.mensaje) {
+            // this.router.navigate(['/productos']);
+            console.error(e.error.mensaje);
+          }
 
-        return throwError(e);
-      }));
+          return throwError(e);
+        }),
+      );
   }
 
   async getProductoHowPromise(productoId: number): Promise<Producto> {
@@ -176,171 +151,210 @@ export class ProductoService {
   async getIdsProductosActivosHowPromise(): Promise<number[] | []> {
     try {
       const res = await lastValueFrom(this.getIdsProductosActivos());
-      return res
+      return res;
     } catch (error) {
       return [];
     }
   }
 
   getProductoByCod(codigo: string): Observable<Producto> {
-    return this.http.get<Producto>(`${environment.apiUrl}/producto/codigo/${codigo}`
-      /*, {headers: this.agregarAuthorizationHeader()}*/
-    ).pipe(
-      catchError(e => {
-        if (e.status != 401 && e.error?.mensaje) {
-          // this.router.navigate(['/productos']);
-          console.error(e.error.mensaje);
-        }
+    return this.http
+      .get<Producto>(
+        `${environment.apiUrl}/producto/codigo/${codigo}`,
+        /*, {headers: this.agregarAuthorizationHeader()}*/
+      )
+      .pipe(
+        catchError((e) => {
+          if (e.status != 401 && e.error?.mensaje) {
+            // this.router.navigate(['/productos']);
+            console.error(e.error.mensaje);
+          }
 
-        return throwError(e);
-      }));
+          return throwError(e);
+        }),
+      );
   }
 
   getProductoByImage(imagen: string): Observable<Producto> {
-    return this.http.get<Producto>(`${environment.apiUrl}/producto/imagen/${imagen}`
-      /*, {headers: this.agregarAuthorizationHeader()}*/
-    ).pipe(
-      catchError(e => {
-        let errorMsg = '';
-        if (e.status === 404) {
-          console.log(e.error.mensaje);
-          errorMsg = 'prd-no-ecnontrado';
-        }
-        else if (e.status === 500) {
-          errorMsg = 'Error interno en el servidor.';
-        }
-        else {
-          errorMsg = 'Error inesperado.';
-        }
+    return this.http
+      .get<Producto>(
+        `${environment.apiUrl}/producto/imagen/${imagen}`,
+        /*, {headers: this.agregarAuthorizationHeader()}*/
+      )
+      .pipe(
+        catchError((e) => {
+          let errorMsg = '';
+          if (e.status === 404) {
+            console.log(e.error.mensaje);
+            errorMsg = 'prd-no-ecnontrado';
+          } else if (e.status === 500) {
+            errorMsg = 'Error interno en el servidor.';
+          } else {
+            errorMsg = 'Error inesperado.';
+          }
 
-        console.error('Error HTTP:', e.status, e.message);
-        //return throwError(() => new Error(errorMsg));
-        return throwError(() => e);
-
-      }));
+          console.error('Error HTTP:', e.status, e.message);
+          //return throwError(() => new Error(errorMsg));
+          return throwError(() => e);
+        }),
+      );
   }
 
   getLstProductoServicioEnvio(): Observable<Producto[]> {
-    return this.http.get<Producto[]>(`${environment.apiUrl}/productos/servicio/envio`
-      /*, {headers: this.agregarAuthorizationHeader()}*/
-    ).pipe(
-      catchError(e => {
-        if (e.status != 401 && e.error?.mensaje) {
-          // this.router.navigate(['/productos']);
-          console.error(e.error.mensaje);
-        }
+    return this.http
+      .get<Producto[]>(
+        `${environment.apiUrl}/productos/servicio/envio`,
+        /*, {headers: this.agregarAuthorizationHeader()}*/
+      )
+      .pipe(
+        catchError((e) => {
+          if (e.status != 401 && e.error?.mensaje) {
+            // this.router.navigate(['/productos']);
+            console.error(e.error.mensaje);
+          }
 
-        return throwError(e);
-      }));
+          return throwError(e);
+        }),
+      );
   }
 
   getLstProductosServicios(): Observable<Producto[]> {
-    return this.http.get<Producto[]>(`${environment.apiUrl}/productos/servicios`
-      /*, {headers: this.agregarAuthorizationHeader()}*/
-    ).pipe(
-      catchError(e => {
-        if (e.status != 401 && e.error?.mensaje) {
-          // this.router.navigate(['/productos']);
-          console.error(e.error.mensaje);
-        }
+    return this.http
+      .get<Producto[]>(
+        `${environment.apiUrl}/productos/servicios`,
+        /*, {headers: this.agregarAuthorizationHeader()}*/
+      )
+      .pipe(
+        catchError((e) => {
+          if (e.status != 401 && e.error?.mensaje) {
+            // this.router.navigate(['/productos']);
+            console.error(e.error.mensaje);
+          }
 
-        return throwError(e);
-      }));
-  }
-
-  updateProducto(producto: Producto): Observable<any> {
-    return this.http.put<any>(`${environment.apiUrl}/producto/${producto.id}`, producto
-      /*, {headers: this.agregarAuthorizationHeader()}*/
-    ).pipe(
-      catchError(e => {
-        if (e.status == 400) {
           return throwError(e);
-        }
-        if (e.error.mensaje) {
-          console.error(e.error.mensaje);
-        }
-        return throwError(e);
-      }));
+        }),
+      );
   }
 
-
+  updateProducto(producto: any): Observable<any> {
+    return this.http
+      .put<any>(
+        `${environment.apiUrl}/producto/${producto.id}`,
+        producto,
+        /*, {headers: this.agregarAuthorizationHeader()}*/
+      )
+      .pipe(
+        catchError((e) => {
+          if (e.status == 400) {
+            return throwError(e);
+          }
+          if (e.error.mensaje) {
+            console.error(e.error.mensaje);
+          }
+          return throwError(e);
+        }),
+      );
+  }
 
   deleteProducto(id: number): Observable<Producto> {
-    return this.http.delete<Producto>(`${environment.apiUrl}/producto/${id}`
-      /*, {headers: this.agregarAuthorizationHeader()}*/
-    ).pipe(
-      catchError(e => {
-        if (e.error?.mensaje) {
-          console.error(e.error.mensaje);
-        }
-        return throwError(e);
-      }));
+    return this.http
+      .delete<Producto>(
+        `${environment.apiUrl}/producto/${id}`,
+        /*, {headers: this.agregarAuthorizationHeader()}*/
+      )
+      .pipe(
+        catchError((e) => {
+          if (e.error?.mensaje) {
+            console.error(e.error.mensaje);
+          }
+          return throwError(e);
+        }),
+      );
   }
 
   deleteMargenProducto(id: number): Observable<MargenProducto> {
-    return this.http.delete<MargenProducto>(`${environment.apiUrl}/margenes/${id}`
-      /*, {headers: this.agregarAuthorizationHeader()}*/
-    ).pipe(
-      catchError(e => {
-        if (e.error?.mensaje) {
-          console.error(e.error.mensaje);
-        }
-        return throwError(e);
-      }));
+    return this.http
+      .delete<MargenProducto>(
+        `${environment.apiUrl}/margenes/${id}`,
+        /*, {headers: this.agregarAuthorizationHeader()}*/
+      )
+      .pipe(
+        catchError((e) => {
+          if (e.error?.mensaje) {
+            console.error(e.error.mensaje);
+          }
+          return throwError(e);
+        }),
+      );
   }
 
   subirImagen(archivo: File, productoId: any): Observable<Producto> {
     let formData = new FormData();
-    formData.append("archivo", archivo);
-    formData.append("productoId", productoId);
+    formData.append('archivo', archivo);
+    formData.append('productoId', productoId);
 
     /*     const req = new HttpRequest('POST', `${environment.apiUrl}/personas/upload`, formData, {
           reportProgress: true
         }); */
 
-    return this.http.post<any>(`${environment.apiUrl}/upload-imagen/`, formData).pipe(
-      map(response => response.producto as Producto),
-      catchError(e => {
-        if (e.error?.mensaje) {
-          this.alertService.error(e.error.mensaje, e.error.err);
-        }
-        return throwError(e);
-      })
-    )
+    return this.http
+      .post<any>(`${environment.apiUrl}/upload-imagen/`, formData)
+      .pipe(
+        map((response) => response.producto as Producto),
+        catchError((e) => {
+          if (e.error?.mensaje) {
+            this.alertService.error(e.error.mensaje, e.error.err);
+          }
+          return throwError(e);
+        }),
+      );
   }
 
   productosPorCategoriaId(id: number): Observable<Producto[]> {
-    return this.http.get<Producto[]>(`${environment.apiUrl}/productos/categoria/${id}`).pipe(
-      catchError(e => {
-        if (e.error?.mensaje) {
-          this.alertService.error(e.error.mensaje, e.error.err);
-        }
-        return throwError(e);
-      })
-    )
+    return this.http
+      .get<Producto[]>(`${environment.apiUrl}/productos/categoria/${id}`)
+      .pipe(
+        catchError((e) => {
+          if (e.error?.mensaje) {
+            this.alertService.error(e.error.mensaje, e.error.err);
+          }
+          return throwError(e);
+        }),
+      );
   }
 
   productosPorCategoriaNombre(params: any): Observable<PageableResponse> {
-    return this.http.get<any>(`${environment.apiUrl}/productos/categoria/pageable`, { params: params }).pipe(
+    return this.http
+      .get<any>(`${environment.apiUrl}/productos/categoria/pageable`, {
+        params: params,
+      })
+      .pipe
       //map(res => res || []),
       //catchError(() => of([]))
-/*       catchError(e => {
+      /*       catchError(e => {
         if (e.error?.mensaje) {
           this.alertService.error(e.error.mensaje, e.error.err);
         }
         return throwError(e);
       }) */
-    )
+      ();
   }
 
-  productoCategoria(productoCodigo: string, categoriaNombre: string): Observable<Producto> {
-    return this.http.get<Producto>(`${environment.apiUrl}/producto/${productoCodigo}/categoria/${categoriaNombre}`).pipe(
-      catchError(e => {
-        if (e.error?.mensaje) {
-          this.alertService.error(e.error.mensaje, e.error.err);
-        }
-        return throwError(e);
-      })
-    )
+  productoCategoria(
+    productoCodigo: string,
+    categoriaNombre: string,
+  ): Observable<Producto> {
+    return this.http
+      .get<Producto>(
+        `${environment.apiUrl}/producto/${productoCodigo}/categoria/${categoriaNombre}`,
+      )
+      .pipe(
+        catchError((e) => {
+          if (e.error?.mensaje) {
+            this.alertService.error(e.error.mensaje, e.error.err);
+          }
+          return throwError(e);
+        }),
+      );
   }
 }

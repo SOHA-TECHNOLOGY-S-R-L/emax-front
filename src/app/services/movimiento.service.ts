@@ -10,6 +10,7 @@ import { environment } from '../../environments/environment';
 import { TipoMovimientoPedido } from '../models/tipo-movimiento-pedido';
 import { TipoMovimientoCaja } from '../models/tipo-movimiento-caja';
 import { AlertService } from './alert.service';
+import { Pedido } from '../models/pedido';
 
 @Injectable({
   providedIn: 'root'
@@ -51,22 +52,19 @@ export class MovimientoService {
     );
   }
 
-  createMovimiento(movimiento: Movimiento): Observable<Movimiento> {
-    return this.http.post(`${environment.apiUrl}/movimientos`, movimiento
-      /*, {headers: this.agregarAuthorizationHeader()}*/
+/*   createMovimiento(pedido: Pedido): Observable<Pedido> {
+    return this.http.post(`${environment.apiUrl}/pedido/movimiento`, pedido
     )
       .pipe(
-        map((response: any) => response.movimiento as Movimiento),
+        map((response: any) => response.pedido as Pedido),
         catchError(e => {
-/*           if (e.status == 400) {
-            return throwError(e);
-          } */
+
           if (e.error?.mensaje) {
             this.alertService.error(e.error.mensaje, e.error.err);
           }
           return throwError(e);
         }));
-  }
+  } */
 
   createMovimientoCaja(movimientoCaja: MovimientoCaja): Observable<MovimientoCaja> {
     return this.http.post(`${environment.apiUrl}/movimientos/caja`, movimientoCaja

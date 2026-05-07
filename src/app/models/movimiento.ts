@@ -5,17 +5,15 @@ import { TipoPago } from "./tipo-pago";
 
 
 export class Movimiento {
-  id!:number;
-  pedido!: Pedido;
+  //id!:number;
+  //pedido!: Pedido;
 	cajaUsuario!: CajaUsuario;
-  tipoPago!: TipoPago;
-  tipoMovimientoPedido!: TipoMovimientoPedido;
-	//createAt!: string;
-	//pagoDinero!:number;
-  //vueltoDinero!:number;
+  tipoPagoId!:number;
+  tipoMovimientoPedidoId!: number;
+  //tipoPago!: TipoPago;
+  //tipoMovimientoPedido!: TipoMovimientoPedido;
   ingresoDinero:number=0;
   egresoDinero:number=0;
-  //saldoBrutoDinero!:number;
-  saldoDinero!:number;
+  //saldoDinero!:number;
 
 }

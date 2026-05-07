@@ -26,13 +26,13 @@ import { StringToTitleWithAccents } from '../../../pipes/StringToTitleWithAccent
   templateUrl: './productos.component.html',
   styleUrls: ['./productos.component.css'],
   standalone: true,
-  imports: [SearchBoxTableComponent, CommonModule,  RouterModule, FormsModule, ReactiveFormsModule, AngularMaterialModule, StringToTitleWithAccents, UpperCasePipe ]
+  imports: [SearchBoxTableComponent, CommonModule, RouterModule, FormsModule, ReactiveFormsModule, AngularMaterialModule, StringToTitleWithAccents, UpperCasePipe]
 
 
 })
 export class ProductosComponent implements OnInit, AfterViewInit {
 
-  displayedColumns: string[] = ['codigo', 'nombre', 'categoria', 'cantidadStock', 'costoUnitario','activo','visibleEnTienda', 'acciones'];
+  displayedColumns: string[] = ['codigo', 'nombre', 'categoria', 'cantidadStock', 'costoUnitario', 'variante', 'activo', 'visibleEnTienda', 'acciones'];
   dataSource: Producto[] = [];
   productos: Producto[] = [];
   pageable: PageableResponse = new PageableResponse();
@@ -55,7 +55,7 @@ export class ProductosComponent implements OnInit, AfterViewInit {
   }
 
 
-  ngOnInit() {}
+  ngOnInit() { }
 
   ngAfterViewInit(): void {
     this.sort.sortChange.subscribe(() => {
@@ -84,12 +84,13 @@ export class ProductosComponent implements OnInit, AfterViewInit {
 
     this.productoService.getAllProductosPageable(params).subscribe(response => {
       this.productos = (response.content as Producto[]).map(prod => {
-              //prod.multimediaPrincipal = this.API_URL_VER_IMAGEN.concat( prod.multimediasProducto!.filter(mp => mp.esPrincipal===true)[0].multimedia.nombre) ?? 'no-imagen.png'
-              prod.colorActivo = COLOR_ACTIVO_PRODUCTO[('' + prod.activo) as keyof typeof COLOR_ACTIVO_PRODUCTO];
-              prod.colorVisibleEnTienda = COLOR_ACTIVO_PRODUCTO[('' + prod.visibleEnTienda) as keyof typeof COLOR_ACTIVO_PRODUCTO];
-              //cat.cantidadProductos = cat.productos.length;
-              return prod;
-            }
+        //prod.multimediaPrincipal = this.API_URL_VER_IMAGEN.concat( prod.multimediasProducto!.filter(mp => mp.esPrincipal===true)[0].multimedia.nombre) ?? 'no-imagen.png'
+        prod.colorVariante= COLOR_ACTIVO_PRODUCTO[('' + (prod.padreId ? true : false)) as keyof typeof COLOR_ACTIVO_PRODUCTO];
+        prod.colorActivo = COLOR_ACTIVO_PRODUCTO[('' + prod.activo) as keyof typeof COLOR_ACTIVO_PRODUCTO];
+        prod.colorVisibleEnTienda = COLOR_ACTIVO_PRODUCTO[('' + prod.visibleEnTienda) as keyof typeof COLOR_ACTIVO_PRODUCTO];
+        //cat.cantidadProductos = cat.productos.length;
+        return prod;
+      }
 
       )
 

@@ -7,3 +7,4 @@ export const COLOR_ESTADO_PEDIDO = {
  "6":"adquirido",
 };
 
+export const ENVIOS = ['ENVIO_LOCAL', 'ENVIO_PROVINCIAL', 'ENVIO_CIUDAD', 'SIN_ENVIO']

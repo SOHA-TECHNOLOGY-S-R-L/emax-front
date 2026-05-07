@@ -62,7 +62,7 @@ export const routes: Routes = [
              path: 'item-producto-persona-online/:productoId', component: ItemProductoPersonaOnlineComponent,
            }, */
           {
-            path: 'pedido-persona-online-finalizado/:tipoPedidoId', component: PedidoPersonaOnlineFinalizadoComponent,
+            path: 'pedido-persona-online-finalizado/:origenPedidoId', component: PedidoPersonaOnlineFinalizadoComponent,
           },
           /*           {
                       path: 'pedido-persona-online-finalizado', component: PedidoPersonaOnlineFinalizadoComponent,

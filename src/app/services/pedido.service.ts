@@ -123,6 +123,24 @@ export class PedidoService {
       }));
   }
 
+  createMovimiento(pedido: Pedido): Observable<Pedido> {
+    return this.http.post(`${environment.apiUrl}/pedido/movimiento`, pedido
+      /*, {headers: this.agregarAuthorizationHeader()}*/
+    )
+      .pipe(
+        map((response: any) => response.pedido as Pedido),
+        catchError(e => {
+/*           if (e.status == 400) {
+            return throwError(e);
+          } */
+          if (e.error?.mensaje) {
+            this.alertService.error(e.error.mensaje, e.error.err);
+          }
+          return throwError(e);
+        }));
+  }
+
+
   createPedidoTienda(pedido: Pedido): Observable<any> {
     return this.http.post<any>(`${environment.apiUrl}/pedidos`, pedido
     ).pipe(
@@ -150,15 +168,8 @@ export class PedidoService {
       { observe: 'response', responseType: 'blob' as 'json' })
   }
 
-  /*   ceateReporteCompras(filtros: any): Observable<HttpResponse<Blob>>{
-
-      return this.http.post<Blob>(`${environment.apiUrl}/pedidos/reporte/compras`, filtros,
-         {observe: 'response', responseType:'blob' as 'json'})
-    } */
-
-  update(pedido: Pedido): Observable<any> {
+/*   update(pedido: Pedido): Observable<any> {
     return this.http.put<any>(`${environment.apiUrl}/pedidos/${pedido.id}`, pedido
-      /*, {headers: this.agregarAuthorizationHeader()}*/
     ).pipe(
       catchError(e => {
         if (e.status == 400) {
@@ -169,5 +180,5 @@ export class PedidoService {
         }
         return throwError(e);
       }));
-  }
+  } */
 }

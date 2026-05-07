@@ -84,14 +84,14 @@ export class MantenimientoProductoComponent {
   variante = signal<'Si' | 'No'>('No');
   //productos = signal<Producto[]>([]);
 
-  productos = computed(() => {
+  productosPadre = computed(() => {
     const valor = this.variante();
     if (valor === 'Si') {
       const pr = this.productosResources.value();
       if (pr == null || pr == undefined) {
         return [];
       }
-      return pr.filter((p) => p.padre === null);
+      return pr.filter((p) => p.padreId === null);
     } else {
       return [];
     }
@@ -136,10 +136,13 @@ export class MantenimientoProductoComponent {
     private alertService: AlertService,
     public authService: AuthService,
     private formBuilder: FormBuilder,
-  ) {}
+  ) { }
 
   cargarProducto(id: number) {
     this.productoService.getProducto(id).subscribe((resp) => {
+      console.log('Producto a cargar', resp);
+      //resp.padre = resp.padre ? { ...resp.padre, hijos: [] } : undefined;
+      resp.padreId ? this.variante.set('Si') : this.variante.set('No');
       this.producto.set(resp);
     });
   }
@@ -156,11 +159,16 @@ export class MantenimientoProductoComponent {
   multimediaProductoToProducto(multimediaProducto: MultimediaProducto[]) {
     //this.multimediasProducto.update(() => multimediaProducto);
     this.producto().multimediasProducto = [...multimediaProducto];
+    console.log("this.producto()", this.producto())
   }
 
   setVariante(valor: 'Si' | 'No') {
     this.variante.set(valor);
-/*     debugger;
+
+    if (valor === 'No') {
+      this.formProducto.get('padreId')?.setValue(null);
+    }
+    /*     debugger;
     if (valor === 'Si') {
       const pr = this.productosResources.value();
       if (pr == null || pr == undefined) {
@@ -174,9 +182,10 @@ export class MantenimientoProductoComponent {
   }
 
   createForm(): void {
+
     const pr = this.producto();
     this.formProducto = this.formBuilder.group({
-      padreId: [pr.padre?.id, Validators.required],
+      padreId: [pr.padreId],
       nombre: [pr.nombre, Validators.required],
       codigo: [
         pr.codigo,
@@ -276,9 +285,9 @@ export class MantenimientoProductoComponent {
       visibleEnTienda: [pr.visibleEnTienda],
 
       categoriaId: [pr.categoria?.id, Validators.required],
-      materialId: [pr.material?.id, Validators.required],
-      colorId: [pr.color?.id, Validators.required],
-      usoId: [pr.uso?.id, Validators.required],
+      materialId: [pr.materialId, Validators.required],
+      colorId: [pr.colorId, Validators.required],
+      usoId: [pr.usoId, Validators.required],
     });
 
     this.defaultMargenProducto();
@@ -323,7 +332,7 @@ export class MantenimientoProductoComponent {
       minCantidad: [1, Validators.min(1)],
       maxCantidad: [],
       margen: [1, [Validators.required, Validators.min(1)]],
-      precioNetoSugerido: [1, [Validators.required, Validators.min(0)]],
+      precioNetoSugerido: [{value: 1, disabled: true} , [Validators.required, Validators.min(0)]],
       precioNeto: [1, [Validators.required, Validators.min(0)]],
     });
     this.agregrarMargenProducto(formGroup);
@@ -349,15 +358,16 @@ export class MantenimientoProductoComponent {
   recuperarValForm() {
     const p = { ...this.producto() };
 
+    p.padreId = this.variante() === 'Si'
+      ? this.formProducto.get('padreId')?.value
+      : null;
     p.nombre = this.formProducto.get('nombre')?.value;
     p.codigo = this.formProducto.get('codigo')?.value;
     p.descripcion = this.formProducto.get('descripcion')?.value;
     p.medidas = this.formProducto.get('medidas')?.value;
     p.peso = this.formProducto.get('peso')?.value;
     p.umbralPocaCantidad = this.formProducto.get('umbralPocaCantidad')?.value;
-    p.umbralCantidadAgotada = this.formProducto.get(
-      'umbralCantidadAgotada',
-    )?.value;
+    p.umbralCantidadAgotada = this.formProducto.get('umbralCantidadAgotada')?.value;
     p.cantidadStock = this.formProducto.get('cantidadStock')?.value;
     p.minCantidadPedido = this.formProducto.get('minCantidadPedido')?.value;
     p.maxCantidadPedido = this.formProducto.get('maxCantidadPedido')?.value;
@@ -370,13 +380,9 @@ export class MantenimientoProductoComponent {
     //p.precioNetoRabajado = this.formProducto.get('precioNetoRabajado')?.value;
     //p.fechaPrecioRebajadoDesde = this.formProducto.get('fechaPrecioRebajadoDesde')?.value;
     //p.fechaPrecioRebajadoHasta = this.formProducto.get('fechaPrecioRebajadoHasta')?.value;
-    p.color = find(this.colores(), {
-      id: +this.formProducto.get('colorId')?.value,
-    });
-    p.material = find(this.materiales(), {
-      id: +this.formProducto.get('materialId')?.value,
-    });
-    p.uso = find(this.usos(), { id: +this.formProducto.get('usoId')?.value });
+    p.colorId = +this.formProducto.get('colorId')?.value;
+    p.materialId = +this.formProducto.get('materialId')?.value;
+    p.usoId = +this.formProducto.get('usoId')?.value;
     p.categoria = find(this.categorias(), {
       id: +this.formProducto.get('categoriaId')?.value,
     });
@@ -402,7 +408,7 @@ export class MantenimientoProductoComponent {
           (costoMasImpuesto * (100 + margen)) / 100;
         abstractControl
           .get('precioNetoSugerido')
-          ?.setValue(precioNetoUnitario.toString());
+          ?.setValue(precioNetoUnitario.toFixed(3));
         //abstractControl.get('precioNeto')?.setValue(precioNetoUnitario.toString());
       });
     }
@@ -422,7 +428,7 @@ export class MantenimientoProductoComponent {
         (costoMasImpuesto * (100 + margen)) / 100;
       abstractControl
         .get('precioNetoSugerido')
-        ?.setValue(precioNetoUnitario.toString());
+        ?.setValue(precioNetoUnitario.toFixed(3));
       //abstractControl.get('precioNeto')?.setValue(precioNetoUnitario.toString());
     }
   }
@@ -458,8 +464,13 @@ export class MantenimientoProductoComponent {
 
     const newPr: any = {
       ...pr,
-      categoria: pr.categoria ? { ...pr.categoria, productos: [] } : null,
-
+      padreId: pr.padreId,
+      colorId: pr.colorId,
+      materialId: pr.materialId,
+      usoId: pr.usoId,
+      categoriaId: pr.categoria?.id,
+      estadoProductoId: pr.estadoProducto?.id,
+      //categoriaId: pr.categoria ? { ...pr.categoria, productos: [] } : null,
       multimediasProducto:
         pr.multimediasProducto?.map((mp) => ({
           id: {
@@ -478,7 +489,6 @@ export class MantenimientoProductoComponent {
           margen: Number(m.margen),
         })) ?? [],
     };
-    //debugger;
     //console.log(JSON.stringify(newPr));
     if (newPr.id) {
       this.productoService.updateProducto(newPr).subscribe((json) => {
@@ -509,6 +519,7 @@ export class MantenimientoProductoComponent {
     });
 
     dialogRef.afterClosed().subscribe((result) => {
+      console.log(result);
       let indice = 0;
       let multimediaProducto: MultimediaProducto = new MultimediaProducto();
       let lstMultimediaProducto: MultimediaProducto[] = [];

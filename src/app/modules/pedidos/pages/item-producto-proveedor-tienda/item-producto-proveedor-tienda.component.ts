@@ -1,108 +1,159 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
-import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
-import { ActivatedRoute, RouterModule } from '@angular/router';
-import { map, Observable, switchMap } from 'rxjs';
-import { Persona } from '../../../../models/persona';
+import { Component, inject, OnInit, signal } from '@angular/core';
+import { rxResource, toSignal } from '@angular/core/rxjs-interop';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import moment from 'moment';
+import { map } from 'rxjs';
+import { environment } from '../../../../../environments/environment';
+import { PEDIDO_COMPRA } from '../../../../constants/constantes';
 import { ItemPedido } from '../../../../models/item-pedido';
 import { Producto } from '../../../../models/producto';
-import { TipoDocumento } from '../../../../models/tipo-documento';
-import { TipoPedido } from '../../../../models/tipo-pedido';
 import { AuthService } from '../../../../services/auth.service';
-import { PersonaService } from '../../../../services/persona.service';
-import { PedidoService } from '../../../../services/pedido.service';
+import { ItemService } from '../../../../services/item.service';
 import { ProductoService } from '../../../../services/producto.service';
-import { FormUtils } from '../../../../utils/form-utils';
 import { AngularMaterialModule } from '../../../compartido/angular-material.module';
-import { CarritoItemProductoComponent } from '../../components/carrito-item-producto/carrito-item-producto.component';
-import { CustomizeItemProductoToClientComponent } from '../../components/customize-item-producto-to-client/customize-item-producto-to-client.component';
-import { PedidoProveedorFinalizadoComponent } from '../../components/pedido-proveedor-finalizado/pedido-proveedor-finalizado.component';
+import { AutocompleteResourceComponent } from '../../../compartido/autocomplete-resource/autocomplete-resource.component';
+import { ItemPedidoComponent } from "../../components/item-pedido/item-pedido.component";
+import { PedidoService } from '../../../../services/pedido.service';
+import { Pedido } from '../../../../models/pedido';
+import { SnackbarService } from '../../../../services/snackbar.service';
+import { EnvioPedido } from '../../../../models/envio-pedido';
 
 @Component({
   selector: 'item-producto-proveedor-tienda',
   templateUrl: './item-producto-proveedor-tienda.component.html',
   styleUrl: './item-producto-proveedor-tienda.component.css',
   standalone: true,
-  imports: [PedidoProveedorFinalizadoComponent, CommonModule, RouterModule, FormsModule, ReactiveFormsModule, AngularMaterialModule]
+  imports: [CommonModule, RouterModule, FormsModule, ReactiveFormsModule, AngularMaterialModule, AutocompleteResourceComponent, ItemPedidoComponent]
 
 })
-export class ItemProductoProveedorTiendaComponent implements OnInit {
+export class ItemProductoProveedorTiendaComponent {
 
-  persona!: Persona;
-  autocompleteControl = new FormControl();
-  //tipoPedidoVentaPersonas!: TipoPedido;
-  //tipoPedidos: TipoPedido[] = [];
-  productosFiltrados!: Observable<Producto[]>;
-  producto!: Producto;
-  formUtils = FormUtils
-  tipoDocumentos: TipoDocumento[] = [];
-  items: ItemPedido[] = [];
+  private productoService = inject(ProductoService);
+  private pedidoService = inject(PedidoService);
+  public authService = inject(AuthService);
+  private activatedRoute = inject(ActivatedRoute);
+  private itemService = inject(ItemService);
+  private router = inject(Router);
+  private snackbar = inject(SnackbarService);
 
-  constructor(private personaService: PersonaService,
-    private pedidoService: PedidoService,
-    private productoService: ProductoService,
-    public authService: AuthService,
-    private activatedRoute: ActivatedRoute) { }
+  personaId = toSignal<number>(
+    this.activatedRoute.paramMap.pipe(map((r) => Number(r.get('personaId')!))),
+  );
+  coloresResource = rxResource({ stream: () => this.productoService.getColoresProducto() });
+  //materialesResource = rxResource({ stream: () => this.productoService.getMaterialesProducto() });
+  producto = signal<Producto | null>(null);
+  envioPedido = signal<EnvioPedido | undefined>(undefined);
+  observaciones = signal<string>('');
+  fechaAdquirido = signal<string>(this.obtenerFechaDefecto());
+  API_URL_VER_IMAGEN = environment.API_URL_VER_IMAGEN;
+  item = new ItemPedido();
+  pedido = signal(new Pedido());
+  items = signal<ItemPedido[]>([]);
+  PEDIDO_COMPRA = PEDIDO_COMPRA;
 
-  ngOnInit() {
-    this.activatedRoute.paramMap.subscribe(params => {
-      let personaId = +params.get('personaId')!;
-      this.personaService.getPersona(personaId).subscribe(persona => {
-        this.persona = persona
-      }
+
+
+  constructor() { }
+
+  private obtenerFechaDefecto(): string {
+    const now = new Date();
+    now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+    //return moment(now).add(2, 'days').toISOString().slice(0, 16);
+    return moment(now).toISOString().slice(0, 16);
+  }
+
+  actualizarFecha(nuevaFecha: string) {
+    this.fechaAdquirido.set(nuevaFecha);
+  }
+
+
+  findColorById(colorId: number) {
+    const colores = this.coloresResource.value();
+    if (!colores) return null;
+    const color = colores.find((c) => c.id === colorId);
+    return color ? color.nombre : 'Sin color';
+  }
+
+
+  buscarProductos = (term: string) =>
+    this.productoService.filtrarProductos(term);
+
+  mostrarProducto = (producto: Producto) =>
+    producto.nombre
+
+  onProductoToItems(producto: Producto) {
+    this.producto.set(producto);
+    const pr = producto;
+
+    const items = this.items();
+    const mp = pr.multimediasProducto;
+    if (!mp) {
+      this.item.imagenShow = 'no-imagen.png';
+    } else {
+      //para item siempre se muestra una imagen y no video
+      const primerElemento = mp.find((mp) =>
+        mp.multimedia.mimeType.startsWith('image'),
       );
-    });
-
-    this.productosFiltrados = this.autocompleteControl.valueChanges
-      .pipe(
-        map(value => typeof value === 'string' ? value : value.nombre),
-        switchMap(value => value ? this._filter(value) : [])
+      this.item.imagenShow = primerElemento
+        ? this.API_URL_VER_IMAGEN.concat(primerElemento.multimedia.nombre)
+        : 'no-imagen.png';
+    }
+    this.item.cantidad = 1;
+    if (this.itemService.existItemInItems(items, pr.id)) {
+      this.itemService.setItems(
+        this.itemService.UpdateAmountItemFromExterno(
+          items,
+          pr.id,
+          this.item.cantidad,
+        ),
       );
-
-/*     this.pedidoService.getAllTipoPedido().subscribe(result => {
-      this.tipoPedidos = result
-      this.tipoPedidos.forEach(r =>
-        r.activo = r.id == 1 ? true : false
-      )
-      this.tipoPedidoVentaPersonas = this.tipoPedidos[0];
-    }); */
-
-    this.personaService.getTipoDocumento().subscribe(doc => {
-      this.tipoDocumentos = doc
-    });
-    //console.log("this.producto", this.producto.id);
+    } else {
+      const item = {
+        ...this.item,
+        producto: pr,
+      };
+      this.itemService.setItems([...items, { ...item }]);
+    }
   }
 
-  private _filter(value: string): Observable<Producto[]> {
-    const filterValue = value.toLowerCase();
 
-    return this.productoService.filtrarProductos(filterValue);
+  recibirItems(itemsPedido: ItemPedido[]) {
+    this.items.set(itemsPedido);
   }
 
-  mostrarNombre(producto: Producto): string {
-    return producto ? producto.nombre : '';
-
+  actualizarObservacion(text: string) {
+    this.observaciones.set(text);
   }
 
-  seleccionarProducto(event: MatAutocompleteSelectedEvent): void {
-    this.producto = event.option.value as Producto;
-    //this.productoService.setProductoToSeo(this.producto);
-    //console.log("this.producto2", this.producto);
 
-    //if (!this.tipoPedidoVentaPersonas) {
-      let nuevoItem = new ItemPedido();
-      nuevoItem.producto = this.producto;
-      this.items.push(nuevoItem);
+  crearPedidoTienda() {
 
-      this.items = [...this.items, { ...nuevoItem }]
+    if (!this.authService.isAuthenticated()) {
+      return;
+    }
 
-    //}
+    if (this.items().length === 0) return;
 
-    this.autocompleteControl.setValue('');
-    event.option.focus();
-    event.option.deselect();
-
+    const envioPed = this.envioPedido();
+    this.pedido.update(p => ({
+      ...p,
+      personaId: this.personaId(),
+      observacion: this.observaciones(),
+      direccionEnvio: envioPed?.direccionEnvio!,
+      celularEnvio: envioPed?.celularEnvio!,
+      nomApellRzEnvio: envioPed?.nomApellRzEnvio!,
+      adquiridoEn: this.fechaAdquirido(),
+      items: [...this.items()],
+      tipoPedidoId: PEDIDO_COMPRA,
+    }));
+    this.pedidoService.createPedidoTienda(this.pedido())
+      .subscribe(p => {
+        this.itemService.setItems([]);
+        this.snackbar.success(`Pedido ${p.tipoPedido.nombre} N° ${p.id}`);
+        this.router.navigate(['/pedidos/listado-compras']);
+      });
   }
 
 }

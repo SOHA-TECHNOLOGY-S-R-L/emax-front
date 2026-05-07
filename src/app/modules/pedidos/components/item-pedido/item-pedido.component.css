@@ -1,0 +1,32 @@
+.cabecera {
+  display: inline-block;
+  width: 150px;
+  font-weight: bold;
+}
+
+.icon-square {
+  padding: 10px;
+  border-radius: 6px;
+  font-size: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+#itemsPedidoOnlineFinalizadoToMovil {
+  display: none;
+}
+
+
+@media (max-width: 767px) {
+
+
+  #itemsPedidoOnlineFinalizadoToDesktop {
+    display: none;
+  }
+
+  #itemsPedidoOnlineFinalizadoToMovil {
+    display: block;
+  }
+}

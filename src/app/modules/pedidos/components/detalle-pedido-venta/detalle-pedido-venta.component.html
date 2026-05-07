@@ -7,23 +7,21 @@
       <ul class="list-group my-2">
         <li class="list-group-item active">Observaciones o texto</li>
         <li class="list-group-item">
-<!--           <div class="ms-2 me-auto">
- -->            {{pedido.observacion}}
-<!--           </div>
- -->        </li>
+           {{pedido()!.observacion}}
+        </li>
       </ul>
       <ul class="list-group my-2">
         <li class="list-group-item active">Items del pedido</li>
-        <li *ngFor="let item of pedido.items" class="list-group-item d-flex justify-content-start align-items-start">
+       <li *ngFor="let item of items()" class="list-group-item d-flex justify-content-start align-items-start">
           <div class="ms-2 me-auto">
             <span class="cabecera">Producto:</span> {{item.producto.nombre}}<br>
-            <span class="cabecera"></span> {{item.producto.color?.nombre}}<br>
+            <span class="cabecera"></span> {{ findColorById( item.producto.colorId! ) }}<br>
             <span class="cabecera"></span> {{item.producto.peso}}<br>
-            <span class="cabecera"></span> {{item.producto.material?.nombre}}<br>
+            <span class="cabecera"></span> {{ findMaterialById( item.producto.materialId! ) }}<br>
             <span class="cabecera">Cantidad:</span> {{item.cantidad}}<br>
             <span class="cabecera">Sub total:</span> {{item.importe| currency: 'PEN'}}<br>
-            <span class="cabecera">Descripcion:</span> {{item.descripcion}}<br>
-          </div>
+<!--             <span class="cabecera">Descripcion:</span> {{item.descripcion}}<br>
+ -->          </div>
           <div>
             <img [src]="item.imagenShow" width="100" alt={{item.producto.nombre}} />
           </div>
@@ -37,48 +35,48 @@
             <li class="list-group-item active">Datos del pedido</li>
             <li class="list-group-item d-flex justify-content-between align-items-start">
               <div class="ms-2 me-auto">
-                <span class="cabecera">Número:</span> {{pedido.id}}
+                <span class="cabecera">Número:</span> {{pedido()?.id}}
               </div>
             </li>
             <li class="list-group-item d-flex justify-content-between align-items-start">
               <div class="ms-2 me-auto">
-                <span class="cabecera">Fecha emision:</span> {{pedido.createAt}}
+                <span class="cabecera">Fecha emision:</span> {{pedido()?.createAt}}
               </div>
             </li>
             <li class="list-group-item d-flex justify-content-between align-items-start">
               <div class="ms-2 me-auto">
-                <span class="cabecera">Fecha entrega:</span> {{pedido.entregadoEn}}
+                <span class="cabecera">Fecha entrega:</span> {{pedido()?.entregadoEn}}
               </div>
             </li>
             <li class="list-group-item d-flex justify-content-between align-items-start">
               <div class="ms-2 me-auto">
-                <span class="cabecera">Estado:</span> {{pedido.estadoPedido.estado}} :
-                {{pedido.estadoPedido.descripcion}}
+                <span class="cabecera">Estado:</span> {{pedido()?.estadoPedido!.estado}} :
+                {{pedido()?.estadoPedido!.descripcion}}
               </div>
             </li>
             <li class="list-group-item d-flex justify-content-between align-items-start">
               <div class="ms-2 me-auto">
-                <span class="cabecera">Total:</span> {{pedido.precioNetoTotal| currency: 'PEN'}}
+                <span class="cabecera">Total:</span> {{pedido()?.precioNetoTotal| currency: 'PEN'}}
               </div>
             </li>
             <li class="list-group-item d-flex justify-content-between align-items-start">
               <div class="ms-2 me-auto">
-                <span class="cabecera">Pago:</span> {{pedido.pagoTotal | currency: 'PEN'}}
+                <span class="cabecera">Pago:</span> {{pedido()?.pagoTotal | currency: 'PEN'}}
               </div>
             </li>
             <li class="list-group-item d-flex justify-content-between align-items-start">
               <div class="ms-2 me-auto">
-                <span class="cabecera">Vuelto:</span> {{pedido.vueltoTotal| currency: 'PEN'}}
+                <span class="cabecera">Vuelto:</span> {{pedido()?.vueltoTotal| currency: 'PEN'}}
               </div>
             </li>
             <li class="list-group-item d-flex justify-content-between align-items-start">
               <div class="ms-2 me-auto">
-                <span class="cabecera">Flujo efectivo:</span> {{pedido.flujoEfectivoTotal| currency: 'PEN'}}
+                <span class="cabecera">Flujo efectivo:</span> {{pedido()?.flujoEfectivoTotal| currency: 'PEN'}}
               </div>
             </li>
             <li class="list-group-item d-flex justify-content-between align-items-start">
               <div class="ms-2 me-auto">
-                <span class="cabecera">Saldo:</span> {{pedido.saldoPedido| currency: 'PEN'}}
+                <span class="cabecera">Saldo:</span> {{pedido()?.saldoPedido| currency: 'PEN'}}
               </div>
             </li>
           </ul>
@@ -86,19 +84,19 @@
         <div class="col-">
           <ul class="list-group my-2">
             <li class="list-group-item active">Datos de envio</li>
-            <li class="list-group-item d-flex justify-content-between align-items-start">
+           <li class="list-group-item d-flex justify-content-between align-items-start">
               <div class="ms-2 me-auto">
-                <span class="cabecera">Direccion de envio:</span> {{pedido.direccionEnvio}}
+                <span class="cabecera">Direccion de envio:</span> {{pedido()?.direccionEnvio}}
               </div>
             </li>
             <li class="list-group-item d-flex justify-content-between align-items-start">
               <div class="ms-2 me-auto">
-                <span class="cabecera">Celular de entrega:</span> {{pedido.celularEnvio}}
+                <span class="cabecera">Celular de entrega:</span> {{pedido()?.celularEnvio}}
               </div>
             </li>
             <li class="list-group-item d-flex justify-content-between align-items-start">
               <div class="ms-2 me-auto">
-                <span class="cabecera">Nombres de entrega:</span> {{pedido.nomApellRzEnvio}}
+                <span class="cabecera">Nombres de entrega:</span> {{pedido()?.nomApellRzEnvio}}
               </div>
             </li>
           </ul>
@@ -109,31 +107,31 @@
             <li class="list-group-item d-flex justify-content-between align-items-start">
               <div class="ms-2 me-auto">
                 <span class="cabecera">Persona:</span>
-                {{pedido.persona!.nomApellRz}}
+                {{personaResources.value()?.nomApellRz}}
               </div>
             </li>
             <li class="list-group-item d-flex justify-content-between align-items-start">
               <div class="ms-2 me-auto">
                 <span class="cabecera">Documento:</span>
-                {{pedido.persona!.tipoDocumento.acronimo}} : {{pedido.persona!.numeroDocumento}}
+                {{personaResources.value()?.tipoDocumento?.acronimo}} : {{personaResources.value()?.numeroDocumento}}
               </div>
             </li>
             <li class="list-group-item d-flex justify-content-between align-items-start">
               <div class="ms-2 me-auto">
                 <span class="cabecera">Celular:</span>
-                {{pedido.persona!.celular}}
+                {{personaResources.value()?.celular}}
               </div>
             </li>
             <li class="list-group-item d-flex justify-content-between align-items-start">
               <div class="ms-2 me-auto">
                 <span class="cabecera">Dirección:</span>
-                {{pedido.persona!.direccion}}
+                {{personaResources.value()?.direccion}}
               </div>
             </li>
             <li class="list-group-item d-flex justify-content-between align-items-start">
               <div class="ms-2 me-auto">
                 <span class="cabecera">Email:</span>
-                {{pedido.persona!.email}}
+                {{personaResources.value()?.email}}
               </div>
             </li>
           </ul>

@@ -1,39 +1,5 @@
-.icon-square {
-  /*   background-color: #fff;
- */
-  padding: 10px;
-  border-radius: 6px;
-  font-size: 16px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.cabecera {
-  display: inline-block;
-  width: 150px;
-  font-weight: bold;
-}
-
-#itemsPedidoOnlineFinalizadoToMovil {
-  display: none;
-}
-
-.text-bold-italic {
-  font-style: italic;
-  font-weight: bolder;
-  color: darkblue;
-}
-
-
-@media (max-width: 767px) {
-
-
-  #itemsPedidoOnlineFinalizadoToDesktop {
-    display: none;
-  }
-
-  #itemsPedidoOnlineFinalizadoToMovil {
-    display: block;
-  }
-}
+ .text-bold-italic {
+   font-style: italic;
+   font-weight: bolder;
+   color: darkblue;
+ }

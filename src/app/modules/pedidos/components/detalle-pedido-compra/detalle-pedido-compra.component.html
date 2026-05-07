@@ -4,15 +4,21 @@
 <div class="row">
   <div class="col-12 col-sm-6">
     <ul class="list-group my-2">
+      <li class="list-group-item active">Observaciones o texto</li>
+      <li class="list-group-item">
+        {{pedido()!.observacion}}
+      </li>
+    </ul>
+    <ul class="list-group my-2">
       <li class="list-group-item active">Items del pedido</li>
-      <li *ngFor="let item of pedido.items" class="list-group-item d-flex justify-content-between align-items-start">
+      <li *ngFor="let item of items()" class="list-group-item d-flex justify-content-between align-items-start">
         <div class="ms-2 me-auto">
           <span class="cabecera">Producto:</span> {{item.producto.nombre}}<br>
-          <span class="cabecera"></span> {{item.producto.color?.nombre}}<br>
+          <span class="cabecera"></span> {{findColorById( item.producto.colorId!) }}<br>
           <span class="cabecera"></span> {{item.producto.peso}}<br>
-          <span class="cabecera"></span> {{item.producto.material?.nombre}}<br>
-          <span class="cabecera">Costo Unitario:</span> {{item.costoUnitarioItem}}<br>
-          <span class="cabecera">Cantidad:</span> {{item.cantidad}}<br>
+          <span class="cabecera"></span> {{findMaterialById(item.producto.materialId!)}}<br>
+<!--           <span class="cabecera">Costo Unitario:</span> {{item.costoUnitarioItem}}<br>
+ -->          <span class="cabecera">Cantidad:</span> {{item.cantidad}}<br>
           <span class="cabecera">Sub total:</span> {{item.importe| currency: 'PEN'}}<br>
         </div>
         <div>
@@ -28,53 +34,53 @@
           <li class="list-group-item active">Datos del pedido</li>
           <li class="list-group-item d-flex justify-content-between align-items-start">
             <div class="ms-2 me-auto">
-              <span class="cabecera">Número:</span> {{pedido.id}}
+              <span class="cabecera">Número:</span> {{pedido()?.id}}
             </div>
           </li>
           <li class="list-group-item d-flex justify-content-between align-items-start">
             <div class="ms-2 me-auto">
-              <span class="cabecera">Fecha emisión:</span> {{pedido.createAt}}
+              <span class="cabecera">Fecha emisión:</span> {{pedido()?.createAt}}
             </div>
           </li>
           <li class="list-group-item d-flex justify-content-between align-items-start">
             <div class="ms-2 me-auto">
-              <span class="cabecera">Fecha adquisición:</span> {{pedido.adquiridoEn}}
+              <span class="cabecera">Fecha adquisición:</span> {{pedido()?.adquiridoEn}}
             </div>
           </li>
           <li class="list-group-item d-flex justify-content-between align-items-start">
             <div class="ms-2 me-auto">
-              <span class="cabecera">Estado:</span> {{pedido.estadoPedido.estado}} :
-              {{pedido.estadoPedido.descripcion}}
+              <span class="cabecera">Estado:</span> {{pedido()?.estadoPedido!.estado}} :
+              {{pedido()?.estadoPedido!.descripcion}}
             </div>
           </li>
           <li class="list-group-item d-flex justify-content-between align-items-start">
             <div class="ms-2 me-auto">
-              <span class="cabecera">Costo Total:</span> {{pedido.costoBrutoTotal| currency: 'PEN'}}
+              <span class="cabecera">Costo Total:</span> {{pedido()?.costoBrutoTotal| currency: 'PEN'}}
             </div>
           </li>
           <li class="list-group-item d-flex justify-content-between align-items-start">
             <div class="ms-2 me-auto">
-              <span class="cabecera">Costo Total(IGV):</span> {{pedido.costoNetoTotal| currency: 'PEN'}}
+              <span class="cabecera">Costo Total(IGV):</span> {{pedido()?.costoNetoTotal| currency: 'PEN'}}
             </div>
           </li>
           <li class="list-group-item d-flex justify-content-between align-items-start">
             <div class="ms-2 me-auto">
-              <span class="cabecera">Pago:</span> {{pedido.pagoTotal | currency: 'PEN'}}
+              <span class="cabecera">Pago:</span> {{pedido()?.pagoTotal | currency: 'PEN'}}
             </div>
           </li>
           <li class="list-group-item d-flex justify-content-between align-items-start">
             <div class="ms-2 me-auto">
-              <span class="cabecera">Vuelto:</span> {{pedido.vueltoTotal| currency: 'PEN'}}
+              <span class="cabecera">Vuelto:</span> {{pedido()?.vueltoTotal| currency: 'PEN'}}
             </div>
           </li>
           <li class="list-group-item d-flex justify-content-between align-items-start">
             <div class="ms-2 me-auto">
-              <span class="cabecera">Flujo efectivo:</span> {{pedido.flujoEfectivoTotal| currency: 'PEN'}}
+              <span class="cabecera">Flujo efectivo:</span> {{pedido()?.flujoEfectivoTotal| currency: 'PEN'}}
             </div>
           </li>
           <li class="list-group-item d-flex justify-content-between align-items-start">
             <div class="ms-2 me-auto">
-              <span class="cabecera">Saldo:</span> {{pedido.saldoPedido| currency: 'PEN'}}
+              <span class="cabecera">Saldo:</span> {{pedido()?.saldoPedido| currency: 'PEN'}}
             </div>
           </li>
         </ul>
@@ -85,31 +91,31 @@
           <li class="list-group-item d-flex justify-content-between align-items-start">
             <div class="ms-2 me-auto">
               <span class="cabecera">Proveedor:</span>
-              {{pedido.persona!.nomApellRz}}
+              {{personaResources.value()?.nomApellRz}}
             </div>
           </li>
           <li class="list-group-item d-flex justify-content-between align-items-start">
             <div class="ms-2 me-auto">
               <span class="cabecera">Documento:</span>
-              {{pedido.persona!.tipoDocumento.acronimo}} : {{pedido.persona!.numeroDocumento}}
+              {{personaResources.value()?.tipoDocumento?.acronimo}} : {{personaResources.value()?.numeroDocumento}}
             </div>
           </li>
           <li class="list-group-item d-flex justify-content-between align-items-start">
             <div class="ms-2 me-auto">
               <span class="cabecera">Celular:</span>
-              {{pedido.persona!.celular}}
+              {{personaResources.value()?.celular}}
             </div>
           </li>
           <li class="list-group-item d-flex justify-content-between align-items-start">
             <div class="ms-2 me-auto">
               <span class="cabecera">Dirección:</span>
-              {{pedido.persona!.direccion}}
+              {{personaResources.value()?.direccion}}
             </div>
           </li>
           <li class="list-group-item d-flex justify-content-between align-items-start">
             <div class="ms-2 me-auto">
               <span class="cabecera">Email:</span>
-              {{pedido.persona!.email}}
+              {{personaResources.value()?.email}}
             </div>
           </li>
         </ul>

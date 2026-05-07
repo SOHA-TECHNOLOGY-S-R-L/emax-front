@@ -31,7 +31,11 @@ export class CajaService {
 
   getAllCaja(): Observable<Caja[]> {
     return this.http.get<Caja[]>(`${environment.apiUrl}/cajas`
-      /*  , {headers: this.agregarAuthorizationHeader()} */
+    );
+  }
+
+  getCajaById(cajaId: number): Observable<Caja> {
+    return this.http.get<Caja>(`${environment.apiUrl}/caja/${cajaId}`
     );
   }
 
@@ -66,19 +70,19 @@ export class CajaService {
       );
   }
 
-/*   getCajaUsuarioByUserName(username: string): Observable<CajaUsuario> {
-    return this.http.get<CajaUsuario>(`${environment.apiUrl}/cajas/usuarios/${username}`
-    )
-      .pipe(
-        map<CajaUsuario, CajaUsuario>(resp => {
-          if (resp != null && resp.movimientos.length > 0) {
-            resp.movimientos.splice(0, resp.movimientos.length)
+  /*   getCajaUsuarioByUserName(username: string): Observable<CajaUsuario> {
+      return this.http.get<CajaUsuario>(`${environment.apiUrl}/cajas/usuarios/${username}`
+      )
+        .pipe(
+          map<CajaUsuario, CajaUsuario>(resp => {
+            if (resp != null && resp.movimientos.length > 0) {
+              resp.movimientos.splice(0, resp.movimientos.length)
+            }
+            return resp
           }
-          return resp
-        }
-        )
-      );
-  } */
+          )
+        );
+    } */
 
   getCajaUsuarioInactivoByCajaId(cajaId: number): Observable<CajaUsuario> {
     return this.http.get<CajaUsuario>(`${environment.apiUrl}/cajas/${cajaId}/usuarios`

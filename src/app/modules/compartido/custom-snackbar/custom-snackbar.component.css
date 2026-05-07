@@ -1,0 +1,26 @@
+.snackbar-container {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  font-weight: 500;
+}
+
+.success {
+  background-color: #4caf50;
+  color: black;
+}
+
+.info {
+  background-color: #20589c;
+  color: white;
+}
+
+.warning {
+  background-color: #fff212;
+  color: black;
+}
+
+.error {
+  background-color: #f44336;
+  color: black;
+}

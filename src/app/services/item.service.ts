@@ -50,20 +50,24 @@ export class ItemService {
         : item
     );
   }
+  /*
+    UpdateAmountItemFromItemsProveedor(items: Array<ItemPedido>, productoId: number, cantidad: number): Array<ItemPedido> {
+      if (cantidad === 0) {
+        return this.deleteItemFromItems(items, productoId);
+      }
 
-  UpdateAmountItemFromItemsProveedor(items: Array<ItemPedido>, productoId: number, cantidad: number): Array<ItemPedido> {
-    if (cantidad === 0) {
+      return items.map(item =>
+        item.producto.id === productoId
+          ? { ...item, cantidad }
+          : item
+      );
+    } */
+
+  UpdateCostItemFromItemsProveedor(items: Array<ItemPedido>, productoId: number, costo: number): Array<ItemPedido> {
+    if (costo === 0) {
       return this.deleteItemFromItems(items, productoId);
     }
 
-    return items.map(item =>
-      item.producto.id === productoId
-        ? { ...item, cantidad }
-        : item
-    );
-  }
-
-  UpdateCostItemFromItemsProveedor(items: Array<ItemPedido>, productoId: number, costo: number): Array<ItemPedido> {
     return items.map(item =>
       item.producto.id === productoId
         ? { ...item, importe: costo }
@@ -115,7 +119,7 @@ export class ItemService {
 
   }
 
-  importePorMargenCantidad(items: ItemPedido[]) {
+  importeDeMargenCantidad(items: ItemPedido[]) {
     return items.map(item => {
 
       let precioAplicado = 0;
@@ -143,6 +147,20 @@ export class ItemService {
           ...item.producto,
           precioMasBajoProductoShow: precioAplicado
         }
+      };
+    });
+  }
+
+
+  importeDeCostoCantidad(items: ItemPedido[]) {
+    return items.map(item => {
+      return {
+        ...item,
+        importe: item.cantidad * item.producto.costoUnitario,
+/*         producto: {
+          ...item.producto,
+          precioMasBajoProductoShow: precioAplicado
+        } */
       };
     });
   }

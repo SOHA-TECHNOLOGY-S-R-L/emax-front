@@ -17,8 +17,10 @@ export class CajaUsuario {
   saldoPorConteo!:number;
   activa:boolean=false;
   color!:string;
-	caja!: Caja;
-	usuario!: Usuario;
+	//caja!: Caja;
+	//usuario!: Usuario;
+  cajaId! :number;
+  usuarioId! : number;
 	movimientos: Movimiento[]=[];
   movimientosCaja: MovimientoCaja[]=[];
 }

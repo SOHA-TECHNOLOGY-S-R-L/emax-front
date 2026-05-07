@@ -6,9 +6,10 @@ export const ULTIMA_PAGINA = 'Ultima página:';
 //Envios servicios internos Grafiya;
 export const SERVICIO_GRABADO_IMAGEN = 'sr1';
 //Envios servicios externos de Grafiya;
-export const SERVICIO_ENTREGA_LOCAL = 'envio-1';
-export const SERVICIO_ENTREGA_PROVINCIAL = 'envio-2';
-export const SERVICIO_ENTREGA_CIUDAD = 'envio-3';
+export const ENVIO_NO = '';
+export const ENVIO_DISTRITO = 'envio-1';
+export const ENVIO_PROVINCIA = 'envio-2';
+export const ENVIO_DEPARTAMENTO = 'envio-3';
 
 //tipo pedido
 export const PEDIDO_VENTA = 1;

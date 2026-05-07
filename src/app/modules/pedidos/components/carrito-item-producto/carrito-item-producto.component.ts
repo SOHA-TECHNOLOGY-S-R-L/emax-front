@@ -50,7 +50,7 @@ export class CarritoItemProductoComponent {
   );
 
   readonly lstItemPedido = computed<ItemPedido[]>(() => {
-    const items = this.itemService.importePorMargenCantidad([...this.items()])
+    const items = this.itemService.importeDeMargenCantidad([...this.items()])
     return items
   }
   );
@@ -129,8 +129,8 @@ export class CarritoItemProductoComponent {
   irRealizarPedido() {
     //this.router.navigate(['/tienda/pedido-persona-online-finalizado', this.tipoPedidoId()]);
 
-    // 3-VENTA POR TIENDA -->
-    // 4-VENTA POR online -->
+    // 3-ORIGEN EN TIENDA -->
+    // 4-ORIGEN EN online -->
     if (!this.isAutenticado() || this.isCliente()) {
       this.router.navigate(['/tienda/pedido-persona-online-finalizado', 4]);
 

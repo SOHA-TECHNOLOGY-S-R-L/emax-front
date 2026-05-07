@@ -34,6 +34,11 @@ export class UsuarioService {
  */    )
   }
 
+  getUsuarioById(usuarioId: number): Observable<Usuario> {
+    return this.httpClient.get<Usuario>(`${environment.apiUrl}/usuario/${usuarioId}`
+    );
+  }
+
   updateRolUsuario(usuario: Usuario, usuarioId: number): Observable<any> {
     return this.httpClient.put(`${environment.apiUrl}/usuarios-roles/update/${usuarioId}`, usuario);
   }
@@ -42,7 +47,7 @@ export class UsuarioService {
     return this.httpClient.put(`${environment.apiUrl}/usuarios-roles/delete/${usuarioId}`, usuario);
   }
 
-   confirmarDobleInputClave(clave: string, confirmaClave: string): boolean {
+  confirmarDobleInputClave(clave: string, confirmaClave: string): boolean {
     return clave === confirmaClave;
   }
 
