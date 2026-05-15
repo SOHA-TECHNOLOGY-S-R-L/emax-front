@@ -24,7 +24,7 @@ export class RptePedidoComponent implements OnInit {
   titulo!: string;
   formVenta!: FormGroup;
   filtrosReporte!: FiltrosReporte;
-  estadoPedidoLst: EstadoPedido[] = [];
+  //estadoPedidoLst: EstadoPedido[] = [];
   tipoPedido!: TipoPedido;
   //pagadoLst: Pagado[] = [];
 
@@ -46,11 +46,11 @@ export class RptePedidoComponent implements OnInit {
     });
 
     //this.cargarPagado();
-    this.cargarEstadoPedido();
+    //this.cargarEstadoPedido();
     this.filtrosReporte = {
       create_at1: moment(new Date()).subtract(7, 'days').toISOString(),
       create_at2: new Date().toISOString(),
-      estado_pedido_id:-1,
+      //estado_pedido_id:-1,
       //pagado:-1
     }
     this.createForm();
@@ -60,7 +60,7 @@ export class RptePedidoComponent implements OnInit {
   generarReporte(){
     this.filtrosReporte.create_at1 = moment(this.formVenta.get("fchDesde")?.value).format("YYYY-MM-DD");
     this.filtrosReporte.create_at2 = moment(this.formVenta.get("fchHasta")?.value).format("YYYY-MM-DD");
-    this.filtrosReporte.estado_pedido_id =  this.formVenta.get("estadoPedidoId")?.value
+    //this.filtrosReporte.estado_pedido_id =  this.formVenta.get("estadoPedidoId")?.value
     //this.filtrosReporte.pagado = this.formVenta.get("pagado")?.value;
 
     const filtros = {
@@ -83,17 +83,17 @@ export class RptePedidoComponent implements OnInit {
     { id: 1, pagado: 'Si' },
     { id: 0, pagado: 'No' }]
   } */
-
+/*
   cargarEstadoPedido() {
     this.pedidoService.getAllEstadoPedido().subscribe(res => { this.estadoPedidoLst = res; })
-  }
+  } */
 
   createForm() {
     this.formVenta = this.fb.group(
       {
         fchDesde: [this.filtrosReporte.create_at1],
         fchHasta: [this.filtrosReporte.create_at2],
-        estadoPedidoId: [this.filtrosReporte.estado_pedido_id],
+        //estadoPedidoId: [this.filtrosReporte.estado_pedido_id],
         //pagado: [this.filtrosReporte.pagado]
       }
     )
@@ -104,7 +104,7 @@ export class RptePedidoComponent implements OnInit {
 interface FiltrosReporte {
   create_at1?: string,
   create_at2?: string,
-  estado_pedido_id?: number,
+  //estado_pedido_id?: number,
   //pagado?: number,
 }
 

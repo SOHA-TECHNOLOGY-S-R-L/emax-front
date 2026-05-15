@@ -12,6 +12,7 @@ import { CustomizeItemProductoToClientComponent } from '../../components/customi
 import { BreakpointObserver, Breakpoints, MediaMatcher } from '@angular/cdk/layout';
 import { rxResource, toSignal } from '@angular/core/rxjs-interop';
 import { map } from 'rxjs';
+import { environment } from '../../../../../environments/environment';
 
 @Component({
   selector: 'item-producto-persona-tienda',
@@ -28,6 +29,7 @@ export class ItemProductoPersonaTiendaComponent {
   producto = signal<Producto | null>(null);
   items = signal<ItemPedido[]>([]);
   coloresResource = rxResource({ stream: () => this.productoService.getColoresProducto() });
+  API_URL_VER_IMAGEN = environment.API_URL_VER_IMAGEN;
 
 
   /*Breakpoint	Media Query
@@ -54,6 +56,16 @@ export class ItemProductoPersonaTiendaComponent {
     nuevoItem.producto = producto;
     this.items.update(items => [...items, nuevoItem]);
 
+  }
+  getImagenPrincipal(producto: Producto): string {
+
+    const multimediaPrincipal = producto.multimediasProducto?.find(
+      m => m.esPrincipal
+    );
+
+    return multimediaPrincipal?.multimedia?.nombre
+      ? this.API_URL_VER_IMAGEN.concat(multimediaPrincipal.multimedia.nombre)
+      : 'no-imagen.png';
   }
 
   findColorById(colorId: number) {
