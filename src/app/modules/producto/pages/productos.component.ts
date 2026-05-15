@@ -108,9 +108,7 @@ export class ProductosComponent implements OnInit, AfterViewInit {
       )
 
       this.dataSource = this.productos;
-      console.log("this.dataSource", this.dataSource)
       this.pageable = response;
-
     });
   }
 
