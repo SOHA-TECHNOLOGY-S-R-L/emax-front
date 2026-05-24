@@ -5,10 +5,10 @@ import { TipoPago } from "./tipo-pago";
 
 
 export class MovimientoCaja {
-  id!: number;
-  cajaUsuario!: CajaUsuario;
-  tipoPago!: TipoPago;
-  tipoMovimientoCaja!: TipoMovimientoCaja;
+  //id!: number;
+  //cajaUsuario!: CajaUsuario;
+  tipoPagoId!: number;
+  tipoMovimientoCajaId!: number;
   ingresoDinero: number = 0;
   egresoDinero: number = 0;
   descripcion!: string;

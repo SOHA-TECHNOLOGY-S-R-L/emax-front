@@ -1,30 +1,20 @@
 <div class="container">
   <div class="row">
     <div class="col-12 col-sm-6">
-      @if(this.cajaUsuario.id != undefined && this.cajaUsuario != null){
-      <info-caja-usuario [inCajaUsuario]=cajaUsuario />
+      @if(cajaUsuarioResource.value()){
+      <info-caja-usuario [inCajaUsuario]="cajaUsuarioResource.value()!" />
       }
-      <ul class="list-group my-2">
+<!--       <ul class="list-group my-2">
         <li class="list-group-item active">Información de movimiento</li>
       </ul>
       <div class="d-flex flex-row justify-content-center">
-        <!--       <div style="margin-right: 5px;">
-          <mat-card>
-            <mat-card-header>
-              <mat-card-title>SALDO CAJA</mat-card-title>
-            </mat-card-header>
-            <mat-card-content>
-              <p class="black">{{cajaUsuario.saldoCaja| currency: 'PEN'}}</p>
-            </mat-card-content>
-          </mat-card>
-        </div> -->
         <div style="margin-right: 5px;">
           <mat-card>
             <mat-card-header>
               <mat-card-title>INGRESO</mat-card-title>
             </mat-card-header>
             <mat-card-content>
-              <p class="blue">{{movimientoCaja.ingresoDinero| currency: 'PEN'}}</p>
+              <p class="blue">{{ingresoDinero()| currency: 'PEN'}}</p>
             </mat-card-content>
           </mat-card>
         </div>
@@ -34,22 +24,20 @@
               <mat-card-title>EGRESO</mat-card-title>
             </mat-card-header>
             <mat-card-content>
-              <p class="red">{{movimientoCaja.egresoDinero| currency: 'PEN'}}</p>
+              <p class="red">{{egresoDinero()| currency: 'PEN'}}</p>
             </mat-card-content>
           </mat-card>
         </div>
-      </div>
+      </div> -->
     </div>
     <div class="col-12 col-sm-6">
-      <ul class="list-group my-2">
-        <li class="list-group-item list-group-item-primary">Registro de ingreso/egreso caja chica</li>
-      </ul>
-      <form #myForm="ngForm" (ngSubmit)="onSubmitForm(myForm)">
-        <!--         <ul class="list-group">
-          <li class="list-group-item list-group-item-primary">Movimiento</li>
-        </ul> -->
-        <mat-radio-group class="example-full-width" name="iMovimiento" [(ngModel)]="iMovimiento"
-          (change)="changeTipoMovimiento($event.value)">
+      <form [formGroup]="frm" (ngSubmit)="onSubmitForm()">
+        <ul class="list-group my-2">
+          <li class="list-group-item list-group-item-primary">
+            <b>{{titulo()}}</b></li>
+        </ul>
+        <mat-radio-group class="example-full-width" name="iMovimiento" formControlName="iMovimiento"
+          (change)="selectTipoMovimiento.set($event.value)">
           <mat-radio-button value="I">Ingreso</mat-radio-button>
           <mat-radio-button value="E">Egreso</mat-radio-button>
         </mat-radio-group>
@@ -61,50 +49,53 @@
 
         <mat-form-field class="example-full-width">
           <mat-label>Tipo movimiento</mat-label>
-          <mat-select name="tipoMovimientoCaja" [(ngModel)]="movimientoCaja.tipoMovimientoCaja" required>
-            <mat-option *ngFor="let tipoMovimientoCaja of tipoMovimientosCajaLst" [value]="tipoMovimientoCaja">
+          <mat-select name="tipoMovimientoCajaId" formControlName="tipoMovimientoCajaId">
+            <mat-option *ngFor="let tipoMovimientoCaja of tipoMovimientosCajaLst()"
+              [value]="tipoMovimientoCaja.id">
               {{tipoMovimientoCaja.movimiento}}
             </mat-option>
           </mat-select>
         </mat-form-field>
+
         <mat-form-field class="example-full-width">
           <mat-label>Tipo pago</mat-label>
-          <mat-select name="tipoPago" [(ngModel)]="movimientoCaja.tipoPago" required>
-            <mat-option *ngFor="let tipoPago of tipoPagos" [value]="tipoPago">
+          <mat-select name="tipoPagoId" formControlName="tipoPagoId">
+            <mat-option *ngFor="let tipoPago of tipoPagosResource.value()" [value]="tipoPago.id">
               {{tipoPago.nombre}}
             </mat-option>
           </mat-select>
+          @if (formUtils.isValidField(frm, "tipoPagoId")) {
+          <mat-error>
+            {{ formUtils.getFieldError(frm, "tipoPagoId") }}
+          </mat-error>
+          }
         </mat-form-field>
-        @if (iMovimiento==='I') {
-        <mat-form-field>
-          <mat-label>INGRESO DINERO</mat-label>
-          <input matInput type="number" name="ingresoDinero" #ingresoDinero="ngModel"
-            [(ngModel)]="movimientoCaja.ingresoDinero" min="0" required>
-          <div *ngIf="ingresoDinero.invalid && (ingresoDinero.dirty || ingresoDinero.touched)">
-            <mat-error *ngIf="ingresoDinero?.errors?.['required']">
-              Pago es requerido
+
+
+          <mat-form-field *ngIf="this.selectTipoMovimiento()=='I'">
+            <mat-label>INGRESO DINERO</mat-label>
+            <input matInput type="number" name="ingresoDinero" formControlName="ingresoDinero">
+            @if (formUtils.isValidField(frm, "ingresoDinero")) {
+            <mat-error>
+              {{ formUtils.getFieldError(frm, "ingresoDinero") }}
             </mat-error>
-          </div>
-        </mat-form-field>
-        }
-        @if (iMovimiento==='E') {
-        <mat-form-field>
-          <mat-label>EGRESO DINERO</mat-label>
-          <input matInput type="number" name="egresoDinero" #egresoDinero="ngModel"
-            [(ngModel)]="movimientoCaja.egresoDinero" min="0" required>
-          <div *ngIf="egresoDinero.invalid && (egresoDinero.dirty || egresoDinero.touched)">
-            <mat-error *ngIf="egresoDinero?.errors?.['required']">
-              Pago es requerido
+            }
+          </mat-form-field>
+          <mat-form-field *ngIf="this.selectTipoMovimiento()=='E'">
+            <mat-label>EGRESO DINERO</mat-label>
+            <input matInput type="number" name="egresoDinero" formControlName="egresoDinero">
+            @if (formUtils.isValidField(frm, "egresoDinero")) {
+            <mat-error>
+              {{ formUtils.getFieldError(frm, "egresoDinero") }}
             </mat-error>
-          </div>
-        </mat-form-field>
-        }
+            }
+          </mat-form-field>
         <mat-form-field>
           <mat-label>Datos adicionales</mat-label>
-          <textarea name="descripcion" [(ngModel)]="movimientoCaja.descripcion"  matInput placeholder="Coloca aquí datos adicionales que creas necesario"></textarea>
+          <textarea name="descripcion" formControlName = "descripcion"  matInput></textarea>
         </mat-form-field>
         <div class="d-flex justify-content-end">
-          <button type="submit" color="primary" mat-raised-button cdkFocusInitial [disabled]="!myForm.form.valid">
+          <button type="submit" color="primary" mat-raised-button cdkFocusInitial [disabled]="!frm.valid">
             Registrar movimiento</button>
           <!--           <button color="primary" mat-raised-button [routerLink]="['/']">
             Cancelar

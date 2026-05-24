@@ -3,5 +3,6 @@
 export class Caja {
   id!:number;
   nombre!: string;
-  ubicacion!: string;
+  direccion!: string;
+  descripcion!: string;
 }

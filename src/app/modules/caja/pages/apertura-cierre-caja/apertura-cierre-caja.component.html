@@ -1,8 +1,8 @@
 <div class="container">
   <div class="row">
     <div class="col-12 col-sm-6">
-      @if(this.cajaUsuario.id != undefined && this.cajaUsuario != null){
-      <info-caja-usuario [inCajaUsuario]=cajaUsuario />
+      @if(infoCajaUsuario()){
+      <info-caja-usuario [inCajaUsuario]=infoCajaUsuario()! />
       }
     </div>
     <div class="col-12 col-sm-6">
@@ -10,28 +10,38 @@
         <li class="list-group-item active">Apertura o cierre de caja</li>
       </ul>
       <form [formGroup]="formCaja">
-        <mat-form-field *ngIf="!cajaActiva" class="example-full-width">
+        <mat-form-field *ngIf="!cajaActiva()" class="example-full-width">
           <mat-label>Caja por asignar</mat-label>
-          <mat-select name="cajaPorAsignar" formControlName="cajaPorAsignar"
-            (selectionChange)="asignarCajaUsuario($event.value)">
-            <mat-option *ngFor="let caja of cajas" [value]="caja">
+          <mat-select name="cajaId" formControlName="cajaId" (selectionChange)="asignarCajaUsuario($event.value)">
+            <mat-option *ngFor="let caja of cajasResource.value()" [value]="caja.id">
               {{caja.nombre}}
             </mat-option>
           </mat-select>
         </mat-form-field>
-        <mat-form-field *ngIf="!cajaActiva" class="example-full-width">
-          <mat-label>Caja ubicación</mat-label>
-          <input matInput formControlName="ubicacionCaja" readonly="true" name="ubicacionCaja">
-          <div *ngIf="formCaja.get('ubicacionCaja')?.invalid &&
-                  (formCaja.get('ubicacionCaja')?.dirty ||
-                  formCaja.get('ubicacionCaja')?.touched)">
-            <mat-error *ngIf="formCaja.get('ubicacionCaja')?.errors?.['required']">
-              Nombre es requerido
+        <mat-form-field *ngIf="!cajaActiva()" class="example-full-width">
+          <mat-label>Direccion/Ubicación de caja</mat-label>
+          <input matInput formControlName="direccionCaja" name="direccionCaja">
+          <div *ngIf="formCaja.get('direccionCaja')?.invalid &&
+                  (formCaja.get('direccionCaja')?.dirty ||
+                  formCaja.get('direccionCaja')?.touched)">
+            <mat-error *ngIf="formCaja.get('direccionCaja')?.errors?.['required']">
+              Dirección/Ubicación de caja es requerida
+            </mat-error>
+          </div>
+        </mat-form-field>
+        <mat-form-field *ngIf="!cajaActiva()" class="example-full-width">
+          <mat-label>Descripción</mat-label>
+          <input matInput formControlName="descripcionCaja" name="descripcionCaja">
+          <div *ngIf="formCaja.get('descripcionCaja')?.invalid &&
+                  (formCaja.get('descripcionCaja')?.dirty ||
+                  formCaja.get('descripcionCaja')?.touched)">
+            <mat-error *ngIf="formCaja.get('descripcionCaja')?.errors?.['required']">
+              Descripción es requerido
             </mat-error>
           </div>
         </mat-form-field>
 
-        <mat-form-field *ngIf="cajaActiva" appearance="fill">
+        <mat-form-field *ngIf="cajaActiva()" appearance="fill">
           <mat-label>En caja hay(conteo):</mat-label>
           <input matInput formControlName="saldoPorConteo" type="number" name="saldoPorConteo">
           <div *ngIf="formCaja.get('saldoPorConteo')?.invalid &&
@@ -44,9 +54,9 @@
         </mat-form-field>
 
         <div class="d-flex justify-content-end">
-          <button *ngIf="!cajaActiva && authService.hasRole('ROLE_CLOSE_CJU')" (click)="abrirCaja()" mat-raised-button
-            color="primary">Abrir CAJA</button>
-          <button *ngIf="cajaActiva && authService.hasRole('ROLE_CLOSE_CJU')" (click)="cerrarCaja()" mat-raised-button
+          <button *ngIf="!cajaActiva() && authService.hasRole('ROLE_CLOSE_CJU')" (click)="abrirCaja()" mat-raised-button
+            color="primary" [disabled] = !formCaja.valid>Abrir CAJA</button>
+          <button *ngIf="cajaActiva() && authService.hasRole('ROLE_CLOSE_CJU')" (click)="cerrarCaja()" mat-raised-button
             color="primary">Cerrar CAJA</button>
         </div>
       </form>

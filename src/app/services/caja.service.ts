@@ -44,7 +44,7 @@ export class CajaService {
   }
 
   getCajaUsuarioActiveByUserName(username: string): Observable<CajaUsuario> {
-    return this.http.get<CajaUsuario>(`${environment.apiUrl}/cajas-usuarios-active/${username}`)
+    return this.http.get<CajaUsuario>(`${environment.apiUrl}/caja-usuario/active-usuario/${username}`)
     /*       .pipe(
             map<CajaUsuario, CajaUsuario>(resp => {
               if (resp != null && resp.movimientos.length > 0) {
@@ -57,9 +57,9 @@ export class CajaService {
   }
 
   getCajaUsuarioInactiveByUserName(username: string): Observable<CajaUsuario> {
-    return this.http.get<CajaUsuario>(`${environment.apiUrl}/cajas-usuarios-inactive/${username}`
+    return this.http.get<CajaUsuario>(`${environment.apiUrl}/caja-usuario/inactive-usuario/${username}`
     )
-      .pipe(
+/*       .pipe(
         map<CajaUsuario, CajaUsuario>(resp => {
           if (resp != null && resp.movimientos.length > 0) {
             resp.movimientos.splice(0, resp.movimientos.length)
@@ -67,7 +67,7 @@ export class CajaService {
           return resp
         }
         )
-      );
+      ); */
   }
 
   /*   getCajaUsuarioByUserName(username: string): Observable<CajaUsuario> {
@@ -84,10 +84,10 @@ export class CajaService {
         );
     } */
 
-  getCajaUsuarioInactivoByCajaId(cajaId: number): Observable<CajaUsuario> {
-    return this.http.get<CajaUsuario>(`${environment.apiUrl}/cajas/${cajaId}/usuarios`
+  getCajaUsuarioInactiveByCajaId(cajaId: number): Observable<CajaUsuario> {
+    return this.http.get<CajaUsuario>(`${environment.apiUrl}/caja-usuario/inactive-caja/${cajaId}`
     )
-      .pipe(
+/*       .pipe(
         map<CajaUsuario, CajaUsuario>(resp => {
           if (resp != null && resp.movimientos.length > 0) {
             resp.movimientos.splice(0, resp.movimientos.length)
@@ -95,7 +95,7 @@ export class CajaService {
           return resp
         }
         )
-      );
+      ); */
   }
 
   getCajaUsuarioByCajaIdAndUserId(cajaId: number, userId: number): Observable<CajaUsuario> {
@@ -112,16 +112,16 @@ export class CajaService {
 
   }
 
-  create(cajaUsuario: CajaUsuario): Observable<any> {
-    return this.http.post<any>(`${environment.apiUrl}/cajas/usuarios`, cajaUsuario
+  createCajaUsuario(caja: Caja): Observable<any> {
+    return this.http.post<any>(`${environment.apiUrl}/caja-usuario`, caja
       /*, {headers: this.agregarAuthorizationHeader()}*/
     );
   }
 
 
 
-  update(cajaUsuario: CajaUsuario): Observable<any> {
-    return this.http.put<any>(`${environment.apiUrl}/cajas/usuarios/${cajaUsuario.id}`, cajaUsuario
+  cerrarCajaUsuario(cajaUsuarioId: number,  saldoPorConteo: number): Observable<any> {
+    return this.http.put<any>(`${environment.apiUrl}/caja-usuario/${cajaUsuarioId}/cerrar?saldoPorConteo=${saldoPorConteo}`, {}
       /*, {headers: this.agregarAuthorizationHeader()}*/
     ).pipe(
       catchError(e => {

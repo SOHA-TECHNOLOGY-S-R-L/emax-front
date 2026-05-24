@@ -7,7 +7,7 @@ import { TipoPago } from "./tipo-pago";
 export class Movimiento {
   //id!:number;
   //pedido!: Pedido;
-	cajaUsuario!: CajaUsuario;
+	//cajaUsuario!: CajaUsuario;
   tipoPagoId!:number;
   tipoMovimientoPedidoId!: number;
   //tipoPago!: TipoPago;

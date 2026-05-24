@@ -207,17 +207,20 @@ export class MovimientoComponent {
   usuario = computed(() => {
     const isAutenticado = this.authService.isAuthenticated()
     if (!isAutenticado) {
-      this.alertService.info(`Se cerro la sesión sesión por tiempo de inactividad `, "Caja");
       return
     }
     return this.authService.usuario();
   })
 
   usuarioNotAutthenticateEffect = effect(() => {
-    if (!this.usuario()) { this.router.navigate(['/']) }
+    if (!this.usuario()) {
+      this.alertService.info(`Se cerro la sesión sesión por tiempo de inactividad `, "Caja");
+      this.router.navigate(['/'])
+    }
   })
 
   refreshCajaUsuario = signal(0);
+  alreadyRedirected = signal(false);
 
   cajaUsuarioResource = rxResource({
     params: () => ({
@@ -226,16 +229,34 @@ export class MovimientoComponent {
     }),
     stream: ({ params }) => {
       if (!params?.usuario?.username) return of(null);
-      return this.cajasService.getCajaUsuarioActiveByUserName(params.usuario.username);
+      return this.cajasService.getCajaUsuarioActiveByUserName(params.usuario.username)
+        .pipe(
+          catchError(() => {
+            return of(null);
+          })
+        );
     }
   });
 
-  isCajaUsuarioInactiveEffect = effect(() => {
+/*   isCajaUsuarioInactiveEffect = effect(() => {
     const cju = this.cajaUsuarioResource.value();
     const status = this.cajaUsuarioResource.status();
 
     if (status === 'resolved' && !cju) {
       this.alertService.info(`Aperturar caja para realizar movimientos en caja `, "Caja")
+      this.router.navigate(['/cajas']);
+    }
+  }); */
+
+  isCajaUsuarioInactiveEffect = effect(() => {
+    if (this.alreadyRedirected()) { return; }
+    const status = this.cajaUsuarioResource.status();
+    if (status === 'loading') { return; }
+
+    const cju = this.cajaUsuarioResource.value();
+    if (status === 'resolved' && cju === null) {
+      this.alreadyRedirected.set(true);
+      this.alertService.info(`Aperturar caja para realizar movimientos`, "Caja");
       this.router.navigate(['/cajas']);
     }
   });
@@ -320,7 +341,7 @@ export class MovimientoComponent {
 
     if (!pedido) {
       return {
-        cajaUsuario: this.cajaUsuarioResource.value()!,
+        //cajaUsuario: this.cajaUsuarioResource.value()!,
         tipoPagoId: tipoPagoId,
         tipoMovimientoPedidoId: this.frm.controls.tipoMovimientoPedidoId.value!,
         ingresoDinero,
@@ -364,7 +385,7 @@ export class MovimientoComponent {
     }
 
     return {
-      cajaUsuario: this.cajaUsuarioResource.value()!,
+      //cajaUsuario: this.cajaUsuarioResource.value()!,
       tipoPagoId: tipoPagoId,
       tipoMovimientoPedidoId: this.frm.controls.tipoMovimientoPedidoId.value!,
       ingresoDinero,
@@ -403,6 +424,8 @@ export class MovimientoComponent {
         };
         this.refreshCajaUsuario.update(v => v + 1);
         this.alertService.success(`${this.tituloTipoPedido()} con exito`, "Exito");
+        this.pedidoId.set('');
+        this.frm.get('pedidoIdSearch')?.setValue('');
       })
     }
     if (pedido.tipoPedidoId == PEDIDO_COMPRA) {
@@ -413,11 +436,12 @@ export class MovimientoComponent {
         };
         this.refreshCajaUsuario.update(v => v + 1);
         this.alertService.success(`${this.tituloTipoPedido()} con exito`, "Exito");
-
+        this.pedidoId.set('');
+        this.frm.get('pedidoIdSearch')?.setValue('');
       })
     }
-    this.pedidoId.set('');
-    this.frm.get('pedidoIdSearch')?.setValue('');
+    //this.pedidoId.set('');
+    //this.frm.get('pedidoIdSearch')?.setValue('');
 
   }
 

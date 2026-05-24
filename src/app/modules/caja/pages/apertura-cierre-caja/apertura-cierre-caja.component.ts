@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, computed, effect, inject, OnInit, signal } from '@angular/core';
 
 
 import { CommonModule } from '@angular/common';
@@ -12,6 +12,8 @@ import { CajaService } from '../../../../services/caja.service';
 import { UsuarioService } from '../../../../services/usuario.service';
 import { AngularMaterialModule } from '../../../compartido/angular-material.module';
 import { InfoCajaUsuarioComponent } from "../../components/info-caja-usuario/info-caja-usuario.component";
+import { rxResource } from '@angular/core/rxjs-interop';
+import { catchError, of, switchMap } from 'rxjs';
 
 
 @Component({
@@ -20,129 +22,169 @@ import { InfoCajaUsuarioComponent } from "../../components/info-caja-usuario/inf
   styleUrls: ['./apertura-cierre-caja.component.css'],
   standalone: true,
   imports: [CommonModule, AngularMaterialModule, RouterModule, FormsModule, ReactiveFormsModule, InfoCajaUsuarioComponent]
-
-
 })
-export class AperturaCierreCajaComponent implements OnInit {
+export class AperturaCierreCajaComponent {
 
+  public authService = inject(AuthService);
+  private cajaService = inject(CajaService);
+  private usuarioService = inject(UsuarioService);
+  private alertService = inject(AlertService);
+  private router = inject(Router);
   private fb = inject(FormBuilder);
-  cajaUsuario = new CajaUsuario();
-  //cajaUsuario!: CajaUsuario;
-  username!: string;
-  //cajaId!: number;
 
-  cajas: Caja[] = [];
-  caja!: Caja;
-  //isAutenticado!: boolean;
-  cajaActiva: boolean = false;
-  //fechaActual!: string;
-  //estadoCajaUsuarioMap = ESTADO_CAJA_USUARIO;
+  caja = signal(new Caja());
+
+  cajaActiva = signal<boolean>(false);
+
+  selectedCajaId = signal<number | null>(null);
 
   formCaja = this.fb.group({
-    ubicacionCaja: ['', {
+    direccionCaja: ['', {
+      validators: [Validators.required]
+    }],
+    descripcionCaja: ['', {
       validators: [Validators.required]
     }],
     saldoPorConteo: [0, {
       validators: [Validators.required]
     }],
-    cajaPorAsignar: ['', {
-      validators: [Validators.required]
-    }],
+    cajaId: [0, { validators: [Validators.required] }],
   })
 
-  constructor(
-    public authService: AuthService,
-    private cajaService: CajaService,
-    private usuarioService: UsuarioService,
-    private alertService: AlertService,
-    private router: Router) {
 
-  }
+  usuario = computed(() => {
+    const isAutenticado = this.authService.isAuthenticated()
+    if (!isAutenticado) {
+      return
+    }
+    return this.authService.usuario();
+  })
 
-  ngOnInit(): void {
-    if (this.authService.isAuthenticated()) {
-      this.username = this.authService.usuario()!.username;
-      //this.usuarioService.getUsuarioByUsername(username).subscribe(resp => this.cajaUsuario.usuario = resp)
+  usuarioNotAutthenticateEffect = effect(() => {
+    const user = this.usuario();
+    if (user === undefined) { return; }
 
-      this.cajaService.getCajaUsuarioActiveByUserName(this.username).subscribe(
-        result => {
-          if (result != null) {
-            this.cajaUsuario = result;
-            this.cajaActiva = this.cajaUsuario.activa;
-          } else {
-            this.cajaService.getCajaUsuarioInactiveByUserName(this.username).subscribe(
-              result => {
-                if (result != null) {
-                  this.cajaUsuario = result;
-                  this.cajaActiva = this.cajaUsuario.activa;
-                }
-              }
-            )
-          }
-        }
-      )
-
-
-      this.obtenerTodoCajas();
-
-    } else {
+    if (!user) {
+      this.alertService.info(`Se cerró la sesión por tiempo de inactividad`, "Caja");
       this.router.navigate(['/']);
     }
+  });
+
+  selectedCajaUsuarioResource = rxResource({
+    params: () => ({ cajaId: this.selectedCajaId() }),
+    stream: ({ params }) => {
+      if (!params?.cajaId) { return of(null); }
+
+      return this.cajaService.getCajaUsuarioInactiveByCajaId(params.cajaId)
+        .pipe(
+          catchError(() => {
+            return of(null);
+          })
+        );
+    }
+  });
+
+  refreshCajaUsuario = signal(0);
+
+  cjUsuResource = rxResource({
+    params: () => ({
+      usuario: this.usuario(),
+      refresh: this.refreshCajaUsuario()
+    }),
+
+    stream: ({ params }) => {
+
+      if (!params?.usuario?.username) {
+        return of(null);
+      }
+
+      return this.cajaService.getCajaUsuarioActiveByUserName(params.usuario.username)
+        .pipe(
+          catchError(() => {
+            return of(null);
+          }),
+          switchMap(active => {
+
+            // SI EXISTE ACTIVA -> retornar
+            if (active) {
+              return of(active);
+            }
+
+            // SI NO EXISTE -> buscar inactiva
+            return this.cajaService.getCajaUsuarioInactiveByUserName(params.usuario!.username)
+              .pipe(
+                catchError(() => of(null))
+              );
+
+          })
+        );
+    }
+  });
+
+  cajaUsuario = computed(() => this.cjUsuResource.value());
+
+  infoCajaUsuario = computed(() => {
+    if (this.selectedCajaId()) {
+      return this.selectedCajaUsuarioResource.value();
+    }
+    return this.cajaUsuario();
+  });
+
+  isCajaActiveEffect = effect(() => {
+    const cju = this.cajaUsuario();
+    if (!cju) { return }
+    this.cajaActiva.set(cju.activa);
+  });
+
+  cajasResource = rxResource({ stream: () => this.cajaService.getCajasPorAsignar() });
+
+  constructor() { }
+
+  asignarCajaUsuario(cajaId: number) {
+    this.selectedCajaId.set(cajaId);
+    const cajas = this.cajasResource.value();
+    if (!cajas) { return; }
+
+    const caja = cajas.find(c => c.id === cajaId);
+    if (!caja) { return; }
+
+    this.caja.set(caja);
+
+    this.formCaja.patchValue({
+      direccionCaja: caja.direccion,
+      descripcionCaja: caja.descripcion
+    });
   }
-
-  asignarCajaUsuario(caja: Caja) {
-    this.cajaService.getCajaUsuarioInactivoByCajaId(caja.id).subscribe(result => {
-
-      /*       if (result != null) {
-              if (result.saldoCaja > 0 && result.activa == true) {
-                this.alertService.success(`${result.caja.nombre}, debe estar cerrada y sin saldo para ser asignada.`, "Caja",)
-                return;
-              }
-            } */
-      this.cajaUsuario.cajaId = caja.id
-      this.cajaUsuario.ingresoEsperado = 0;
-      this.cajaUsuario.egresoEsperado = 0;
-      this.cajaUsuario.saldoInicial = result.saldoFinal;
-      this.cajaUsuario.saldoFinal = result.saldoFinal;
-      this.formCaja.get("ubicacionCaja")?.setValue(caja.ubicacion);
-    })
-  }
-
-  obtenerTodoCajas() {
-    this.cajaService.getCajasPorAsignar().subscribe(result => this.cajas = result)
-  }
-
 
   abrirCaja() {
-    this.usuarioService.getUsuarioByUsername(this.username).subscribe(resp => {
-      this.cajaUsuario.usuarioId = resp.id;
 
-      //this.cajaUsuario.fechaApertura = '';
-      //this.cajaUsuario.fechaCierre = '';
-      //this.cajaUsuario.usuario.password = "";
-      //this.cajaUsuario.usuario.roles = [];
-      this.cajaService.create(this.cajaUsuario).subscribe(
-        response => {
-          //this.alertService.success(`Se habrió ${this.cajaUsuario.caja.nombre}, para ${this.cajaUsuario.usuario.username} con éxito!`, "Caja",)
-          this.alertService.success(`Se habrió la caja con éxito!`, "Caja",)
-          this.router.navigate(['/']);
-        })
-    })
+    this.caja.update((cj) => {
+      if (!cj) return cj; // Validación por si el valor inicial es null/undefined
+      return {
+        ...cj,
+        direccion: this.formCaja.get('direccionCaja')!.value!,
+        descripcion: this.formCaja.get('descripcionCaja')!.value!
+      };
+    });
+
+    if (!this.formCaja.valid) { return }
+    this.cajaService.createCajaUsuario(this.caja()).subscribe(
+      response => {
+        //this.alertService.success(`Se habrió ${this.cajaUsuario.caja.nombre}, para ${this.cajaUsuario.usuario.username} con éxito!`, "Caja",)
+        this.refreshCajaUsuario.update(v => v + 1);
+        this.alertService.success(`Se habrió la caja con éxito!`, "Caja",)
+        this.router.navigate(['/']);
+      })
+    //})
   }
 
   cerrarCaja() {
-    const saldoPorConteo = this.formCaja.get('saldoPorConteo')!.value;
-    const saldoFinal = this.cajaUsuario.saldoFinal;
-    this.cajaUsuario.fechaApertura = '';
-    this.cajaUsuario.fechaCierre = '';
-    //this.cajaUsuario.usuario.password = "";
-
+    const cju = this.cajaUsuario();
+    if (!cju) { return }
+    const saldoPorConteo = this.formCaja.get('saldoPorConteo')!.value ?? 0;
+    const saldoFinal = cju.saldoFinal ?? 0;
     if (saldoPorConteo == saldoFinal) {
-      this.cajaUsuario.saldoPorConteo = saldoPorConteo!;
-      /*this.cajaUsuario.ingresoEsperado = 0;
-      this.cajaUsuario.egresoEsperado = 0;
-      this.cajaUsuario.activa = false;*/
-      this.cajaService.update(this.cajaUsuario).subscribe(
+      this.cajaService.cerrarCajaUsuario(cju.id, saldoPorConteo).subscribe(
         response => {
           //this.alertService.success(`Se cerró ${this.cajaUsuario.caja.nombre}, para ${this.cajaUsuario.usuario.username} con éxito!`, "Caja")
           this.alertService.success(`Se cerró la caja con éxito!`, "Caja")

@@ -48,9 +48,12 @@ export class AuthService {
     const user = new Usuario();
     user.id = payload.id;
     user.username = payload.username;
-    user.roles = payload.authorities as Role[];
+    user.roles = payload.roles as Role[];
 
     this._usuario.set(user);
+
+        console.log("payload", user)
+
     if (this.isBrowser) {
       sessionStorage.setItem('usuario', JSON.stringify(user));
     }

@@ -21,6 +21,6 @@ export class CajaUsuario {
 	//usuario!: Usuario;
   cajaId! :number;
   usuarioId! : number;
-	movimientos: Movimiento[]=[];
-  movimientosCaja: MovimientoCaja[]=[];
+	//movimientos: Movimiento[]=[];
+  //movimientosCaja: MovimientoCaja[]=[];
 }

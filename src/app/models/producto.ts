@@ -39,7 +39,7 @@ export class Producto {
   usoId: number | undefined;;
   estadoProducto!: EstadoProducto;
   padreId: number | undefined;
-  hijos: Producto[] = [];
+  //hijos: Producto[] = [];
   margenesProducto: MargenProducto[] = [];
   multimediasProducto: MultimediaProducto[] = [];
   //campos utilitarios

@@ -11,6 +11,7 @@ import { TipoMovimientoPedido } from '../models/tipo-movimiento-pedido';
 import { TipoMovimientoCaja } from '../models/tipo-movimiento-caja';
 import { AlertService } from './alert.service';
 import { Pedido } from '../models/pedido';
+import { CajaUsuario } from '../models/caja-usuario';
 
 @Injectable({
   providedIn: 'root'
@@ -35,13 +36,13 @@ export class MovimientoService {
 
 
   getAllTipoPagos(): Observable<TipoPago[]> {
-    return this.http.get<TipoPago[]>(`${environment.apiUrl}/movimientos/tipoPagos`
+    return this.http.get<TipoPago[]>(`${environment.apiUrl}/tipoPagos`
       /*, {headers: this.agregarAuthorizationHeader()} */
     );
   }
 
   getAllTipoMovimientosPedido(): Observable<TipoMovimientoPedido[]> {
-    return this.http.get<TipoMovimientoPedido[]>(`${environment.apiUrl}/movimientos/tipoMovimientosPedido`
+    return this.http.get<TipoMovimientoPedido[]>(`${environment.apiUrl}/pedidos/movimientos/tipo-movimientos`
       /*  , {headers: this.agregarAuthorizationHeader()} */
     );
   }
@@ -66,18 +67,16 @@ export class MovimientoService {
         }));
   } */
 
-  createMovimientoCaja(movimientoCaja: MovimientoCaja): Observable<MovimientoCaja> {
-    return this.http.post(`${environment.apiUrl}/movimientos/caja`, movimientoCaja
+  createMovimientoCaja(movimientoCaja: MovimientoCaja): Observable<CajaUsuario> {
+    return this.http.post(`${environment.apiUrl}/caja-usuario/movimiento-caja`, movimientoCaja
       /*, {headers: this.agregarAuthorizationHeader()}*/
     )
       .pipe(
-        map((response: any) => response.movimientoCaja as MovimientoCaja),
+        map((response: any) => response.cajaUsuario as CajaUsuario),
         catchError(e => {
-/*           if (e.status == 400) {
-            return throwError(e);
-          } */
+          console.log("eeeeeeeee", e)
           if (e.error?.mensaje) {
-            this.alertService.error(e.error.mensaje, e.error.err);
+            this.alertService.error(e.error.mensaje, "Caja Usuario");
           }
 
           return throwError(e);
@@ -85,7 +84,7 @@ export class MovimientoService {
   }
 
   ceateReporteMovEnCaja(filtros: any): Observable<HttpResponse<Blob>> {
-    return this.http.post<Blob>(`${environment.apiUrl}/movimientos/reporte/mov-en-caja`, filtros,
+    return this.http.post<Blob>(`${environment.apiUrl}/pedidos/movimientos/reporte/mov-en-caja`, filtros,
       { observe: 'response', responseType: 'blob' as 'json' })
   }
 
