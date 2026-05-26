@@ -93,16 +93,18 @@
                   </div>
                 </div> -->
                 <div class="row mb-2">
-                  <label for="clicUploadImageToCategoria" class="form-label col-sm-5"><b>Imágen de
-                      categoria::</b><br>Visible
-                    en
-                    tienda</label>
+                  <label for="clicUploadImageToCategoria" class="form-label col-sm-5"><b>Multimedia</b><br>Visible
+                    en tienda</label>
                   <div class="col-7">
-                    <button id="clicUploadImageToCategoria" class="btn btn-primary" (click)='openDialog()'>Elegir
-                      imágen para categoria</button>
+                    <button id="clicUploadImageToCategoria" matFab extended (click)='openDialog()'>Multimedia para
+                      categoria</button>
                   </div>
                 </div>
-                <div class="row mb-2">
+                <ver-multimedia-asignada [inMultimediasAsignadas]="categoria().multimediasAsignada" [inCircular]="false"
+                  [inShowNavigators]="true" [inShowIndicators]="false" (outMultimediasAsignadas)="
+                    loadedMultimedia($event)
+                  "></ver-multimedia-asignada>
+                <!--                 <div class="row mb-2">
                   <div class="col-sm">
                     @if (categoria().multimedia) {
                     <img [src]="categoria().multimedia.urlMultimediaShow" alt="{{categoria().nombre}}"
@@ -111,7 +113,7 @@
                     <img src="no-imagen.png" alt="No imagen" class="img-fluid img-thumbnail rounded mx-auto d-block">
                     }
                   </div>
-                </div>
+                </div> -->
                 }
               </div>
             </div>

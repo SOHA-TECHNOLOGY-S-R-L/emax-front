@@ -23,7 +23,7 @@ export class ProductoService {
     private router: Router,
     private authService: AuthService,
     private alertService: AlertService,
-  ) {}
+  ) { }
 
   getColoresProducto(): Observable<Color[]> {
     return this.http.get<Color[]>(`${environment.apiUrl}/producto/colores`);
@@ -238,11 +238,7 @@ export class ProductoService {
 
   updateProducto(producto: any): Observable<any> {
     return this.http
-      .put<any>(
-        `${environment.apiUrl}/producto/${producto.id}`,
-        producto,
-        /*, {headers: this.agregarAuthorizationHeader()}*/
-      )
+      .put<any>(`${environment.apiUrl}/producto/${producto.id}`,producto)
       .pipe(
         catchError((e) => {
           if (e.status == 400) {
@@ -357,4 +353,21 @@ export class ProductoService {
         }),
       );
   }
+
+  productoWithMultimediaEsPrincipal(): Observable<Producto[]> {
+    return this.http.get<Producto[]>(`${environment.apiUrl}/producto/multimedia/esprincipal`)
+      .pipe(
+        map(res => res || []),
+        catchError(() => of([])) // Si el servidor falla, devuelve un array vacío en lugar de un error
+      );;
+  }
+
+    servicioWithMultimediaEsPrincipal(): Observable<Producto[]> {
+    return this.http.get<Producto[]>(`${environment.apiUrl}/producto/servicio/multimedia/esprincipal`)
+      .pipe(
+        map(res => res || []),
+        catchError(() => of([])) // Si el servidor falla, devuelve un array vacío en lugar de un error
+      );;
+  }
+
 }

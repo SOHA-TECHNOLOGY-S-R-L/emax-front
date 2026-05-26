@@ -21,16 +21,16 @@
         <ng-container matColumnDef="multimedia">
           <th mat-header-cell *matHeaderCellDef mat-sort-header> Multimedia </th>
           <td mat-cell *matCellDef="let element">
-            @if (element.multimediasProducto?.length
-            && element.multimediasProducto[0].multimedia.mimeType.startsWith('image/')){
-            <img [src]="element.multimediasProducto[0].multimedia.urlMultimediaShow" loading="lazy"
+            @if (element.multimediasAsignada?.length
+            && element.multimediasAsignada[0].multimedia.mimeType.startsWith('image/')){
+            <img [src]="element.multimediasAsignada[0].multimedia.urlMultimediaShow" loading="lazy"
               width="86" decoding="async" priority="false" class="productos-por-categoria-img">
             } @else {
             <img src="no-imagen.png" loading="lazy" decoding="async" priority="false"
               class="productos-por-categoria-img" width="86">
             }
           </td>
-          <!--           <td mat-cell *matCellDef="let element"> {{element.multimediaProducto.multimedia.urlMultimediaShow |
+          <!--           <td mat-cell *matCellDef="let element"> {{element.multimediaAsignada.multimedia.urlMultimediaShow |
             uppercase}} </td> -->
         </ng-container>
         <ng-container matColumnDef="codigo">

@@ -421,22 +421,7 @@
                 }
               </div>
               @if (authService.hasRole("ROLE_IMAGE_PRODUCTO")) {
-              <!--               <div class="row mb-2">
-                <label for="clicUploadImageToProduct" class="form-label col-sm-5"><b>Imágen principal:</b><br>Visible
-                  en
-                  tienda</label>
-                <div class="input-group col-7">
-                  <input #file type="file" (change)="subirImagen(file)" name="imagen" class="form-control"
-                    style="display: none;" id="clicUploadImageToProduct" aria-describedby="clicUploadImageToProduct">
-                  <label for="clicUploadImageToProduct" class="btn btn-secondary">📁 Elegir imagen principal</label>
-                </div>
-              </div> -->
-
               <div class="row mb-2">
-                <!--                 <div class="col-6">
-                  <button id="clicUploadImageToProduct" matFab extended (click)='openDialog(producto, true)'>Elegir
-                    multimedia principal</button>
-                </div> -->
                 <label for="clicUploadImageToProduct" class="form-label col-sm-5"><b>Multimedia:</b><br />Visible en
                   tienda</label>
                 <div class="col-7">
@@ -445,32 +430,11 @@
                   </button>
                 </div>
               </div>
-              <!--            <div class="row mb-2">
-                <div class="col-sm">
-                  <img *ngIf="producto()?.imagen" [src]="verImagenProducto" alt="{{producto.imagen}}"
-                    class="img-fluid img-thumbnail rounded mx-auto d-block">
-                </div>
-              </div> -->
+              <ver-multimedia-asignada [inMultimediasAsignadas]="producto().multimediasAsignada" [inCircular]="false"
+                [inShowNavigators]="true" [inShowIndicators]="false" (outMultimediasAsignadas)="
+                    loadedMultimedia($event)
+                  "></ver-multimedia-asignada>
 
-              <ver-multimedia-producto [inMultimediasProducto]="producto().multimediasProducto" [inCircular]="false"
-                [inShowNavigators]="true" [inShowIndicators]="false" (outMultimediasProducto)="
-                    multimediaProductoToProducto($event)
-                  "></ver-multimedia-producto>
-
-              <!-- <div class="row mb-2">
-                           <label for="formFile" class="form-label col-sm-4"><b>Imágen del producto:</b><br>Visible en
-                  tienda</label>
-                <div class="input-group col-sm">
-                  <input #file (change)="this.isImage(file)" type="file" name="imagen" class="form-control"
-                    style="padding: 25px;" id="inputGroupFile04" aria-describedby="inputGroupFileAddon04">
-                  <button (click)="subirImagen(file)" class="btn btn-primary" type="button"
-                    [disabled]="!this.isImage(file)" id="inputGroupFileAddon04">Subir</button>
-                </div>
-
-
-
-
-              </div>-->
               }
               <!--             <div class="row mb-2">
               <div class="ol-sm-6">

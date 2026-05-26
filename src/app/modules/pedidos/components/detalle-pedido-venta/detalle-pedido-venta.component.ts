@@ -5,11 +5,11 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { map } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
+import { ItemPedido } from '../../../../models/item-pedido';
 import { PedidoService } from '../../../../services/pedido.service';
+import { PersonaService } from '../../../../services/persona.service';
 import { ProductoService } from '../../../../services/producto.service';
 import { AngularMaterialModule } from '../../../compartido/angular-material.module';
-import { ItemPedido } from '../../../../models/item-pedido';
-import { PersonaService } from '../../../../services/persona.service';
 
 @Component({
   selector: 'app-detalle-pedido-venta',
@@ -77,7 +77,7 @@ export class DetallePedidoVentaComponent {
     if (!items) { return [] };
 
     return items.map((item) => {
-      const mp = item.producto.multimediasProducto;
+      const mp = item.producto.multimediasAsignada;
 
       if (!mp) {
         return { ...item, imagenShow: 'no-imagen.png' };

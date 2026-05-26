@@ -1,7 +1,7 @@
 import { Categoria } from './categoria';
 import { EstadoProducto } from './estado-producto';
 import { MargenProducto } from './margen-producto';
-import { MultimediaProducto } from './multimedia-producto';
+import { MultimediaAsignada } from './multimedia-asignada';
 
 export class Producto {
   id!: number;
@@ -41,7 +41,7 @@ export class Producto {
   padreId: number | undefined;
   //hijos: Producto[] = [];
   margenesProducto: MargenProducto[] = [];
-  multimediasProducto: MultimediaProducto[] = [];
+  multimediasAsignada: MultimediaAsignada[] = [];
   //campos utilitarios
   //multimediaPrincipal?: string;
   colorVariante! : string;

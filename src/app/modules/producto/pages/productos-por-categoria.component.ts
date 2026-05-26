@@ -8,26 +8,26 @@ import {
   signal,
   ViewChild,
 } from '@angular/core';
-import { rxResource, toSignal } from '@angular/core/rxjs-interop';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { EMPTY, map } from 'rxjs';
+import { map } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { COLOR_ESTADO_PRODUCTO } from '../../../constants/color-estado-producto';
-import { Producto } from '../../../models/producto';
-import { ChatUtils } from '../../../utils/chat-utils';
-import { AngularMaterialModule } from '../../compartido/angular-material.module';
-import { CategoriaService } from './../../../services/categoria.service';
-import { ProductoService } from './../../../services/producto.service';
-import { SeoService } from './../../../services/seo.service';
-import { PageableResponse } from '../../../models/pageable-response';
-import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import {
   ELEMENTOS_POR_PAGINA,
   PRIMERA_PAGINA,
   SIGUIENTE_PAGINA,
   ULTIMA_PAGINA,
 } from '../../../constants/constantes';
+import { PageableResponse } from '../../../models/pageable-response';
+import { Producto } from '../../../models/producto';
+import { ChatUtils } from '../../../utils/chat-utils';
+import { AngularMaterialModule } from '../../compartido/angular-material.module';
+import { CategoriaService } from './../../../services/categoria.service';
+import { ProductoService } from './../../../services/producto.service';
+import { SeoService } from './../../../services/seo.service';
 
 @Component({
   selector: 'productos-por-categoria',
@@ -95,31 +95,20 @@ export class ProductosPorCategoriaComponent implements AfterViewInit {
 
     if (!categoria || productos.length === 0) return;
 
-    const multimedia = productos[0].categoria?.multimedia;
+ /*    const multimedia = categoria?.multimedia;
     const imagenCategoria = multimedia
       ? this.API_URL_VER_IMAGEN.concat(multimedia.nombre)
-      : 'no-imagen.png';
+      : 'no-imagen.png'; */
 
     const titulo = categoria;
     const descripcion = `Categoria ${categoria}`;
-
     this.seo.title.setTitle(titulo);
     this.seo.meta.updateTag({ name: 'description', content: descripcion });
     this.seo.meta.updateTag({ property: 'og:type', content: 'website' });
     this.seo.meta.updateTag({ property: 'og:title', content: titulo });
-    this.seo.meta.updateTag({
-      property: 'og:description',
-      content: descripcion,
-    });
-    this.seo.meta.updateTag({
-      property: 'og:url',
-      content: `${environment.apiFront}/tienda/productos-categoria/${categoria}`,
-    });
-    this.seo.meta.updateTag({
-      property: 'og:image',
-      content: imagenCategoria,
-    });
-
+    this.seo.meta.updateTag({ property: 'og:description', content: descripcion });
+    this.seo.meta.updateTag({property: 'og:url',content: `${environment.apiFront}/tienda/productos-categoria/${categoria}`,});
+    //this.seo.meta.updateTag({property: 'og:image',content: imagenCategoria,});
     this.seo.setIndexFollow(true);
   });
   constructor() { }
@@ -151,6 +140,7 @@ export class ProductosPorCategoriaComponent implements AfterViewInit {
         const productos = response.content as Producto[];
         console.log("cargarProductosPorCategoria", productos);
         this.lstProductos.set(
+
           productos.map((prd) => {
             prd.estadoProducto.color =
               COLOR_ESTADO_PRODUCTO[
@@ -177,12 +167,12 @@ export class ProductosPorCategoriaComponent implements AfterViewInit {
                     : previous,
                 ).precioNeto
                 : 0;
-            if (prd.multimediasProducto.length > 0) {
+            if (prd.multimediasAsignada.length > 0) {
               const primerElemento =
-                prd.multimediasProducto.find((m) => m.esPrincipal) ||
-                prd.multimediasProducto[0];
-              prd.multimediasProducto = [primerElemento];
-              prd.multimediasProducto.map((mp) => {
+                prd.multimediasAsignada.find((m) => m.esPrincipal) ||
+                prd.multimediasAsignada[0];
+              prd.multimediasAsignada = [primerElemento];
+              prd.multimediasAsignada.map((mp) => {
                 mp.multimedia.urlMultimediaShow =
                   this.API_URL_VER_IMAGEN.concat(mp.multimedia.nombre);
                 return mp;

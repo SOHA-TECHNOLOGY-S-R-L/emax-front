@@ -88,7 +88,7 @@ export class ItemProductoProveedorTiendaComponent {
     const pr = producto;
 
     const items = this.items();
-    const mp = pr.multimediasProducto;
+    const mp = pr.multimediasAsignada;
     if (!mp) {
       this.item.imagenShow = 'no-imagen.png';
     } else {

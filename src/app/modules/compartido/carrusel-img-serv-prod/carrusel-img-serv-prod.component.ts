@@ -2,7 +2,7 @@ import { Component, computed, input, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { environment } from '../../../../environments/environment';
 import { COLOR_ESTADO_PRODUCTO } from '../../../constants/color-estado-producto';
-import { MultimediaProducto } from '../../../models/multimedia-producto';
+import { Producto } from '../../../models/producto';
 import { StringToTitleWithAccents } from '../../../pipes/StringToTitleWithAccents.pipe';
 import { PrimeNgModule } from '../prime-ng.module';
 
@@ -16,39 +16,40 @@ import { PrimeNgModule } from '../prime-ng.module';
 })
 
 export class CarruselImgServProdComponent implements OnInit {
-  //multimediaProductoService = inject(MultimediaProductoService);
-  inMultimediasProducto = input.required<MultimediaProducto[]>();//es6to genera una señal no mutble
+  inProductos = input.required<Producto[]>();//es6to genera una señal no mutble
   responsiveOptions: any[] | undefined;
   inCircular = input.required<boolean>();
   inShowNavigators = input.required<boolean>();
   inShowIndicators = input.required<boolean>();
   API_URL_VER_IMAGEN = environment.API_URL_VER_IMAGEN;
-  multimediasProducto = computed(() => {
-    const lista = this.inMultimediasProducto();
+
+  productos = computed(() => {
+    const lista = this.inProductos();
     if (!lista || lista.length === 0) {
       return [];
     }
 
     return lista
-      .filter(mp => mp.multimedia?.mimeType?.startsWith('image/'))
-      .map(mp => {
+      .filter(pr => pr.multimediasAsignada[0].multimedia?.mimeType?.startsWith('image/'))
+      .map(pr => {
         const producto = {
-          ...mp.producto,
-          precioMasBajoProductoShow: mp.producto.margenesProducto.length
-            ? Math.min(...mp.producto.margenesProducto.map(m => m.precioNeto))
+          ...pr,
+          precioMasBajoProductoShow: pr.margenesProducto.length
+            ? Math.min(...pr.margenesProducto.map(m => m.precioNeto))
             : 0,
           estadoProducto: {
-            ...mp.producto.estadoProducto,
+            ...pr.estadoProducto,
             color: COLOR_ESTADO_PRODUCTO[
-              ('' + mp.producto.estadoProducto.id) as keyof typeof COLOR_ESTADO_PRODUCTO
+              ('' + pr.estadoProducto.id) as keyof typeof COLOR_ESTADO_PRODUCTO
             ]
           }
         };
 
-        return { ...mp, producto };
+        return { ...producto };
       });
   });
-  hasMultimediaProducto = computed(() => this.multimediasProducto().length > 0);
+
+  hasMultimediaProducto = computed(() => this.productos().length > 0);
 
   constructor() { }
 

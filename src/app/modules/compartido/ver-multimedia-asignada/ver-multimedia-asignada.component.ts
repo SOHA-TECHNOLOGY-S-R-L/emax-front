@@ -1,39 +1,38 @@
 import { Component, computed, effect, input, OnInit, output, signal } from '@angular/core';
 import { environment } from '../../../../environments/environment';
-import { COLOR_ESTADO_PRODUCTO } from '../../../constants/color-estado-producto';
-import { MultimediaProducto } from '../../../models/multimedia-producto';
+import { MultimediaAsignada } from '../../../models/multimedia-asignada';
 import { PrimeNgModule } from '../prime-ng.module';
 
 
 @Component({
-  selector: 'ver-multimedia-producto',
-  templateUrl: './ver-multimedia-producto.component.html',
-  styleUrl: './ver-multimedia-producto.component.css',
+  selector: 'ver-multimedia-asignada',
+  templateUrl: './ver-multimedia-asignada.component.html',
+  styleUrl: './ver-multimedia-asignada.component.css',
   standalone: true,
   imports: [PrimeNgModule]
 })
 
-export class VerMultimediaProductoComponent implements OnInit {
-  inMultimediasProducto = input.required<MultimediaProducto[]>();//es6to genera una señal no mutble
-  multimediasProducto = signal<MultimediaProducto[]>([]);
+export class VerMultimediaAsignadaComponent implements OnInit {
+  inMultimediasAsignadas = input.required<MultimediaAsignada[]>();//es6to genera una señal no mutble
+  multimediasAsignada = signal<MultimediaAsignada[]>([]);
   syncFromInput = effect(() => {
-    const lista = this.inMultimediasProducto();
+    const lista = this.inMultimediasAsignadas();
     if (!lista || lista.length === 0) {
-      this.multimediasProducto.set([]);
+      this.multimediasAsignada.set([]);
       return;
     }
-    this.multimediasProducto.set(lista.map(mp => ({ ...mp })));
+    this.multimediasAsignada.set(lista.map(mp => ({ ...mp })));
   });
 
-  //hasMultimediaProducto = computed(() => this.multimediasProducto().length > 0);
+  //hasMultimediaAsignada = computed(() => this.multimediasAsignada().length > 0);
 
   /* a ?? b. Devuelve "a" si a NO es null ni undefined. Si "a" es null o undefined, devuelve "b" */
   multimediaPrincipal = computed(() => {
-    const lista = this.multimediasProducto();
+    const lista = this.multimediasAsignada();
     return lista.find(m => m.esPrincipal) ?? lista[0] ?? null;
   });
 
-  outMultimediasProducto = output<MultimediaProducto[]>();
+  outMultimediasAsignadas = output<MultimediaAsignada[]>();
 
   responsiveOptions: any[] | undefined;
   inCircular = input.required<boolean>();
@@ -53,18 +52,18 @@ export class VerMultimediaProductoComponent implements OnInit {
     ];
   }
 
-  setMultimediaPrincipal(multimediaProducto: MultimediaProducto) {
+  setMultimediaPrincipal(MultimediaAsignada: MultimediaAsignada) {
     const actual = this.multimediaPrincipal();
-    if (actual?.multimedia.id === multimediaProducto.multimedia.id) return;
+    if (actual?.multimedia.id === MultimediaAsignada.multimedia.id) return;
 
-    this.multimediasProducto.update(lista => {
+    this.multimediasAsignada.update(lista => {
       for (const item of lista) {
-        item.esPrincipal = (item === multimediaProducto);
+        item.esPrincipal = (item === MultimediaAsignada);
       }
       return [...lista];
     }
     );
-    this.outMultimediasProducto.emit(this.multimediasProducto());
+    this.outMultimediasAsignadas.emit(this.multimediasAsignada());
   }
 
   onMouseMove(event: MouseEvent, img: HTMLImageElement) {

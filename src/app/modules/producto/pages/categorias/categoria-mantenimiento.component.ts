@@ -1,26 +1,30 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { rxResource, toSignal } from '@angular/core/rxjs-interop';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { map } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
 import { Categoria } from '../../../../models/categoria';
 import { Multimedia } from '../../../../models/multimedia';
+import { MultimediaAsignada } from '../../../../models/multimedia-asignada';
 import { AlertService } from '../../../../services/alert.service';
 import { AuthService } from '../../../../services/auth.service';
 import { CategoriaService } from '../../../../services/categoria.service';
 import { MultimediaHttpService } from '../../../../services/multimedia-http.service';
 import { FormUtils } from '../../../../utils/form-utils';
 import { ListMultimediaComponent } from '../../../multimedia/pages/list-multimedia/list-multimedia.component';
+import { VerMultimediaAsignadaComponent } from '../../../compartido/ver-multimedia-asignada/ver-multimedia-asignada.component';
+import { AngularMaterialModule } from '../../../compartido/angular-material.module';
 
 @Component({
   selector: 'app-categoria-mantenimiento',
   standalone: true,
   templateUrl: './categoria-mantenimiento.component.html',
   styleUrl: './categoria-mantenimiento.component.css',
-  imports: [CommonModule, RouterModule, ReactiveFormsModule]
+  imports: [CommonModule, RouterModule, FormsModule, ReactiveFormsModule, AngularMaterialModule, VerMultimediaAsignadaComponent]
+
 })
 export class CategoriaMantenimientoComponent {
   private activatedRoute = inject(ActivatedRoute);
@@ -54,44 +58,47 @@ export class CategoriaMantenimientoComponent {
     const categorias = this.categorias();
     if (categoriaId && categorias.length > 0) {
       const categoria = categorias.find(cat => cat.id === categoriaId)!;
-      if (categoria.multimedia) {
-        categoria.multimedia.urlMultimediaShow = this.API_URL_VER_IMAGEN.concat(categoria.multimedia.nombre)
+
+      if (categoria.multimediasAsignada.length > 0 ) {
+        const primerElemento = categoria.multimediasAsignada.find((m) => m.esPrincipal) || categoria.multimediasAsignada[0];
+        categoria.multimediasAsignada = [primerElemento];
+        categoria.multimediasAsignada.map((mp) => {
+          mp.multimedia.urlMultimediaShow = this.API_URL_VER_IMAGEN.concat(mp.multimedia.nombre);
+          return mp;
+        });
         this.categoria.set(categoria);
       }
       this.categoria.set(categoria);
+
+      this.formCategoria.patchValue({
+        nombre: categoria.nombre,
+        descripcion: categoria.descripcion,
+        activa: categoria.activa,
+        visibleEnTienda: categoria.visibleEnTienda,
+        orden: categoria.orden
+      });
     }
   });
 
-  private formEffect = effect(() => {
-    const categoria = this.categoria();
-    if (!categoria) return;
-    this.createForm();
-  });
+  /*   private formEffect = effect(() => {
+      const categoria = this.categoria();
+      if (!categoria) return;
+      this.createForm();
+    }); */
 
 
 
-  constructor() { }
+  constructor() { this.createForm(); }
 
-
-  /*  cargarCategoria(categoria: Categoria) {
-     const cat = this.categoria();
-     if (categoria.multimedia) {
-       cat.urlMultimediaImageCategoriaShow = this.API_URL_VER_IMAGEN.concat(categoria.multimedia.nombre)
-     }
-     return cat;
-   }
-  */
   createForm(): void {
-    const cat = this.categoria();
     this.formCategoria = this.formBuilder.group({
-      nombre: [cat.nombre, Validators.required],
-      descripcion: [cat.descripcion, Validators.required],
-      activa: [cat.activa],
-      visibleEnTienda: [cat.visibleEnTienda],
-      orden: [cat.orden, Validators.required]
+      nombre: ['', Validators.required],
+      descripcion: ['', Validators.required],
+      activa: [true],
+      visibleEnTienda: [true],
+      orden: [0, Validators.required]
     });
   }
-
 
   recuperarValForm() {
     const cat = { ...this.categoria() };
@@ -105,15 +112,31 @@ export class CategoriaMantenimientoComponent {
 
   guardarCategoria() {
     this.recuperarValForm();
-    if (this.categoria().id) {
-      this.categoriaService.updateCategoria(this.categoria()).subscribe(
+    const categoria = this.categoria();
+    const newCat: any = {
+      ...categoria,
+      multimediasAsignada:
+        categoria.multimediasAsignada?.map((mp) => ({
+          /*id: {
+            productoId: pr.id,
+            multimediaId: mp.multimediaId,
+          },*/
+          categoriaId: categoria.id,
+          multimedia: mp.multimedia,
+          visibleEnTienda: mp.visibleEnTienda,
+          esPrincipal: mp.esPrincipal,
+        })) ?? [],
+    }
+
+    if (newCat.id) {
+      this.categoriaService.updateCategoria(newCat).subscribe(
         cat => {
           this.alertService.success(`${cat.nombre} actualizada exitosamente`, 'Categoria');
           this.router.navigate(['/productos/categorias']);
         }
       )
     } else {
-      this.categoriaService.createCategoria(this.categoria()).subscribe(resp => {
+      this.categoriaService.createCategoria(newCat).subscribe(resp => {
         this.alertService.success('Categoria ha sido creado exitosamente', 'Categoria');
         this.router.navigate(['/productos/categorias']);
       })
@@ -129,10 +152,27 @@ export class CategoriaMantenimientoComponent {
       disableClose: false
     });
 
-    dialogRef.afterClosed().subscribe(multimedia => {
-      //const m = multimedia as Multimedia;
-      if (!multimedia || !multimedia[0].mimeType.startsWith('image')) { return; }
-      this.multimediaToCategoria(multimedia[0]);
+    dialogRef.afterClosed().subscribe(result => {
+
+      if (!result || result.length === 0) {
+        return;
+      }
+
+      const lstMultimediaAsignada: MultimediaAsignada[] = [];
+
+      result.forEach((multimedia: Multimedia, indice: number) => {
+
+        const multimediaAsignada: MultimediaAsignada = {
+          multimedia,
+          esPrincipal: indice === 0,
+          visibleEnTienda: true
+        } as MultimediaAsignada;
+
+        lstMultimediaAsignada.push(multimediaAsignada);
+      });
+
+      this.loadedMultimedia(lstMultimediaAsignada);
+
     });
   }
 
@@ -147,6 +187,14 @@ export class CategoriaMantenimientoComponent {
       }
     };
     this.categoria.set(cat);
+  }
+
+  loadedMultimedia(multimediaAsignada: MultimediaAsignada[]) {
+    this.categoria.update(cat => ({
+      ...cat,
+      multimediasAsignada: [...multimediaAsignada]
+    }));
+    console.log("this.producto()", this.categoria())
   }
 
   /*   subirImagen(fileInput: HTMLInputElement) {

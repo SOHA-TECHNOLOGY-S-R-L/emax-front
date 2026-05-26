@@ -37,18 +37,18 @@ export class CategoriaListadoComponent {
     const categorias = this.categoriasResource.value();
     if (!categorias) { return };
     this.categorias = categorias.map(cat => {
-      //cat.urlMultimediaImageCategoriaShow = 'no-imagen.png';
-      if (cat.multimedia) {
-        cat.multimedia.urlMultimediaShow = this.API_URL_VER_IMAGEN.concat(cat.multimedia.nombre)
+      cat.colorActiva = COLOR_ACTIVO_CATEGORIA[('' + cat.activa) as keyof typeof COLOR_ACTIVO_CATEGORIA];
+      cat.colorVisibleEnTienda = COLOR_ACTIVO_CATEGORIA[('' + cat.visibleEnTienda) as keyof typeof COLOR_ACTIVO_CATEGORIA];
+      cat.cantidadProductos = cat.productos.length;
+      if (cat.multimediasAsignada.length > 0) {
+        const primerElemento = cat.multimediasAsignada.find((m) => m.esPrincipal) || cat.multimediasAsignada[0];
+        cat.multimediasAsignada = [primerElemento];
+        cat.multimediasAsignada.map((mp) => {
+          mp.multimedia.urlMultimediaShow = this.API_URL_VER_IMAGEN.concat(mp.multimedia.nombre);
+          return mp;
+        });
       }
-      const categoria = {
-        ...cat,
-        colorActiva: COLOR_ACTIVO_CATEGORIA[('' + cat.activa) as keyof typeof COLOR_ACTIVO_CATEGORIA],
-        colorVisibleEnTienda: COLOR_ACTIVO_CATEGORIA[('' + cat.visibleEnTienda) as keyof typeof COLOR_ACTIVO_CATEGORIA],
-        cantidadProductos: cat.productos.length
-      };
-
-      return categoria;
+      return cat;
     })
   });
 

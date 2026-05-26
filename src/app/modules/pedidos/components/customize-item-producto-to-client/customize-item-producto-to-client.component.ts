@@ -1,5 +1,4 @@
-import { ProductoService } from './../../../../services/producto.service';
-import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { BreakpointObserver } from '@angular/cdk/layout';
 import { CommonModule, UpperCasePipe } from '@angular/common';
 import {
   Component,
@@ -9,8 +8,7 @@ import {
   inject,
   input,
   Output,
-  signal,
-  Signal,
+  Signal
 } from '@angular/core';
 import { rxResource, toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -23,13 +21,12 @@ import { Producto } from '../../../../models/producto';
 import { AuthService } from '../../../../services/auth.service';
 import { ItemService } from '../../../../services/item.service';
 import { MultimediaHttpService } from '../../../../services/multimedia-http.service';
+import { SnackbarService } from '../../../../services/snackbar.service';
 import { ChatUtils } from '../../../../utils/chat-utils';
 import { FormUtils } from '../../../../utils/form-utils';
 import { AngularMaterialModule } from '../../../compartido/angular-material.module';
-import { VerMultimediaProductoComponent } from '../../../compartido/ver-multimedia-producto/ver-multimedia-producto.component';
-import { MultimediaProductoService } from './../../../../services/multimedia-producto.service';
-import { sign } from 'node:crypto';
-import { SnackbarService } from '../../../../services/snackbar.service';
+import { VerMultimediaAsignadaComponent } from '../../../compartido/ver-multimedia-asignada/ver-multimedia-asignada.component';
+import { ProductoService } from './../../../../services/producto.service';
 
 @Component({
   selector: 'customize-item-producto-to-client',
@@ -43,12 +40,11 @@ import { SnackbarService } from '../../../../services/snackbar.service';
     ReactiveFormsModule,
     AngularMaterialModule,
     UpperCasePipe,
-    VerMultimediaProductoComponent,
+    VerMultimediaAsignadaComponent
   ],
 })
 export class CustomizeItemProductoToClientComponent {
   public multimediaHttpService = inject(MultimediaHttpService);
-  private multimediaProductoService = inject(MultimediaProductoService);
   private formBuilder = inject(FormBuilder);
   private productoService = inject(ProductoService);
   private itemService = inject(ItemService);
@@ -114,16 +110,16 @@ export class CustomizeItemProductoToClientComponent {
   );
   API_URL_VER_IMAGEN = environment.API_URL_VER_IMAGEN;
 
-  readonly multimediasFromProducto = rxResource({
+/*   readonly multimediasFromProducto = rxResource({
     params: () => {
       const p = this.producto();
       return { productoId: p.id };
     },
     stream: ({ params }) =>
-      this.multimediaProductoService.multimediasProductoByProductoId(
+      this.multimediaAsignadaService.multimediasAsignadaByProductoId(
         params.productoId,
       ),
-  });
+  }); */
 
   setCantidad = effect(() => {
     const producto = this.producto();
@@ -197,7 +193,7 @@ export class CustomizeItemProductoToClientComponent {
     }
 
     const items = this.items();
-    const mp = this.multimediasFromProducto.value();
+    const mp = this.producto().multimediasAsignada;
     if (!mp) {
       this.item.imagenShow = 'no-imagen.png';
     } else {

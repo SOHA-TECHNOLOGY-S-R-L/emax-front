@@ -23,16 +23,25 @@ export class CategoriasProductoPersonaComponent implements OnInit {
   ngOnInit(): void {
     this.categoriaService.getCategoriasActivasYVisibleTienda()
       .subscribe(categorias => {
-        this.lstCategoria = categorias.map(cat => {
-          const categoria = { ...cat };
-          if (categoria.multimedia) {
-            categoria.multimedia = {
-              ...categoria.multimedia,
-              urlMultimediaShow: this.API_URL_VER_IMAGEN.concat(categoria.multimedia.nombre)
-            };
-          }
-          return categoria;
-        }).sort((a, b) => a.orden - b.orden);
+        console.log("Categoria", categorias)
+        //this.lstCategoria = categorias.sort((a, b) => a.orden - b.orden);
+        this.lstCategoria =
+          categorias
+            //.filter(cat => cat.multimediasAsignada[0]?.multimedia?.mimeType?.startsWith('image/'))
+            .map(cat => {
+              if (cat.multimediasAsignada.length > 0 && cat.multimediasAsignada[0].multimedia?.mimeType?.startsWith('image/')) {
+                const primerElemento =
+                  cat.multimediasAsignada.find((m) => m.esPrincipal) || cat.multimediasAsignada[0];
+                cat.multimediasAsignada = [primerElemento];
+                cat.multimediasAsignada.map((mp) => {
+                  mp.multimedia.urlMultimediaShow =
+                    this.API_URL_VER_IMAGEN.concat(mp.multimedia.nombre);
+                  return mp;
+                });
+              }
+              return cat;
+            })
+        console.log("this.lstCategoria", this.lstCategoria)
       })
   }
 }

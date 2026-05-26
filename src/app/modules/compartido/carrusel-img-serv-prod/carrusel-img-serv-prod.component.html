@@ -1,25 +1,25 @@
 @if(hasMultimediaProducto()){
-<p-carousel autoplayInterval="8000" [value]="multimediasProducto()" [numVisible]="4" [numScroll]="1"
+<p-carousel autoplayInterval="8000" [value]="productos()" [numVisible]="4" [numScroll]="1"
   [circular]="inCircular()" [showNavigators]="inShowNavigators()" [showIndicators]="inShowIndicators()"
   orientation="horizontal" [responsiveOptions]="responsiveOptions">
-  <ng-template let-mulProd #item>
-    @if (mulProd){
+  <ng-template let-producto #item>
+    @if (producto){
     <div class="rounded item-carousel m-1 p-2">
       <div class="relative mx-auto mb-4">
-        <a class="{{mulProd.producto.estadoProducto.color}}"
-          [routerLink]="['/tienda/productos-categoria',mulProd.producto.categoria.nombre, 'item-producto-persona-online', mulProd.producto.codigo]">
-          <img [src]="API_URL_VER_IMAGEN+mulProd.multimedia.nombre" [alt]="mulProd.multimedia.descripcion"
+        <a class="{{producto.estadoProducto.color}}"
+          [routerLink]="['/tienda/productos-categoria',producto.categoria.nombre, 'item-producto-persona-online', producto.codigo]">
+          <img [src]="API_URL_VER_IMAGEN+producto.multimediasAsignada[0].multimedia.nombre" [alt]="producto.multimediasAsignada[0].multimedia.descripcion"
             class="imagen" />
         </a>
       </div>
-      <div class="mb-4 font-medium text-center">{{ mulProd.producto.nombre | stringToTitleWithAccents }}</div>
+      <div class="mb-4 font-medium text-center">{{ producto.nombre | stringToTitleWithAccents }}</div>
       <div class="flex justify-content-between items-center">
         <div class="font-semibold text-xl">
-          {{ mulProd.producto.precioMasBajoProductoShow | currency: 'PEN' }}
+          {{ producto.precioMasBajoProductoShow | currency: 'PEN' }}
         </div>
         <div>
           <a class="btn btn-secondary icon-square mb-2"
-            [routerLink]="['/tienda/productos-categoria',mulProd.producto.categoria.nombre, 'item-producto-persona-online', mulProd.producto.codigo]">
+            [routerLink]="['/tienda/productos-categoria',producto.categoria.nombre, 'item-producto-persona-online', producto.codigo]">
             <i class="fa fa-eye"></i>
           </a>
         </div>

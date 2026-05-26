@@ -14,6 +14,7 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { find } from 'lodash-es';
 import { map } from 'rxjs';
 import { MargenProducto } from '../../../models/margen-producto';
+import { MultimediaAsignada } from '../../../models/multimedia-asignada';
 import { Producto } from '../../../models/producto';
 import { AlertService } from '../../../services/alert.service';
 import { AuthService } from '../../../services/auth.service';
@@ -21,11 +22,10 @@ import { CategoriaService } from '../../../services/categoria.service';
 import { ProductoService } from '../../../services/producto.service';
 import { FormUtils } from '../../../utils/form-utils';
 import { AngularMaterialModule } from '../../compartido/angular-material.module';
-import { VerMultimediaProductoComponent } from '../../compartido/ver-multimedia-producto/ver-multimedia-producto.component';
+import { VerMultimediaAsignadaComponent } from '../../compartido/ver-multimedia-asignada/ver-multimedia-asignada.component';
 import { ListMultimediaComponent } from '../../multimedia/pages/list-multimedia/list-multimedia.component';
-import { MultimediaProducto } from './../../../models/multimedia-producto';
 import { MultimediaHttpService } from './../../../services/multimedia-http.service';
-import { MultimediaProductoService } from './../../../services/multimedia-producto.service';
+import { MultimediaAsignadaService } from '../../../services/multimedia-asignada.service';
 
 @Component({
   selector: 'app-mantenimiento-producto',
@@ -38,13 +38,13 @@ import { MultimediaProductoService } from './../../../services/multimedia-produc
     FormsModule,
     ReactiveFormsModule,
     AngularMaterialModule,
-    VerMultimediaProductoComponent,
+    VerMultimediaAsignadaComponent
   ],
 })
 export class MantenimientoProductoComponent {
   public multimediaHttpService = inject(MultimediaHttpService);
   private productoService = inject(ProductoService);
-  private multimediaProductoService = inject(MultimediaProductoService);
+  //private multimediaAsignadaService = inject(MultimediaAsignadaService);
   private categoriaService = inject(CategoriaService);
   private activatedRoute = inject(ActivatedRoute);
 
@@ -75,7 +75,7 @@ export class MantenimientoProductoComponent {
   categorias = computed(() => this.categoriasResource.value() ?? []);
   usos = computed(() => this.usosResource.value() ?? []);
 
-  //multimediasProducto = signal<MultimediaProducto[]>([]);
+  //multimediasAsignada = signal<MultimediaAsignada[]>([]);
   producto = signal<Producto>(new Producto());
   productoId = toSignal<number>(
     this.activatedRoute.paramMap.pipe(map((r) => Number(r.get('productoId')!))),
@@ -103,20 +103,21 @@ export class MantenimientoProductoComponent {
       this.cargarProducto(id);
     } else {
       this.producto.set(new Producto());
+      //this.formProducto.reset();
     }
   });
 
-  /*   private multimediasProductoEffect = effect(() => {
+  /*   private multimediasAsignadaEffect = effect(() => {
       const pr = this.producto();
       if (!pr) { return }
-      this.cargarMultimediaProducto(pr.id, pr.multimediasProducto);
+      this.cargarMultimediaAsignada(pr.id, pr.multimediasAsignada);
     }); */
 
-  private formEffect = effect(() => {
-    const producto = this.producto();
-    if (!producto) return;
-    this.createForm();
-  });
+  /*   private formEffect = effect(() => {
+      const producto = this.producto();
+      if (!producto) return;
+      this.createForm();
+    }); */
 
   //producto: Producto = new Producto();
   formProducto!: FormGroup;
@@ -136,29 +137,61 @@ export class MantenimientoProductoComponent {
     private alertService: AlertService,
     public authService: AuthService,
     private formBuilder: FormBuilder,
-  ) { }
+  ) { this.createForm(); }
 
   cargarProducto(id: number) {
     this.productoService.getProducto(id).subscribe((resp) => {
-      console.log('Producto a cargar', resp);
-      //resp.padre = resp.padre ? { ...resp.padre, hijos: [] } : undefined;
       resp.padreId ? this.variante.set('Si') : this.variante.set('No');
       this.producto.set(resp);
+
+      this.formProducto.patchValue({
+        padreId: resp.padreId,
+        nombre: resp.nombre,
+        codigo: resp.codigo,
+        descripcion: resp.descripcion,
+        medidas: resp.medidas,
+        peso: resp.peso,
+        umbralPocaCantidad: resp.umbralPocaCantidad,
+        umbralCantidadAgotada: resp.umbralCantidadAgotada,
+        cantidadStock: resp.cantidadStock,
+        cantidadVendidos: resp.cantidadVendidos,
+        minCantidadPedido: resp.minCantidadPedido,
+        maxCantidadPedido: resp.maxCantidadPedido,
+        gruposDe: resp.gruposDe,
+        costoUnitario: resp.costoUnitario,
+        impuestoIgv: resp.impuestoIgv,
+        activo: resp.activo,
+        visibleEnTienda: resp.visibleEnTienda,
+        categoriaId: resp.categoria?.id,
+        materialId: resp.materialId,
+        colorId: resp.colorId,
+        usoId: resp.usoId,
+      });
+
+      this.margenesGanancia.clear();
+      resp.margenesProducto.forEach((m) => {
+        this.agregrarMargenProducto(
+          this.existMargenProducto(m)
+        );
+      });
+
+
     });
   }
 
-  cargarMultimediaProducto(id: number) {
-    this.multimediaProductoService
-      .multimediasProductoByProductoId(id)
-      .subscribe((resp) => {
-        this.multimediaProductoToProducto(resp);
-        //this.multimediasProducto.set(resp);
-      });
-  }
+  /*   cargarMultimediaAsignada(id: number) {
+      this.multimediaAsignadaService
+        .multimediasAsignadaByProductoId(id)
+        .subscribe((resp) => {
+          this.multimediaAsignadaToProducto(resp);
+        });
+    } */
 
-  multimediaProductoToProducto(multimediaProducto: MultimediaProducto[]) {
-    //this.multimediasProducto.update(() => multimediaProducto);
-    this.producto().multimediasProducto = [...multimediaProducto];
+  loadedMultimedia(multimediaAsignada: MultimediaAsignada[]) {
+    this.producto.update(pr => ({
+      ...pr,
+      multimediasAsignada: [...multimediaAsignada]
+    }))
     console.log("this.producto()", this.producto())
   }
 
@@ -332,7 +365,7 @@ export class MantenimientoProductoComponent {
       minCantidad: [1, Validators.min(1)],
       maxCantidad: [],
       margen: [1, [Validators.required, Validators.min(1)]],
-      precioNetoSugerido: [{value: 1, disabled: true} , [Validators.required, Validators.min(0)]],
+      precioNetoSugerido: [{ value: 1, disabled: true }, [Validators.required, Validators.min(0)]],
       precioNeto: [1, [Validators.required, Validators.min(0)]],
     });
     this.agregrarMargenProducto(formGroup);
@@ -434,14 +467,11 @@ export class MantenimientoProductoComponent {
   }
 
   guardarProducto() {
-    //console.log("this.formProducto", this.formProducto.value);
     this.recuperarValForm();
     const pr = this.producto();
 
     if (pr.margenesProducto.length == 0) {
-      this.alertService.warning(
-        `Debe agregar margenes al producto`,
-        'Margenes de ganancia',
+      this.alertService.warning(`Debe agregar margenes al producto`, 'Margenes de ganancia',
       );
       return;
     }
@@ -455,10 +485,7 @@ export class MantenimientoProductoComponent {
       (margen) => margen.precioNeto < costoMasImpuesto,
     );
     if (tienePrecioInsuficiente) {
-      this.alertService.error(
-        `Precio Neto no cubre costo con impuesto. Corregir!`,
-        'Margenes de ganancia',
-      );
+      this.alertService.error(`Precio Neto no cubre costo con impuesto. Corregir!`, 'Margenes de ganancia');
       return;
     }
 
@@ -471,12 +498,14 @@ export class MantenimientoProductoComponent {
       categoriaId: pr.categoria?.id,
       estadoProductoId: pr.estadoProducto?.id,
       //categoriaId: pr.categoria ? { ...pr.categoria, productos: [] } : null,
-      multimediasProducto:
-        pr.multimediasProducto?.map((mp) => ({
-          id: {
+      multimediasAsignada:
+        pr.multimediasAsignada?.map((mp) => ({
+          /*id: {
             productoId: pr.id,
-            multimediaId: mp.multimedia.id,
-          },
+            multimediaId: mp.multimediaId,
+          },*/
+          productoId: pr.id,
+          multimedia: mp.multimedia,
           visibleEnTienda: mp.visibleEnTienda,
           esPrincipal: mp.esPrincipal,
         })) ?? [],
@@ -492,18 +521,12 @@ export class MantenimientoProductoComponent {
     //console.log(JSON.stringify(newPr));
     if (newPr.id) {
       this.productoService.updateProducto(newPr).subscribe((json) => {
-        this.alertService.success(
-          `${json?.mensaje}: ${json.producto.nombre}`,
-          'Producto',
-        );
+        this.alertService.success(`${json?.mensaje}: ${json.producto.nombre}`, 'Producto',);
         this.router.navigate(['/productos']);
       });
     } else {
       this.productoService.createProducto(newPr).subscribe((resp) => {
-        this.alertService.success(
-          'Producto ha sido creado exitosamente',
-          'Producto',
-        );
+        this.alertService.success('Producto ha sido creado exitosamente', 'Producto',);
         this.router.navigate(['/productos']);
       });
     }
@@ -519,26 +542,24 @@ export class MantenimientoProductoComponent {
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      console.log(result);
       let indice = 0;
-      let multimediaProducto: MultimediaProducto = new MultimediaProducto();
-      let lstMultimediaProducto: MultimediaProducto[] = [];
+      let multimediaAsignada: MultimediaAsignada = new MultimediaAsignada();
+      let lstMultimediaAsignada: MultimediaAsignada[] = [];
       for (const multimedia of result) {
-        multimediaProducto.multimedia = multimedia;
-        multimediaProducto.esPrincipal = false;
-        multimediaProducto.visibleEnTienda = true;
+        multimediaAsignada.multimedia = multimedia;
+        multimediaAsignada.esPrincipal = false;
+        multimediaAsignada.visibleEnTienda = true;
 
         if (indice === 0) {
-          multimediaProducto.esPrincipal = true;
+          multimediaAsignada.esPrincipal = true;
         }
-        lstMultimediaProducto = [
-          ...lstMultimediaProducto,
-          { ...multimediaProducto },
+        lstMultimediaAsignada = [
+          ...lstMultimediaAsignada,
+          { ...multimediaAsignada },
         ];
         indice++;
       }
-      console.log(result);
-      this.multimediaProductoToProducto(lstMultimediaProducto);
+      this.loadedMultimedia(lstMultimediaAsignada);
     });
   }
 

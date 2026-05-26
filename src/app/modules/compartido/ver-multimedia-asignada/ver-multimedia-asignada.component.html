@@ -21,8 +21,8 @@
 </div>
 }
 <!------------carrusel horizontal-------------->
-@if(multimediasProducto().length > 1) {
-<p-carousel autoplayInterval="8000" [value]="multimediasProducto()" [numVisible]="4" [numScroll]="1"
+@if(multimediasAsignada().length > 1) {
+<p-carousel autoplayInterval="8000" [value]="multimediasAsignada()" [numVisible]="4" [numScroll]="1"
   [circular]="inCircular()" [showNavigators]="inShowNavigators()" [showIndicators]="inShowIndicators()"
   orientation="horizontal" [responsiveOptions]="responsiveOptions">
   <ng-template let-mulProd #item>

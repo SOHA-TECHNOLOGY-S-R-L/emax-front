@@ -7,7 +7,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { ActivatedRoute, RouterModule } from '@angular/router';
-import { find } from 'lodash-es';
 import { ELEMENTOS_POR_PAGINA, PRIMERA_PAGINA, SIGUIENTE_PAGINA, ULTIMA_PAGINA } from '../../../constants/constantes';
 import { PageableResponse } from '../../../models/pageable-response';
 import { Producto } from '../../../models/producto';
@@ -17,8 +16,8 @@ import { ModalService } from '../../../services/modal.service';
 import { ProductoService } from '../../../services/producto.service';
 import { AngularMaterialModule } from '../../compartido/angular-material.module';
 
-import { COLOR_ACTIVO_PRODUCTO, ESTADO_ACTIVO_PRODUCTO } from '../../../constants/color-estado-producto';
 import { environment } from '../../../../environments/environment';
+import { COLOR_ACTIVO_PRODUCTO, ESTADO_ACTIVO_PRODUCTO } from '../../../constants/color-estado-producto';
 import { StringToTitleWithAccents } from '../../../pipes/StringToTitleWithAccents.pipe';
 
 @Component({
@@ -84,18 +83,18 @@ export class ProductosComponent implements OnInit, AfterViewInit {
 
     this.productoService.getAllProductosPageable(params).subscribe(response => {
       this.productos = (response.content as Producto[]).map(prod => {
-        //prod.multimediaPrincipal = this.API_URL_VER_IMAGEN.concat( prod.multimediasProducto!.filter(mp => mp.esPrincipal===true)[0].multimedia.nombre) ?? 'no-imagen.png'
+        //prod.multimediaPrincipal = this.API_URL_VER_IMAGEN.concat( prod.multimediasAsignada!.filter(mp => mp.esPrincipal===true)[0].multimedia.nombre) ?? 'no-imagen.png'
         prod.colorVariante = COLOR_ACTIVO_PRODUCTO[('' + (prod.padreId ? true : false)) as keyof typeof COLOR_ACTIVO_PRODUCTO];
         prod.colorActivo = COLOR_ACTIVO_PRODUCTO[('' + prod.activo) as keyof typeof COLOR_ACTIVO_PRODUCTO];
         prod.colorVisibleEnTienda = COLOR_ACTIVO_PRODUCTO[('' + prod.visibleEnTienda) as keyof typeof COLOR_ACTIVO_PRODUCTO];
         //cat.cantidadProductos = cat.productos.length;
 
-        if (prod.multimediasProducto.length > 0) {
+        if (prod.multimediasAsignada.length > 0) {
           const primerElemento =
-            prod.multimediasProducto.find((m) => m.esPrincipal) ||
-            prod.multimediasProducto[0];
-          prod.multimediasProducto = [primerElemento];
-          prod.multimediasProducto.map((mp) => {
+            prod.multimediasAsignada.find((m) => m.esPrincipal) ||
+            prod.multimediasAsignada[0];
+          prod.multimediasAsignada = [primerElemento];
+          prod.multimediasAsignada.map((mp) => {
             mp.multimedia.urlMultimediaShow =
               this.API_URL_VER_IMAGEN.concat(mp.multimedia.nombre);
             return mp;

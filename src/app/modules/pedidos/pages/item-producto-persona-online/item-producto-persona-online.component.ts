@@ -60,8 +60,8 @@ export class ItemProductoPersonaOnlineComponent {
   readonly multimediaPrincipal = computed(() => {
     const prd = this.producto.value();
     if (!prd) return;
-    if (prd.multimediasProducto.length > 0) {
-      const primerElemento = prd.multimediasProducto.find(m => m.esPrincipal) || prd.multimediasProducto[0];
+    if (prd.multimediasAsignada.length > 0) {
+      const primerElemento = prd.multimediasAsignada.find(m => m.esPrincipal) || prd.multimediasAsignada[0];
       return this.API_URL_VER_IMAGEN.concat(primerElemento.multimedia.nombre)
     }
     return 'no-imagen.png';

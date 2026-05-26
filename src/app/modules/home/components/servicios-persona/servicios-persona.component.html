@@ -13,10 +13,10 @@
         [responsiveOptions]="responsiveOptions" autoplayInterval="3000">
         <ng-template let-servicio #item>
           <div class="border border-surface-200 dark:border-surface-700 rounded m-2 p-4">
-            <div class="mb-4 font-medium text-center">{{ servicio.producto.nombre | stringToTitleWithAccents }}</div>
+            <div class="mb-4 font-medium text-center">{{ servicio.nombre | stringToTitleWithAccents }}</div>
             <div class="mb-4">
               <div class="relative mx-auto">
-                <img [src]="API_URL_VER_IMAGEN+servicio.multimedia.nombre" [alt]="servicio.multimedia.nombre" class="w-full rounded-border"
+                <img [src]="API_URL_VER_IMAGEN+servicio.multimediasAsignada[0].multimedia.nombre" [alt]="servicio.multimediasAsignada[0].multimedia.nombre" class="w-full rounded-border"
                   width="150px" />
               </div>
             </div>

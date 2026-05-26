@@ -1,9 +1,9 @@
 import { Component, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { environment } from '../../../../../environments/environment';
-import { MultimediaProducto } from '../../../../models/multimedia-producto';
+import { Producto } from '../../../../models/producto';
 import { StringToTitleWithAccents } from '../../../../pipes/StringToTitleWithAccents.pipe';
-import { MultimediaProductoService } from '../../../../services/multimedia-producto.service';
+import { ProductoService } from '../../../../services/producto.service';
 import { PrimeNgModule } from '../../../compartido/prime-ng.module';
 
 @Component({
@@ -14,14 +14,14 @@ import { PrimeNgModule } from '../../../compartido/prime-ng.module';
   imports: [RouterModule, PrimeNgModule, StringToTitleWithAccents]
 })
 export class ServiciosPersonaComponent {
-  private multimediaProductoService = inject(MultimediaProductoService)
-  servicios: MultimediaProducto[] = [];
+  private productoService = inject(ProductoService)
+  servicios: Producto[] = [];
   responsiveOptions: any[] | undefined;
   API_URL_VER_IMAGEN = environment.API_URL_VER_IMAGEN;
 
 
   ngOnInit() {
-    this.multimediaProductoService.multimediasServiciosEsPrincipal().subscribe({
+    this.productoService.servicioWithMultimediaEsPrincipal ().subscribe({
       next: (resp) => {
         this.servicios = resp;
         console.log("servicios", this.servicios)

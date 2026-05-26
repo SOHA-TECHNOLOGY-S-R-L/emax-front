@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
+import { Producto } from '../../../../models/producto';
+import { ProductoService } from '../../../../services/producto.service';
 import { CarruselImgServProdComponent } from "../../../compartido/carrusel-img-serv-prod/carrusel-img-serv-prod.component";
-import { MultimediaProducto } from './../../../../models/multimedia-producto';
-import { MultimediaProductoService } from './../../../../services/multimedia-producto.service';
 
 @Component({
   selector: 'producto-persona',
@@ -13,14 +13,14 @@ import { MultimediaProductoService } from './../../../../services/multimedia-pro
 })
 export class ProductoPersonaComponent {
 
-  private multimediaProductoService = inject(MultimediaProductoService)
-  multimediasProducto: MultimediaProducto[] = [];
+  private productoService = inject(ProductoService)
+  productos: Producto[] = [];
 
   ngOnInit() {
-    this.multimediaProductoService.multimediasProductoByEsPrincipal(true)
+    this.productoService.productoWithMultimediaEsPrincipal()
       .subscribe({
         next: (resp) => {
-          this.multimediasProducto = resp;
+          this.productos = resp;
         }
       });
   }

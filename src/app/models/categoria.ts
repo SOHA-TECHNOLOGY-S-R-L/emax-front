@@ -1,4 +1,5 @@
 import { Multimedia } from "./multimedia";
+import { MultimediaAsignada } from "./multimedia-asignada";
 import { Producto } from "./producto";
 
 export class Categoria {
@@ -11,6 +12,7 @@ export class Categoria {
   colorVisibleEnTienda!: string;
   orden!: number;
   productos: Producto[] = [];
+  multimediasAsignada: MultimediaAsignada[] = [];
   cantidadProductos!: number;
-  multimedia!: Multimedia;
+  //multimedia!: Multimedia;
 }

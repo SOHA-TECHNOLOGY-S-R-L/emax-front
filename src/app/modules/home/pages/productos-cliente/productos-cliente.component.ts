@@ -1,8 +1,8 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { environment } from '../../../../../environments/environment';
-import { MultimediaProducto } from '../../../../models/multimedia-producto';
-import { MultimediaProductoService } from '../../../../services/multimedia-producto.service';
+import { Producto } from '../../../../models/producto';
+import { ProductoService } from '../../../../services/producto.service';
 import { SeoService } from '../../../../services/seo.service';
 import { CarruselImgServProdComponent } from '../../../compartido/carrusel-img-serv-prod/carrusel-img-serv-prod.component';
 import { CategoriasProductoPersonaComponent } from '../../components/categorias-producto-persona/categorias-producto-persona.component';
@@ -17,14 +17,14 @@ import { ServiciosPersonaComponent } from '../../components/servicios-persona/se
 })
 export class ProductosClienteComponent implements OnInit {
   private seoService = inject(SeoService);
-  private multimediaProductoService = inject(MultimediaProductoService)
-  multimediasProducto: MultimediaProducto[] = [];
+  private productoService = inject(ProductoService)
+  productos: Producto[] = [];
 
   ngOnInit(): void {
-    this.multimediaProductoService.multimediasProductoByEsPrincipal(true)
+    this.productoService.productoWithMultimediaEsPrincipal()
       .subscribe({
         next: (resp) => {
-          this.multimediasProducto = resp;
+          this.productos = resp;
         }
       });
     this.seoService.title.setTitle("Productos para hacer publicidad, merchandising y branding")

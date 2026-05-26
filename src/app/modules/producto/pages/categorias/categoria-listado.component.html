@@ -21,6 +21,7 @@
                 <th>Orden</th>
                 <th>Productos</th>
                 <th>Activo</th>
+                <th>Visible</th>
                 <th>Editar</th>
               </tr>
             </thead>
@@ -28,10 +29,13 @@
               @for (cat of categorias; track $index) {
               <tr>
                 <td>
-                  @if(cat.multimedia){
-                  <img [src]="cat.multimedia.urlMultimediaShow" width="86" alt={{cat.nombre}} />
+                  @if (cat.multimediasAsignada.length > 0
+                  && cat.multimediasAsignada[0].multimedia.mimeType.startsWith('image/')){
+                  <img [src]="cat.multimediasAsignada[0].multimedia.urlMultimediaShow" loading="lazy" width="86"
+                    alt={{cat.nombre}} />
                   } @else {
-                  <img src="no-imagen.png" width="86" alt={{cat.nombre}} />
+                  <img src="no-imagen.png" loading="lazy" decoding="async" priority="false" width="86"
+                    alt={{cat.nombre}} />
                   }
                 </td>
                 <td>

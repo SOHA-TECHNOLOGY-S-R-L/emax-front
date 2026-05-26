@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, Subject, throwError } from 'rxjs';
+import { Observable, of, Subject, throwError } from 'rxjs';
 import { catchError, filter, map } from 'rxjs/operators';
 
 import { Router } from '@angular/router';
@@ -41,13 +41,16 @@ export class CategoriaService {
     return this.http.get<Categoria[]>(environment.apiUrl + '/producto/categorias');
   }
 
-  getCategoriasActivas(): Observable<Categoria[]> {
-    return this.http.get<Categoria[]>(environment.apiUrl + '/categorias/active');
-  }
+  /*   getCategoriasActivas(): Observable<Categoria[]> {
+      return this.http.get<Categoria[]>(environment.apiUrl + '/categorias/active');
+    } */
 
   getCategoriasActivasYVisibleTienda(): Observable<Categoria[]> {
-    return this.http.get<Categoria[]>(environment.apiUrl + '/categorias/active').pipe(
-      map(categorias => categorias.filter(cat => cat.visibleEnTienda === true)));
+    return this.http.get<Categoria[]>(environment.apiUrl + '/categorias/active')
+      .pipe(
+        map(categorias => categorias.filter(cat => cat.visibleEnTienda === true)),
+        catchError(() => of([])) // Si el servidor falla, devuelve un array vacío en lugar de un error
+      );
   }
 
 

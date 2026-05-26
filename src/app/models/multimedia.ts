@@ -1,4 +1,4 @@
-import { MultimediaProducto } from "./multimedia-producto";
+import { MultimediaAsignada } from "./multimedia-asignada";
 
 export class Multimedia {
   id!: number;
@@ -9,10 +9,7 @@ export class Multimedia {
   alto!: string
   extension!: string
   mimeType!: string
-  //checked: boolean = false;
-  multimediasProducto: MultimediaProducto[] = [];
-  //campos utilitarios
-  //nombreMultimediaShow: string = 'no-imagen.png';
+  multimediasAsignada: MultimediaAsignada[] = [];
   urlMultimediaShow!: string;
 
 }

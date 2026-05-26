@@ -2,11 +2,11 @@
   <div class="row">
     @for (categoria of lstCategoria; track $index) {
     <div class="col-6 col-md-4 col-lg-3 p-0 portfolio-item">
-      @if(categoria.multimedia){
+      @if(categoria.multimediasAsignada.length > 0 && categoria.multimediasAsignada[0]?.multimedia?.mimeType?.startsWith('image/')){
       <div class="multimedia-image-wrapper">
         <a [routerLink]="['/tienda/productos-categoria' ,categoria.nombre]" [routerLinkActive]="['active']"
           [routerLinkActiveOptions]="{exact: true}">
-          <img class="multimedia-image" [src]="categoria.multimedia.urlMultimediaShow" [alt]="categoria.nombre"
+          <img class="multimedia-image" [src]="categoria.multimediasAsignada[0].multimedia.urlMultimediaShow" [alt]="categoria.nombre"
             loading="lazy" decoding="async" priority="false">
         </a>
       </div>

@@ -32,7 +32,7 @@ export class ListMultimediaComponent {
   ALL_EXTENSIONS = ['png', 'jpg', 'jpeg', 'gif', 'mp4', 'mpeg'];
 
   pageIndex = signal(0);
-  pageSize = signal(6);
+  pageSize = signal(12);
 
   multimediaFilters = signal<MultimediaFilters>({
     query: '',
@@ -138,7 +138,7 @@ export class ListMultimediaComponent {
 
   multimediaPrincipal: boolean = this.data?.multimediaPrincipal ?? false;
 
-  pageSizeOptions = [6, 12, 18];
+  pageSizeOptions = [12, 18, 24];
 
   constructor() { }
 

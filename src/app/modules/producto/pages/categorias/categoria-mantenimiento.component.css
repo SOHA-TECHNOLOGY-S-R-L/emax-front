@@ -1,0 +1,5 @@
+.text-bold-italic {
+  font-style: italic;
+  font-weight: bolder;
+  color: darkblue;
+}

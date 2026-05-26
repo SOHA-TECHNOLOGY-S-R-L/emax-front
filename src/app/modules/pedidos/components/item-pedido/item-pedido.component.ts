@@ -1,16 +1,16 @@
-import { ENVIO_DEPARTAMENTO, ENVIO_DISTRITO, ENVIO_PROVINCIA, PEDIDO_COMPRA, PEDIDO_VENTA } from './../../../../constants/constantes';
 import { CommonModule } from '@angular/common';
 import { Component, computed, effect, inject, input, output, signal } from '@angular/core';
 import { rxResource, toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { environment } from '../../../../../environments/environment';
+import { EnvioPedido } from '../../../../models/envio-pedido';
 import { ItemPedido } from '../../../../models/item-pedido';
 import { StringToTitleWithAccents } from '../../../../pipes/StringToTitleWithAccents.pipe';
 import { ItemService } from '../../../../services/item.service';
 import { ProductoService } from '../../../../services/producto.service';
 import { PrimeNgModule } from '../../../compartido/prime-ng.module';
-import { EnvioPedido } from '../../../../models/envio-pedido';
+import { ENVIO_DEPARTAMENTO, ENVIO_DISTRITO, ENVIO_PROVINCIA, PEDIDO_COMPRA, PEDIDO_VENTA } from './../../../../constants/constantes';
 
 @Component({
   selector: 'app-item-pedido',
@@ -140,7 +140,7 @@ export class ItemPedidoComponent {
     let envioNoSelected = this.serviciosEnvio().filter(ser => ser.codigo != formaEnvio);
 
     if (!envioSelected) return;
-    let lstMultimediaServicioEnvio = envioSelected?.multimediasProducto
+    let lstMultimediaServicioEnvio = envioSelected?.multimediasAsignada
     lstMultimediaServicioEnvio = lstMultimediaServicioEnvio ?
       lstMultimediaServicioEnvio.filter(lst => lst.multimedia.mimeType.startsWith('image')) : [];
 

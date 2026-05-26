@@ -1,7 +1,11 @@
+import { BreakpointObserver } from '@angular/cdk/layout';
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
+import { rxResource, toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { map } from 'rxjs';
+import { environment } from '../../../../../environments/environment';
 import { ItemPedido } from '../../../../models/item-pedido';
 import { Producto } from '../../../../models/producto';
 import { ProductoService } from '../../../../services/producto.service';
@@ -9,10 +13,6 @@ import { AngularMaterialModule } from '../../../compartido/angular-material.modu
 import { AutocompleteResourceComponent } from '../../../compartido/autocomplete-resource/autocomplete-resource.component';
 import { CarritoItemProductoComponent } from '../../components/carrito-item-producto/carrito-item-producto.component';
 import { CustomizeItemProductoToClientComponent } from '../../components/customize-item-producto-to-client/customize-item-producto-to-client.component';
-import { BreakpointObserver, Breakpoints, MediaMatcher } from '@angular/cdk/layout';
-import { rxResource, toSignal } from '@angular/core/rxjs-interop';
-import { map } from 'rxjs';
-import { environment } from '../../../../../environments/environment';
 
 @Component({
   selector: 'item-producto-persona-tienda',
@@ -59,7 +59,7 @@ export class ItemProductoPersonaTiendaComponent {
   }
   getImagenPrincipal(producto: Producto): string {
 
-    const multimediaPrincipal = producto.multimediasProducto?.find(
+    const multimediaPrincipal = producto.multimediasAsignada?.find(
       m => m.esPrincipal
     );
 
