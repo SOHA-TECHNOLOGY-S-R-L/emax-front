@@ -44,7 +44,7 @@ export class FormDatosPersonaComponent {
       [
         Validators.required,
         Validators.minLength(2),
-        Validators.pattern(/^[a-zA-Z\s]+$/)
+        Validators.pattern(/^[a-zA-Z0-9\s]+$/)
       ]
     ],
     email: [

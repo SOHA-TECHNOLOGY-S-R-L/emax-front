@@ -18,7 +18,9 @@ import { ProductoService } from './../../../../services/producto.service';
 import { BreakpointObserver, Breakpoints, MediaMatcher } from '@angular/cdk/layout';
 import { Pedido } from '../../../../models/pedido';
 import { PedidoService } from '../../../../services/pedido.service';
-import { COTIZACION_VENTA } from '../../../../constants/constantes';
+import { COTIZACION_VENTA, PEDIDO_COMPRA, PEDIDO_VENTA } from '../../../../constants/constantes';
+import { EnvioPedido } from '../../../../models/envio-pedido';
+import { environment } from '../../../../../environments/environment';
 
 
 @Component({
@@ -43,20 +45,44 @@ export class CarritoItemProductoComponent {
 
   itemServiceSuscription$!: Subscription;
   cotizacion = signal(new Pedido());
+  envioPedido = signal<EnvioPedido | undefined>(undefined);
+  serviciosEnvioResource = rxResource({ stream: () => this.productoService.getLstProductoServicioEnvio() });
+  serviciosEnvio = computed(() => this.serviciosEnvioResource.value() ?? []);
 
-  readonly items = toSignal(
-    this.itemService.getItems(),
-    { initialValue: [] as ItemPedido[] }
+  readonly rawItems = toSignal(
+    this.itemService.getItems(), { initialValue: [] }
   );
 
-  readonly lstItemPedido = computed<ItemPedido[]>(() => {
+  readonly items = computed(() =>
+    this.itemService.buildItems(
+      this.rawItems(), this.envioPedido(), this.serviciosEnvio(), environment.API_URL_VER_IMAGEN, PEDIDO_VENTA
+    )
+  );
+
+/*   readonly lstItemPedido = computed<ItemPedido[]>(() => {
     const items = this.itemService.importeDeMargenCantidad([...this.items()])
     return items
   }
+  ); */
+
+  readonly totalImporteBruto = computed(() =>
+    this.itemService.calculateImporteBrutoFromItems(this.items())
   );
 
-  readonly total = computed(() =>
-    this.itemService.calculateTotalFromItems(this.lstItemPedido())
+  readonly totalImporteOfertaDescuento = computed(() =>
+    this.itemService.calculateDescuentoPorOfertayCuponFromItems(this.items())
+  );
+
+  readonly totalImporteNeto = computed(() =>
+    this.itemService.calculateImporteNetoFromItems(this.items())
+  );
+
+  readonly totalIgv = computed(() =>
+    this.itemService.calculateIgvFromItems(this.items())
+  );
+
+  readonly totalPrecio = computed(() =>
+    this.itemService.calculatePrecioCostoFromItems(this.items())
   );
 
   readonly usuarioResource = rxResource({
@@ -117,12 +143,12 @@ export class CarritoItemProductoComponent {
 
   actualizarCantidad(productoId: number, event: any): void {
     const cantidad = Number((event.target as HTMLInputElement).value);
-    const nuevosItems = this.itemService.UpdateAmountItemFromItems([...this.lstItemPedido()], productoId, cantidad);
+    const nuevosItems = this.itemService.UpdateAmountItemFromItems([...this.items()], productoId, cantidad);
     this.itemService.setItems(nuevosItems);
   }
 
   eliminarItemPedido(item: ItemPedido): void {
-    const nuevosItems = this.itemService.deleteItemFromItems([...this.lstItemPedido()], item.producto.id);
+    const nuevosItems = this.itemService.deleteItemFromItems([...this.items()], item.producto.id);
     this.itemService.setItems(nuevosItems);
   }
 
@@ -177,8 +203,10 @@ export class CarritoItemProductoComponent {
       persona: persona!,
       //observacion: this.observaciones(),
       //entregadoEn: this.fechaEntrega(),
-      items: [...this.lstItemPedido()],
-      precioNetoTotal: this.total(),
+      items: [...this.items()],
+      //precioBrutoTotal: this.subTotal(),
+      descuentoPorOfertaTotal: this.totalImporteOfertaDescuento(),
+      precioTotal: this.totalPrecio(),
       tipoPedido: this.tipoPedidoCotizacionVentaResource.value()!
     }));
 

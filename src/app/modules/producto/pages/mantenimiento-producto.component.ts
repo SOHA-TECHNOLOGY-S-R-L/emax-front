@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { rxResource, toSignal } from '@angular/core/rxjs-interop';
 import {
+  AbstractControl,
   FormArray,
   FormBuilder,
   FormGroup,
@@ -26,6 +27,7 @@ import { VerMultimediaAsignadaComponent } from '../../compartido/ver-multimedia-
 import { ListMultimediaComponent } from '../../multimedia/pages/list-multimedia/list-multimedia.component';
 import { MultimediaHttpService } from './../../../services/multimedia-http.service';
 import { MultimediaAsignadaService } from '../../../services/multimedia-asignada.service';
+import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-mantenimiento-producto',
@@ -37,6 +39,7 @@ import { MultimediaAsignadaService } from '../../../services/multimedia-asignada
     RouterModule,
     FormsModule,
     ReactiveFormsModule,
+    NgbTooltipModule,
     AngularMaterialModule,
     VerMultimediaAsignadaComponent
   ],
@@ -106,31 +109,14 @@ export class MantenimientoProductoComponent {
       //this.formProducto.reset();
     }
   });
-
-  /*   private multimediasAsignadaEffect = effect(() => {
-      const pr = this.producto();
-      if (!pr) { return }
-      this.cargarMultimediaAsignada(pr.id, pr.multimediasAsignada);
-    }); */
-
-  /*   private formEffect = effect(() => {
-      const producto = this.producto();
-      if (!producto) return;
-      this.createForm();
-    }); */
-
-  //producto: Producto = new Producto();
   formProducto!: FormGroup;
 
   verImagenProducto!: string;
   formUtils = FormUtils;
-
-  /*   categoriaId!: number;
-    materialId!: number;
-    colorId!: number;
-    usoId!: number; */
   titulo: string = 'Crear Producto';
-  //imagenSeleccionada!: File;
+
+  readonly panelOpenState = signal(false);
+
 
   constructor(
     private router: Router,
@@ -159,7 +145,7 @@ export class MantenimientoProductoComponent {
         maxCantidadPedido: resp.maxCantidadPedido,
         gruposDe: resp.gruposDe,
         costoUnitario: resp.costoUnitario,
-        impuestoIgv: resp.impuestoIgv,
+        porcentajeIgv: resp.porcentajeIgv,
         activo: resp.activo,
         visibleEnTienda: resp.visibleEnTienda,
         categoriaId: resp.categoria?.id,
@@ -179,14 +165,6 @@ export class MantenimientoProductoComponent {
     });
   }
 
-  /*   cargarMultimediaAsignada(id: number) {
-      this.multimediaAsignadaService
-        .multimediasAsignadaByProductoId(id)
-        .subscribe((resp) => {
-          this.multimediaAsignadaToProducto(resp);
-        });
-    } */
-
   loadedMultimedia(multimediaAsignada: MultimediaAsignada[]) {
     this.producto.update(pr => ({
       ...pr,
@@ -197,25 +175,12 @@ export class MantenimientoProductoComponent {
 
   setVariante(valor: 'Si' | 'No') {
     this.variante.set(valor);
-
     if (valor === 'No') {
       this.formProducto.get('padreId')?.setValue(null);
     }
-    /*     debugger;
-    if (valor === 'Si') {
-      const pr = this.productosResources.value();
-      if (pr == null || pr == undefined) {
-        this.productos.set([]);
-        return;
-      }
-      this.productos.set(pr.filter((p) => p.padre === null));
-    } else {
-      this.productos.set([]);
-    } */
   }
 
   createForm(): void {
-
     const pr = this.producto();
     this.formProducto = this.formBuilder.group({
       padreId: [pr.padreId],
@@ -289,34 +254,13 @@ export class MantenimientoProductoComponent {
         { validators: [Validators.required, Validators.min(0)] },
       ],
 
-      //costoPersonalizacion: [pr.costoPersonalizacion, Validators.min(0)],
-      //costoUnitarioEmpaque: [pr.costoUnitarioEmpaque, Validators.min(0)],
-      //precioBruto: [pr.precioBruto, Validators.min(3)],
-      impuestoIgv: [
-        pr.impuestoIgv,
-        { validators: [Validators.required, Validators.min(18)] },
+      porcentajeIgv: [
+        pr.porcentajeIgv,
+        { validators: [Validators.required, Validators.min(0)] },
       ],
-
-      //margenGanancia: [pr.margenGanancia, [Validators.required, Validators.min(0)]],
-      //precioNeto: [pr.precioNeto, [Validators.required, Validators.min(0)]],
-      //precioBrutoRebajado: [pr.precioBrutoRebajado, Validators.min(2)],
-      //precioNetoRabajado: [pr.precioNetoRabajado, Validators.min(3)],
-      //fechaPrecioRebajadoDesde: [pr.fechaPrecioRebajadoDesde],
-      //fechaPrecioRebajadoHasta: [pr.fechaPrecioRebajadoHasta],
-      //imagen: [pr.imagen],
-
       margenesGanancia: this.formBuilder.array([], Validators.minLength(1)),
-
-      /*       margenesGanancia: this.formBuilder.array([
-              minCantidad: [pr.margenProducto?.minCantidad, Validators.min(1)],
-              maxCantidad: [pr.margenProducto?.maxCantidad],
-              margenGanancia: [pr.margenProducto?.margenGanancia, [Validators.required, Validators.min(1)]],
-              precioNeto: [pr.margenProducto?.precioNeto, [Validators.required, Validators.min(1)]],
-            ], Validators.minLength(1)), */
-
       activo: [pr.activo],
       visibleEnTienda: [pr.visibleEnTienda],
-
       categoriaId: [pr.categoria?.id, Validators.required],
       materialId: [pr.materialId, Validators.required],
       colorId: [pr.colorId, Validators.required],
@@ -335,57 +279,82 @@ export class MantenimientoProductoComponent {
       this.producto().margenesProducto.forEach((m) => {
         this.agregrarMargenProducto(this.existMargenProducto(m));
       });
-    } /*else {
-      this.newMargenProducto();
-    }*/
+    }
   }
 
-  existMargenProducto(margenProducto: MargenProducto) {
+  existMargenProducto(mrgn: MargenProducto) {
     return this.formBuilder.group({
-      id: [margenProducto.id],
+      id: [mrgn.id],
       minCantidad: [
-        margenProducto.minCantidad,
+        mrgn.minCantidad,
         [Validators.required, Validators.min(1)],
       ],
-      maxCantidad: [margenProducto.maxCantidad, Validators.min(1)],
-      margen: [margenProducto.margen, [Validators.required, Validators.min(1)]],
-      precioNetoSugerido: [
-        margenProducto.precioNetoSugerido,
-        [Validators.required, Validators.min(0)],
+      maxCantidad: [mrgn.maxCantidad],
+      margen: [mrgn.margen, [Validators.required, Validators.min(0), Validators.pattern(/^\d+(\.\d{1,2})?$/)]],
+      valorBrutoUnitario: [
+        { value: mrgn.valorBrutoUnitario, disabled: true },
+        { validators: [Validators.required, Validators.min(0.01)] },
       ],
-      precioNeto: [
-        margenProducto.precioNeto,
-        [Validators.required, Validators.min(0)],
+      fechaInicioOferta: [this.toDateTimeLocal(mrgn.fechaInicioOferta as any)],
+      fechaFinOferta: [this.toDateTimeLocal(mrgn.fechaFinOferta as any)],
+      valorUnitarioOferta: [mrgn.valorUnitarioOferta, [Validators.required, Validators.min(0), Validators.pattern(/^\d+(\.\d{1,2})?$/)]],
+      descripcionOferta: [mrgn.descripcionOferta],
+      /*       valorNetoUnitario: [
+              { value: mrgn.valorNetoUnitario, disabled: true },
+              [Validators.required, Validators.min(0.01)],
+              // otra manera
+              //{ validators: [Validators.required, Validators.min(0.01)] },
+            ], */
+      igvUnitario: [
+        { value: mrgn.igvUnitario, disabled: true },
+        [Validators.required, Validators.min(0.01)],
+        // otra manera
+        //{ validators: [Validators.required, Validators.min(0.01)] },
       ],
+      precioUnitario: [{ value: mrgn.precioUnitario, disabled: true }, [Validators.required, Validators.min(0.01)],
+      ],
+      /*       igvUnitarioOferta: [
+              { value: mrgn.igvUnitarioOferta, disabled: true },
+              [Validators.required, Validators.min(0.01)],
+              // otra manera
+              //{ validators: [Validators.required, Validators.min(0.01)] },
+            ],
+            precioUnitarioOferta: [{ value: mrgn.precioUnitarioOferta, disabled: true }, [Validators.required, Validators.min(0.01)],
+            ], */
     });
   }
 
   newMargenProducto() {
     const formGroup = this.formBuilder.group({
       minCantidad: [1, Validators.min(1)],
-      maxCantidad: [],
-      margen: [1, [Validators.required, Validators.min(1)]],
-      precioNetoSugerido: [{ value: 1, disabled: true }, [Validators.required, Validators.min(0)]],
-      precioNeto: [1, [Validators.required, Validators.min(0)]],
+      maxCantidad: [1, Validators.min(1)],
+      margen: [100, [Validators.required, Validators.min(0), Validators.pattern(/^\d+(\.\d{1,2})?$/)]],
+      valorBrutoUnitario: [{ value: 0.01, disabled: true }, [Validators.required, Validators.min(0.01)]],
+      fechaInicioOferta: [null],
+      fechaFinOferta: [null],
+      valorUnitarioOferta: [0, [Validators.required, Validators.min(0.00), Validators.pattern(/^\d+(\.\d{1,2})?$/)]],
+      descripcionOferta:[null],
+      //valorNetoUnitario: [{ value: 0.01, disabled: true }, [Validators.required, Validators.min(0.01)]],
+      igvUnitario: [{ value: 0, disabled: true }, [Validators.required, Validators.min(0), Validators.pattern(/^\d+(\.\d{1,2})?$/)]],
+      precioUnitario: [0.01, [Validators.required, Validators.min(0.01)]],
+      //igvUnitarioOferta: [{ value: 0.01, disabled: true }, [Validators.required, Validators.min(0.01)]],
+      //precioUnitarioOferta: [0.01, [Validators.required, Validators.min(0.01)]],
     });
     this.agregrarMargenProducto(formGroup);
   }
 
   agregrarMargenProducto(formGroup: FormGroup) {
+    const margenId = formGroup.get('id')?.value;
     this.margenesGanancia.push(formGroup);
-    const ultimoIndice = this.margenesGanancia.length - 1;
-    this.calcularPrecioNetoPorMargen(ultimoIndice);
+    if (!margenId) {
+      const ultimoIndice = this.margenesGanancia.length - 1;
+      this.calcularPrecioPorMargen(ultimoIndice);
+    }
   }
 
   eliminarMargenProducto(index: number) {
     const id: number = +this.margenesGanancia.controls[index].get('id')?.value;
-    /*     if (id) {
-      this.productoService.deleteMargenProducto(id).subscribe(m => {
-        this.margenesGanancia.removeAt(index);
-      })
-    } else { */
     this.margenesGanancia.removeAt(index);
-    //}
   }
 
   recuperarValForm() {
@@ -406,64 +375,72 @@ export class MantenimientoProductoComponent {
     p.maxCantidadPedido = this.formProducto.get('maxCantidadPedido')?.value;
     p.gruposDe = this.formProducto.get('gruposDe')?.value;
     p.costoUnitario = this.formProducto.get('costoUnitario')?.value;
-    //p.costoPersonalizacion = this.formProducto.get('costoPersonalizacion')?.value;
-    p.impuestoIgv = this.formProducto.get('impuestoIgv')?.value;
-    p.margenesProducto = this.margenesGanancia.value;
-    //p.precioBrutoRebajado = this.formProducto.get('precioBrutoRebajado')?.value;
-    //p.precioNetoRabajado = this.formProducto.get('precioNetoRabajado')?.value;
-    //p.fechaPrecioRebajadoDesde = this.formProducto.get('fechaPrecioRebajadoDesde')?.value;
-    //p.fechaPrecioRebajadoHasta = this.formProducto.get('fechaPrecioRebajadoHasta')?.value;
+    p.porcentajeIgv = this.formProducto.get('porcentajeIgv')?.value;
     p.colorId = +this.formProducto.get('colorId')?.value;
     p.materialId = +this.formProducto.get('materialId')?.value;
     p.usoId = +this.formProducto.get('usoId')?.value;
     p.categoria = find(this.categorias(), {
       id: +this.formProducto.get('categoriaId')?.value,
     });
-    //p.imagen = this.formProducto.get('imagen')?.value;
     p.activo = this.formProducto.get('activo')?.value;
     p.visibleEnTienda = this.formProducto.get('visibleEnTienda')?.value;
+    p.margenesProducto = this.margenesGanancia.getRawValue();
+
     this.producto.set(p);
   }
 
-  calcularPrecioNeto() {
-    const margenesGanancia = this.formProducto.get(
-      'margenesGanancia',
-    ) as FormArray;
-    if (margenesGanancia.controls.length > 0) {
-      const costoUnitario: number =
-        +this.formProducto.get('costoUnitario')?.value;
-      const impuestoIgv: number = +this.formProducto.get('impuestoIgv')?.value;
-      const costoMasImpuesto: number =
-        (costoUnitario * (100 + impuestoIgv)) / 100;
-      margenesGanancia.controls.forEach((abstractControl) => {
-        const margen = +abstractControl.get('margen')?.value;
-        const precioNetoUnitario: number =
-          (costoMasImpuesto * (100 + margen)) / 100;
-        abstractControl
-          .get('precioNetoSugerido')
-          ?.setValue(precioNetoUnitario.toFixed(3));
-        //abstractControl.get('precioNeto')?.setValue(precioNetoUnitario.toString());
-      });
+  calcularPrecio() {
+    const margenesGanancia = this.formProducto.get('margenesGanancia',) as FormArray;
+
+    if (margenesGanancia.controls.length < 1) {
+      return;
     }
+
+    const costoUnitario: number = +this.formProducto.get('costoUnitario')?.value;
+    const porcentajeIgv: number = +this.formProducto.get('porcentajeIgv')?.value;
+    /*const costoMasImpuesto: number =
+      (costoUnitario * (100 + porcentajeIgv)) / 100; */
+    margenesGanancia.controls.forEach((abstractControl) => {
+      this.colocarValorParaControl(costoUnitario, porcentajeIgv, abstractControl)
+    });
+
   }
 
-  calcularPrecioNetoPorMargen(index: number) {
-    const abstractControl = this.margenesGanancia.controls[index];
-    if (abstractControl) {
-      const costoUnitario: number =
-        this.formProducto.get('costoUnitario')?.value;
-      const impuestoIgv: number = +this.formProducto.get('impuestoIgv')?.value;
-      const costoMasImpuesto: number =
-        (costoUnitario * (100 + impuestoIgv)) / 100;
+  private colocarValorParaControl(costoUnitario: number, porcentajeIgv: number, abstractControl: AbstractControl) {
+    const margen = +abstractControl.get('margen')?.value;
 
-      const margen = +abstractControl.get('margen')?.value;
-      const precioNetoUnitario: number =
-        (costoMasImpuesto * (100 + margen)) / 100;
-      abstractControl
-        .get('precioNetoSugerido')
-        ?.setValue(precioNetoUnitario.toFixed(3));
-      //abstractControl.get('precioNeto')?.setValue(precioNetoUnitario.toString());
+    const valorBrutoUnitario: number = Number((costoUnitario * ((100 + margen) / 100)).toFixed(2));
+    abstractControl.get('valorBrutoUnitario')?.setValue(valorBrutoUnitario);
+
+    const igvUnitario = Number((valorBrutoUnitario * (porcentajeIgv / 100)).toFixed(2));
+    abstractControl.get('igvUnitario')?.setValue(igvUnitario);
+
+    const precioUnitario: number = Number((valorBrutoUnitario + igvUnitario).toFixed(2));
+    abstractControl.get('precioUnitario')?.setValue(precioUnitario);
+
+    //const valorUnitarioOferta = +abstractControl.get('valorUnitarioOferta')?.value || 0.00;
+    //abstractControl.get('valorUnitarioOferta')?.setValue(valorUnitarioOferta);
+
+    //const valorNetoUnitario = (valorBrutoUnitario - valorUnitarioOferta);
+    //abstractControl.get('valorNetoUnitario')?.setValue(valorNetoUnitario.toFixed(2));
+
+    //const igvUnitarioOferta = (valorNetoUnitario * (porcentajeIgv / 100));
+    //abstractControl.get('igvUnitarioOferta')?.setValue(igvUnitarioOferta.toFixed(2));
+
+    //const precioUnitarioOferta: number = (valorNetoUnitario + igvUnitarioOferta);
+    //abstractControl.get('precioUnitarioOferta')?.setValue(precioUnitarioOferta.toFixed(2));
+
+  }
+
+  calcularPrecioPorMargen(index: number) {
+    const abstractControl = this.margenesGanancia.controls[index];
+    if (!abstractControl) {
+      return;
     }
+
+    const costoUnitario: number = +this.formProducto.get('costoUnitario')?.value;
+    const porcentajeIgv: number = +this.formProducto.get('porcentajeIgv')?.value;
+    this.colocarValorParaControl(costoUnitario, porcentajeIgv, abstractControl)
   }
 
   guardarProducto() {
@@ -477,15 +454,31 @@ export class MantenimientoProductoComponent {
     }
 
     const costoUnitario: number = +pr.costoUnitario;
-    const impuestoIgv: number = +pr.impuestoIgv;
-    const costoMasImpuesto: number =
-      (costoUnitario * (100 + impuestoIgv)) / 100;
+    const tieneValorBrutoUnitarioInsuficiente = pr.margenesProducto.some(
+      (margn) => margn.valorBrutoUnitario < costoUnitario,
+    );
+
+    if (tieneValorBrutoUnitarioInsuficiente) {
+      this.alertService.error(`Valor Bruto Unitario sin ganancia sobre costo unitario. Corregir!`, 'Margenes de ganancia');
+      return;
+    }
+
+
+    const tieneValorOfertaUnitarioInsuficiente = pr.margenesProducto.some(
+      (margn) => margn.valorUnitarioOferta <= costoUnitario && margn.fechaInicioOferta != null && margn.fechaFinOferta != null,
+    );
+
+    if (tieneValorOfertaUnitarioInsuficiente) {
+      this.alertService.error(`Valor Oferta Unitario sin ganancia sobre costo unitario. Corregir!`, 'Margenes de ganancia');
+      return;
+    }
+
 
     const tienePrecioInsuficiente = pr.margenesProducto.some(
-      (margen) => margen.precioNeto < costoMasImpuesto,
+      (margn) => margn.precioUnitario < margn.valorBrutoUnitario,
     );
     if (tienePrecioInsuficiente) {
-      this.alertService.error(`Precio Neto no cubre costo con impuesto. Corregir!`, 'Margenes de ganancia');
+      this.alertService.error(`Precio Unitario no permite ganancia. Corregir!`, 'Margenes de ganancia');
       return;
     }
 
@@ -513,12 +506,19 @@ export class MantenimientoProductoComponent {
       margenesProducto:
         pr.margenesProducto?.map((m) => ({
           ...m,
-          precioNetoSugerido: Number(m.precioNetoSugerido),
-          precioNeto: Number(m.precioNeto),
-          margen: Number(m.margen),
+          valorBrutoUnitario: m.valorBrutoUnitario,
+          fechaInicioOferta: m.fechaInicioOferta,
+          fechaFinOferta: m.fechaFinOferta,
+          valorUnitarioOferta: m.valorUnitarioOferta,
+          descripcionOferta: m.descripcionOferta,
+          //valorNetoUnitario: Number(m.valorNetoUnitario),
+          igvUnitario: m.igvUnitario,
+          precioUnitario: m.precioUnitario,
+          //igvUnitarioOferta: Number(m.igvUnitarioOferta),
+          //precioUnitarioOferta: Number(m.precioUnitarioOferta),
+          margen: m.margen,
         })) ?? [],
     };
-    //console.log(JSON.stringify(newPr));
     if (newPr.id) {
       this.productoService.updateProducto(newPr).subscribe((json) => {
         this.alertService.success(`${json?.mensaje}: ${json.producto.nombre}`, 'Producto',);
@@ -563,18 +563,38 @@ export class MantenimientoProductoComponent {
     });
   }
 
-  /*   cargarDatosAuxiliares(): void {
-      this.productoService.getColoresProducto()
-        .subscribe(resp => this.colores.set(resp));
+  private toDateTimeLocal(value: string | null): string | null {
+    if (!value) {
+      return null;
+    }
 
-      this.productoService.getMaterialesProducto()
-        .subscribe(resp => this.materiales.set(resp));
+    return value.substring(0, 16);
+  }
 
-      this.categoriaService.getCategoriasProducto()
-        .subscribe(resp => this.categorias.set(resp));
+  /*   validarDecimales(event: KeyboardEvent): boolean {
+      const input = event.target as HTMLInputElement;
+      const valorActual = input.value;
 
-      this.productoService.getUsosInternoProducto()
-        .subscribe(resp => this.usos.set(resp));
+      // Obtener la posición del cursor y la selección actual
+      const start = input.selectionStart ?? 0;
+      const end = input.selectionEnd ?? 0;
 
+      // Reconstruir cómo quedará el texto si se acepta la nueva tecla
+      const nuevoValor = valorActual.slice(0, start) + event.key + valorActual.slice(end);
+
+      // Expresión regular: Permite números enteros opcionales y hasta 2 decimales
+      // También permite un punto solo temporalmente mientras el usuario escribe (ej: "3.")
+      const regex = /^\d*\.?\d{0,2}$/;
+
+      // Si el nuevo texto no cumple con el formato, se cancela la pulsación
+      if (!regex.test(nuevoValor)) {
+        event.preventDefault();
+        return false;
+      }
+
+      return true;
     } */
+
+
+
 }

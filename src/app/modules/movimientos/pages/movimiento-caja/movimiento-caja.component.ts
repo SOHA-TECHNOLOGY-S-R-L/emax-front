@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { rxResource, toSignal } from '@angular/core/rxjs-interop';
-import { FormBuilder, FormsModule, NgForm, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { catchError, of } from 'rxjs';
 import { TipoMovimientoCaja } from '../../../../models/tipo-movimiento-caja';
@@ -9,12 +9,9 @@ import { AlertService } from '../../../../services/alert.service';
 import { AuthService } from '../../../../services/auth.service';
 import { CajaService } from '../../../../services/caja.service';
 import { MovimientoService } from '../../../../services/movimiento.service';
-import { SnackbarService } from '../../../../services/snackbar.service';
-import { UsuarioService } from '../../../../services/usuario.service';
+import { FormUtils } from '../../../../utils/form-utils';
 import { InfoCajaUsuarioComponent } from '../../../caja/components/info-caja-usuario/info-caja-usuario.component';
 import { AngularMaterialModule } from '../../../compartido/angular-material.module';
-import { FormUtils } from '../../../../utils/form-utils';
-import { CajaUsuario } from '../../../../models/caja-usuario';
 
 @Component({
   selector: 'app-movimiento-caja',

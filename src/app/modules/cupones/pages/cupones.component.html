@@ -1,0 +1,95 @@
+<div class="container">
+  <mat-card class="card">
+    <mat-card-header class="card-header">
+      <mat-card-title>Listado de Cupones</mat-card-title>
+      <div class="ms-auto">
+        <button *ngIf="authService.hasRole('ROLE_REGISTER_CUPON')" color="primary" mat-raised-button
+          [routerLink]="['mantenimiento']">
+          Crear cupón
+        </button>
+      </div>
+    </mat-card-header>
+    <mat-card-content class="mt-2">
+      <table mat-table [dataSource]="cupones()" matSort
+        (matSortChange)="sortChanged($event)" [matSortActive]="params().active" [matSortDirection]="params().direction"
+        matSortDisableClear>
+        <ng-container matColumnDef="codigo">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Código </th>
+          <td mat-cell *matCellDef="let element"> {{element.codigo}} </td>
+        </ng-container>
+        <!--           <ng-container matColumnDef="descripcion">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Descripcion </th>
+            <td mat-cell *matCellDef="let element"> {{element.descripcion }} </td>
+          </ng-container> -->
+        <!--           <ng-container matColumnDef="usoCupon">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Uso Cupón </th>
+            <td mat-cell *matCellDef="let element"> {{findUsoCuponById( element.usoCuponId)}} </td>
+          </ng-container> -->
+        <ng-container matColumnDef="tipoCupon">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Tipo </th>
+          <td mat-cell *matCellDef="let element"> {{findTipoDescuentoByCodigo(element.tipoDescuentoCupon)}} </td>
+        </ng-container>
+        <ng-container matColumnDef="usoCombinado">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Uso </th>
+          <td mat-cell *matCellDef="let element">
+            {{element.usoCombinado + '' | i18nSelect:usoCupon}} </td>
+        </ng-container>
+        <ng-container matColumnDef="importe">
+          <th mat-header-cell *matHeaderCellDef> Importe </th>
+          <td mat-cell *matCellDef="let element"> {{element.importe}} </td>
+        </ng-container>
+        <ng-container matColumnDef="fchHoraCaducidad">
+          <th mat-header-cell *matHeaderCellDef> Caducidad </th>
+          <td mat-cell *matCellDef="let element"> {{ element.fchHoraCaducidad | date: 'dd/MM/yyyy hh:mm' }} </td>
+        </ng-container>
+        <ng-container matColumnDef="limiteUsoDelCupon">
+          <th mat-header-cell *matHeaderCellDef> # cupones </th>
+          <td mat-cell *matCellDef="let element"> {{ element.limiteUsoDelCupon }} </td>
+        </ng-container>
+        <ng-container matColumnDef="limiteUsoPorPersona">
+          <th mat-header-cell *matHeaderCellDef> # Uso persona </th>
+          <td mat-cell *matCellDef="let element"> {{ element.limiteUsoPorPersona }} </td>
+        </ng-container>
+        <ng-container matColumnDef="visibleEnTienda">
+          <th mat-header-cell *matHeaderCellDef> Visible </th>
+          <td mat-cell *matCellDef="let element">
+            <span class="celda-estado {{element.colorVisibleEnTienda}}">
+              {{element.visibleEnTienda + '' | i18nSelect:estadoActivo}}
+            </span>
+          </td>
+        </ng-container>
+        <!--           <ng-container matColumnDef="activo">
+            <th mat-header-cell *matHeaderCellDef> Activo </th>
+            <td mat-cell *matCellDef="let element">
+              <span class="celda-estado {{element.colorActivo}}">
+                {{element.activo + '' | i18nSelect:estadoActivo}}
+              </span>
+            </td>
+          </ng-container> -->
+        <ng-container matColumnDef="acciones">
+          <th mat-header-cell *matHeaderCellDef> Acciones </th>
+          <td mat-cell *matCellDef="let element">
+            <div class="d-flex flex-row">
+              <button *ngIf="authService.hasRole('ROLE_UPDATE_CUPON')" mat-icon-button color="primary"
+                [routerLink]="['mantenimiento', element.codigo]" matTooltip="Actualizar cupón">
+                <mat-icon>edit</mat-icon>
+              </button>
+            </div>
+          </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        <tr class="mat-row" *matNoDataRow>
+          <td class="mat-cell" colspan="9">No hay registros para mostrar</td>
+        </tr>
+      </table>
+      <mat-paginator [length]="page()?.totalElements ?? 0" [pageIndex]="page()?.number ?? 0"
+        [pageSizeOptions]="[10, 20, 40, 60]" [pageSize]="page()?.size ?? 10" (page)="pageChanged($event)"
+        showFirstLastButtons class="table-paginator">
+      </mat-paginator>
+
+    </mat-card-content>
+
+  </mat-card>
+
+</div>

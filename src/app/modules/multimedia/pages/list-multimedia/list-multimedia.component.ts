@@ -59,8 +59,17 @@ export class ListMultimediaComponent {
         this.multimediaHttpService.listarArchivosMultimedia(params)
       )
     ),
-    { initialValue: new PageableResponse() }
-  );
+    {
+      initialValue: {
+        content: [],
+        page: {
+          size: 10,
+          number: 0,
+          totalElements: 0,
+          totalPages: 0
+        }
+      } satisfies PageableResponse<Multimedia>
+    });
 
   lstMultimedia = computed(() => this.pageable().content ?? []);
 

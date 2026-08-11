@@ -31,59 +31,56 @@ export class ItemPedidoComponent {
   serviciosEnvioResource = rxResource({ stream: () => this.productoService.getLstProductoServicioEnvio() });
   serviciosEnvio = computed(() => this.serviciosEnvioResource.value() ?? []);
   rawItems = toSignal(this.itemService.getItems(), { initialValue: [] });
-  items = computed(() => {
-    let newItems: ItemPedido[] = []
-    if (this.inTipoPedidoId() === PEDIDO_VENTA) {
-      const hayEnvio = this.envioPedido()
-      if (hayEnvio) {
-        newItems = [...this.itemService.importeDeMargenCantidad(this.checkAddServicioEnvio(hayEnvio.formaEnvio)!)];
-      } else {
-        newItems = [... this.itemService.importeDeMargenCantidad(this.checkDeleteServicioEnvio())];
-        //this.itemService.setItems(nuevosItems);
-      }
-    } else {
-      //return this.itemService.importeDeCostoCantidad(this.rawItems());//SI ES PEDIDO COMPRA
-      newItems = [...this.rawItems()];//SI ES PEDIDO COMPRA
-    } return newItems;//SI ES PEDIDO COMPRA
-  })
+  items = computed(() =>
+    this.itemService.buildItems(this.rawItems(), this.envioPedido(), this.serviciosEnvio(), this.API_URL_VER_IMAGEN, this.inTipoPedidoId()
+    )
+  );
 
-  total = computed(() => this.itemService.calculateTotalFromItems(this.items()));
+  /*   items = computed(() => {
+      let newItems: ItemPedido[] = []
+      if (this.inTipoPedidoId() === PEDIDO_VENTA) {
+        const hayEnvio = this.envioPedido()
+        if (hayEnvio) {
+          newItems = [...this.itemService.importeDeMargenCantidad(this.checkAddServicioEnvio(hayEnvio.formaEnvio)!)];
+        } else {
+          newItems = [... this.itemService.importeDeMargenCantidad(this.checkDeleteServicioEnvio())];
+        }
+      } else {
+        newItems = [...this.rawItems()];//SI ES PEDIDO COMPRA
+      } return newItems;//SI ES PEDIDO COMPRA
+    }) */
+
+  //total = computed(() => this.itemService.calculateTotalFromItems(this.items()));
   PEDIDO_VENTA = PEDIDO_VENTA
   PEDIDO_COMPRA = PEDIDO_COMPRA
   API_URL_VER_IMAGEN = environment.API_URL_VER_IMAGEN;
   SERVICIO_ENVIO_DISTRITO = ENVIO_DISTRITO;
   SERVICIO_ENVIO_PROVINCIA = ENVIO_PROVINCIA;
   SERVICIO_ENVIO_DEPARTAMENTO = ENVIO_DEPARTAMENTO;
-  outItems = output<ItemPedido[]>();
-  codigoDescuento = signal<string>('')
 
   setExisteEnvio = effect(() => {
     const inEnvio = this.inEnvioPedido();
     this.envioPedido.set(inEnvio)
   });
 
-  constructor() {
-    effect(() => {
-      const items = this.items();
-      //if (items.length > 0) {
-      this.outItems.emit(items);
-      //}
-    });
-  }
-  checkDeleteServicioEnvio() {
-    const itemsActuales = this.rawItems();
-    const serviciosEnvio = this.serviciosEnvio();
-    let nuevosItems = itemsActuales;
-    serviciosEnvio.forEach(servicio => {
-      if (this.itemService.existItemInItems(nuevosItems, servicio.id)) {
-        nuevosItems = this.itemService.deleteItemFromItems(
-          nuevosItems,
-          servicio.id
-        );
-      }
-    });
-    return nuevosItems;
-  }
+
+
+  constructor() { }
+
+  /*   checkDeleteServicioEnvio() {
+      const itemsActuales = this.rawItems();
+      const serviciosEnvio = this.serviciosEnvio();
+      let nuevosItems = itemsActuales;
+      serviciosEnvio.forEach(servicio => {
+        if (this.itemService.existItemInItems(nuevosItems, servicio.id)) {
+          nuevosItems = this.itemService.deleteItemFromItems(
+            nuevosItems,
+            servicio.id
+          );
+        }
+      });
+      return nuevosItems;
+    } */
 
   eliminarItemPedido(item: ItemPedido): void {
     const prod = item.producto
@@ -125,52 +122,52 @@ export class ItemPedidoComponent {
   //this.itemService.setItems(updated);
   //}
 
-  actualizarImporteWithCosto(productoId: number, event: any): void {
-    const costo: number = parseFloat(event.target.value);
-    const updated = this.itemService.UpdateCostItemFromItemsProveedor(this.items(), productoId, costo);
+  actualizarPrecioCostoItem(productoId: number, event: any): void {
+    const precioCosto: number = parseFloat(event.target.value);
+    const updated = this.itemService.UpdatePriceCostItemFromItems(this.items(), productoId, precioCosto);
     this.itemService.setItems(updated);
     //this.itemService.saveLocalStorageItems(this.lstItemPedido);
   }
 
 
-  private checkAddServicioEnvio(formaEnvio: string) {
-    const itemsActuales = this.rawItems();
+  /*   private checkAddServicioEnvio(formaEnvio: string) {
+      const itemsActuales = this.rawItems();
 
-    let envioSelected = this.serviciosEnvio().find(ser => ser.codigo == formaEnvio);
-    let envioNoSelected = this.serviciosEnvio().filter(ser => ser.codigo != formaEnvio);
+      let envioSelected = this.serviciosEnvio().find(ser => ser.codigo == formaEnvio);
+      let envioNoSelected = this.serviciosEnvio().filter(ser => ser.codigo != formaEnvio);
 
-    if (!envioSelected) return;
-    let lstMultimediaServicioEnvio = envioSelected?.multimediasAsignada
-    lstMultimediaServicioEnvio = lstMultimediaServicioEnvio ?
-      lstMultimediaServicioEnvio.filter(lst => lst.multimedia.mimeType.startsWith('image')) : [];
+      if (!envioSelected) return;
+      let lstMultimediaServicioEnvio = envioSelected?.multimediasAsignada
+      lstMultimediaServicioEnvio = lstMultimediaServicioEnvio ?
+        lstMultimediaServicioEnvio.filter(lst => lst.multimedia.mimeType.startsWith('image')) : [];
 
 
-    let nuevosItems = itemsActuales;
-    envioNoSelected.forEach(servicio => {
-      if (this.itemService.existItemInItems(nuevosItems, servicio.id)) {
-        nuevosItems = this.itemService.deleteItemFromItems(nuevosItems, servicio.id);
+      let nuevosItems = itemsActuales;
+      envioNoSelected.forEach(servicio => {
+        if (this.itemService.existItemInItems(nuevosItems, servicio.id)) {
+          nuevosItems = this.itemService.deleteItemFromItems(nuevosItems, servicio.id);
+        }
+      })
+      const yaExiste = this.itemService.existItemInItems(nuevosItems, envioSelected.id);
+
+      if (!yaExiste) {
+
+        const nuevoItem: ItemPedido = {
+          ...new ItemPedido(),
+          cantidad: envioSelected.minCantidadPedido,
+          descripcion: envioSelected.descripcion,
+          imagenShow: lstMultimediaServicioEnvio.length > 0 ?
+            this.API_URL_VER_IMAGEN.concat(
+              lstMultimediaServicioEnvio[0].multimedia.nombre) : 'no-imagen.png',
+          producto: { ...envioSelected }
+        };
+
+        if (nuevoItem.cantidad <= envioSelected.maxCantidadPedido) {
+          nuevosItems = [...nuevosItems, nuevoItem];
+        }
       }
-    })
-    const yaExiste = this.itemService.existItemInItems(nuevosItems, envioSelected.id);
-
-    if (!yaExiste) {
-
-      const nuevoItem: ItemPedido = {
-        ...new ItemPedido(),
-        cantidad: envioSelected.minCantidadPedido,
-        descripcion: envioSelected.descripcion,
-        imagenShow: lstMultimediaServicioEnvio.length > 0 ?
-          this.API_URL_VER_IMAGEN.concat(
-            lstMultimediaServicioEnvio[0].multimedia.nombre) : 'no-imagen.png',
-        producto: { ...envioSelected }
-      };
-
-      if (nuevoItem.cantidad <= envioSelected.maxCantidadPedido) {
-        nuevosItems = [...nuevosItems, nuevoItem];
-      }
-    }
-    return nuevosItems
-  };
+      return nuevosItems
+    }; */
 
 
   findColorById(colorId: number) {
@@ -187,8 +184,9 @@ export class ItemPedidoComponent {
     return material ? material.nombre : 'Sin material';
   }
 
-  ingresarCodigoDescuento(text: string) {
-    this.codigoDescuento.set(text);
-  }
+  /*   ingresarCodigoDescuento(text: string) {
+      this.codigoDescuento.set(text);
+      this.items()
+    } */
 
 }

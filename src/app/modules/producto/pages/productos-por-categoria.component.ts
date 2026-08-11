@@ -69,7 +69,8 @@ export class ProductosPorCategoriaComponent implements AfterViewInit {
   lstProductos = signal<Producto[]>([]);
 
   // ************propiedades del paginador***********
-  pageable: PageableResponse = new PageableResponse();
+  pageable!: PageableResponse<Producto>;
+  //pageable: PageableResponse = new PageableResponse();
   //length = 50;
   pageSize = 8;
   pageIndex = 0;
@@ -78,7 +79,6 @@ export class ProductosPorCategoriaComponent implements AfterViewInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   initProductosPorCategoriaEffect = effect(() => {
-    //debugger;
     const categoriaNombre = this.categoriaActiva();
     if (!categoriaNombre) {
       return;
@@ -95,10 +95,10 @@ export class ProductosPorCategoriaComponent implements AfterViewInit {
 
     if (!categoria || productos.length === 0) return;
 
- /*    const multimedia = categoria?.multimedia;
-    const imagenCategoria = multimedia
-      ? this.API_URL_VER_IMAGEN.concat(multimedia.nombre)
-      : 'no-imagen.png'; */
+    /*    const multimedia = categoria?.multimedia;
+       const imagenCategoria = multimedia
+         ? this.API_URL_VER_IMAGEN.concat(multimedia.nombre)
+         : 'no-imagen.png'; */
 
     const titulo = categoria;
     const descripcion = `Categoria ${categoria}`;
@@ -107,7 +107,7 @@ export class ProductosPorCategoriaComponent implements AfterViewInit {
     this.seo.meta.updateTag({ property: 'og:type', content: 'website' });
     this.seo.meta.updateTag({ property: 'og:title', content: titulo });
     this.seo.meta.updateTag({ property: 'og:description', content: descripcion });
-    this.seo.meta.updateTag({property: 'og:url',content: `${environment.apiFront}/tienda/productos-categoria/${categoria}`,});
+    this.seo.meta.updateTag({ property: 'og:url', content: `${environment.apiFront}/tienda/productos-categoria/${categoria}`, });
     //this.seo.meta.updateTag({property: 'og:image',content: imagenCategoria,});
     this.seo.setIndexFollow(true);
   });
@@ -159,13 +159,13 @@ export class ProductosPorCategoriaComponent implements AfterViewInit {
             prd.cantidadStock = cantidadDisponible;
             //muestar todos los productos en formato string
             //prd.precioNetoStringShow = "S/ ".concat(prd.margenesProducto.map(m => m.precioNeto).toString().replaceAll(',', ' - '));
-            prd.precioMasBajoProductoShow =
+            prd.precioUnitarioSelect =
               prd.margenesProducto.length > 0
                 ? prd.margenesProducto.reduce((previous, current) =>
-                  current.precioNeto < previous.precioNeto
+                  current.precioUnitario < previous.precioUnitario
                     ? current
                     : previous,
-                ).precioNeto
+                ).precioUnitario
                 : 0;
             if (prd.multimediasAsignada.length > 0) {
               const primerElemento =

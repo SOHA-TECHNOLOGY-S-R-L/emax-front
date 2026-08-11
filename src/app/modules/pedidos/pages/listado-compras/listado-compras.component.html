@@ -1,24 +1,18 @@
-<mat-card class="card">
-  <mat-card-header class="card-header">
-    <mat-card-title>Listado de compras</mat-card-title>
-  </mat-card-header>
-
-  <mat-card-content>
-
-    <div *ngIf="pedidos?.length == 0" class="alert alert-info">
-      No hay registros en la base de datos!
-    </div>
-    <ng-container *ngIf="authService.hasRole('ROLE_SEARCH_COMPRA')">
-      <search-box-table *ngIf="pedidos?.length !== 0" (searchEvent)="searchEvent($event)"></search-box-table>
-    </ng-container>
-
-
-    <div class="mat-elevation-z8">
-      <table [ngClass]="{'d-none': !dataSource.length}" mat-table [dataSource]="dataSource" matSort
-        matSortActive="id" matSortDisableClear matSortDirection="desc">
+<div class="container">
+  <mat-card class="card">
+    <mat-card-header class="card-header">
+      <mat-card-title>Listado de compras</mat-card-title>
+    </mat-card-header>
+    <mat-card-content class="mt-2">
+      @if (authService.hasRole('ROLE_LIST_COMPRAS') && pedidos().length > 0) {
+      @if (authService.hasRole('ROLE_SEARCH_COMPRA')) {
+      <search-box-table *ngIf="pedidos().length !== 0" (searchEvent)="searchEvent($event)"></search-box-table>
+      }
+      <table mat-table [dataSource]="pedidos()" multiTemplateDataRows matSort (matSortChange)="sortChanged($event)"
+        [matSortActive]="params().active" [matSortDirection]="params().direction" matSortDisableClear>
 
         <ng-container matColumnDef="id">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header> Cod </th>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Id </th>
           <td mat-cell *matCellDef="let element"> {{element.id}} </td>
         </ng-container>
 
@@ -37,12 +31,12 @@
           <td mat-cell *matCellDef="let element"> {{element.adquiridoEn}} </td>
         </ng-container>
 
-        <ng-container matColumnDef="costoNetoTotal">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Costo Total S/.</th>
-          <td mat-cell *matCellDef="let element"> {{element.costoNetoTotal | currency: 'PEN'}} </td>
+        <ng-container matColumnDef="costoTotal">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Costo S/.</th>
+          <td mat-cell *matCellDef="let element"> {{element.costoTotal | currency: 'PEN'}} </td>
         </ng-container>
 
-        <ng-container matColumnDef="pagoTotal">
+        <!--         <ng-container matColumnDef="pagoTotal">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Pago Total S/.</th>
           <td mat-cell *matCellDef="let element"> {{element.pagoTotal | currency: 'PEN'}} </td>
         </ng-container>
@@ -50,10 +44,10 @@
         <ng-container matColumnDef="vueltoTotal">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Vuelto Total S/.</th>
           <td mat-cell *matCellDef="let element"> {{element.vueltoTotal | currency: 'PEN'}} </td>
-        </ng-container>
+        </ng-container> -->
 
         <ng-container matColumnDef="saldoPedido">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Saldo con IGV</th>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Saldo S/.</th>
           <td mat-cell *matCellDef="let element"> {{element.saldoPedido | currency: 'PEN'}} </td>
         </ng-container>
 
@@ -72,21 +66,53 @@
                 [routerLink]="['/movimientos', element.id]" matTooltip="Pagar">
                 <mat-icon>price_change</mat-icon>
               </button>
-              <button *ngIf="authService.hasRole('ROLE_VIEW_DETAILS_COMPRA')" mat-icon-button color="primary"
+              <!--               <button *ngIf="authService.hasRole('ROLE_VIEW_DETAILS_COMPRA')" mat-icon-button color="primary"
                 [routerLink]="['/pedidos/detalle-compra', element.id]" matTooltip="Ver Detalle">
                 <mat-icon>visibility</mat-icon>
-              </button>
+              </button> -->
             </div>
           </td>
         </ng-container>
 
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        <ng-container *ngIf="authService.hasRole('ROLE_VIEW_DETAILS_COMPRA')" matColumnDef="expand">
+          <th mat-header-cell *matHeaderCellDef aria-label="row actions">&nbsp;</th>
+          <td mat-cell *matCellDef="let element">
+            <button matIconButton aria-label="expand row" (click)="toggle(element);
+             $event.stopPropagation()" class="toggle-button" [class.toggle-button-expanded]="isExpanded(element)">
+              <mat-icon>keyboard_arrow_down</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="expandedDetail">
+          <td mat-cell *matCellDef="let element" [attr.colspan]="displayedColumnsExpand.length">
+            <div class="element-detail-wrapper" [class.element-detail-wrapper-expanded]="isExpanded(element)">
+              <div class="element-detail">
+                <app-detalle-pedido [inPedido]="element" />
+              </div>
+            </div>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumnsExpand"></tr>
+
+        <tr mat-row *matRowDef="let element; columns: displayedColumnsExpand;" class="element-row"
+          [class.expanded-row]="isExpanded(element)" (click)="toggle(element)">
+        </tr>
+
+        <tr mat-row *matRowDef="let row; columns: ['expandedDetail']; when: isExpansionDetailRow" class="detail-row">
+        </tr>
+
       </table>
-      <mat-paginator [length]="pageable.totalElements" [ngClass]="{'d-none': !dataSource.length}"
-        [pageSizeOptions]="[10, 20, 40]" [pageSize]="10" (page)="loadItems()" showFirstLastButtons
-        class="table-paginator">
+      <mat-paginator [length]="page()?.totalElements ?? 0" [pageIndex]="page()?.number ?? 0"
+        [pageSizeOptions]="[10, 20, 40, 60]" [pageSize]="page()?.size ?? 10" (page)="pageChanged($event)"
+        showFirstLastButtons class="table-paginator">
       </mat-paginator>
-    </div>
-  </mat-card-content>
-</mat-card>
+      } @else {
+      <div class="alert alert-info mt-3">
+        No hay registros en la base de datos.
+      </div>
+      }
+    </mat-card-content>
+  </mat-card>
+</div>

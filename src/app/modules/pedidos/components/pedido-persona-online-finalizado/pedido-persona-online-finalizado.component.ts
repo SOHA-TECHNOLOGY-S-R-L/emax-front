@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, effect, inject, signal } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { Component, computed, effect, inject, signal } from '@angular/core';
+import { rxResource, toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
@@ -25,6 +25,8 @@ import { PagoPedidoPersonaOnlineComponent } from '../pago-pedido-persona-online/
 import { AlertService } from './../../../../services/alert.service';
 import { ItemService } from '../../../../services/item.service';
 import { SnackbarService } from '../../../../services/snackbar.service';
+import { environment } from '../../../../../environments/environment';
+import { CuponService } from '../../../../services/cupon.service';
 
 @Component({
   selector: 'pedido-persona-online-finalizado',
@@ -42,6 +44,10 @@ export class PedidoPersonaOnlineFinalizadoComponent {
   private usuarioService = inject(UsuarioService);
   private pedidoService = inject(PedidoService);
   private itemService = inject(ItemService);
+  private productoService = inject(ProductoService);
+  private cuponService = inject(CuponService)
+
+
   //private alertService = inject(AlertService);
   private snackbar = inject(SnackbarService);
   private router = inject(Router);
@@ -55,8 +61,50 @@ export class PedidoPersonaOnlineFinalizadoComponent {
   fechaEntrega = signal<string>(this.obtenerFechaDefecto());
   observaciones = signal<string>('');
   envioPedido = signal<EnvioPedido | undefined>(undefined);
+
+  serviciosEnvioResource = rxResource({ stream: () => this.productoService.getLstProductoServicioEnvio() });
+  readonly cuponesActivosResource = rxResource({
+    stream: () => this.cuponService.getAllCuponesActivos(),
+  })
+
+  readonly hayCuponesActivos = computed(
+    () => (this.cuponesActivosResource.value()?.length ?? 0) > 0
+  );
+
+  serviciosEnvio = computed(() => this.serviciosEnvioResource.value() ?? []);
   //formaEnvio = signal<string>('');
-  items = signal<ItemPedido[]>([]);
+  //items = signal<ItemPedido[]>([]);
+  readonly rawItems = toSignal(
+    this.itemService.getItems(), { initialValue: [] }
+  );
+
+  readonly items = computed(() =>
+    this.itemService.buildItems(
+      this.rawItems(), this.envioPedido(), this.serviciosEnvio(), environment.API_URL_VER_IMAGEN, PEDIDO_VENTA
+    )
+  );
+
+  readonly totalImporteBruto = computed(() =>
+    this.itemService.calculateImporteBrutoFromItems(this.items())
+  );
+
+  readonly totalDescuentoPorOfertayCupon = computed(() =>
+    this.itemService.calculateDescuentoPorOfertayCuponFromItems(this.items())
+  );
+
+  readonly totalImporteNeto = computed(() =>
+    this.itemService.calculateImporteNetoFromItems(this.items())
+  );
+
+  readonly totalIgv = computed(() =>
+    this.itemService.calculateIgvFromItems(this.items())
+  );
+
+  readonly totalPrecio = computed(() =>
+    this.itemService.calculatePrecioCostoFromItems(this.items())
+  );
+  //subTotal = computed(() => this.itemService.calculateSubTotalFromItems(this.items()));
+
   formPersonaValid: boolean = false;
   formEnvioPedidoValid: boolean = true;
 
@@ -106,7 +154,7 @@ export class PedidoPersonaOnlineFinalizadoComponent {
   toggleIsEnvio(event: Event) {
     const checkbox = event.target as HTMLInputElement;
     this.isEnvio.set(checkbox.checked);
-    if(checkbox.checked) {return}
+    if (checkbox.checked) { return }
     this.envioPedido.set(undefined);
   }
 
@@ -124,16 +172,11 @@ export class PedidoPersonaOnlineFinalizadoComponent {
     //this.checkEnvioPedido(envioPedido);
   }
 
-  recibirItems(itemsPedido: ItemPedido[]) {
-    console.log("itemsPedido", itemsPedido);
-    this.items.set(itemsPedido);
-  }
 
   crearPedidoTienda() {
     if (!this.authService.isAuthenticated()) {
       return;
     }
-    //debugger;
     const persona = this.personSelect();
     if (!this.formPersonaValid && !persona) { return }
     const personaId = persona!.id
@@ -141,13 +184,15 @@ export class PedidoPersonaOnlineFinalizadoComponent {
       this.personaService.update(personaId, persona!).subscribe(result => {
         console.log('persona actualziada')
         this.personSelect.set(result.persona)
-        this.actualizarPedido()
+        this.actualizarPedido();
+        this.crearPedido();
       })
     } else {
       this.personaService.create(persona!).subscribe(result => {
         console.log("persona creada", persona)
         this.personSelect.set(result)
-        this.actualizarPedido()
+        this.actualizarPedido();
+        this.crearPedido();
       })
     }
   }
@@ -159,16 +204,19 @@ export class PedidoPersonaOnlineFinalizadoComponent {
 
     this.pedido.update(p => ({
       ...p,
-      personaId: this.personSelect()!.id,
+      persona: this.personSelect(),
       observacion: this.observaciones(),
       direccionEnvio: envioPed?.direccionEnvio!,
       celularEnvio: envioPed?.celularEnvio!,
       nomApellRzEnvio: envioPed?.nomApellRzEnvio!,
       entregadoEn: this.fechaEntrega(),
       items: [...this.items()],
-      //precioNetoTotal: this.total(),
       tipoPedidoId: PEDIDO_VENTA,
     }));
+  }
+
+  crearPedido() {
+    if (!this.formEnvioPedidoValid || this.items().length === 0) return;
     this.pedidoService.createPedidoTienda(this.pedido())
       .subscribe(p => {
         this.itemService.setItems([]);
@@ -224,6 +272,21 @@ export class PedidoPersonaOnlineFinalizadoComponent {
         },
         error: (err) => console.error('Error en la carga:', err)
       });
+  }
+
+
+  aplicarCuponDescuento(input: HTMLInputElement) {
+    const codigoDescuento = input.value;
+    this.actualizarPedido();
+    console.log("antes", this.pedido().items);
+    this.pedidoService.aplicarDescuento(this.pedido(), codigoDescuento).subscribe(result => {
+      console.log("despues", result);
+      //this.items.set(result);
+      this.itemService.setItems(result);
+
+    })
+    //this.codigoDescuento.set(text);
+    //this.items()
   }
 
 }

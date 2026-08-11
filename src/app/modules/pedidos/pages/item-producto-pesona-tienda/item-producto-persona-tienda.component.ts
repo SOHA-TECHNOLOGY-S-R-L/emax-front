@@ -27,7 +27,7 @@ export class ItemProductoPersonaTiendaComponent {
   private breakpointObserver = inject(BreakpointObserver);
 
   producto = signal<Producto | null>(null);
-  items = signal<ItemPedido[]>([]);
+  //items = signal<ItemPedido[]>([]);
   coloresResource = rxResource({ stream: () => this.productoService.getColoresProducto() });
   API_URL_VER_IMAGEN = environment.API_URL_VER_IMAGEN;
 
@@ -52,9 +52,9 @@ export class ItemProductoPersonaTiendaComponent {
 
   onProductoSeleccionado(producto: Producto) {
     this.producto.set(producto);
-    const nuevoItem = new ItemPedido();
-    nuevoItem.producto = producto;
-    this.items.update(items => [...items, nuevoItem]);
+    //const nuevoItem = new ItemPedido();
+    //nuevoItem.producto = producto;
+    //this.items.update(items => [...items, nuevoItem]);
 
   }
   getImagenPrincipal(producto: Producto): string {

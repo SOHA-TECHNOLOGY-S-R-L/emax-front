@@ -8,57 +8,62 @@
           Crear empleado
         </button>
       </div>
-
     </mat-card-header>
-    <mat-card-content>
-      <ng-container *ngIf="authService.hasRole('ROLE_SEARCH_USUARIO')">
-        <search-box-table (searchEvent)="searchEvent($event)"></search-box-table>
-      </ng-container>
-      <div class="mat-elevation-z8">
-        <table [ngClass]="{'d-none': !dataSource.length}" mat-table [dataSource]="dataSource" matSort
-          matSortActive="nomApellRz" matSortDisableClear matSortDirection="desc">
-          <ng-container matColumnDef="nomApellRz">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> Empleado </th>
-            <td mat-cell *matCellDef="let element"> {{element.nomApellRz}} </td>
-          </ng-container>
-          <ng-container matColumnDef="tipoPersona">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> Tipo Persona </th>
-            <td mat-cell *matCellDef="let element"> {{element.tipoPersona.persona}} </td>
-          </ng-container>
-          <ng-container matColumnDef="celular">
-            <th mat-header-cell *matHeaderCellDef> Celular </th>
-            <td mat-cell *matCellDef="let element"> {{element.celular}} </td>
-          </ng-container>
-<!--           <ng-container matColumnDef="email">
+    <mat-card-content class="mt-2">
+      @if (authService.hasRole('ROLE_SEARCH_USUARIO')) {
+      <search-box-table (searchEvent)="searchEvent($event)"></search-box-table>
+      }
+      <table mat-table [dataSource]="empleados()" matSort (matSortChange)="sortChanged($event)"
+        [matSortActive]="params().active" [matSortDirection]="params().direction" matSortDisableClear>
+        <ng-container matColumnDef="id">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Id </th>
+          <td mat-cell *matCellDef="let element"> {{element.id}} </td>
+        </ng-container>
+        <ng-container matColumnDef="nomApellRz">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Empleado </th>
+          <td mat-cell *matCellDef="let element"> {{element.nomApellRz}} </td>
+        </ng-container>
+        <ng-container matColumnDef="tipoPersona">
+          <th mat-header-cell *matHeaderCellDef> Tipo Persona </th>
+          <td mat-cell *matCellDef="let element"> {{element.tipoPersona.persona}} </td>
+        </ng-container>
+        <ng-container matColumnDef="celular">
+          <th mat-header-cell *matHeaderCellDef> Celular </th>
+          <td mat-cell *matCellDef="let element"> {{element.celular}} </td>
+        </ng-container>
+        <!--           <ng-container matColumnDef="email">
             <th mat-header-cell *matHeaderCellDef> Email </th>
             <td mat-cell *matCellDef="let element"> {{element.email}} </td>
           </ng-container> -->
-          <ng-container matColumnDef="usuario">
-            <th mat-header-cell *matHeaderCellDef> Usuario </th>
-            <td mat-cell *matCellDef="let element"> {{element.usuario.username}} </td>
-          </ng-container>
-          <ng-container matColumnDef="acciones">
-            <th mat-header-cell *matHeaderCellDef> Acciones </th>
-            <td mat-cell *matCellDef="let element">
-              <div class="d-flex flex-row">
-                <button *ngIf="authService.hasRole('ROLE_UPDATE_USUARIO')" mat-icon-button color="primary"
-                  [routerLink]="['edit', element.id, 'tipo', element.tipoPersona.id]" matTooltip="Actualizar empleado">
-                  <mat-icon>person_text</mat-icon>
-                </button>
-                <button *ngIf="authService.hasRole('ROLE_ASIGNAR_ROL_USUARIO')" mat-icon-button color="primary"
-                  (click)="setUsuario(element)" matTooltip="Asignar roles">
-                  <mat-icon>add_moderator</mat-icon>
-                </button>
-              </div>
-            </td>
-          </ng-container>
-          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-        </table>
-        <mat-paginator [length]="pageable.totalElements" class="table-paginator"
-          [ngClass]="{'d-none': !dataSource.length}" [pageSizeOptions]="[10, 20, 50]" showFirstLastButtons
-          [pageSize]="10" (page)="loadItems()"></mat-paginator>
-      </div>
+        <ng-container matColumnDef="usuario">
+          <th mat-header-cell *matHeaderCellDef> Usuario </th>
+          <td mat-cell *matCellDef="let element"> {{element.usuario.username}} </td>
+        </ng-container>
+        <ng-container matColumnDef="acciones">
+          <th mat-header-cell *matHeaderCellDef> Acciones </th>
+          <td mat-cell *matCellDef="let element">
+            <div class="d-flex flex-row">
+              <button *ngIf="authService.hasRole('ROLE_UPDATE_USUARIO')" mat-icon-button color="primary"
+                [routerLink]="['edit', element.id, 'tipo', element.tipoPersona.id]" matTooltip="Actualizar empleado">
+                <mat-icon>person_text</mat-icon>
+              </button>
+              <button *ngIf="authService.hasRole('ROLE_ASIGNAR_ROL_USUARIO')" mat-icon-button color="primary"
+                (click)="setUsuario(element)" matTooltip="Asignar roles">
+                <mat-icon>add_moderator</mat-icon>
+              </button>
+            </div>
+          </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        <tr class="mat-row" *matNoDataRow>
+          <td class="mat-cell" colspan="6">No hay registros que mostrar</td>
+        </tr>
+      </table>
+      <mat-paginator [length]="page()?.totalElements ?? 0" [pageIndex]="page()?.number ?? 0"
+        [pageSizeOptions]="[10, 20, 50]" [pageSize]="page()?.size ?? 10" (page)="pageChanged($event)"
+        showFirstLastButtons [ngClass]="{'d-none': empleados().length===0}" class="table-paginator">
+      </mat-paginator>
     </mat-card-content>
   </mat-card>
 

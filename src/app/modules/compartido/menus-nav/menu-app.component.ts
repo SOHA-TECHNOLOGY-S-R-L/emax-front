@@ -36,23 +36,12 @@ export class MenuAppComponent {
     private router: Router,
     private alertService: AlertService) { }
 
-  /*   ngOnInit(): void {
-      debugger;
-      this.isAutenticado = this.authService.isAuthenticated();
-      if (this.isAutenticado) {
-        debugger;
-        this.usuario = this.authService.usuario()!;
-        console.log("this.usuarioooooooooooo", this.usuario)
-      }
-    } */
 
   logout(): void {
-    //let username = this.authService.usuario.username;
     this.authService.logout();
     this.clickMenuEvent.emit();
 
-    //this.alertService.success(`Hola ${username}, has cerrado sesión con éxito!`, 'Cerrar sesión');
-    //this.router.navigate(['']);
+
   }
 
 }

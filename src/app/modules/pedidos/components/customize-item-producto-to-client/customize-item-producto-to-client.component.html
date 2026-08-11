@@ -14,10 +14,20 @@
       <h5> {{producto().descripcion }} ({{producto().codigo | uppercase}})</h5>
       <!--       <p>{{producto().cantidadVendidos}} vendidos</p> -->
       <div class="row">
-        @for (margen of producto().margenesProducto; track $index) {
+        @for (margen of margenes(); track $index) {
         <div class="col-4">
           <p> {{margen.minCantidad}} - {{margen.maxCantidad}} unid</p>
-          <span class="precio">{{margen.precioNeto | currency:'PEN'}}</span>
+          @if (margen.precioUnitarioOferta > 0) {
+          <!-- valor de oferta sin considerar IGV
+          <span class="precio">{{margen.valorUnitarioOferta| currency:'PEN'}}</span><br> -->
+          <span class="precio">{{margen.precioUnitarioOferta| currency:'PEN'}}</span><br>
+          <span class="precio-remplazado-por-oferta">Antes: {{margen.precioUnitario | currency:'PEN'}}</span>
+
+          } @else {
+          <span class="precio">{{margen.precioUnitario | currency:'PEN'}}</span>
+          }
+
+
         </div>
         }
       </div>
@@ -82,7 +92,8 @@
               <div class="d-flex flex-wrap flex-column flex-sm-row justify-content-sm-evenly">
                 <button type="button" class="btn btn-secondary mb-2" (click)="chatear(producto())"><i
                     class="fa-brands fa-whatsapp mr-1"></i>Chatear</button>
-                <button id="btnAddToCart" type="submit" class="btn btn-primary mb-2"><i class="fa-solid fa-cart-plus mr-1"></i>Añadir
+                <button id="btnAddToCart" type="submit" class="btn btn-primary mb-2"><i
+                    class="fa-solid fa-cart-plus mr-1"></i>Añadir
                   carrito</button>
               </div>
             </div>

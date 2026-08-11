@@ -1,136 +1,165 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { PersonaService } from '../../../../services/persona.service';
 import { SearchBoxTableComponent } from './../../../compartido/search-box-table/search-box-table.component';
 
 import { CommonModule } from '@angular/common';
+import { rxResource } from '@angular/core/rxjs-interop';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { PageEvent } from '@angular/material/paginator';
+import { Sort, SortDirection } from '@angular/material/sort';
+import { RouterModule } from '@angular/router';
 import moment from 'moment';
-import { concatMap } from 'rxjs';
-import { ELEMENTOS_POR_PAGINA, PEDIDO_VENTA, PRIMERA_PAGINA, SIGUIENTE_PAGINA, ULTIMA_PAGINA } from '../../../../constants/constantes';
+import { concatMap, EMPTY } from 'rxjs';
+import { PEDIDO_VENTA } from '../../../../constants/constantes';
 import { COLOR_ESTADO_PEDIDO } from '../../../../constants/pedido.constants';
-import { PageableResponse } from '../../../../models/pageable-response';
 import { Pedido } from '../../../../models/pedido';
-import { Persona } from '../../../../models/persona';
 import { AuthService } from '../../../../services/auth.service';
 import { PedidoService } from '../../../../services/pedido.service';
 import { UsuarioService } from '../../../../services/usuario.service';
 import { AngularMaterialModule } from '../../../compartido/angular-material.module';
+import { PageableParams } from '../../../../interfaces/pageable-params';
+import { DetallePedidoComponent } from '../../components/detalle-pedido/detalle-pedido.component';
 
 @Component({
   selector: 'listado-ventas',
   templateUrl: './listado-ventas.component.html',
   styleUrls: ['./listado-ventas.component.css'],
   standalone: true,
-  imports: [SearchBoxTableComponent, CommonModule ,RouterModule, FormsModule, ReactiveFormsModule, AngularMaterialModule ]
+  imports: [SearchBoxTableComponent, CommonModule, RouterModule, FormsModule, ReactiveFormsModule, AngularMaterialModule, DetallePedidoComponent]
 })
 
-export class ListadoVentasComponent implements OnInit, AfterViewInit {
+export class ListadoVentasComponent {
 
-  displayedColumnsLarge: string[] = ['id','nomApellRz', 'createAt', 'entregadoEn', 'precioNetoTotal', 'pagoTotal', 'vueltoTotal', 'saldoPedido', 'estado', 'acciones'];
-  displayedColumnsShort: string[] = [ 'entregadoEn', 'precioNetoTotal', 'pagoTotal','acciones'];
+  private readonly pedidoService = inject(PedidoService);
+  public authService = inject(AuthService);
 
-  dataSource: Pedido[] = [];
-  pageable: PageableResponse = new PageableResponse();
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
-  @ViewChild(MatSort) sort!: MatSort;
-  querySearch!: string;
+  private readonly usuarioService = inject(UsuarioService);
+  private readonly personaService = inject(PersonaService);
 
-  persona!: Persona;
-  pedidos: Pedido[] = [];
-  pedidoSeleccionado!: Pedido;
+  displayedColumnsLarge: string[] = ['id', 'nomApellRz', 'createAt', 'entregadoEn', 'precioTotal', 'saldoPedido', 'username', 'estado'];
+  displayedColumnsLargeExpand = [...this.displayedColumnsLarge, 'expand'];
 
-  constructor(
-    private pedidoService: PedidoService,
-    // private modalService: ModalService,
-    public authService: AuthService,
-    public usuarioService: UsuarioService,
-    public personaService: PersonaService,
-    private dialog: MatDialog,
-    private ro: Router,
-    private activatedRoute: ActivatedRoute) {
+  displayedColumnsShort: string[] = ['entregadoEn', 'precioTotal', 'saldoPedido'];
+  displayedColumnsShortExpand = [...this.displayedColumnsShort, 'expand'];
 
-  }
+  // isExpansionDetailRow = (i: number, row: any) => row.hasOwnProperty('detailRow') || true;
+  isExpansionDetailRow = (index: number, row: any) => true;
 
-  ngOnInit(): void {
+  pedido = signal<Pedido | null>(null);
+  readonly params = signal<PageableParams>({
+    active: 'id',
+    direction: 'desc',
+    pageNumber: 0,
+    pageSize: 10,
+    query: ''
+  });
 
-  }
-
-  ngAfterViewInit(): void {
-    this.sort.sortChange.subscribe(() => {
-      (this.paginator.pageIndex = 0);
-      this.loadItems();
-    });
-    this.paginator._intl.itemsPerPageLabel = ELEMENTOS_POR_PAGINA;
-    this.paginator._intl.firstPageLabel = PRIMERA_PAGINA;
-    this.paginator._intl.nextPageLabel = SIGUIENTE_PAGINA;
-    this.paginator._intl.lastPageLabel = ULTIMA_PAGINA;
-    this.loadItems();
-  }
-
-  loadItems(): void {
-    try {
-      //this.isLoading = true;
-      const params: any = {
-        active: this.sort.active.toUpperCase(),
-        direction: this.sort.direction.toUpperCase(),
-        pageNumber: this.paginator.pageIndex,
-        pageSize: this.paginator.pageSize,
-        query: !!this.querySearch ? this.querySearch : ''
-      };
+  readonly pedidosResource = rxResource({
+    params: () => this.params(),
+    stream: ({ params }) => {
       if (this.authService.hasRole('ROLE_LIST_VENTAS')) {
-        this.pedidoService.getAllPedidosPageable(params, PEDIDO_VENTA).subscribe(response => {
-          this.dataSource = response.content as Pedido[];
-          this.dataSource.forEach((r: Pedido) => {
-            r.createAt = moment(r.createAt).format('DD/MM/YYYY');
-            r.entregadoEn = r.entregadoEn == null ? '-' : moment(r.entregadoEn).format('DD/MM/YYYY');
-            r.adquiridoEn = r.adquiridoEn == null ? '-' : moment(r.adquiridoEn).format('DD/MM/YYYY');
-            r.estadoPedido.color = COLOR_ESTADO_PEDIDO[('' + r.estadoPedido.id) as keyof typeof COLOR_ESTADO_PEDIDO];
-          })
-          this.pedidos = this.dataSource;
-          this.pageable = response;
-        });
-
-      } else if (this.authService.hasRole('ROLE_LIST_MY_ORDERS')) {
-        const usuario = this.authService.usuario()
-        if (!usuario) {return}
-
-        this.usuarioService.getUsuarioByUsername(usuario.username).pipe(
-          concatMap(usr => this.personaService.getPersonaByUsuarioId(usr.id)),
-          concatMap(cli => this.pedidoService.getPedidosPersonaPageable(params, cli.id))
-        ).subscribe(response => {
-          this.dataSource = response.content as Pedido[];
-          this.dataSource.forEach((r: Pedido) => {
-            r.createAt = moment(r.createAt).format('DD/MM/YYYY');
-            r.entregadoEn = r.entregadoEn == null ? '-' : moment(r.entregadoEn).format('DD/MM/YYYY');
-            r.adquiridoEn = r.adquiridoEn == null ? '-' : moment(r.adquiridoEn).format('DD/MM/YYYY');
-            r.estadoPedido.color = COLOR_ESTADO_PEDIDO[('' + r.estadoPedido.id) as keyof typeof COLOR_ESTADO_PEDIDO];
-          })
-          this.pedidos = this.dataSource;
-          this.pageable = response;
-        });
-      } else {
-        console.log("No tiene permisos ROLE_LIST_VENTAS o ROLE_LIST_MY_ORDERS");
+        const resul = this.pedidoService.getAllPedidosPageable(params, PEDIDO_VENTA);
+        return resul;
       }
-    } catch (error) {
-      console.error("Error en la consulta de pedido")
-      //this.isLoading = true;
+
+      if (this.authService.hasRole('ROLE_LIST_MY_ORDERS')) {
+        const usuario = this.authService.usuario();
+        if (!usuario) {
+          return EMPTY;
+        }
+
+        return this.usuarioService.getUsuarioByUsername(usuario.username)
+          .pipe(
+            concatMap(usuario => this.personaService.getPersonaByUsuarioId(usuario.id)),
+            concatMap(persona => this.pedidoService.getPedidosPersonaPageable(
+              params, persona.id))
+          );
+      }
+      console.warn('Sin permisos');
+      return EMPTY;
+    }
+  });
+
+  loading = this.pedidosResource.isLoading;
+
+  readonly pedidos = computed(() => {
+
+    const response = this.pedidosResource.value();
+    if (!response) {
+      return [];
     }
 
+    return response.content.map(p => {
+      p.createAt = moment(p.createAt).format('DD/MM/YYYY');
+      p.entregadoEn = p.entregadoEn ? moment(p.entregadoEn).format('DD/MM/YYYY HH:mm') : '-';
+      p.adquiridoEn = p.adquiridoEn ? moment(p.adquiridoEn).format('DD/MM/YYYY') : '-';
+      p.estadoPedido.color =
+        COLOR_ESTADO_PEDIDO[('' + p.estadoPedido.id) as keyof typeof COLOR_ESTADO_PEDIDO];
+      return p;
+    });
+
+  });
+
+  readonly page = computed(() =>
+    this.pedidosResource.value()?.page
+  );
+
+  constructor() { }
+
+
+
+  pageChanged(event: PageEvent) {
+    this.params.update(params => ({
+      ...params,
+      pageNumber: event.pageIndex,
+      pageSize: event.pageSize
+    }));
   }
 
-  searchEvent(query: string): void {
-    this.querySearch = query;
-    this.loadItems();
+  /*   sortChanged(sort: Sort) {
+      this.params.update(params => ({
+        ...params,
+        active: sort.active.toUpperCase(),
+        direction: sort.direction.toUpperCase(),
+        pageNumber: 0
+      }));
+    } */
+
+  sortChanged(sort: Sort) {
+    const direction = sort.direction ? sort.direction : 'desc';
+    const active = sort.direction ? sort.active: 'id';
+
+    this.params.update(params => {
+      // Evitamos peticiones duplicadas si el estado del orden no cambió realmente
+      if (params.active === active && params.direction === direction) {
+        return params;
+      }
+
+      return {
+        ...params,
+        active,
+        direction,
+        pageNumber: 0 // Reiniciamos a la primera página al ordenar
+      };
+    });
   }
 
-/*   setPedido(pedido: Pedido): void {
-    this.pedidoService.setPedido(pedido);
-    this.ro.navigate(['/movimientos']);
-  } */
+  searchEvent(query: string) {
+    this.params.update(params => ({
+      ...params,
+      query,
+      pageNumber: 0
+    }));
 
+  }
 
+  isExpanded(pedido: Pedido) {
+    return this.pedido() === pedido;
+  }
+
+  toggle(pedido: Pedido) {
+    this.pedido.update(actual =>
+      actual === pedido ? null : pedido
+    );
+  }
 }

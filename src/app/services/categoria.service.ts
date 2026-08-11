@@ -54,6 +54,16 @@ export class CategoriaService {
   }
 
 
+  filtrarCategorias(term: string): Observable<Categoria[]> {
+    const filtro = term?.trim();
+    if (!filtro || filtro.length < 2) {
+      return of([]);
+    }
+    return this.http.get<Categoria[]>(`${environment.apiUrl}/categoria/filtrar-categoria/${encodeURIComponent(filtro)}`
+    );
+  }
+
+
   createCategoria(categoria: Categoria): Observable<Categoria> {
     return this.http.post(`${environment.apiUrl}/categoria`, categoria)
       .pipe(

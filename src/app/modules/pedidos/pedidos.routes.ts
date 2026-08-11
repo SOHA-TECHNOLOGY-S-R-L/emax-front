@@ -1,8 +1,6 @@
 import { Routes } from '@angular/router';
 import { isAuthenticatedGuard } from '../../guards/is-authenticated.guard';
 import { RoleGuard } from '../../guards/role.guard';
-import { DetallePedidoCompraComponent } from './components/detalle-pedido-compra/detalle-pedido-compra.component';
-import { DetallePedidoVentaComponent } from './components/detalle-pedido-venta/detalle-pedido-venta.component';
 import { ItemProductoPersonaTiendaComponent } from './pages/item-producto-pesona-tienda/item-producto-persona-tienda.component';
 import { ItemProductoProveedorTiendaComponent } from './pages/item-producto-proveedor-tienda/item-producto-proveedor-tienda.component';
 import { ListadoComprasComponent } from './pages/listado-compras/listado-compras.component';
@@ -45,23 +43,6 @@ export const routes: Routes = [
     canActivate: [isAuthenticatedGuard],
     /*data: { role: 'ROLE_REGISTER_VENTA' }*/
   },
-  {
-    path: 'detalle-venta/:pedidoId',
-    component: DetallePedidoVentaComponent,
-    canActivate: [isAuthenticatedGuard, RoleGuard],
-    data: { role: 'ROLE_VIEW_DETAILS_VENTA' }
-  },
-  {
-    path: 'detalle-compra/:pedidoId',
-    component: DetallePedidoCompraComponent,
-    canActivate: [isAuthenticatedGuard, RoleGuard],
-    data: { role: 'ROLE_VIEW_DETAILS_COMPRA' }
-  },
-
 ];
 
-/* @NgModule({
-  imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
-})
-export class PedidosRoutingModule { } */
+

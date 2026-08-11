@@ -1,3 +1,4 @@
+import { SnackbarService } from './snackbar.service';
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { catchError, map, Observable, throwError } from 'rxjs';
@@ -10,6 +11,8 @@ import { environment } from '../../environments/environment';
 import { TipoPedido } from '../models/tipo-pedido';
 import { AlertService } from './alert.service';
 import * as fileSaver from 'file-saver-es';
+import { ItemPedido } from '../models/item-pedido';
+import { PageableParams } from '../interfaces/pageable-params';
 
 @Injectable({
   providedIn: 'root'
@@ -24,6 +27,7 @@ export class PedidoService {
 
   constructor(private http: HttpClient,
     private authService: AuthService,
+    private snackbar: SnackbarService,
     private alertService: AlertService) { }
 
   /*   private agregarAuthorizationHeader(){
@@ -56,19 +60,27 @@ export class PedidoService {
     );
   }
 
-  getAllPedidosPageable(params: any, tipoPedidoId: number): Observable<PageableResponse> {
-    return this.http.get<any>(`${environment.apiUrl}/pedidos/${tipoPedidoId}/pageable`, {
-      /*headers: this.agregarAuthorizationHeader(),*/
-      params: params,
+  getAllPedidosPageable(params: PageableParams, tipoPedidoId: number): Observable<PageableResponse<Pedido>> {
+    const backendParams = {
+      ...params,
+      active: params.active ? params.active.toUpperCase() : 'ID',
+      direction: params.direction ? params.direction.toUpperCase() : 'DESC'
+    };
+    return this.http.get<PageableResponse<Pedido>>(`${environment.apiUrl}/pedidos/${tipoPedidoId}/pageable`, {
+      params: backendParams,
     });
   }
 
 
 
-    getPedidosPersonaPageable(params: any, personaId: number): Observable<PageableResponse> {
-    return this.http.get<any>(`${environment.apiUrl}/pedidos/persona/${personaId}/pageable`, {
-      /*headers: this.agregarAuthorizationHeader(),*/
-      params: params,
+  getPedidosPersonaPageable(params: PageableParams, personaId: number): Observable<PageableResponse<Pedido>> {
+    const backendParams = {
+      ...params,
+      active: params.active ? params.active.toUpperCase() : 'ID',
+      direction: params.direction ? params.direction.toUpperCase() : 'DESC'
+    };
+    return this.http.get<PageableResponse<Pedido>>(`${environment.apiUrl}/pedidos/persona/${personaId}/pageable`, {
+      params: backendParams,
     });
   }
 
@@ -130,9 +142,9 @@ export class PedidoService {
       .pipe(
         map((response: any) => response.pedido as Pedido),
         catchError(e => {
-/*           if (e.status == 400) {
-            return throwError(e);
-          } */
+          /*           if (e.status == 400) {
+                      return throwError(e);
+                    } */
           if (e.error?.mensaje) {
             this.alertService.error(e.error.mensaje, e.error.err);
           }
@@ -168,17 +180,34 @@ export class PedidoService {
       { observe: 'response', responseType: 'blob' as 'json' })
   }
 
-/*   update(pedido: Pedido): Observable<any> {
-    return this.http.put<any>(`${environment.apiUrl}/pedidos/${pedido.id}`, pedido
+  aplicarDescuento(pedido: Pedido, codigoCupon: string): Observable<ItemPedido[]> {
+    return this.http.post<any>(`${environment.apiUrl}/pedidos/aplicar-cupon/${codigoCupon}`, pedido
     ).pipe(
+      map((response: any) => response.items as ItemPedido[]),
       catchError(e => {
-        if (e.status == 400) {
-          return throwError(e);
-        }
+        /*          if (e.status == 400) {
+                  return throwError(e);
+                } */
         if (e.error?.mensaje) {
-          console.error(e.error.mensaje);
+          this.snackbar.warning(e.error.mensaje);
+          //this.alertService.error(e.error.mensaje, e.error.err);
+          //console.error(e.error.mensaje);
         }
         return throwError(e);
       }));
-  } */
+  }
+
+  /*   update(pedido: Pedido): Observable<any> {
+      return this.http.put<any>(`${environment.apiUrl}/pedidos/${pedido.id}`, pedido
+      ).pipe(
+        catchError(e => {
+          if (e.status == 400) {
+            return throwError(e);
+          }
+          if (e.error?.mensaje) {
+            console.error(e.error.mensaje);
+          }
+          return throwError(e);
+        }));
+    } */
 }

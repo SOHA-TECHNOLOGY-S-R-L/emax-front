@@ -17,9 +17,10 @@ export class Producto {
   minCantidadPedido: number = 1;
   maxCantidadPedido: number = 999999999;
   gruposDe: number = 1;
+  costoUnitarioMax: number = 0;
   costoUnitario: number = 0; // esto se actualiza al comprar
   //costoPersonalizacion: number=0;
-  impuestoIgv: number = 18;
+  porcentajeIgv: number = 18;
   //margenGanancia:number=0;
   //costoUnitarioEmpaque: number=0;
   //precioBruto: number = 3;
@@ -47,7 +48,9 @@ export class Producto {
   colorVariante! : string;
   colorActivo!: string;
   colorVisibleEnTienda!: string;
-  precioMasBajoProductoShow: number = 0;
+  //---------------------
+  valorBrutoUnitarioSelect: number = 0;
+  precioUnitarioSelect: number = 0;
 }
 
 //

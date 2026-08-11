@@ -6,6 +6,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatTimepickerModule } from '@angular/material/timepicker';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -24,7 +25,9 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatStepperModule } from '@angular/material/stepper';
 import { AsyncPipe } from '@angular/common';
 import { MatDividerModule } from '@angular/material/divider';
-import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatChipsModule } from '@angular/material/chips';
+
 
 
 
@@ -41,6 +44,7 @@ import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
     MatPaginatorModule,
     MatCardModule,
     MatDatepickerModule,
+    MatTimepickerModule,
     MatTableModule,
     MatTooltipModule,
     MatSortModule,
@@ -54,7 +58,8 @@ import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
     MatStepperModule,
     AsyncPipe,
     MatDividerModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatChipsModule
   ],
   exports: [
     MatSidenavModule,
@@ -68,6 +73,7 @@ import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
     MatPaginatorModule,
     MatCardModule,
     MatDatepickerModule,
+    MatTimepickerModule,
     MatTableModule,
     MatTooltipModule,
     MatSortModule,
@@ -81,7 +87,8 @@ import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
     MatStepperModule,
     AsyncPipe,
     MatDividerModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatChipsModule
   ]
 })
 export class AngularMaterialModule { }

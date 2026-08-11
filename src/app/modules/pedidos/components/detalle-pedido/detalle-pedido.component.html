@@ -1,0 +1,192 @@
+<div class="container">
+  <div class="row">
+    <div class="col-12 col-sm-6">
+      <ul class="list-group my-2">
+        <li class="list-group-item active">Observaciones o texto</li>
+        <li class="list-group-item">
+          {{inPedido()!.observacion}}
+        </li>
+      </ul>
+      <ul class="list-group my-2">
+        <li class="list-group-item active">Items del pedido</li>
+        <li *ngFor="let item of items()" class="list-group-item d-flex justify-content-start align-items-start">
+          <div class="ms-2 me-auto">
+            <span class="cabecera">Producto:</span> {{item.producto.nombre}}<br>
+<!--             <span class="cabecera"></span> {{ findColorById( item.producto.colorId! ) }}<br>
+            <span class="cabecera"></span> {{item.producto.peso}}<br>
+            <span class="cabecera"></span> {{ findMaterialById( item.producto.materialId! ) }}<br> -->
+            <span class="cabecera">Cantidad:</span> {{item.cantidad}}<br>
+            @if(inPedido().tipoPedidoId === PEDIDO_VENTA) {
+            <span class="cabecera">Importe Bruto:</span> {{item.importeBrutoItem | currency: 'PEN'}}<br>
+            <span class="cabecera">Desc por Oferta:</span> {{item.descuentoPorOfertaItem | currency: 'PEN'}}<br>
+            <span class="cabecera">Desc por Cupón:</span> {{item.descuentoPorCuponItem | currency: 'PEN'}}<br>
+            <span class="cabecera">Importe Neto:</span> {{item.importeNetoItem | currency: 'PEN'}}<br>
+            <span class="cabecera">IGV:</span> {{item.igvItem| currency: 'PEN'}}<br>
+            <span class="cabecera">Precio:</span> <b>{{item.precioCostoItem | currency: 'PEN'}}</b><br>
+            }
+            @if(inPedido().tipoPedidoId === PEDIDO_COMPRA) { <span class="cabecera">Costo:</span> {{item.precioCostoItem
+            | currency: 'PEN'}}<br> }
+          </div>
+          <div class="d-flex align-items-end">
+            <img [src]="item.imagenShow" width="100" alt={{item.producto.nombre}} />
+          </div>
+        </li>
+      </ul>
+    </div>
+    <div class="col-12 col-sm-6">
+      <div class="row">
+        <div class="col-">
+          <ul class="list-group my-2">
+            <li class="list-group-item active">Datos del pedido</li>
+            <li class="list-group-item d-flex justify-content-between align-items-start">
+              <div class="ms-2 me-auto">
+                <span class="cabecera">Número:</span> {{inPedido().id}}
+              </div>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-start">
+              <div class="ms-2 me-auto">
+                <span class="cabecera">Fecha creación:</span> {{inPedido().createAt | date: 'dd/MM/yyyy' }}
+              </div>
+            </li>
+            @if(inPedido().tipoPedidoId === PEDIDO_VENTA) {
+            <li class="list-group-item d-flex justify-content-between align-items-start">
+              <div class="ms-2 me-auto">
+                <span class="cabecera">Fecha entrega:</span> {{inPedido().entregadoEn | date: 'dd/MM/yyyy HH:mm'}}
+              </div>
+            </li>
+            }
+            @if(inPedido().tipoPedidoId === PEDIDO_COMPRA) {
+            <li class="list-group-item d-flex justify-content-between align-items-start">
+              <div class="ms-2 me-auto">
+                <span class="cabecera">Fecha adquisición:</span> {{inPedido().adquiridoEn}}
+              </div>
+            </li>
+            }
+            <li class="list-group-item d-flex justify-content-between align-items-start">
+              <div class="ms-2 me-auto">
+                <span class="cabecera">Estado:</span> {{inPedido().estadoPedido!.estado}} :
+                {{inPedido().estadoPedido!.descripcion}}
+              </div>
+            </li>
+            @if(inPedido().tipoPedidoId === PEDIDO_VENTA) {
+            <li class="list-group-item d-flex justify-content-between align-items-start">
+              <div class="ms-2 me-auto">
+                <span class="cabecera">Importe Bruto Total:</span> {{inPedido().importeBrutoTotal| currency: 'PEN'}}
+              </div>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-start">
+              <div class="ms-2 me-auto">
+                <span class="cabecera">Desc.Oferta Total:</span> {{inPedido().descuentoPorOfertaTotal| currency: 'PEN'}}
+              </div>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-start">
+              <div class="ms-2 me-auto">
+                <span class="cabecera">Desc.Cupón Total:</span> {{inPedido().descuentoPorCuponTotal| currency: 'PEN'}}
+              </div>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-start">
+              <div class="ms-2 me-auto">
+                <span class="cabecera">Importe Neto Total:</span> {{inPedido().importeNetoTotal| currency: 'PEN'}}
+              </div>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-start">
+              <div class="ms-2 me-auto">
+                <span class="cabecera">IGV Total:</span> {{inPedido().igvTotal| currency: 'PEN'}}
+              </div>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-start">
+              <div class="ms-2 me-auto">
+                <span class="cabecera">Precio Total:</span> <b>{{inPedido().precioTotal| currency: 'PEN'}}</b>
+              </div>
+            </li>
+            }
+            @if(inPedido().tipoPedidoId === PEDIDO_COMPRA) {
+            <li class="list-group-item d-flex justify-content-between align-items-start">
+              <div class="ms-2 me-auto">
+                <span class="cabecera">Costo Total:</span> {{inPedido().costoTotal| currency: 'PEN'}}
+              </div>
+            </li>
+            }
+            <li class="list-group-item d-flex justify-content-between align-items-start">
+              <div class="ms-2 me-auto">
+                <span class="cabecera">Pago:</span> {{inPedido().pagoTotal | currency: 'PEN'}}
+              </div>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-start">
+              <div class="ms-2 me-auto">
+                <span class="cabecera">Vuelto:</span> {{inPedido().vueltoTotal| currency: 'PEN'}}
+              </div>
+            </li>
+            <!--             <li class="list-group-item d-flex justify-content-between align-items-start">
+              <div class="ms-2 me-auto">
+                <span class="cabecera">Flujo efectivo:</span> {{inPedido().flujoEfectivoTotal| currency: 'PEN'}}
+              </div>
+            </li> -->
+            <li class="list-group-item d-flex justify-content-between align-items-start">
+              <div class="ms-2 me-auto">
+                <span class="cabecera">Saldo:</span> {{inPedido().saldoPedido| currency: 'PEN'}}
+              </div>
+            </li>
+          </ul>
+        </div>
+        @if(inPedido().tipoPedidoId === PEDIDO_VENTA) {
+        <div class="col-">
+          <ul class="list-group my-2">
+            <li class="list-group-item active">Datos de envio</li>
+            <li class="list-group-item d-flex justify-content-between align-items-start">
+              <div class="ms-2 me-auto">
+                <span class="cabecera">Direccion de envio:</span> {{inPedido().direccionEnvio}}
+              </div>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-start">
+              <div class="ms-2 me-auto">
+                <span class="cabecera">Celular de entrega:</span> {{inPedido().celularEnvio}}
+              </div>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-start">
+              <div class="ms-2 me-auto">
+                <span class="cabecera">Nombres de entrega:</span> {{inPedido().nomApellRzEnvio}}
+              </div>
+            </li>
+          </ul>
+        </div>
+        }
+        <div class="col-">
+          <ul class="list-group my-2">
+            <li class="list-group-item active">Datos de la persona</li>
+            <li class="list-group-item d-flex justify-content-between align-items-start">
+              <div class="ms-2 me-auto">
+                <span class="cabecera">Nombres Apell:</span>
+                {{persona().nomApellRz}}
+              </div>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-start">
+              <div class="ms-2 me-auto">
+                <span class="cabecera">Documento:</span>
+                {{persona().numeroDocumento}}
+              </div>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-start">
+              <div class="ms-2 me-auto">
+                <span class="cabecera">Celular:</span>
+                {{persona().celular}}
+              </div>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-start">
+              <div class="ms-2 me-auto">
+                <span class="cabecera">Dirección:</span>
+                {{persona().direccion}}
+              </div>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-start">
+              <div class="ms-2 me-auto">
+                <span class="cabecera">Email:</span>
+                {{persona().email}}
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

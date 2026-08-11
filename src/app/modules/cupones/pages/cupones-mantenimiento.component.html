@@ -1,0 +1,376 @@
+<div class="container">
+  <mat-card class="card">
+    <form [formGroup]="formCupon" autocomplete="off">
+      <mat-card-header class="card-header">
+        <mat-card-title>{{ titulo }}</mat-card-title>
+        <div class="ms-auto">
+          <button color="primary" mat-raised-button [routerLink]="'/cupones'">
+            Cancelar
+          </button>
+          @if (cupon().codigo && authService.hasRole("ROLE_UPDATE_CUPON")) {
+          <button color="primary" mat-raised-button (click)="guardarCupon()" [disabled]="!formCupon.valid">
+            Actualizar
+          </button>
+          }
+          @if (
+          !cupon().codigo && authService.hasRole("ROLE_REGISTER_CUPON")
+          ) {
+          <button color="primary" mat-raised-button (click)="guardarCupon()" [disabled]="!formCupon.valid">
+            Crear
+          </button>
+          }
+
+          <!--         @if (producto.id && authService.hasRole('ROLE_UPDATE_PRODUCTO')) {
+        <button color="primary" mat-raised-button (click)='guardarProducto()'>Actualizar producto</button>
+        } -->
+        </div>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="container">
+          <div class="row">
+            <div class="col">
+              <div class="row mb-2">
+                <label for="codigo" class="col-form-label col-sm-3">Código:</label>
+                <div class="input-group col-sm">
+                  <input formControlName="codigo" type="text" class="form-control" name="codigo"
+                    placeholder="codigo para aplicar descuento" />
+                  @if (formUtils.isValidField(formCupon, "codigo")) {
+                  <div class="alert alert-danger">
+                    {{ formUtils.getFieldError(formCupon, "codigo") }}
+                  </div>
+                  }
+                </div>
+              </div>
+              <div class="row mb-2">
+                <label for="descripcion" class="col-form-label col-sm-3">
+                  <b>Descripción:</b> <br />Visible en tienda
+                </label>
+                <div class="input-group col-sm">
+                  <textarea formControlName="descripcion" name="descripcion" class="form-control"
+                    [ngStyle]="{ resize: 'none' }" aria-label="With textarea"
+                    placeholder="Descripción saldrá en la tienda" maxlength="250" rows="5"></textarea>
+                  @if (formUtils.isValidField(formCupon, "descripcion")) {
+                  <div class="alert alert-danger">
+                    {{ formUtils.getFieldError(formCupon, "descripcion") }}
+                  </div>
+                  }
+                </div>
+              </div>
+              <div class="row mb-2">
+                <label for="caducidad" class="col-form-label col-sm-4">Caducidad:</label>
+                <div class="form-check form-check-inline col-sm">
+                  <input class="form-check-input" type="checkbox" formControlName="caducidad"
+                    name="aplicaPersonasConPedidos" [checked]="isCaducidad()" (change)="changeCaducidad($event)" />
+                  <label class="form-check-label" for="aplicaPersonasConPedidos">Advertencia! Sin caducidad el cupón es para siempre.
+                    <i class="bi bi-question-circle-fill text-muted"
+                      ngbTooltip="Sin caducidad no es habitual. Quita el check si quieres confirmar esta acción." placement="top">
+                    </i>
+                  </label>
+                  @if (
+                  formUtils.isValidField(formCupon, "caducidad")
+                  ) {
+                  <div class="alert alert-danger">
+                    {{formUtils.getFieldError(formCupon,"caducidad")}}
+                  </div>
+                  }
+                </div>
+              </div>
+              <div class="row mb-2">
+                <label for="fchCaducidad" class="col-form-label col-sm-3">Fecha caducidad:</label>
+                <div class="input-group col-sm">
+                  <mat-form-field>
+                    <mat-label>Fecha caducidad</mat-label>
+                    <input matInput [matDatepicker]="datepicker" formControlName="fchHoraCaducidad"
+                      name="fchHoraCaducidad">
+                    <mat-datepicker #datepicker />
+                    <mat-datepicker-toggle [for]="datepicker" matSuffix />
+                  </mat-form-field>
+                  @if (formUtils.isValidField(formCupon, "fchHoraCaducidad")) {
+                  <div class="alert alert-danger">
+                    {{ formUtils.getFieldError(formCupon, "fchHoraCaducidad") }}
+                  </div>
+                  }
+                </div>
+              </div>
+              <div class="row mb-2">
+                <label for="fchCaducidad" class="col-form-label col-sm-3">Hora caducidad:</label>
+                <div class="input-group col-sm">
+                  <mat-form-field>
+                    <mat-label>Hora caducidad</mat-label>
+                    <!-- <input matInput [matTimepicker]="timepicker" formControlName="fchHoraCaducidad" name="fchHoraCaducidad" [ngModelOptions]="{updateOn: 'blur'}"> -->
+                    <input matInput [matTimepicker]="timepicker" formControlName="fchHoraCaducidad"
+                      name="fchHoraCaducidad">
+                    <mat-timepicker #timepicker />
+                    <mat-timepicker-toggle [for]="timepicker" matSuffix />
+                  </mat-form-field>
+                  @if (formUtils.isValidField(formCupon, "fchHoraCaducidad")) {
+                  <div class="alert alert-danger">
+                    {{ formUtils.getFieldError(formCupon, "fchHoraCaducidad") }}
+                  </div>
+                  }
+                </div>
+              </div>
+
+              <hr>
+
+
+              <div class="row mb-2">
+                <label for="limiteUsoDelCupon" class="col-form-label col-sm-3">Límite uso del Cupon:</label>
+                <div class="input-group col-sm">
+                  <input type="number" formControlName="limiteUsoDelCupon" name="limiteUsoDelCupon" class="form-control"
+                    placeholder="Uso ilimitado si no se especifica" />
+                  <span class="input-group-text"># Número</span>
+                  @if (formUtils.isValidField(formCupon, "limiteUsoDelCupon")) {
+                  <div class="alert alert-danger">
+                    {{
+                    formUtils.getFieldError(formCupon, "limiteUsoDelCupon")
+                    }}
+                  </div>
+                  }
+                </div>
+              </div>
+              <div class="row mb-2">
+                <label for="limiteUsoNProductosPedido" class="col-form-label col-sm-3">Límite N
+                  Productos en Pedido:</label>
+                <div class="input-group col-sm">
+                  <input type="number" formControlName="limiteUsoNProductosPedido" name="limiteUsoNProductosPedido"
+                    class="form-control" placeholder="Aplica a todos los productos del pedido si no especifica" />
+                  <span class="input-group-text"># Número</span>
+                  @if (formUtils.isValidField(formCupon, "limiteUsoNProductosPedido")) {
+                  <div class="alert alert-danger">
+                    {{
+                    formUtils.getFieldError(formCupon, "limiteUsoNProductosPedido")
+                    }}
+                  </div>
+                  }
+                </div>
+              </div>
+              <div class="row mb-2">
+                <label for="limiteUsoPorPersona" class="col-form-label col-sm-3">Límite uso por
+                  Persona:</label>
+                <div class="input-group col-sm">
+                  <input type="number" formControlName="limiteUsoPorPersona" name="limiteUsoPorPersona"
+                    class="form-control" placeholder="Uso ilimitado si no se especifica" />
+                  <span class="input-group-text"># Número</span>
+                  @if (formUtils.isValidField(formCupon, "limiteUsoPorPersona")) {
+                  <div class="alert alert-danger">
+                    {{
+                    formUtils.getFieldError(formCupon, "limiteUsoPorPersona")
+                    }}
+                  </div>
+                  }
+                </div>
+              </div>
+
+              <div class="row mb-2">
+                <div class="row mb-2">
+                  <label for="usoCombinado" class="col-form-label col-sm-4">Uso combinado:</label>
+                  <div class="form-check form-check-inline col-sm">
+                    <input class="form-check-input" type="checkbox" formControlName="usoCombinado" name="usoCombinado"
+                      [checked]="cupon().usoCombinado" />
+                    <label class="form-check-label" for="usoCombinado">El cupón se utiliza en combinación con otros
+                      cupones.</label>
+                    <!--                     @if (formUtils.isValidField(formCupon, "usoCupon")) {
+                    <div class="alert alert-danger">
+                      {{ formUtils.getFieldError(formCupon, "usoCupon") }}
+                    </div>
+                    } -->
+                  </div>
+                </div>
+                <hr>
+
+                <div class="row mb-2">
+                  <label for="categoriasIncluidasBusq" class="form-label col-sm-3">Categorias incluidas: </label>
+                  <div class="col-sm">
+                    <chips-autocomplete-resource placeholder="Buscar categoria..." [searchFn]="buscarCategorias"
+                      [displayWith]="displayCategoria" [getKey]="categoriaKey" [(chips)]="categoriasIncluidas">
+                    </chips-autocomplete-resource>
+                  </div>
+                </div>
+
+                <div class="row mb-2">
+                  <label for="categoriasExcluidasBusq" class="form-label col-sm-3">Categorias excluidas: </label>
+                  <div class="col-sm">
+                    <chips-autocomplete-resource placeholder="Buscar categoria..." [searchFn]="buscarCategorias"
+                      [displayWith]="displayCategoria" [getKey]="categoriaKey" [(chips)]="categoriasExcluidas">
+                    </chips-autocomplete-resource>
+                  </div>
+                </div>
+                <div class="row mb-2">
+                  <label for="productosIncluidosBusq" class="form-label col-sm-3">Productos incluidos: </label>
+                  <div class="col-sm">
+                    <chips-autocomplete-resource placeholder="Buscar producto..." [searchFn]="buscarProductos"
+                      [displayWith]="displayProducto" [getKey]="productoKey" [(chips)]="productosIncluidos">
+                    </chips-autocomplete-resource>
+                  </div>
+                </div>
+                <div class="row mb-2">
+                  <label for="productosExcluidosBusq" class="form-label col-sm-3">Productos Excluidos: </label>
+                  <div class="col-sm">
+                    <chips-autocomplete-resource placeholder="Buscar producto..." [searchFn]="buscarProductos"
+                      [displayWith]="displayProducto" [getKey]="productoKey" [(chips)]="productosExcluidos">
+                    </chips-autocomplete-resource>
+                  </div>
+                </div>
+                <div class="row mb-2">
+                  <label for="excluirProductosOferta" class="col-form-label col-sm-4">Excluir productos en
+                    oferta:</label>
+                  <div class="form-check form-check-inline col-sm">
+                    <input class="form-check-input" type="checkbox" formControlName="excluirProductosOferta"
+                      name="excluirProductosOferta" [checked]="cupon().excluirProductosOferta" />
+                    <label class="form-check-label" for="excluirProductosOferta">A un si está en categorias incluidas o
+                      productos incluidos</label>
+                    @if (formUtils.isValidField(formCupon, "excluirProductosOferta")) {
+                    <div class="alert alert-danger">
+                      {{ formUtils.getFieldError(formCupon, "excluirProductosOferta") }}
+                    </div>
+                    }
+                  </div>
+                </div>
+                <hr>
+                <div class="row mb-2">
+                  <label for="personasExcluidasBusq" class="form-label col-sm-3">Personas excluidas: </label>
+                  <div class="col-sm">
+                    <chips-autocomplete-resource placeholder="Buscar persona..." [searchFn]="buscarPersonas"
+                      [displayWith]="displayPersona" [getKey]="personaKey" [(chips)]="personasExcluidas">
+                    </chips-autocomplete-resource>
+                  </div>
+                </div>
+                <!--                 <div class="row mb-2">
+                  <label for="aplicaPersonasConPedidos" class="col-form-label col-sm-4">Personas incluidas:</label>
+                  <div class="form-check form-check-inline col-sm">
+                    <input class="form-check-input" type="checkbox" formControlName="aplicaPersonasConPedidos"
+                      name="aplicaPersonasConPedidos" [checked]="cupon().aplicaPersonasConPedidos" />
+                    <label class="form-check-label" for="aplicaPersonasConPedidos">El cupón se aplica a todas las
+                      personas con
+                      pedidos</label>
+                    @if (
+                    formUtils.isValidField(formCupon, "aplicaPersonasConPedidos")
+                    ) {
+                    <div class="alert alert-danger">
+                      {{formUtils.getFieldError(formCupon,"aplicaPersonasConPedidos")}}
+                    </div>
+                    }
+                  </div>
+                </div> -->
+                <hr>
+                <div class="row mb-2">
+                  <label for="tipoDescuentoCupon" class="form-label col-sm-3">Tipo de Cupon:</label>
+                  <div class="input-group col-sm">
+                    <select formControlName="tipoDescuentoCupon" name="tipoDescuentoCupon" class="form-control">
+                      @for (tipo of tiposDescuentoCuponResource.value(); track tipo.codigo) {
+                      <option [value]="tipo.codigo">{{tipo.descripcion}}</option>
+                      }
+                    </select>
+                    @if (formUtils.isValidField(formCupon, "tipoDescuentoCupon")) {
+                    <div class="alert alert-danger">
+                      {{ formUtils.getFieldError(formCupon, "tipoDescuentoCupon") }}
+                    </div>
+                    }
+                  </div>
+                </div>
+                <div class="row mb-2">
+                  <label for="importe" class="col-form-label col-sm-3">Importe:</label>
+                  <div class="input-group col-sm">
+                    <input type="number" formControlName="importe" name="importe" class="form-control"
+                      placeholder="Gasto mínimo" step="any" />
+                    <span class="input-group-text">S/ 0.00</span>
+                    <span class="input-group-text">%</span>
+                    @if (formUtils.isValidField(formCupon, "importe")) {
+                    <div class="alert alert-danger">
+                      {{
+                      formUtils.getFieldError(formCupon, "importe")
+                      }}
+                    </div>
+                    }
+                  </div>
+                </div>
+                <div class="row mb-2">
+                  <label for="gastoMinimoProductos" class="col-form-label col-sm-3">Gasto mínimo en Producto:</label>
+                  <div class="input-group col-sm">
+                    <input type="number" formControlName="gastoMinimoProductos" name="gastoMinimoProductos"
+                      class="form-control" placeholder="Sin mínimo en el producto del cupón" step="any" />
+                    <span class="input-group-text">S/</span>
+                    <span class="input-group-text">0.00</span>
+                    @if (formUtils.isValidField(formCupon, "gastoMinimoProductos")) {
+                    <div class="alert alert-danger">
+                      {{
+                      formUtils.getFieldError(formCupon, "gastoMinimoProductos")
+                      }}
+                    </div>
+                    }
+                  </div>
+                </div>
+                <div class="row mb-2">
+                  <label for="gastoMaximoProductos" class="col-form-label col-sm-3">Gasto máximo en Producto:</label>
+                  <div class="input-group col-sm">
+                    <input type="number" formControlName="gastoMaximoProductos" name="gastoMaximoProductos"
+                      class="form-control" placeholder="Sin máximo en el producto del cupón" step="any" />
+                    <span class="input-group-text">S/</span>
+                    <span class="input-group-text">0.00</span>
+                    @if (formUtils.isValidField(formCupon, "gastoMaximoProductos")) {
+                    <div class="alert alert-danger">
+                      {{
+                      formUtils.getFieldError(formCupon, "gastoMaximoProductos")
+                      }}
+                    </div>
+                    }
+                  </div>
+                </div>
+                <!--              <div class="row mb-2">
+                  <label for="gastoMaximoProductos" class="col-form-label col-sm-3"></label>
+                  <div class="col-sm">
+                    <p>No especifique Gasto Máximo si no quiere colocar un limite de gasto al cupón</p>
+                  </div>
+                </div> -->
+                <hr>
+                <label for="visibleEnTienda" class="form-label col-sm-4">Visible en tienda:</label>
+                <div class="form-check form-switch col-sm">
+                  <input class="form-check-input" type="checkbox" formControlName="visibleEnTienda"
+                    name="visibleEnTienda" [checked]="cupon().visibleEnTienda" />
+                  @if (formUtils.isValidField(formCupon, "visibleEnTienda")) {
+                  <div class="alert alert-danger">
+                    {{ formUtils.getFieldError(formCupon, "visibleEnTienda") }}
+                  </div>
+                  }
+                </div>
+                <!--                 @if (authService.hasRole("ROLE_ACTIVE_CUPON")) {
+                <label for="activo" class="form-label col-sm-3">Activar cupón:</label>
+                <div class="form-check form-switch col-sm">
+                  <input class="form-check-input" type="checkbox" formControlName="activo" name="activo"
+                    [checked]="cupon().activo" />
+                  @if (formUtils.isValidField(formCupon, "activo")) {
+                  <div class="alert alert-danger">
+                    {{ formUtils.getFieldError(formCupon, "activo") }}
+                  </div>
+                  }
+                </div>
+                } -->
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+      <mat-card-footer class="card-header">
+        <div class="ms-auto">
+          <button color="primary" mat-raised-button [routerLink]="'/cupones'">
+            Cancelar
+          </button>
+          @if (cupon().codigo && authService.hasRole("ROLE_UPDATE_CUPON")) {
+          <button color="primary" mat-raised-button (click)="guardarCupon()" [disabled]="!formCupon.valid">
+            Actualizar
+          </button>
+          }
+          @if (
+          !cupon().codigo && authService.hasRole("ROLE_REGISTER_CUPON")
+          ) {
+          <button color="primary" mat-raised-button (click)="guardarCupon()" [disabled]="!formCupon.valid">
+            Crear
+          </button>
+          }
+        </div>
+      </mat-card-footer>
+    </form>
+  </mat-card>
+</div>

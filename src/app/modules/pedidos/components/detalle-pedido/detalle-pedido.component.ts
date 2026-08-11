@@ -1,51 +1,64 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, inject } from '@angular/core';
-import { rxResource, toSignal } from '@angular/core/rxjs-interop';
+import { Component, computed, inject, input } from '@angular/core';
+import { rxResource } from '@angular/core/rxjs-interop';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute, RouterModule } from '@angular/router';
-import { map } from 'rxjs';
+import { RouterModule } from '@angular/router';
 import { environment } from '../../../../../environments/environment';
+import { PEDIDO_COMPRA, PEDIDO_VENTA } from '../../../../constants/constantes';
 import { ItemPedido } from '../../../../models/item-pedido';
-import { PedidoService } from '../../../../services/pedido.service';
+import { Pedido } from '../../../../models/pedido';
+import { Persona } from '../../../../models/persona';
 import { PersonaService } from '../../../../services/persona.service';
 import { ProductoService } from '../../../../services/producto.service';
 import { AngularMaterialModule } from '../../../compartido/angular-material.module';
 
 @Component({
-  selector: 'app-detalle-pedido-compra',
-  templateUrl: './detalle-pedido-compra.component.html',
-  styleUrl: './detalle-pedido-compra.component.css',
+  selector: 'app-detalle-pedido',
+  templateUrl: './detalle-pedido.component.html',
+  styleUrl: './detalle-pedido.component.css',
   standalone: true,
   imports: [
     CommonModule,
     RouterModule,
+    AngularMaterialModule,
     FormsModule,
     ReactiveFormsModule,
-    AngularMaterialModule,
   ],
 })
-export class DetallePedidoCompraComponent {
-  private pedidoService = inject(PedidoService);
-  private productoService = inject(ProductoService);
-  private personaService = inject(PersonaService);
-  private route = inject(ActivatedRoute);
+export class DetallePedidoComponent {
 
-  titulo: string = 'Pedido de compra';
+  //private pedidoService = inject(PedidoService);
+  private productoService = inject(ProductoService);
+  //private route = inject(ActivatedRoute);
+  inPedido = input.required<Pedido>();
+  persona = computed<Persona>(() => {
+    const persona = this.inPedido().persona!;
+    return persona;
+  })
+
+  /*     pedido = computed(() => {
+      const pedido = this.pedidoResource.value();
+      if (!pedido) return null;
+      return { ...pedido, items: [] };
+    });
+   */
+
+  titulo: string = 'Pedido de venta';
   API_URL_VER_IMAGEN = environment.API_URL_VER_IMAGEN;
 
-  readonly pedidoId = toSignal(
-    this.route.paramMap.pipe(map((p) => p.get('pedidoId'))),
-    { initialValue: null },
-  );
+  /*   readonly pedidoId = toSignal(
+      this.route.paramMap.pipe(map((p) => p.get('pedidoId'))),
+      { initialValue: null },
+    ); */
 
-  pedidoResource = rxResource({
-    params: () => {
-      const pedidoId = this.pedidoId();
-      if (!pedidoId) return null;
-      return { pedidoId };
-    },
-    stream: ({ params }) => this.pedidoService.getPedido(+params!.pedidoId),
-  });
+  /*   pedidoResource = rxResource({
+      params: () => {
+        const pedidoId = this.pedidoId();
+        if (!pedidoId) return null;
+        return { pedidoId };
+      },
+      stream: ({ params }) => this.pedidoService.getPedido(+params!.pedidoId),
+    }); */
 
   coloresResource = rxResource({
     stream: () => this.productoService.getColoresProducto(),
@@ -55,24 +68,18 @@ export class DetallePedidoCompraComponent {
     stream: () => this.productoService.getMaterialesProducto(),
   });
 
-  pedido = computed(() => {
-    const pedido = this.pedidoResource.value();
-    if (!pedido) return null;
-    return { ...pedido, items: [] };
-  });
+  /*   personaResources = rxResource({
+      params: () => {
+        const personaId = this.inPedido().persona?.id;
+        if (!personaId) return null;
+        return { personaId };
 
-  personaResources = rxResource({
-    params: () => {
-      const personaId = this.pedido()?.personaId
-      if (!personaId) return null;
-      return { personaId };
-
-    },
-    stream: ({ params }) => this.personaService.getPersona(+params!.personaId),
-  })
+      },
+      stream: ({ params }) => this.personaService.getPersona(+params!.personaId),
+    }) */
 
   items = computed<ItemPedido[]>(() => {
-    const items = this.pedidoResource.value()?.items as ItemPedido[];
+    const items = this.inPedido().items as ItemPedido[];
     if (!items) { return [] };
 
     return items.map((item) => {
@@ -93,6 +100,10 @@ export class DetallePedidoCompraComponent {
       return { ...item, imagenShow };
     });
   });
+
+  PEDIDO_VENTA = PEDIDO_VENTA;
+  PEDIDO_COMPRA = PEDIDO_COMPRA;
+
 
   constructor() { }
 

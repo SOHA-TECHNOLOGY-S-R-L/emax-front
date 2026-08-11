@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { rxResource, toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
@@ -8,17 +8,17 @@ import { map } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
 import { PEDIDO_COMPRA } from '../../../../constants/constantes';
 import { ItemPedido } from '../../../../models/item-pedido';
+import { Pedido } from '../../../../models/pedido';
 import { Producto } from '../../../../models/producto';
 import { AuthService } from '../../../../services/auth.service';
 import { ItemService } from '../../../../services/item.service';
+import { PedidoService } from '../../../../services/pedido.service';
 import { ProductoService } from '../../../../services/producto.service';
+import { SnackbarService } from '../../../../services/snackbar.service';
 import { AngularMaterialModule } from '../../../compartido/angular-material.module';
 import { AutocompleteResourceComponent } from '../../../compartido/autocomplete-resource/autocomplete-resource.component';
 import { ItemPedidoComponent } from "../../components/item-pedido/item-pedido.component";
-import { PedidoService } from '../../../../services/pedido.service';
-import { Pedido } from '../../../../models/pedido';
-import { SnackbarService } from '../../../../services/snackbar.service';
-import { EnvioPedido } from '../../../../models/envio-pedido';
+import { Persona } from '../../../../models/persona';
 
 @Component({
   selector: 'item-producto-proveedor-tienda',
@@ -44,13 +44,26 @@ export class ItemProductoProveedorTiendaComponent {
   coloresResource = rxResource({ stream: () => this.productoService.getColoresProducto() });
   //materialesResource = rxResource({ stream: () => this.productoService.getMaterialesProducto() });
   producto = signal<Producto | null>(null);
-  envioPedido = signal<EnvioPedido | undefined>(undefined);
+  //envioPedido = signal<EnvioPedido | undefined>(undefined);
+  serviciosEnvioResource = rxResource({ stream: () => this.productoService.getLstProductoServicioEnvio() });
+  serviciosEnvio = computed(() => this.serviciosEnvioResource.value() ?? []);
   observaciones = signal<string>('');
   fechaAdquirido = signal<string>(this.obtenerFechaDefecto());
   API_URL_VER_IMAGEN = environment.API_URL_VER_IMAGEN;
   item = new ItemPedido();
   pedido = signal(new Pedido());
-  items = signal<ItemPedido[]>([]);
+  readonly rawItems = toSignal(this.itemService.getItems(), { initialValue: [] });
+  readonly items = computed(() =>
+    this.itemService.buildItems(
+      this.rawItems(), undefined, this.serviciosEnvio(), environment.API_URL_VER_IMAGEN, PEDIDO_COMPRA
+    )
+  );
+
+  readonly totalCosto = computed(() =>
+    this.itemService.calculatePrecioCostoFromItems(this.items())
+  );
+
+  //items = signal<ItemPedido[]>([]);
   PEDIDO_COMPRA = PEDIDO_COMPRA;
 
 
@@ -92,7 +105,6 @@ export class ItemProductoProveedorTiendaComponent {
     if (!mp) {
       this.item.imagenShow = 'no-imagen.png';
     } else {
-      //para item siempre se muestra una imagen y no video
       const primerElemento = mp.find((mp) =>
         mp.multimedia.mimeType.startsWith('image'),
       );
@@ -101,6 +113,7 @@ export class ItemProductoProveedorTiendaComponent {
         : 'no-imagen.png';
     }
     this.item.cantidad = 1;
+    this.item.precioCostoItem = 0;
     if (this.itemService.existItemInItems(items, pr.id)) {
       this.itemService.setItems(
         this.itemService.UpdateAmountItemFromExterno(
@@ -118,10 +131,21 @@ export class ItemProductoProveedorTiendaComponent {
     }
   }
 
+  getImagenPrincipal(producto: Producto): string {
 
-  recibirItems(itemsPedido: ItemPedido[]) {
-    this.items.set(itemsPedido);
+    const multimediaPrincipal = producto.multimediasAsignada?.find(
+      m => m.esPrincipal
+    );
+
+    return multimediaPrincipal?.multimedia?.nombre
+      ? this.API_URL_VER_IMAGEN.concat(multimediaPrincipal.multimedia.nombre)
+      : 'no-imagen.png';
   }
+
+
+/*   recibirItems(itemsPedido: ItemPedido[]) {
+    this.items.set(itemsPedido);
+  } */
 
   actualizarObservacion(text: string) {
     this.observaciones.set(text);
@@ -136,14 +160,17 @@ export class ItemProductoProveedorTiendaComponent {
 
     if (this.items().length === 0) return;
 
-    const envioPed = this.envioPedido();
+    const persona = new Persona();
+    persona.id = this.personaId()!
+
+    //const envioPed = this.envioPedido();
     this.pedido.update(p => ({
       ...p,
-      personaId: this.personaId(),
+      persona: persona,
       observacion: this.observaciones(),
-      direccionEnvio: envioPed?.direccionEnvio!,
-      celularEnvio: envioPed?.celularEnvio!,
-      nomApellRzEnvio: envioPed?.nomApellRzEnvio!,
+      //direccionEnvio: envioPed?.direccionEnvio!,
+      //celularEnvio: envioPed?.celularEnvio!,
+      //nomApellRzEnvio: envioPed?.nomApellRzEnvio!,
       adquiridoEn: this.fechaAdquirido(),
       items: [...this.items()],
       tipoPedidoId: PEDIDO_COMPRA,

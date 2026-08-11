@@ -10,18 +10,23 @@ export class Pedido {
   observacion!: string;
   items: Array<ItemPedido> = [];
   movimientos: Array<Movimiento> = [];
-  //  persona?:Persona;
-  personaId: number | undefined;
+  persona?:Persona;
+  //personaId: number | undefined;
   nomApellRzEnvio: string = '';
   direccionEnvio: string = '';
   celularEnvio: string = '';
   estadoPedido!: EstadoPedido;
   //tipoPedido!:TipoPedido;
   tipoPedidoId: number | undefined;
-  costoBrutoTotal: number = 0;
-  costoNetoTotal: number = 0;
-  precioBrutoTotal!: number;
-  precioNetoTotal: number = 0;
+  //costoBrutoTotal: number = 0;
+  //costoNetoTotal: number = 0;
+  costoTotal: number = 0;
+  importeBrutoTotal!: number;
+  descuentoPorOfertaTotal : number = 0;
+  descuentoPorCuponTotal: number = 0;
+  importeNetoTotal: number = 0;
+  igvTotal: number = 0;
+  precioTotal: number = 0;
   pagoTotal: number = 0;
   vueltoTotal: number = 0;
   saldoPedido!: number;
@@ -35,6 +40,7 @@ export class Pedido {
   //vencido:boolean = false;
   pagado: boolean = false;
   devuelto: boolean = false;
+  username: string = ''
 
 
   /*    calcularGranTotal(): number {

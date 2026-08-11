@@ -1,117 +1,109 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 
 import { CommonModule } from '@angular/common';
-import { MatDialog } from '@angular/material/dialog';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
-import { ActivatedRoute, RouterModule } from '@angular/router';
-import { ELEMENTOS_POR_PAGINA, PRIMERA_PAGINA, SIGUIENTE_PAGINA, ULTIMA_PAGINA } from '../../../constants/constantes';
+import { rxResource } from '@angular/core/rxjs-interop';
+import { PageEvent } from '@angular/material/paginator';
+import { Sort, SortDirection } from '@angular/material/sort';
+import { RouterModule } from '@angular/router';
 import { Persona } from '../../../models/persona';
-import { PageableResponse } from '../../../models/pageable-response';
 import { AlertService } from '../../../services/alert.service';
 import { AuthService } from '../../../services/auth.service';
 import { PersonaService } from '../../../services/persona.service';
-import { ModalService } from '../../../services/modal.service';
 import { AngularMaterialModule } from '../../compartido/angular-material.module';
 import { SearchBoxTableComponent } from '../../compartido/search-box-table/search-box-table.component';
+import { PageableParams } from '../../../interfaces/pageable-params';
 
 @Component({
   selector: 'app-personas',
   templateUrl: './personas.component.html',
   styleUrls: ['./personas.component.css'],
   standalone: true,
-  imports: [CommonModule,AngularMaterialModule , RouterModule, SearchBoxTableComponent],
+  imports: [CommonModule, AngularMaterialModule, RouterModule, SearchBoxTableComponent],
 
 })
-export class PersonasComponent implements OnInit, AfterViewInit {
+export class PersonasComponent {
+  private personaService = inject(PersonaService);
+  public authService = inject(AuthService);
+  //private alertService = inject(AlertService);
+  displayedColumns: string[] = ['id','nomApellRz', 'numeroDocumento', 'celular', 'acciones'];
 
-  displayedColumns: string[] = ['nomApellRz', 'numeroDocumento', 'celular',  'acciones'];
-  //dataSource!: MatTableDataSource<Persona>;
-  dataSource: Persona[] = [];
-  //personas: Persona[]=[];
-  personaSeleccionado!: Persona;
-  pageable: PageableResponse = new PageableResponse();
-  querySearch!: string;
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
-  @ViewChild(MatSort) sort!: MatSort;
-  isLoading = true;
+  readonly params = signal<PageableParams>({
+    pageNumber: 0,
+    pageSize: 10,
+    active: 'id',
+    direction: 'desc',
+    query: ''
+  });
 
+  readonly personasResource = rxResource({
+    params: () => this.params(),
+    stream: ({ params }) =>
+      this.personaService.getAllClientesPageable(params)
+  });
 
-  constructor(
-    private personaService: PersonaService,
-    private modalService: ModalService,
-    public authService: AuthService,
-    private modal: MatDialog,
-    private alertService: AlertService,
-    private activatedRoute: ActivatedRoute) {
+  readonly personas = computed(() =>
+    this.personasResource.value()?.content ?? []
+  );
 
+  readonly page = computed(() =>
+    this.personasResource.value()?.page
+  );
+
+  //readonly loading = this.personasResource.isLoading;
+  constructor() { }
+
+  pageChanged(event: PageEvent) {
+    this.params.update(params => ({
+      ...params,
+      pageNumber: event.pageIndex,
+      pageSize: event.pageSize
+    }));
   }
 
+  sortChanged(sort: Sort) {
+    const direction = sort.direction ? sort.direction : 'desc';
+    const active = sort.direction ? sort.active: 'id';
 
-  ngOnInit() { }
-
-  ngAfterViewInit(): void {
-     this.sort.sortChange.subscribe(() => {
-      (this.paginator.pageIndex = 0);
-      this.loadItems();
+    this.params.update(params => {
+      if (params.active === active && params.direction === direction) {
+        return params;
+      }
+      return {
+        ...params,
+        active,
+        direction,
+        pageNumber: 0 // Reiniciamos a la primera página al ordenar
+      };
     });
-    this.paginator._intl.itemsPerPageLabel = ELEMENTOS_POR_PAGINA;
-    this.paginator._intl.firstPageLabel = PRIMERA_PAGINA;
-    this.paginator._intl.nextPageLabel = SIGUIENTE_PAGINA;
-    this.paginator._intl.lastPageLabel = ULTIMA_PAGINA;
-    this.loadItems();
   }
 
-
-  loadItems() {
-    // try {
-    this.isLoading = true;
-    const params: any = {
-      active: this.sort.active.toUpperCase(),
-      direction: this.sort.direction.toUpperCase(),
-      pageNumber: this.paginator.pageIndex,
-      pageSize: this.paginator.pageSize,
-      query: !!this.querySearch ? this.querySearch : ''
-    };
-
-    this.personaService.getAllClientesPageable(params).subscribe(response => {
-      this.dataSource = response.content as Persona[];
-      this.pageable = response;
-    });
-
-  }
-
-
-  searchEvent(query: string): void {
-    this.querySearch = query;
-    this.loadItems();
+  searchEvent(query: string) {
+    this.params.update(params => ({
+      ...params,
+      query,
+      pageNumber: 0
+    }));
   }
 
   delete(persona: Persona): void {
 
-    const dialogRef = this.alertService.decision(`¿Seguro que desea eliminar al persona ${persona.nomApellRz}?`, "Borrar persona")
+/*     const dialogRef = this.alertService.decision(`¿Seguro que desea eliminar al persona ${persona.nomApellRz}?`, "Borrar persona")
     dialogRef.afterClosed().subscribe((result: boolean) => {
       if (result) {
         this.personaService.delete(persona.id).subscribe(
           () => {
             this.loadItems();
-            ///this.dataSource = this.personas.filter(cli => cli !== persona)
             this.alertService.success(`Persona ${persona.nomApellRz} eliminado con éxito.`, 'Persona Eliminado!')
-            /* swal.fire(
-             'Persona Eliminado!',
-             `Persona ${persona.nombres} eliminado con éxito.`,
-             'success'
-           ) */
           }
         )
       }
-    });
+    }); */
 
   }
 
-  abrirModal(persona: Persona) {
-    this.personaSeleccionado = persona;
-    this.modalService.abrirModal();
-  }
+  /*   abrirModal(persona: Persona) {
+      this.personaSeleccionado = persona;
+      this.modalService.abrirModal();
+    } */
 
 }

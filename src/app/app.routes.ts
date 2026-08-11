@@ -46,6 +46,10 @@ export const routes: Routes = [
         loadChildren: () => import("./modules/multimedia/multimedia.routes").then((r) => r.routes),
       },
       {
+        path: 'cupones',
+        loadChildren: () => import("./modules/cupones/cupones.routes").then((r) => r.routes),
+      },
+      {
         path: 'usuarios',
         loadChildren: () => import("./modules/usuarios/usuarios.routes").then((r) => r.routes),
       },

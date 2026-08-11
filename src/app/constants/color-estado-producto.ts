@@ -6,7 +6,7 @@ export const COLOR_ESTADO_PRODUCTO = {
  "5":"proximo",
 };
 
-export const COLOR_ACTIVO_CATEGORIA = {
+/* export const COLOR_ACTIVO_CATEGORIA = {
  "true":"color_activo", //registrado es atributo CSS
  "false":"color_inactivo",
 };
@@ -16,12 +16,12 @@ export const ESTADO_ACTIVO_CATEGORIA = {
  false:"No"
 };
 
-export const COLOR_ACTIVO_PRODUCTO = {
+export const COLOR_ACTIVO = {
  "true":"color_activo", //registrado es atributo CSS
  "false":"color_inactivo",
 };
 
-export const ESTADO_ACTIVO_PRODUCTO = {
+export const ESTADO_ACTIVO = {
  true:"Sí",
  false:"No"
-};
+}; */

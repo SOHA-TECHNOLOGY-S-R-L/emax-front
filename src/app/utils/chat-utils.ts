@@ -29,7 +29,7 @@ export class ChatUtils {
   }
 
   static pagoPedidoToEmpleadoCaja(pedido: Pedido) {
-    const mensaje = `Envío imagen con pago por pedido con código ${pedido.id}, por un monto de S/. ${pedido.precioNetoTotal.toFixed(2)}, fecha creación de pedido  ${moment(pedido.createAt).format('DD/MM/yyyy HH:mm:ss')}`
+    const mensaje = `Envío imagen con pago por pedido con código ${pedido.id}, por un monto de S/. ${pedido.precioTotal.toFixed(2)}, fecha creación de pedido  ${moment(pedido.createAt).format('DD/MM/yyyy HH:mm:ss')}`
     const link = environment.URL_WHATSAPP_CAJA + encodeURI(mensaje);
     window.open(link, "_blank")
   }

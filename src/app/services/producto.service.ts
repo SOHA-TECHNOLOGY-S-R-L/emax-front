@@ -13,6 +13,8 @@ import { Uso } from '../models/uso';
 import { AlertService } from './alert.service';
 import { AuthService } from './auth.service';
 import { Color } from '../models/color';
+import { Categoria } from '../models/categoria';
+import { PageableParams } from '../interfaces/pageable-params';
 
 @Injectable({
   providedIn: 'root',
@@ -47,15 +49,27 @@ export class ProductoService {
     return this.http.get<Uso[]>(`${environment.apiUrl}/producto/usos`);
   }
 
-  getAllProductosPageable(params: any): Observable<PageableResponse> {
-    return this.http.get<any>(`${environment.apiUrl}/producto/pageable`, {
-      params: params,
+  getAllProductosPageable(params: PageableParams): Observable<PageableResponse<Producto>> {
+    const backendParams = {
+      ...params,
+      active: params.active ? params.active.toUpperCase() : 'CODIGO',
+      direction: params.direction ? params.direction.toUpperCase() : 'DESC'
+    };
+
+    return this.http.get<PageableResponse<Producto>>(`${environment.apiUrl}/producto/pageable`, {
+      params: backendParams,
     });
   }
 
   getAllProducto(): Observable<Producto[]> {
     return this.http.get<Producto[]>(`${environment.apiUrl}/productos`);
   }
+
+
+  getProductosConOferta(): Observable<Producto[]> {
+    return this.http.get<Producto[]>(`${environment.apiUrl}/productos/con-oferta`);
+  }
+
 
   /*   getAllProductosNoVarienteActivos(): Observable<Producto[]> {
     return this.http.get<Producto[]>(`${environment.apiUrl}/productos/no-variente-activos`);
@@ -123,6 +137,14 @@ export class ProductoService {
           }
           return throwError(e);
         }),
+      );
+  }
+
+  productosByIds(productoIds: string): Observable<Producto[]> {
+    return this.http
+      .get<Producto[]>(`${environment.apiUrl}/productos/ids/${productoIds}`)
+      .pipe(
+        catchError(() => of([])),
       );
   }
 
@@ -238,7 +260,7 @@ export class ProductoService {
 
   updateProducto(producto: any): Observable<any> {
     return this.http
-      .put<any>(`${environment.apiUrl}/producto/${producto.id}`,producto)
+      .put<any>(`${environment.apiUrl}/producto/${producto.id}`, producto)
       .pipe(
         catchError((e) => {
           if (e.status == 400) {
@@ -319,7 +341,14 @@ export class ProductoService {
       );
   }
 
-  productosPorCategoriaNombre(params: any): Observable<PageableResponse> {
+  categoriaPorIds(categoriaIds: string): Observable<Categoria[]> {
+    return this.http.get<Categoria[]>(`${environment.apiUrl}/categorias/ids/${categoriaIds}`)
+      .pipe(
+        catchError(() => of([]))
+      )
+  }
+
+  productosPorCategoriaNombre(params: any): Observable<any> {
     return this.http
       .get<any>(`${environment.apiUrl}/productos/categoria/pageable`, {
         params: params,
@@ -362,7 +391,7 @@ export class ProductoService {
       );;
   }
 
-    servicioWithMultimediaEsPrincipal(): Observable<Producto[]> {
+  servicioWithMultimediaEsPrincipal(): Observable<Producto[]> {
     return this.http.get<Producto[]>(`${environment.apiUrl}/producto/servicio/multimedia/esprincipal`)
       .pipe(
         map(res => res || []),

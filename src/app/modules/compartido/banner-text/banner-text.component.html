@@ -1,0 +1,21 @@
+<div #container
+  class="banner-container"
+  [attr.role]="role()"
+  [attr.aria-label]="ariaLabel() ?? null"
+  [attr.aria-live]="ariaLive()">
+  <div #track class="banner-track">
+    @if (messages().length > 0) {
+      {{ currentMessage() }}
+    } @else {
+      <ng-content></ng-content>
+    }
+  </div>
+</div>
+
+
+<!-- <div #container class="banner-container">
+  <div #track class="banner-track">
+     <ng-content></ng-content>
+  </div>
+</div> -->
+

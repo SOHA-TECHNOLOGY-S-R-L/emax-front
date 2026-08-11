@@ -11,6 +11,7 @@ import { TipoDocumento } from '../models/tipo-documento';
 import { AlertService } from './alert.service';
 import { AuthService } from './auth.service';
 import { TipoPersona } from '../models/tipo-persona';
+import { PageableParams } from '../interfaces/pageable-params';
 
 @Injectable({
   providedIn: 'root'
@@ -98,16 +99,28 @@ export class PersonaService {
     );
   }
 
+  personasByIds(personaIds: string): Observable<Persona[]> {
+    return this.http.get<Persona[]>(`${environment.apiUrl}/personas/ids/${personaIds}`
+    ).pipe(
+      catchError(() => of([])
+      ))
+  }
+
   getAllPersonas(): Observable<Persona[]> {
     return this.http.get<Persona[]>(`${environment.apiUrl}/personas`
     );
   }
 
-  getAllClientesPageable(params: any): Observable<PageableResponse> {
+  getAllClientesPageable(params: PageableParams): Observable<PageableResponse<Persona>> {
+    const backendParams = {
+      ...params,
+      active: params.active ? params.active.toUpperCase() : 'ID',
+      direction: params.direction ? params.direction.toUpperCase() : 'DESC'
+    };
 
-    return this.http.get<any>(`${environment.apiUrl}/clientes/pageable`, {
+    return this.http.get<PageableResponse<Persona>>(`${environment.apiUrl}/clientes/pageable`, {
       /* headers: this.agregarAuthorizationHeader(),*/
-      params: params,
+      params: backendParams,
     });
 
   }
@@ -222,9 +235,15 @@ export class PersonaService {
   }
 
 
-  getAllEmpleadosPageable(params: any): Observable<PageableResponse> {
-    return this.http.get<any>(`${environment.apiUrl}/empleados/pageable`, {
-      params: params,
+  getAllEmpleadosPageable(params: PageableParams): Observable<PageableResponse<Persona>> {
+    const backendParams = {
+      ...params,
+      active: params.active ? params.active.toUpperCase() : 'ID',
+      direction: params.direction ? params.direction.toUpperCase() : 'DESC'
+    };
+
+    return this.http.get<PageableResponse<Persona>>(`${environment.apiUrl}/empleados/pageable`, {
+      params: backendParams,
     });
   }
 }

@@ -111,7 +111,7 @@
     }
   </div>
   <div class="row">
-    <mat-paginator [length]="pageable().totalElements" [ngClass]="{'d-none': !lstMultimedia().length}"
+    <mat-paginator [length]="pageable().page.totalElements" [ngClass]="{'d-none': !lstMultimedia().length}"
       [pageSizeOptions]="pageSizeOptions" [pageSize]="pageSize()" (page)="handlePageEvent($event)" showFirstLastButtons>
     </mat-paginator>
   </div>

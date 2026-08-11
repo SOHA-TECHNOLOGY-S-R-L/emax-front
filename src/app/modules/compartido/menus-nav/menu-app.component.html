@@ -127,6 +127,21 @@
   </ng-container>
 
   <!----------------------7-------------------->
+  <div mat-subheader *ngIf="authService.hasAnyRole('ROLE_LIST_CUPON','ROLE_REGISTER_CUPON')">
+    <mat-icon>list_alt_check</mat-icon>CUPONES DESCUENTO
+  </div>
+  <ng-container *ngIf="authService.hasRole('ROLE_LIST_CUPON')">
+    <a mat-list-item [routerLink]="['cupones']" [routerLinkActive]="['active']"
+      [routerLinkActiveOptions]="{exact: true}">
+      Listar cupones</a>
+  </ng-container>
+  <ng-container *ngIf="authService.hasRole('ROLE_REGISTER_CUPON')">
+    <a mat-list-item [routerLink]="['cupones/mantenimiento']" [routerLinkActive]="['active']"
+      [routerLinkActiveOptions]="{exact: true}">
+      Registrar cupón</a>
+  </ng-container>
+
+  <!----------------------8-------------------->
   <div mat-subheader><mat-icon>list_alt_check</mat-icon>USUARIOS
   </div>
   <ng-container *ngIf="authService.hasRole('ROLE_LIST_USUARIOS')">

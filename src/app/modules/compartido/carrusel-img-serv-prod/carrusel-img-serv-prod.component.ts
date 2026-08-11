@@ -35,7 +35,7 @@ export class CarruselImgServProdComponent implements OnInit {
         const producto = {
           ...pr,
           precioMasBajoProductoShow: pr.margenesProducto.length
-            ? Math.min(...pr.margenesProducto.map(m => m.precioNeto))
+            ? Math.min(...pr.margenesProducto.map(m => m.precioUnitario))
             : 0,
           estadoProducto: {
             ...pr.estadoProducto,

@@ -3,6 +3,18 @@ export class MargenProducto {
   minCantidad!: number;
   maxCantidad?: number;
   margen!: number;
-  precioNetoSugerido!: number;
-  precioNeto!: number;
+  valorBrutoUnitario!: number;
+  valorUnitarioOferta!: number;
+  fechaInicioOferta!: Date;
+  fechaFinOferta!: Date;
+
+  //valorNetoUnitario!: number;
+  igvUnitario!: number;
+  precioUnitario!: number;
+  //------------
+  igvUnitarioOferta !: number;
+  precioUnitarioOferta!: number;
+  descripcionOferta!: string;
+
+  //hayOferta :boolean = false;
 }

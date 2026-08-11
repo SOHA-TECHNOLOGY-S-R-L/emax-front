@@ -37,7 +37,7 @@ export class MultimediaHttpService {
       }
     } */
 
-  listarArchivosMultimedia(params: any): Observable<PageableResponse> {
+  listarArchivosMultimedia(params: any): Observable<any> {
     //console.log(params);
     return this.httpClient.get<any>(`${environment.apiUrl}/multimedia/listar/pageable`, { params: params })
   }

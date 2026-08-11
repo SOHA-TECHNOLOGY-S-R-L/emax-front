@@ -4,9 +4,11 @@
   <p>Completar los datos correctamente para <b>FINALIZAR PEDIDO</b></p>
 </div>
 }
-@if (origenPedidoId()===3) { <!--3 Pedido de tiendaa-->
-<div class="row mt-2">
-  <autocomplete-resource [placeholder]="'Buscar cliente'" [searchFn]="buscarPersonas" [displayWith]="mostrarPersona"
+<div class="row">
+
+  @if (origenPedidoId()===3) { <!--3 Pedido de tiendaa-->
+  <!--   <div class="col-12">
+ --> <autocomplete-resource [placeholder]="'Buscar cliente'" [searchFn]="buscarPersonas" [displayWith]="mostrarPersona"
     (selected)="personSelecToInForm($event)">
     <ng-template let-persona>
       <div>
@@ -16,11 +18,8 @@
       </div>
     </ng-template>
   </autocomplete-resource>
-</div>
-}
-<!-- <form id="frmPedidoPersonaOnlineFinalizado" #pedidoTiendaForm="ngForm" (ngSubmit)="crearPedidoTienda(pedidoTiendaForm)">
- -->
-<div class="row">
+  <!--   </div>
+ --> }
   <div class="col-12 col-md-6">
     <form-datos-persona [inPersona]="inPersona()" (outPersona)="outPersonSelect($event)"></form-datos-persona>
   </div>
@@ -51,22 +50,41 @@
       </li>
     </ul>
   </div>
-</div>
-<app-item-pedido [inEnvioPedido]="envioPedido()" [inTipoPedidoId]="PEDIDO_VENTA" (outItems)="recibirItems($event)" />
-<div class="row">
-  <div class="col-12">
-    <textarea class="form-control" name="observacion" [ngStyle]="{ resize: 'none' }" aria-label="With textarea"
-      placeholder="Coloca aquí datos adicionales al pedido..." minlength="2" maxlength="250" rows="2"
-      (input)="actualizarObservacion($any($event.target).value)"></textarea>
-    <!--     @if (formUtils.isValidField(formProducto, "observacion")) {
-    <div class="alert alert-danger">
-      {{ formUtils.getFieldError(formProducto, "observacion") }}
+  <app-item-pedido [inEnvioPedido]="envioPedido()" [inTipoPedidoId]="PEDIDO_VENTA" />
+  <div class="col-12 col-md-6">
+    @if(this.hayCuponesActivos()){
+    <div class="input-group mb-2">
+      <input class="form-control" name="codigoDescuento" placeholder="Código de cupón" #codigoDescuento (input)="0" />
+      <button type="button" [disabled]="(!formPersonaValid || !codigoDescuento.value.trim())"
+        (click)="aplicarCuponDescuento(codigoDescuento)">Aplicar cupón
+        descuento</button>
     </div>
-    } -->
-
+    }
+    <textarea class="form-control" name="observacion" [ngStyle]="{ resize: 'none' }" aria-label="With textarea"
+      placeholder="Coloca aquí datos adicionales al pedido..." minlength="2" maxlength="250" rows="6"
+      (input)="actualizarObservacion($any($event.target).value)"></textarea>
   </div>
-</div>
-<div class="row mb-2">
+  <div class="col-12 col-md-6">
+    <ul class="list-group">
+      <li class="list-group-item d-flex justify-content-around">
+        <span class="cabecera">Sub Total: </span> {{totalImporteBruto() | currency:'PEN'}}
+      </li>
+      @if(totalDescuentoPorOfertayCupon() > 0) {
+      <li class="list-group-item d-flex justify-content-around">
+        <span class="cabecera">Desc/Ofert: </span> {{totalDescuentoPorOfertayCupon() | currency:'PEN'}}
+      </li>
+      <li class="list-group-item d-flex justify-content-around">
+        <span class="cabecera">Neto: </span> {{totalImporteNeto() | currency:'PEN'}}
+      </li>
+      }
+      <li class="list-group-item d-flex justify-content-around">
+        <span class="cabecera">IGV: </span> {{totalIgv() | currency:'PEN'}}
+      </li>
+      <li class="list-group-item active d-flex justify-content-around">
+        <span class="cabecera">Total: </span> {{totalPrecio() | currency:'PEN'}}
+      </li>
+    </ul>
+  </div>
   @if(items().length > 0){
   <button class="btn btn-dark btn-lg" [disabled]="(!formPersonaValid || !formEnvioPedidoValid)"
     (click)="crearPedidoTienda()">Finalizar

@@ -14,6 +14,8 @@ import Aura from '@primeuix/themes/aura';
 import { tokenIntercept } from './interceptors/token.interceptor';
 import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
 import { LoadingInterceptor } from './interceptors/loading.interceptor';
+import { MatPaginatorIntl } from '@angular/material/paginator';
+import { PaginatorIntlEs } from './modules/compartido/PaginatorIntEs/modal-dialog-alert.component';
 
 
 export const appConfig: ApplicationConfig = {
@@ -36,6 +38,11 @@ export const appConfig: ApplicationConfig = {
       withInterceptorsFromDi()),
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: LoadingInterceptor, multi: true },
+
+    {
+      provide: MatPaginatorIntl,
+      useClass: PaginatorIntlEs
+    },
 
     provideClientHydration(withEventReplay()),
     /*{ provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true }, */

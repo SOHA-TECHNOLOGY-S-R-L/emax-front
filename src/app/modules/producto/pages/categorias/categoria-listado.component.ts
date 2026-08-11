@@ -3,7 +3,7 @@ import { Component, effect, inject } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { RouterModule } from '@angular/router';
 import { environment } from '../../../../../environments/environment';
-import { COLOR_ACTIVO_CATEGORIA, ESTADO_ACTIVO_CATEGORIA } from '../../../../constants/color-estado-producto';
+import { COLOR_ACTIVO, ESTADO_ACTIVO } from '../../../../constants/color-estado';
 import { Categoria } from '../../../../models/categoria';
 import { StringToTitleWithAccents } from '../../../../pipes/StringToTitleWithAccents.pipe';
 import { AuthService } from '../../../../services/auth.service';
@@ -24,7 +24,7 @@ export class CategoriaListadoComponent {
 
   categorias: Categoria[] = [];
   verImagenCategoria!: string;
-  estadoActivoCategoria = ESTADO_ACTIVO_CATEGORIA
+  estadoActivo = ESTADO_ACTIVO
   API_URL_VER_IMAGEN = environment.API_URL_VER_IMAGEN;
 
   readonly categoriasResource = rxResource({
@@ -37,8 +37,8 @@ export class CategoriaListadoComponent {
     const categorias = this.categoriasResource.value();
     if (!categorias) { return };
     this.categorias = categorias.map(cat => {
-      cat.colorActiva = COLOR_ACTIVO_CATEGORIA[('' + cat.activa) as keyof typeof COLOR_ACTIVO_CATEGORIA];
-      cat.colorVisibleEnTienda = COLOR_ACTIVO_CATEGORIA[('' + cat.visibleEnTienda) as keyof typeof COLOR_ACTIVO_CATEGORIA];
+      cat.colorActiva = COLOR_ACTIVO[('' + cat.activa) as keyof typeof COLOR_ACTIVO];
+      cat.colorVisibleEnTienda = COLOR_ACTIVO[('' + cat.visibleEnTienda) as keyof typeof COLOR_ACTIVO];
       cat.cantidadProductos = cat.productos.length;
       if (cat.multimediasAsignada.length > 0) {
         const primerElemento = cat.multimediasAsignada.find((m) => m.esPrincipal) || cat.multimediasAsignada[0];

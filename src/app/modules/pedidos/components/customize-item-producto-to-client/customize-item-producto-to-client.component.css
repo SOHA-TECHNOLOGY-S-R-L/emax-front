@@ -1,3 +1,12 @@
+.precio-remplazado-por-oferta {
+  font-size: medium;
+  font-weight: bold;
+  text-decoration: line-through;
+  text-decoration-color: red;
+  /* Cambia solo el color de la línea */
+  text-decoration-thickness: 2px;
+  /* Cambia el grosor de la línea */
+}
 
 .precio {
   font-size: x-large;
@@ -5,9 +14,10 @@
 }
 
 input[type="number"] {
-/*     width: 80px;
- */    background-color: #f9f9f9;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 16px;
+  /*     width: 80px;
+ */
+  background-color: #f9f9f9;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
 }

@@ -128,7 +128,7 @@
                 <div class="input-group col-sm">
                   <input type="number" formControlName="cantidadStock" name="cantidadStock" class="form-control"
                     placeholder="Cantidad en stock" min="0" />
-                  <span class="input-group-text">Número</span>
+                  <span class="input-group-text"># Número</span>
                   @if (formUtils.isValidField(formProducto, "cantidadStock")) {
                   <div class="alert alert-danger">
                     {{
@@ -144,7 +144,7 @@
                 <div class="input-group col-sm">
                   <input type="number" formControlName="cantidadVendidos" name="cantidadVendidos" class="form-control"
                     placeholder="Cantidad Vendidos" min="0" />
-                  <span class="input-group-text">Número</span>
+                  <span class="input-group-text"># Número</span>
                   @if (
                   formUtils.isValidField(formProducto, "cantidadVendidos")
                   ) {
@@ -164,7 +164,7 @@
                 <div class="input-group col-sm">
                   <input type="number" formControlName="minCantidadPedido" name="minCantidadPedido" class="form-control"
                     placeholder="Mínima cantidad en pedido" min="1" />
-                  <span class="input-group-text">Número</span>
+                  <span class="input-group-text"># Número</span>
                   @if (
                   formUtils.isValidField(formProducto, "minCantidadPedido")
                   ) {
@@ -185,7 +185,7 @@
                 <div class="input-group col-sm">
                   <input type="number" formControlName="maxCantidadPedido" name="maxCantidadPedido" class="form-control"
                     placeholder="Máxima cantidad en pedido" min="1" />
-                  <span class="input-group-text">Número</span>
+                  <span class="input-group-text"># Número</span>
                   @if (
                   formUtils.isValidField(formProducto, "maxCantidadPedido")
                   ) {
@@ -205,7 +205,7 @@
                 <div class="input-group col-sm">
                   <input type="number" formControlName="gruposDe" name="gruposDe" class="form-control"
                     placeholder="Grupos De" min="1" />
-                  <span class="input-group-text">Número</span>
+                  <span class="input-group-text"># Número</span>
                   @if (formUtils.isValidField(formProducto, "gruposDe")) {
                   <div class="alert alert-danger">
                     {{ formUtils.getFieldError(formProducto, "gruposDe") }}
@@ -218,7 +218,7 @@
                 <div class="input-group col-sm">
                   <input type="number" formControlName="umbralPocaCantidad" name="umbralPocaCantidad"
                     class="form-control" placeholder="Umbral de poca cantidad" min="1" />
-                  <span class="input-group-text">Número</span>
+                  <span class="input-group-text"># Número</span>
                   @if (
                   formUtils.isValidField(formProducto, "umbralPocaCantidad")
                   ) {
@@ -239,7 +239,7 @@
                 <div class="input-group col-sm">
                   <input type="number" formControlName="umbralCantidadAgotada" name="umbralCantidadAgotada"
                     class="form-control" placeholder="Umbral de cantidad agotada" min="0" />
-                  <span class="input-group-text">Número</span>
+                  <span class="input-group-text"># Número</span>
                   @if (
                   formUtils.isValidField(
                   formProducto,
@@ -257,22 +257,7 @@
                   }
                 </div>
               </div>
-              <div class="row mb-2">
-                <label for="costoUnitario" class="col-form-label col-sm-5"><b>Costo unitario:</b></label>
-                <div class="input-group col-sm">
-                  <input type="number" (input)="calcularPrecioNeto()" formControlName="costoUnitario"
-                    name="costoUnitario" class="form-control" placeholder="Costo unitario" step="any" />
-                  <span class="input-group-text">S/</span>
-                  <span class="input-group-text">0.00</span>
-                  @if (formUtils.isValidField(formProducto, "costoUnitario")) {
-                  <div class="alert alert-danger">
-                    {{
-                    formUtils.getFieldError(formProducto, "costoUnitario")
-                    }}
-                  </div>
-                  }
-                </div>
-              </div>
+
               <!--             <div class="row mb-2">
               <label for="costoPersonalizacion" class="col-form-label col-sm-4">Costo Personalizacion:</label>
               <div class="input-group col-sm">
@@ -296,19 +281,7 @@
                 <span class="input-group-text">0.00</span>
               </div>
             </div> -->
-              <div class="row mb-2">
-                <label for="impuestoIgv" class="col-form-label col-sm-5">IGV (%)</label>
-                <div class="input-group col-sm">
-                  <input type="number" (input)="calcularPrecioNeto()" formControlName="impuestoIgv" name="impuestoIgv"
-                    class="form-control" placeholder="Impuesto IGV" required />
-                  <span class="input-group-text">%</span>
-                  @if (formUtils.isValidField(formProducto, "impuestoIgv")) {
-                  <div class="alert alert-danger">
-                    {{ formUtils.getFieldError(formProducto, "impuestoIgv") }}
-                  </div>
-                  }
-                </div>
-              </div>
+
               <!--             <div class="row mb-2">
               <label for="margenGanancia" (input)="calcularPrecioNeto()" class="col-form-label col-sm-4">Margen ganancia
                 (%)</label>
@@ -456,130 +429,226 @@
             </div>
           </div>
           @if (authService.hasRole("ROLE_VIEW_MARGEN_PRODUCTO")) {
+          @if (authService.hasRole("ROLE_CREATE_MARGEN_PRODUCTO")) {
+          <div class="col d-grid">
+            <button type="button" class="btn btn-warning" (click)="newMargenProducto()">
+              Aplicar margenes de ganancia(%) por cantidad
+            </button>
+          </div>
+          }
           <div class="row">
-            @if (authService.hasRole("ROLE_CREATE_MARGEN_PRODUCTO")) {
-            <div class="col d-grid">
-              <button type="button" class="btn btn-warning" (click)="newMargenProducto()">
-                Aplicar margenes de ganancia(%) por cantidad
-              </button>
+            <!--             <div class="col-sm">
+              <div class="row mb-2">
+                <label for="costoUnitarioMax" class="col-form-label col-sm-7"><b>Costo unitario Máximo:</b></label>
+                <div class="input-group col-sm">
+                  <input type="number" formControlName="costoUnitarioMax" [value]="producto().costoUnitarioMax"
+                    name="costoUnitarioMax" class="form-control" placeholder="Costo unitario Maximo" step="any" readonly />
+                </div>
+              </div>
+            </div> -->
+            <div class="col-sm">
+              <div class="row mb-2">
+                <label for="costoUnitario" class="col-form-label col-sm-5"><b>Costo unitario:</b></label>
+                <div class="input-group col-sm">
+                  <input type="number" (input)="calcularPrecio()" formControlName="costoUnitario" name="costoUnitario"
+                    class="form-control" placeholder="Costo unitario" step="any" />
+                  <!--                   <span class="input-group-text">S/</span>
+                  <span class="input-group-text">0.00</span> -->
+                  @if (formUtils.isValidField(formProducto, "costoUnitario")) {
+                  <div class="alert alert-danger">
+                    {{
+                    formUtils.getFieldError(formProducto, "costoUnitario")
+                    }}
+                  </div>
+                  }
+                </div>
+              </div>
             </div>
-            }
-            <div class="row">
-              <div class="col-2 text-center">
-                <b>Mín Cant</b>
+            <div class="col-sm">
+              <div class="row mb-2">
+                <label for="porcentajeIgv" class="col-form-label col-sm-5">IGV (%)</label>
+                <div class="input-group col-sm">
+                  <input type="number" (input)="calcularPrecio()" formControlName="porcentajeIgv" name="porcentajeIgv"
+                    class="form-control" placeholder="Impuesto IGV" required />
+                  <span class="input-group-text">%</span>
+                  @if (formUtils.isValidField(formProducto, "porcentajeIgv")) {
+                  <div class="alert alert-danger">
+                    {{ formUtils.getFieldError(formProducto, "porcentajeIgv") }}
+                  </div>
+                  }
+                </div>
               </div>
-              <div class="col-2 text-center">
-                <b>Máx Cant</b>
-              </div>
-              <div class="col-2 text-center">
-                <b>Margen(%)</b>
-              </div>
-              <div class="col-2 text-center">
-                <b>P.Sugeri(S/)</b>
-              </div>
-              <div class="col-3 text-center">
-                <b>P. Neto(S/)</b>
-              </div>
-              <div class="col-1"></div>
             </div>
+          </div>
+          <div class="row">
+
             <div formArrayName="margenesGanancia">
-              @for (
-              margen of margenesGanancia.controls;
-              track $index;
-              let i = $index
-              ) {
+              @for (margen of margenesGanancia.controls;track $index;let i = $index) {
               <div class="row mb-2" [formGroupName]="i">
-                <div class="col-2">
-                  <input type="number" formControlName="minCantidad" name="minCantidad" class="form-control" />
-                  @if (
-                  margenesGanancia.controls[i].get("minCantidad")
-                  ?.errors &&
-                  margenesGanancia.controls[i].get("minCantidad")?.touched
-                  ) {
-                  <div class="alert alert-danger" *ngIf="
-                            margenesGanancia.controls[i].get('minCantidad')
-                              ?.errors?.['required']
-                          ">
-                    Valor requerido
-                  </div>
-                  <div class="alert alert-danger" *ngIf="
-                            margenesGanancia.controls[i].get('minCantidad')
-                              ?.errors?.['min']
-                          ">
-                    Valor mínimo requerido
-                  </div>
-                  }
-                </div>
+                <div class="col">
+                  <ul class="list-group">
+                    <li class="list-group-item active d-flex justify-content-between">
+                      <span>Margen {{i + 1}}</span>
+                      <!--                       <button type="button" id="btnDeleteFromPedidoOnline" class="btn btn-danger icon-square" title="Eliminar item"
+                        (click)="$event.stopPropagation(); eliminarItemPedido(item)">
+                        <i class="fa-regular fa-trash-can"></i> </button> -->
+                      @if (authService.hasRole("ROLE_DELETE_MARGEN_PRODUCTO")) {
+                      <button type="button" class="btn btn-danger icon-square" title="Eliminar item"
+                        (click)="eliminarMargenProducto(i)">
+                        <i class="fa-regular fa-trash-can"></i>
+                      </button>
+                      }
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                      <span class="cabecera">Mín cantidad:
+                        <!--                       <i class="bi bi-question-circle-fill text-muted"
+                        ngbTooltip="Este es el mensaje de ayuda de ng-bootstrap" placement="top">
+                      </i> -->
+                      </span>
 
-                <div class="col-2">
-                  <input type="number" formControlName="maxCantidad" name="maxCantidad" class="form-control" />
-                  @if (
-                  margenesGanancia.controls[i].get("maxCantidad")
-                  ?.errors &&
-                  margenesGanancia.controls[i].get("maxCantidad")?.touched
-                  ) {
-                  <div class="alert alert-danger" *ngIf="
-                            margenesGanancia.controls[i].get('maxCantidad')
-                              ?.errors?.['min']
-                          ">
-                    Valor mínimo requerido
-                  </div>
-                  }
-                </div>
+                      <input style="width:175px" type="number" formControlName="minCantidad" name="minCantidad" min="1"
+                        class="form-control" />
+                      @if (margenesGanancia.controls[i].get("minCantidad")?.errors &&
+                      margenesGanancia.controls[i].get("minCantidad")?.touched
+                      ) {
+                      <div class="alert alert-danger"
+                        *ngIf="margenesGanancia.controls[i].get('minCantidad')?.errors?.['required']">
+                        Valor requerido
+                      </div>
+                      <div class="alert alert-danger"
+                        *ngIf="margenesGanancia.controls[i].get('minCantidad')?.errors?.['min']">
+                        Valor mínimo requerido
+                      </div>
+                      }
+                      <span class="cabecera">Máx cantidad:
+                        <i class="bi bi-question-circle-fill text-muted"
+                          ngbTooltip="Borre el número si no quiere restricción de máximo" placement="top">
+                        </i>
+                      </span>
+                      <input style="width:175px" type="number" formControlName="maxCantidad" name="maxCantidad"
+                        class="form-control" />
+                      @if (margenesGanancia.controls[i].get("maxCantidad")?.errors &&
+                      margenesGanancia.controls[i].get("maxCantidad")?.touched
+                      ) {
+                      <div class="alert alert-danger"
+                        *ngIf="margenesGanancia.controls[i].get('maxCantidad')?.errors?.['min']">
+                        Valor mínimo requerido
+                      </div>
+                      }
+                      <span class="cabecera">Margen(%):
+                        <i class="bi bi-question-circle-fill text-muted" ngbTooltip="% de ganancia" placement="top">
+                        </i>
+                      </span>
+                      <input style="width:175px" type="number" (input)="calcularPrecioPorMargen(i)"
+                        formControlName="margen" name="margen" class="form-control" step="any" min="0" />
+                      @if (margenesGanancia.controls[i].get("margen")?.errors &&
+                      margenesGanancia.controls[i].get("margen")?.touched) {
+                      <div class="alert alert-danger"
+                        *ngIf="margenesGanancia.controls[i].get('margen')?.errors?.['required']">
+                        Valor requerido
+                      </div>
+                      <div class="alert alert-danger"
+                        *ngIf="margenesGanancia.controls[i].get('margen')?.errors?.['min']">
+                        Valor mínimo requerido
+                      </div>
+                      }
 
-                <div class="col-2">
-                  <input type="number" (input)="calcularPrecioNetoPorMargen(i)" formControlName="margen" name="margen"
-                    class="form-control" step="any" />
-                  @if (
-                  margenesGanancia.controls[i].get("margen")?.errors &&
-                  margenesGanancia.controls[i].get("margen")?.touched
-                  ) {
-                  <div class="alert alert-danger" *ngIf="
-                            margenesGanancia.controls[i].get('margen')
-                              ?.errors?.['required']
-                          ">
-                    Valor requerido
-                  </div>
-                  <div class="alert alert-danger" *ngIf="
-                            margenesGanancia.controls[i].get('margen')
-                              ?.errors?.['min']
-                          ">
-                    Valor mínimo requerido
-                  </div>
-                  }
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                      <span class="cabecera">Val Bruto(S/.):
+                        <i class="bi bi-question-circle-fill text-muted"
+                          ngbTooltip="Valor al aplicar Margen %  por encima del Costo Unitario" placement="top">
+                        </i>
+                      </span>
+                      <input style="width:175px" type="number" formControlName="valorBrutoUnitario"
+                        name="valorBrutoUnitario" class="form-control" step="any" />
+
+                      <span class="cabecera">IGV(S/.):
+                        <i class="bi bi-question-circle-fill text-muted" ngbTooltip="% aplicado al Valor Neto"
+                          placement="top">
+                        </i>
+                      </span>
+                      <input style="width:175px" type="number" formControlName="igvUnitario" name="igvUnitario"
+                        class="form-control" step="any" />
+                      @if (margenesGanancia.controls[i].get("igvUnitario")?.errors &&
+                      margenesGanancia.controls[i].get("igvUnitario")?.touched) {
+                      <div class="alert alert-danger"
+                        *ngIf="margenesGanancia.controls[i].get('igvUnitario')?.errors?.['required']">
+                        Valor requerido
+                      </div>
+                      <div class="alert alert-danger"
+                        *ngIf="margenesGanancia.controls[i].get('igvUnitario')?.errors?.['min']">
+                        Valor mínimo requerido
+                      </div>
+                      }
+                      <span class="cabecera">Precio(S/.):
+                        <i class="bi bi-question-circle-fill text-muted" ngbTooltip="Precio final" placement="top">
+                        </i>
+                      </span>
+                      <input style="width:175px" type="number" formControlName="precioUnitario" name="precioUnitario"
+                        class="form-control" step="any" />
+                    </li>
+                    <!--                 </ul>
+                  <ul class="list-group">
+                    <li class="list-group-item active d-flex justify-content-between">
+                      <span>Oferta {{i + 1}}</span>
+                    </li> -->
+
+                    <mat-accordion>
+                      <mat-expansion-panel (opened)="panelOpenState.set(true)" (closed)="panelOpenState.set(false)">
+                        <mat-expansion-panel-header>
+                          <mat-panel-title> <i>Configuración de oferta para Margen {{i + 1}}</i></mat-panel-title>
+                        </mat-expansion-panel-header>
+
+                        <ul class="list-group">
+                          <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span class="cabecera">Val Oferta(S/.):
+                              <i class="bi bi-question-circle-fill text-muted"
+                                ngbTooltip="Valor en oferta, por debajo del Valor Bruto  y por encima del Costo Unitario"
+                                placement="bottom">
+                              </i>
+                            </span>
+                            <input style="width:175px" type="number" (input)="calcularPrecioPorMargen(i)"
+                              formControlName="valorUnitarioOferta" name="valorUnitarioOferta" class="form-control"
+                              step="0.01" min="0.00" />
+                            @if (margenesGanancia.controls[i].get("valorUnitarioOferta")?.errors &&
+                            margenesGanancia.controls[i].get("valorUnitarioOferta")?.touched) {
+                            <div class="alert alert-danger"
+                              *ngIf="margenesGanancia.controls[i].get('valorUnitarioOferta')?.errors?.['required']">
+                              Valor requerido
+                            </div>
+                            <div class="alert alert-danger"
+                              *ngIf="margenesGanancia.controls[i].get('valorUnitarioOferta')?.errors?.['min']">
+                              Valor mínimo requerido
+                            </div>
+                            }
+                            <span class="cabecera">Fecha ini oferta:
+                              <i class="bi bi-question-circle-fill text-muted"
+                                ngbTooltip="Oferta sin caducidad si fechas de inicio y fin no se especifica"
+                                placement="bottom">
+                              </i>
+                            </span>
+                            <input style="width:175px" type="datetime-local" class="form-control"
+                              formControlName="fechaInicioOferta" name="fechaInicioOferta" />
+                            <span class="cabecera">Fecha fin oferta:
+                              <i class="bi bi-question-circle-fill text-muted"
+                                ngbTooltip="Oferta sin caducidad si fechas de inicio y fin no se especifica"
+                                placement="bottom">
+                              </i>
+                            </span>
+                            <input style="width:175px" type="datetime-local" class="form-control"
+                              formControlName="fechaFinOferta" name="fechaFinOferta" />
+                          </li>
+                          <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <textarea formControlName="descripcionOferta" name="descripcionOferta" class="form-control"
+                              [ngStyle]="{ resize: 'none' }" aria-label="With textarea" placeholder="Descripción oferta (Visible en tienda)"
+                              maxlength="250" rows="2"></textarea>
+                          </li>
+                        </ul>
+                      </mat-expansion-panel>
+                    </mat-accordion>
+                  </ul>
                 </div>
-                <div class="col-2">
-                  <input type="number" formControlName="precioNetoSugerido" name="precioNetoSugerido"
-                    class="form-control" step="any" />
-                </div>
-                <div class="col-3">
-                  <input type="number" formControlName="precioNeto" name="precioNeto" class="form-control" step="any" />
-                  @if (
-                  margenesGanancia.controls[i].get("precioNeto")
-                  ?.errors &&
-                  margenesGanancia.controls[i].get("precioNeto")?.touched
-                  ) {
-                  <div class="alert alert-danger" *ngIf="
-                            margenesGanancia.controls[i].get('precioNeto')
-                              ?.errors?.['required']
-                          ">
-                    Valor requerido
-                  </div>
-                  <div class="alert alert-danger" *ngIf="
-                            margenesGanancia.controls[i].get('precioNeto')
-                              ?.errors?.['min']
-                          ">
-                    Valor mínimo requerido
-                  </div>
-                  }
-                </div>
-                @if (authService.hasRole("ROLE_DELETE_MARGEN_PRODUCTO")) {
-                <div class="col-1">
-                  <button mat-icon-button color="warn" (click)="eliminarMargenProducto(i)" matTooltip="Elimnar">
-                    <mat-icon>close</mat-icon>
-                  </button>
-                </div>
-                }
               </div>
               }
             </div>

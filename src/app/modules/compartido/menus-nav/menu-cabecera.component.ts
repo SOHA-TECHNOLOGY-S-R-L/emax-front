@@ -69,31 +69,6 @@ export class MenuCabeceraComponent {
 
   constructor() { }
 
-  /*   ngOnInit(): void {
-      debugger;
-      if (!this.authService.isAuthenticated()) {
-        return;
-      }
-      this.usuarioService.getUsuarioByUsername(this.authService.usuario.username)
-        .pipe(
-          switchMap(usr => this.personaService.getPersonaByUsuarioId(usr.id))
-        )
-        .subscribe({
-          next: (persona) => {
-            debugger;
-            console.log('personasssssssssss', persona)
-            this.isCliente = true
-            if (persona.tipoPersona.persona.startsWith("Empleado")) {
-              this.isCliente = false
-            }
-          },
-          error: (err) => console.error('Error en la carga:', err)
-        });
-    } */
-
-  /*   isAutenticado(): boolean {
-      return this.authService.isAuthenticated();
-    } */
 
   logout(): void {
     const username = this.authService.usuario()?.username;

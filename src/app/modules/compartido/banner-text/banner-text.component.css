@@ -1,0 +1,31 @@
+:host {
+  display: block;
+  width: 100%;
+  overflow: hidden;
+}
+
+.banner-container {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.banner-track {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+  will-change: transform;
+  transform: translate3d(0, 0, 0);
+  user-select: none;
+  pointer-events: auto;
+}
+
+/*
+ * Evita que los elementos internos
+ * cambien de línea.
+ */
+.banner-track > * {
+  flex-shrink: 0;
+}

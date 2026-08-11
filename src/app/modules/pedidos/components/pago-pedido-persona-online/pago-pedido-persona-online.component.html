@@ -3,11 +3,11 @@
     <div class="row">
       <td class="col-12 text-center">
         <h5>!Ya casi terminas!</h5>
-        <p> Pedido con <b>código {{data.id}}</b>, por un monto de <b>{{data.precioNetoTotal| currency:'PEN'}} </b>
+        <p> Pedido con <b>código {{data.id}}</b>, por un monto de <b>{{data.precioTotal| currency:'PEN'}} </b>
           contiene
           {{data.items.length}} item(s).</p>
 
-        <p><span class="fw-bold" style="font-size: 40px; font-weight: bolder;"> {{data.precioNetoTotal|
+        <p><span class="fw-bold" style="font-size: 40px; font-weight: bolder;"> {{data.precioTotal|
             currency:'PEN'}}
           </span></p>
         <button class="btn btn-dark btn-lg" (click)="enviarPedidoChat()">ENVIA TU PAGO AQUÍ</button>

@@ -134,7 +134,7 @@
             <input matInput type="text" name="flujoEfectivoTotal" formControlName="flujoEfectivoTotal">
           </mat-form-field>
         </ng-container>
-        <ng-container *ngIf="pedidoResource.value()!.personaId">
+        <ng-container *ngIf="pedidoResource.value()!.persona!.id">
           <mat-form-field *ngIf="this.selectTipoMovimiento()=='I'">
             <mat-label>INGRESO DINERO</mat-label>
             <input matInput type="number" name="ingresoDinero" formControlName="ingresoDinero">

@@ -43,7 +43,7 @@
       </div>
       <ul class="list-group list-group-flush">
         <li class="list-group-item"><i>Stock:</i> {{producto.cantidadStock}}, <span
-            class="precio">{{producto.precioMasBajoProductoShow | currency: 'PEN'}}</span></li>
+            class="precio">{{producto.precioUnitarioSelect | currency: 'PEN'}}</span></li>
       </ul>
       <div class="card-footer">
         <div class="d-flex justify-content-evenly">
@@ -61,7 +61,7 @@
   }
 </div>
 <div class="row">
-  <mat-paginator [length]="pageable.totalElements" [ngClass]="{'d-none': !lstProductos().length}"
+  <mat-paginator [length]="pageable.page.totalElements" [ngClass]="{'d-none': !lstProductos().length}"
     [pageSizeOptions]="pageSizeOptions" [pageSize]="pageSize" (page)="handlePageEvent($event)" showFirstLastButtons>
   </mat-paginator>
 </div>
