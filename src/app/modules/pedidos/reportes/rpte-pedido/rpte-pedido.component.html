@@ -24,22 +24,16 @@
           <mat-datepicker-toggle matIconSuffix [for]="fchHasta"></mat-datepicker-toggle>
           <mat-datepicker #fchHasta></mat-datepicker>
         </mat-form-field>
-<!--         <mat-form-field>
-          <mat-label>Estado de pedido</mat-label>
-          <select matNativeControl formControlName="estadoPedidoId">
-            <option value="-1">--Seleccione</option>
-            <option *ngFor="let e of estadoPedidoLst" value={{e.id}}>{{e.estado}}</option>
-          </select>
-        </mat-form-field> -->
-<!--         <mat-form-field>
-          <mat-label>Pagado</mat-label>
-          <select matNativeControl formControlName="pagado">
-            <option value="-1">--Seleccione</option>
-            <option *ngFor="let p of pagadoLst" value={{p.id}}>{{p.pagado}}</option>
-          </select>
-        </mat-form-field> -->
-
-
+        <autocomplete-resource [placeholder]="'Buscar cliente'" [searchFn]="buscarPersonas"
+          [displayWith]="mostrarPersona" (selected)="personSelecToInForm($event)">
+          <ng-template let-persona>
+            <div>
+              {{ persona.nomApellRz }}
+              <span class="text-bold-italic">Documento:</span> {{ persona.numeroDocumento }}
+              <span class="text-bold-italic">Celular:</span> {{ persona.celular }}
+            </div>
+          </ng-template>
+        </autocomplete-resource>
       </mat-card-content>
     </form>
   </mat-card>

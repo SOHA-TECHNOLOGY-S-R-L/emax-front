@@ -3,7 +3,7 @@ import { Producto } from './producto';
 export class ItemPedido {
   producto!: Producto;
   cantidad: number = 0;
-  costoUnitarioItem: number = 0;
+  costoUnitarioPorCompraItem: number = 0;
   importeBrutoItem!: number;
   descuentoPorOfertaItem!: number;
   descuentoPorCuponItem!: number;

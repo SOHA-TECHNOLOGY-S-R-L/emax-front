@@ -1,10 +1,9 @@
 <div class="container">
-
-  <mat-card class="card">
-    <mat-card-header class="card-header">
-      <mat-card-title>Listado ventas</mat-card-title>
-    </mat-card-header>
-    <mat-card-content class="mt-2">
+<!--   <mat-card class="card">
+     <mat-card-header class="card-header"> -->
+      <h4>Listado ventas</h4>
+<!--     </mat-card-header>
+    <mat-card-content class="mt-2"> -->
       @if (pedidos().length > 0) {
       @if (authService.hasRole('ROLE_SEARCH_VENTA')) {
       <search-box-table (searchEvent)="searchEvent($event)"></search-box-table>
@@ -105,24 +104,23 @@
           <td mat-cell *matCellDef="let element"> {{element.entregadoEn}} </td>
         </ng-container>
 
-        <ng-container matColumnDef="precioNetoTotal">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Precio S/.</th>
-          <td mat-cell *matCellDef="let element"> {{element.precioNetoTotal | currency: 'PEN'}} </td>
+        <ng-container matColumnDef="precioTotal">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Precio</th>
+          <td mat-cell *matCellDef="let element"> {{element.precioTotal | currency: 'PEN'}} </td>
         </ng-container>
 
         <ng-container matColumnDef="saldoPedido">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Saldo con IGV</th>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Saldo</th>
           <td mat-cell *matCellDef="let element"> {{element.saldoPedido | currency: 'PEN'}} </td>
         </ng-container>
 
-
         <ng-container *ngIf="authService.hasRole('ROLE_VIEW_DETAILS_VENTA')" matColumnDef="expand">
-          <th mat-header-cell *matHeaderCellDef aria-label="row actions">&nbsp;</th>
+          <th mat-header-cell *matHeaderCellDef aria-label="row actions">Acciones</th>
           <td mat-cell *matCellDef="let element">
-            <button matIconButton aria-label="expand row" (click)="toggle(element);
+              <button matIconButton aria-label="expand row" (click)="toggle(element);
              $event.stopPropagation()" class="toggle-button" [class.toggle-button-expanded]="isExpanded(element)">
-              <mat-icon>keyboard_arrow_down</mat-icon>
-            </button>
+                <mat-icon>keyboard_arrow_down</mat-icon>
+              </button>
           </td>
         </ng-container>
 
@@ -152,6 +150,6 @@
         No hay registros en la base de datos.
       </div>
       }
-    </mat-card-content>
-  </mat-card>
-</div>
+<!--    </mat-card-content>
+   </mat-card> -->
+ </div>

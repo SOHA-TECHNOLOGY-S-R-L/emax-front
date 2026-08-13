@@ -31,7 +31,8 @@ export class AutocompleteResourceComponent<T> {
 
   @Output() selected = new EventEmitter<T>();
 
-  control = new FormControl('');
+  //control = new FormControl('');
+  control = new FormControl<string | T | null>(null);
   filtro = toSignal(this.control.valueChanges, { initialValue: '' });
 
   filtroNormalizado: Signal<string> = computed(() => {
@@ -53,7 +54,8 @@ export class AutocompleteResourceComponent<T> {
   seleccionar(event: MatAutocompleteSelectedEvent) {
     const item = event.option.value as T;
     this.selected.emit(item);
-    this.control.setValue('');
+    //this.control.setValue('');
+    this.control.setValue(item, { emitEvent: false });
   }
 
   clear() {

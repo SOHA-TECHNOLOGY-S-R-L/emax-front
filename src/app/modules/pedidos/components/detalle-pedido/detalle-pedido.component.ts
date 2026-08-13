@@ -11,6 +11,7 @@ import { Persona } from '../../../../models/persona';
 import { PersonaService } from '../../../../services/persona.service';
 import { ProductoService } from '../../../../services/producto.service';
 import { AngularMaterialModule } from '../../../compartido/angular-material.module';
+import moment from 'moment';
 
 @Component({
   selector: 'app-detalle-pedido',
@@ -31,9 +32,20 @@ export class DetallePedidoComponent {
   private productoService = inject(ProductoService);
   //private route = inject(ActivatedRoute);
   inPedido = input.required<Pedido>();
+
+/*   pedido = computed<Pedido>(() => {
+    const p = this.inPedido();
+    return {
+      ...p,
+      createAt : moment(p.createAt).format('DD/MM/YYYY'),
+      entregadoEn : p.entregadoEn ? moment(p.entregadoEn).format('DD/MM/YYYY HH:mm') : '-',
+      adquiridoEn : p.adquiridoEn ? moment(p.adquiridoEn).format('DD/MM/YYYY') : '-',
+    }
+  }) */
+
   persona = computed<Persona>(() => {
-    const persona = this.inPedido().persona!;
-    return persona;
+    //const pedido = this.inPedido();
+    return this.inPedido().persona!;
   })
 
   /*     pedido = computed(() => {
