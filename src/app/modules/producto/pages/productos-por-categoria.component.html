@@ -61,7 +61,11 @@
   }
 </div>
 <div class="row">
-  <mat-paginator [length]="pageable.page.totalElements" [ngClass]="{'d-none': !lstProductos().length}"
-    [pageSizeOptions]="pageSizeOptions" [pageSize]="pageSize" (page)="handlePageEvent($event)" showFirstLastButtons>
+  <mat-paginator
+  [length]="pageable?.page.totalElements"
+  [ngClass]="{'d-none': !lstProductos().length}"
+  [pageSizeOptions]="pageSizeOptions"
+  [pageSize]="pageSize"
+  (page)="handlePageEvent($event)" showFirstLastButtons>
   </mat-paginator>
 </div>
