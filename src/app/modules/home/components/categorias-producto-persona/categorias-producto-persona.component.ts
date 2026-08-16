@@ -23,7 +23,7 @@ export class CategoriasProductoPersonaComponent implements OnInit {
   ngOnInit(): void {
     this.categoriaService.getCategoriasActivasYVisibleTienda()
       .subscribe(categorias => {
-        console.log("Categoria", categorias)
+        //console.log("Categoria", categorias)
         //this.lstCategoria = categorias.sort((a, b) => a.orden - b.orden);
         this.lstCategoria =
           categorias
@@ -41,7 +41,7 @@ export class CategoriasProductoPersonaComponent implements OnInit {
               }
               return cat;
             })
-        console.log("this.lstCategoria", this.lstCategoria)
+        //console.log("this.lstCategoria", this.lstCategoria)
       })
   }
 }

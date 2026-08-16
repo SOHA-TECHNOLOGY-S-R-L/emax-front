@@ -207,7 +207,7 @@ export class ProductoService {
         catchError((e) => {
           let errorMsg = '';
           if (e.status === 404) {
-            console.log(e.error.mensaje);
+            //console.log(e.error.mensaje);
             errorMsg = 'prd-no-ecnontrado';
           } else if (e.status === 500) {
             errorMsg = 'Error interno en el servidor.';

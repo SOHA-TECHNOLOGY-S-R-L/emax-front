@@ -74,7 +74,6 @@ export class MovimientoService {
       .pipe(
         map((response: any) => response.cajaUsuario as CajaUsuario),
         catchError(e => {
-          console.log("eeeeeeeee", e)
           if (e.error?.mensaje) {
             this.alertService.error(e.error.mensaje, "Caja Usuario");
           }

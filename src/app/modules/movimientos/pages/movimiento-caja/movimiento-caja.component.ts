@@ -192,7 +192,7 @@ export class MovimientoCajaComponent {
 
 
   onSubmitForm() {
-    console.log("this.movimiento()", this.movimiento())
+    //console.log("this.movimiento()", this.movimiento())
     this.movimientoService.createMovimientoCaja(this.movimiento()).subscribe({
 
       next: () => {

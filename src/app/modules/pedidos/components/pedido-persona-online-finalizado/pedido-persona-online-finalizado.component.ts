@@ -182,14 +182,14 @@ export class PedidoPersonaOnlineFinalizadoComponent {
     const personaId = persona!.id
     if (personaId) {
       this.personaService.update(personaId, persona!).subscribe(result => {
-        console.log('persona actualziada')
+        //console.log('persona actualziada')
         this.personSelect.set(result.persona)
         this.actualizarPedido();
         this.crearPedido();
       })
     } else {
       this.personaService.create(persona!).subscribe(result => {
-        console.log("persona creada", persona)
+        //console.log("persona creada", persona)
         this.personSelect.set(result)
         this.actualizarPedido();
         this.crearPedido();
@@ -267,7 +267,7 @@ export class PedidoPersonaOnlineFinalizadoComponent {
       )
       .subscribe({
         next: (persona) => {
-          console.log('cargarPersonaOnline-->persona para update', persona)
+          //console.log('cargarPersonaOnline-->persona para update', persona)
           this.inPersona.set(persona);
         },
         error: (err) => console.error('Error en la carga:', err)
@@ -278,9 +278,7 @@ export class PedidoPersonaOnlineFinalizadoComponent {
   aplicarCuponDescuento(input: HTMLInputElement) {
     const codigoDescuento = input.value;
     this.actualizarPedido();
-    console.log("antes", this.pedido().items);
     this.pedidoService.aplicarDescuento(this.pedido(), codigoDescuento).subscribe(result => {
-      console.log("despues", result);
       //this.items.set(result);
       this.itemService.setItems(result);
 

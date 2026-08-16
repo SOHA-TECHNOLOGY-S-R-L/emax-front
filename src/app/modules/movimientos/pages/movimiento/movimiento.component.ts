@@ -411,7 +411,7 @@ export class MovimientoComponent {
     if (!pedido) { return }
     pedido.items = []
     pedido.movimientos = [this.movimiento()];
-    console.log("pedido: ", pedido)
+    //console.log("pedido: ", pedido)
 
     if (pedido.tipoPedidoId == PEDIDO_VENTA) {
       this.pedidoService.createMovimiento(pedido).pipe(

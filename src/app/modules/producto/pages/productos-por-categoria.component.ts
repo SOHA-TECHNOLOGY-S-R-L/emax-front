@@ -138,7 +138,7 @@ export class ProductosPorCategoriaComponent implements AfterViewInit {
       .subscribe((response) => {
         this.pageable = response;
         const productos = response.content as Producto[];
-        console.log("cargarProductosPorCategoria", productos);
+        //console.log("cargarProductosPorCategoria", productos);
         this.lstProductos.set(
 
           productos.map((prd) => {
