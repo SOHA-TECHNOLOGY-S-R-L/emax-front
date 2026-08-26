@@ -14,6 +14,7 @@ import { rxResource, toSignal } from '@angular/core/rxjs-interop';
 import { PersonaService } from '../../../services/persona.service';
 import { of, switchMap } from 'rxjs';
 import { Persona } from '../../../models/persona';
+import { CLIENTE_PROVEEDOR } from '../../../constants/constantes';
 
 @Component({
   selector: 'menu-cabecera',
@@ -54,7 +55,7 @@ export class MenuCabeceraComponent {
     const persona = this.personaResource.value();
     if (!persona) return true;
 
-    return !persona.tipoPersona.persona.startsWith('Empleado');
+    return persona.tipoPersonaId === CLIENTE_PROVEEDOR;
   });
 
   readonly isAutenticado = computed(() =>

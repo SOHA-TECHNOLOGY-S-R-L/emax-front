@@ -56,7 +56,9 @@ export class CuponesMantenimientoComponent {
 
 
   buscarPersonas = (term: string) => this.personaService.filtrarPersonas(term);
-  displayPersona = (persona: Persona) => persona.nomApellRz;
+  displayPersona = (persona: Persona | null): string => {
+    return persona?.nomApellRz ?? '';
+  };
   personaKey = (persona: Persona) => persona.id;
   //personaLabel = (persona: Persona) => persona.nomApellRz;
 
@@ -186,7 +188,7 @@ export class CuponesMantenimientoComponent {
           categs.filter(c => idsSetExcluidas.has(c.id)));
       });
 
-      const productoIds = (resp.productosIncluidos.trim().length === 0) ? resp.productosExcluidos:
+      const productoIds = (resp.productosIncluidos.trim().length === 0) ? resp.productosExcluidos :
         resp.productosIncluidos + ',' + resp.productosExcluidos
 
       this.productoService.productosByIds(productoIds).subscribe(prods => {

@@ -19,6 +19,7 @@ import { of } from 'rxjs';
 import { UsuarioService } from '../../../services/usuario.service';
 import { PersonaService } from '../../../services/persona.service';
 import { AlertService } from '../../../services/alert.service';
+import { CLIENTE_PROVEEDOR } from '../../../constants/constantes';
 
 @Component({
   selector: 'app-home',
@@ -60,7 +61,7 @@ export class HomeComponent implements OnInit {
     const persona = this.personaResource.value();
     if (!persona) return true;
 
-    return !persona.tipoPersona.persona.startsWith('Empleado');
+    return persona.tipoPersonaId === CLIENTE_PROVEEDOR;
   });
 
   readonly isAutenticado = computed(() =>

@@ -25,7 +25,7 @@
         </ng-container>
         <ng-container matColumnDef="tipoPersona">
           <th mat-header-cell *matHeaderCellDef> Tipo Persona </th>
-          <td mat-cell *matCellDef="let element"> {{element.tipoPersona.persona}} </td>
+          <td mat-cell *matCellDef="let element"> {{ getTipoPersona(element.tipoPersonaId) }} </td>
         </ng-container>
         <ng-container matColumnDef="celular">
           <th mat-header-cell *matHeaderCellDef> Celular </th>
@@ -34,17 +34,17 @@
         <!--           <ng-container matColumnDef="email">
             <th mat-header-cell *matHeaderCellDef> Email </th>
             <td mat-cell *matCellDef="let element"> {{element.email}} </td>
-          </ng-container> -->
+          </ng-container>
         <ng-container matColumnDef="usuario">
           <th mat-header-cell *matHeaderCellDef> Usuario </th>
           <td mat-cell *matCellDef="let element"> {{element.usuario.username}} </td>
-        </ng-container>
+        </ng-container> -->
         <ng-container matColumnDef="acciones">
           <th mat-header-cell *matHeaderCellDef> Acciones </th>
           <td mat-cell *matCellDef="let element">
             <div class="d-flex flex-row">
               <button *ngIf="authService.hasRole('ROLE_UPDATE_USUARIO')" mat-icon-button color="primary"
-                [routerLink]="['edit', element.id, 'tipo', element.tipoPersona.id]" matTooltip="Actualizar empleado">
+                [routerLink]="['edit', element.id, 'tipo-persona', element.tipoPersonaId]" matTooltip="Actualizar empleado">
                 <mat-icon>person_text</mat-icon>
               </button>
               <button *ngIf="authService.hasRole('ROLE_ASIGNAR_ROL_USUARIO')" mat-icon-button color="primary"

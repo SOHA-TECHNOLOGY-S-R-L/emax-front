@@ -1,18 +1,24 @@
 <div class="container">
   <div class="card">
-    <form class="d-flex flex-column" #empleadoForm="ngForm" [formGroup]="personaForm" autocomplete="off">
+    <form class="d-flex flex-column" [formGroup]="personaForm" autocomplete="off">
       <div class="card-header">
-        <h6 class="card-title">{{ titulo }}</h6>
+        <h6 class="card-title">{{ titulo() }}</h6>
         <div class="ms-auto">
           <button color="primary" mat-raised-button [routerLink]="'/usuarios'">Cancelar</button>
-          @if(!this.isEmpleadoEdit && authService.hasRole('ROLE_REGISTER_USUARIO')){
+          @if(!this.isEmpleadoEdit() && !this.isCliente() && authService.hasRole('ROLE_REGISTER_USUARIO')){
           <button color="primary" mat-raised-button (click)='addEmpleado()'
             [disabled]="!(personaForm.valid && isValidFormEqualsClave)">Crear empleado</button>
           }
-          @if(this.isEmpleadoEdit && authService.hasRole('ROLE_UPDATE_USUARIO')){
+          @if(this.isEmpleadoEdit() && !this.isCliente() && authService.hasRole('ROLE_UPDATE_USUARIO')){
           <button color="primary" mat-raised-button (click)='update()'
             [disabled]="!(personaForm.valid && isValidFormEqualsClave)">
             Actualizar empleado
+          </button>
+          }
+          @if(!this.isEmpleadoEdit() && this.isCliente() && authService.hasRole('ROLE_UPDATE_USUARIO')){
+          <button color="primary" mat-raised-button (click)='update()'
+            [disabled]="!(personaForm.valid && isValidFormEqualsClave)">
+            Convertir a empleado
           </button>
           }
         </div>
@@ -25,7 +31,7 @@
             <select formControlName="tipoDocumentoId" name="tipoDocumentoId" class="form-control">
               <option value="-1">
                 -- Seleccione Tipo de documento</option>
-              <option *ngFor="let tipoDocumento of tipoDocumentos" [value]="tipoDocumento.id">
+              <option *ngFor="let tipoDocumento of tipoDocumentosResources.value()" [value]="tipoDocumento.id">
                 {{tipoDocumento.nombre}}</option>
             </select>
             @if(formUtils.isValidField(personaForm,'tipoDocumentoId')){
@@ -96,7 +102,7 @@
             <select formControlName="tipoPersonaId" name="tipoPersonaId" class="form-control">
               <option value="-1">
                 -- Seleccione Tipo de empleado</option>
-              <option *ngFor="let tPerson of tipoPersonas" [value]="tPerson.id">
+              <option *ngFor="let tPerson of tipoPersonasResources.value()" [value]="tPerson.id">
                 {{tPerson.persona}}</option>
             </select>
             @if(formUtils.isValidField(personaForm,'tipoPersonaId')){
@@ -107,7 +113,7 @@
         </div>
 
         <b>Credenciales de acceso:</b>
-<!--         <div class="row mb-2">
+        <div class="row mb-2">
           <div class="col-12">
             <input formControlName="username" type="text" class="form-control" name="username"
               placeholder="Nombre usuario">
@@ -116,7 +122,7 @@
               {{formUtils.getFieldError(personaForm,'username')}}
             </div>}
           </div>
-        </div> -->
+        </div>
         <confirmar-clave (outFormEqualsClavesChange)="formEqualsClavesChange($event)" />
       </div>
     </form>

@@ -110,7 +110,7 @@ export class RpteCajaComponent implements OnInit {
   cargarUsuarios() {
 
     this.personaService.getAllPersonas().pipe(
-      map(personas => personas.filter(p => p.tipoPersona.id !== CLIENTE_PROVEEDOR))
+      map(personas => personas.filter(p => p.tipoPersonaId !== CLIENTE_PROVEEDOR))
     ).subscribe(resp => this.personasLst = resp);
 
     //this.usuarioService.getAllUsers().subscribe(res => this.usuarioLst = res);

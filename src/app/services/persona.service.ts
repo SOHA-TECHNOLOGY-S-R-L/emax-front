@@ -62,7 +62,7 @@ export class PersonaService {
         }))
   }
   getNumeroDocumento(numero: string): Observable<Persona> {
-    return this.http.get<Persona>(`${environment.apiUrl}/personas/numero-documento/${numero}`)
+    return this.http.get<Persona>(`${environment.apiUrl}/persona/numero-documento/${numero}`)
       .pipe(
         map((response: any) => response.persona as Persona),
         catchError(e => {
@@ -127,7 +127,7 @@ export class PersonaService {
 
 
   create(persona: Persona): Observable<Persona> {
-    return this.http.post(`${environment.apiUrl}/personas`, persona
+    return this.http.post(`${environment.apiUrl}/persona`, persona
     )
       .pipe(
         map((response: any) => response.persona as Persona),
@@ -142,8 +142,8 @@ export class PersonaService {
         }));
   }
 
-  getPersona(id: any): Observable<Persona> {
-    return this.http.get<Persona>(`${environment.apiUrl}/personas/${id}`
+  getPersona(personaId: any): Observable<Persona> {
+    return this.http.get<Persona>(`${environment.apiUrl}/persona/${personaId}`
       /*, {headers: this.agregarAuthorizationHeader()}*/
     ).pipe(
       catchError(e => {
@@ -157,8 +157,8 @@ export class PersonaService {
   }
 
 
-  getPersonaByIdAndTipoId(id: number, tipoPersonaId: number): Observable<Persona> {
-    return this.http.get<Persona>(`${environment.apiUrl}/personas/${id}/tipo-persona/${tipoPersonaId}`
+  getPersonaByIdAndTipoId(personaId: number, tipoPersonaId: number): Observable<Persona> {
+    return this.http.get<Persona>(`${environment.apiUrl}/personas/${personaId}/tipo-persona/${tipoPersonaId}`
       /*, {headers: this.agregarAuthorizationHeader()}*/
     ).pipe(
       catchError(e => {
@@ -172,7 +172,7 @@ export class PersonaService {
   }
 
   update(personaId: number, persona: Persona): Observable<any> {
-    return this.http.put<any>(`${environment.apiUrl}/personas/${personaId}`, persona
+    return this.http.put<any>(`${environment.apiUrl}/persona/${personaId}`, persona
       /*, {headers: this.agregarAuthorizationHeader()}*/
     ).pipe(
       catchError(e => {

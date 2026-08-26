@@ -3,7 +3,7 @@
   <mat-card-header>
     <h6 class="card-title">{{ titulo() }}</h6>
     <div class="ms-auto">
-      <button color="primary" mat-raised-button [routerLink]="'/personas'">Cancelar</button>
+      <button color="primary mr-2" mat-raised-button [routerLink]="'/personas'">Cancelar</button>
       @if(!personaId()){
       <button *ngIf="authService.hasRole('ROLE_REGISTER_PERSONA')" color="primary" [disabled]="!formValid()"
         mat-raised-button (click)='create()'>{{ titulo() }}</button>

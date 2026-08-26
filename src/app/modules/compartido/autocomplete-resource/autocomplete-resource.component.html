@@ -5,14 +5,17 @@
     [placeholder]="placeholder"
     [formControl]="control"
     [matAutocomplete]="auto"/>
+    @if (control.value) {
     <button
-    *ngIf="control.value"
-    mat-icon-button
-    matSuffix
-    type="button"
-    (click)="clear()">
-    <mat-icon>close</mat-icon>
-  </button>
+      mat-icon-button
+      matSuffix
+      type="button"
+      (click)="clear()">
+      <mat-icon>
+        close
+      </mat-icon>
+    </button>
+    }
   <mat-autocomplete
     #auto="matAutocomplete"
     [displayWith]="displayWith"

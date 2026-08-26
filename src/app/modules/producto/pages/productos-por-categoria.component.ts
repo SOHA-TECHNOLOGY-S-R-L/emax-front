@@ -69,9 +69,8 @@ export class ProductosPorCategoriaComponent implements AfterViewInit {
   lstProductos = signal<Producto[]>([]);
 
   // ************propiedades del paginador***********
-  pageable!: PageableResponse<Producto>;
-  //pageable: PageableResponse = new PageableResponse();
-  //length = 50;
+  //pageable!: PageableResponse<Producto>;
+  pageable = signal<PageableResponse<Producto> | null>(null);  //length = 50;
   pageSize = 8;
   pageIndex = 0;
   pageSizeOptions = [8, 16, 24];
@@ -136,7 +135,8 @@ export class ProductosPorCategoriaComponent implements AfterViewInit {
   cargarProductosPorCategoria(params: any) {
     return this.productoService.productosPorCategoriaNombre(params)
       .subscribe((response) => {
-        this.pageable = response;
+        //       this.pageable = response;
+        this.pageable.set(response);
         const productos = response.content as Producto[];
         //console.log("cargarProductosPorCategoria", productos);
         this.lstProductos.set(

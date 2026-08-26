@@ -62,7 +62,7 @@
 </div>
 <div class="row">
   <mat-paginator
-  [length]="pageable?.page?.totalElements"
+  [length]="pageable()?.page?.totalElements ?? 0"
   [ngClass]="{'d-none': !lstProductos().length}"
   [pageSizeOptions]="pageSizeOptions"
   [pageSize]="pageSize"

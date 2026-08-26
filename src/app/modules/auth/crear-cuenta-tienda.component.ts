@@ -3,18 +3,17 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { find, findIndex } from 'lodash-es';
+import { findIndex } from 'lodash-es';
+import { CLIENTE_PROVEEDOR } from '../../constants/constantes';
 import { Persona } from '../../models/persona';
 import { TipoDocumento } from '../../models/tipo-documento';
-import { Usuario } from '../../models/usuario';
+import { TipoPersona } from '../../models/tipo-persona';
 import { AlertService } from '../../services/alert.service';
 import { PersonaService } from '../../services/persona.service';
 import { UsuarioService } from '../../services/usuario.service';
 import { FormUtils } from '../../utils/form-utils';
 import { AngularMaterialModule } from '../compartido/angular-material.module';
 import { ConfirmarClaveComponent } from "./confirmar-clave.component";
-import { TipoPersona } from '../../models/tipo-persona';
-import { CLIENTE_PROVEEDOR } from '../../constants/constantes';
 
 @Component({
   selector: 'app-crear-cuenta-tienda',
@@ -39,19 +38,13 @@ export class CrearCuentaTiendaComponent {
 
   tipoDocumentos: TipoDocumento[] = [];
   tipoPersonas: TipoPersona[] = [];
-  tipoPersonaSelected!: TipoPersona;
-
-  //usuario: Usuario = new Usuario();
   persona: Persona = new Persona();
-  usuario: Usuario = new Usuario();
   formNewCuenta!: FormGroup;
-  isCliente: boolean = false;
-  //isUsuario: boolean = false;
   frmDefault!: FrmCrearCuentaDefault;
-  isClienteEdit: boolean = false;
-  isValidFormEqualsClave = false;
-  //isLoading: boolean = false;
+  existePersona: boolean = false ;
+  isPassword: boolean = false;
 
+  isValidFormEqualsClave = false;
 
 
   ngOnInit() {
@@ -93,17 +86,13 @@ export class CrearCuentaTiendaComponent {
   }
 
   setValueControls() {
-    this.usuario.username = this.formNewCuenta.get('numeroDocumento')?.value
-    this.usuario.password = this.formNewCuenta.get('confirmaClave.clave')?.value
-    this.usuario.noBloqueado = true;
-    this.usuario.activo = true;
-    this.usuario.reintentos = 0
-    this.persona.usuario = { ...this.usuario }
-    this.persona.tipoDocumento = find(this.tipoDocumentos, (td) => td.id === +this.formNewCuenta.get('tipoDocumentoId')?.value)!
+    this.persona.tipoDocumentoId = +this.formNewCuenta.get('tipoDocumentoId')?.value
     this.persona.numeroDocumento = this.formNewCuenta.get('numeroDocumento')?.value
     this.persona.nomApellRz = this.formNewCuenta.get('nomApellRz')?.value
     this.persona.email = this.formNewCuenta.get('correo')?.value
     this.persona.direccion = this.formNewCuenta.get('direccion')?.value
+    this.persona.username = this.formNewCuenta.get('numeroDocumento')?.value
+    this.persona.password = this.formNewCuenta.get('confirmaClave.clave')?.value
   }
 
   crearCuenta() {
@@ -114,8 +103,9 @@ export class CrearCuentaTiendaComponent {
     if (this.formNewCuenta.valid) {
       //this.isLoading = true;
       this.setValueControls();
-      this.tipoPersonaSelected = this.tipoPersonas[this.findIndexTipoPersona(CLIENTE_PROVEEDOR)];
-      this.persona.tipoPersona = this.tipoPersonaSelected
+      //this.tipoPersonaSelected = this.tipoPersonas[this.findIndexTipoPersona(CLIENTE_PROVEEDOR)];
+      //this.persona.tipoPersona = this.tipoPersonaSelected
+      this.persona.tipoPersonaId = CLIENTE_PROVEEDOR
 
       this.personaService.create(this.persona).subscribe(resp => {
         this.alertService.success(`Hola ${resp.nomApellRz} se ha creado tu cuenta, puedes iniciar sesión`, "Exito");
@@ -152,36 +142,22 @@ export class CrearCuentaTiendaComponent {
   }
 
   findByNumDocumento(event: any) {
-    //this.isLoading = true;
     const numero = event.target.value;
     const tipoDocumentoId = this.formNewCuenta.get('tipoDocumentoId')?.value;
     this.personaService.getNumeroDocumento(numero).subscribe(resp => {
       if (resp != null) {
-        this.isCliente = true
+        this.existePersona = true;
         this.persona = resp;
-        this.frmDefault.tipoDocumentoId = resp.tipoDocumento?.id;
+        this.frmDefault.tipoDocumentoId = resp.tipoDocumentoId;
         this.frmDefault.numDocumento = resp.numeroDocumento;
         this.frmDefault.nomApellRz = resp.nomApellRz;
         this.frmDefault.correo = resp.email;
-        //this.frmDefault.tipoPersonaId = resp.tipoPersona.id;
-
-        this.tipoPersonaSelected = this.tipoPersonas[this.findIndexTipoPersona(resp.tipoPersona.id)];
-        this.persona.tipoPersona = this.tipoPersonaSelected
-
         this.formNewCuenta.get('tipoDocumentoId')?.setValue(tipoDocumentoId);
-        if (resp.usuario.password != null) {
-          this.isClienteEdit = false;
-        } else {
-          this.isClienteEdit = true;
-        }
+        this.usuarioService.getUsuarioById(resp.usuarioId!).subscribe(resp => {
+          this.isPassword = !!resp.password;
+        })
         this.createForm();
-
-      } else {
-        this.tipoPersonaSelected = this.tipoPersonas[this.findIndexTipoPersona(CLIENTE_PROVEEDOR)];
-        this.persona.tipoPersona = this.tipoPersonaSelected
-        this.isCliente = false
       }
-      //this.isLoading = false;
 
     }, err => {
       console.log("Entro")

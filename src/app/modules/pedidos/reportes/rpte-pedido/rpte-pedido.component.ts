@@ -43,8 +43,8 @@ export class RptePedidoComponent implements OnInit {
   buscarPersonas = (term: string) =>
     this.personaService.filtrarPersonas(term);
 
-  mostrarPersona = (persona: Persona) =>
-    persona.nomApellRz
+  mostrarPersona = (persona: Persona | null  ) =>
+    persona?.nomApellRz ?? '';
 
   personSelecToInForm(persona: Persona) {
     this.inPersona.set(persona);

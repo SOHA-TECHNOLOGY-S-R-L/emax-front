@@ -1,21 +1,25 @@
 import { Pedido } from './pedido';
-import { TipoDocumento } from './tipo-documento';
-import { TipoPersona } from './tipo-persona';
-import { Usuario } from './usuario';
 
 export class Persona {
   id!: number;
-  nomApellRz!: string;
+  nomApellRz?: string;
   direccion?: string;
   createAt!: string;
-  tipoDocumento!: TipoDocumento;
-  tipoPersona!: TipoPersona;
+  //tipoDocumento!: TipoDocumento;
+  //tipoPersona!: TipoPersona;
+  tipoDocumentoId?: number;
+  tipoPersonaId?: number;
+
   numeroDocumento!: string;
   email?: string;
   //clave!:string;
   //confirmaClave!:string;
   celular!: string;
-  //usuarioId?:number;
-  usuario!: Usuario;
+  usuarioId?: number;
+
+  username?: string | null;
+  password?: string | null;
+
+  //usuario!: Usuario;
   pedidos: Array<Pedido> = [];
 }

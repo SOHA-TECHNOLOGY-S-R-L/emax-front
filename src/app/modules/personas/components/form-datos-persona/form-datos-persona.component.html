@@ -6,14 +6,16 @@
 
 <form [formGroup]="personaForm" autocomplete="off" class="d-flex flex-column">
   <div class="mb-2">
-    <select class="form-control" formControlName="tipoDocumento">
+    <select class="form-control" formControlName="tipoDocumentoId">
       <option [ngValue]="null">---Seleccionar tipo documento ---</option>
-      <option *ngFor="let documento of tipoDocumentos()" [ngValue]="documento">
+      @for (documento of tipoDocumentos(); track documento.id) {
+      <option [ngValue]="documento.id">
         {{ documento.nombre }}
       </option>
+      }
     </select>
-    <div *ngIf="formUtils.isValidField(personaForm,'tipoDocumento')" class="alert alert-danger">
-      {{ formUtils.getFieldError(personaForm,'tipoDocumento') }}
+    <div *ngIf="formUtils.isValidField(personaForm,'tipoDocumentoId')" class="alert alert-danger">
+      {{ formUtils.getFieldError(personaForm,'tipoDocumentoId') }}
     </div>
   </div>
   <div class="mb-2">

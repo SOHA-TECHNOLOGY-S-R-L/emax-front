@@ -47,8 +47,8 @@ export class ItemProductoPersonaTiendaComponent {
   buscarProductos = (term: string) =>
     this.productoService.filtrarProductos(term);
 
-  mostrarProducto = (producto: Producto) =>
-    producto.nombre
+  mostrarProducto = (producto: Producto | null) =>
+    producto?.nombre ?? '';
 
   onProductoSeleccionado(producto: Producto) {
     this.producto.set(producto);

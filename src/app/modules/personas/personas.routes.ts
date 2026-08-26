@@ -14,9 +14,10 @@ export const routes: Routes = [
     canActivate: [isAuthenticatedGuard, RoleGuard],
     data: { role: 'ROLE_LIST_PERSONAS' }
   },
-  { path: 'form/:id', component: FormComponent,
+  { path: 'form/:personaId', component: FormComponent,
     canActivate: [isAuthenticatedGuard, RoleGuard],
     data: { role: 'ROLE_UPDATE_PERSONA' }  },
+
   { path: 'form', component: FormComponent,
     canActivate: [isAuthenticatedGuard, RoleGuard],
     data: { role: 'ROLE_REGISTER_PERSONA' } },

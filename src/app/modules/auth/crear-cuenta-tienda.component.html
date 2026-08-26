@@ -7,8 +7,7 @@
     <div class="row align-items-center">
       <div class="col-md-7 text-center text-md-left">
         <div class="card p-4">
-          <form id="formCreateCuenta" #formCreateCuenta="ngForm" [formGroup]="formNewCuenta"
-            autocomplete="off">
+          <form id="formCreateCuenta" #formCreateCuenta="ngForm" [formGroup]="formNewCuenta" autocomplete="off">
             <div class="row mb-2">
               <label for="tipoDocumentoId" class="form-label col-12"><b>Datos del usuario:</b></label>
               <div class="col-12">
@@ -59,7 +58,6 @@
             </div>
             <b>Crear clave:</b>
             <confirmar-clave (outFormEqualsClavesChange)="formEqualsClavesChange($event)" />
-
             <!--             <div class="row mb-2">
               <label for="clave" class="form-label col-12"><b>Crear Clave:</b></label>
               <div class="col-12">
@@ -83,23 +81,23 @@
             <div class="d-flex justify-content-center">
               <button type="button" class="btn btn-secondary me-2" [routerLink]="['/']">Cancelar
                 registro</button>
-
-              @if(isCliente && isClienteEdit){
+              @if(existePersona && !isPassword){
               <button type="submit" class="btn btn-primary"
-                [disabled]="!(formCreateCuenta.form.valid && isValidFormEqualsClave)" (click)="actualizarCuenta()">Actualizar cuenta</button>
+                [disabled]="!(formCreateCuenta.form.valid && isValidFormEqualsClave)"
+                (click)="actualizarCuenta()">Actualizar cuenta</button>
               }
-              @if(!isCliente){
+              @if(!existePersona){
               <button type="submit" class="btn btn-primary"
-                [disabled]="!(formCreateCuenta.form.valid && isValidFormEqualsClave)" (click)="crearCuenta()">Registrar cuenta</button>
+                [disabled]="!(formCreateCuenta.form.valid && isValidFormEqualsClave)" (click)="crearCuenta()">Registrar
+                cuenta</button>
               }
-
-
             </div>
           </form>
         </div>
       </div>
       <div class="col-md-5 text-white">
-        @if(isCliente && isClienteEdit){
+
+        @if(existePersona && !isPassword){
         <div class="row">
           <div class="col-12 alert alert-info">
             Hola <b>{{persona.nomApellRz}}</b>, ya tenemos algunos datos, tu usuario de sesión es
@@ -108,7 +106,7 @@
         </div>
         }
 
-        @if(isCliente && !isClienteEdit){
+        @if(existePersona && isPassword){
         <div class="row">
           <div class="col-12 alert alert-info">
             <p>Hola <b>{{persona.nomApellRz}}</b> ya tienes una cuenta creada, si olvidaste tu clave has click

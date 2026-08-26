@@ -27,7 +27,7 @@ export class AutocompleteResourceComponent<T> {
   searchFn!: (term: string) => Observable<T[]>;
 
   @Input({ required: true })
-  displayWith!: (item: T) => string;
+  displayWith!: (item: T | null) => string;
 
   @Output() selected = new EventEmitter<T>();
 
@@ -37,9 +37,15 @@ export class AutocompleteResourceComponent<T> {
 
   filtroNormalizado: Signal<string> = computed(() => {
     const value = this.filtro();
-    return typeof value === 'string'
-      ? value.toLowerCase()
-      : this.displayWith(value as T)?.toLowerCase() ?? '';
+    if (typeof value === 'string') {
+      return value.toLowerCase().trim();
+    }
+
+    if (value === null) {
+      return '';
+    }
+
+    return this.displayWith(value)?.toLowerCase() ?? '';
   });
 
   readonly resource = rxResource<T[], string>({

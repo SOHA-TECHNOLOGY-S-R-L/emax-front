@@ -93,8 +93,8 @@ export class ItemProductoProveedorTiendaComponent {
   buscarProductos = (term: string) =>
     this.productoService.filtrarProductos(term);
 
-  mostrarProducto = (producto: Producto) =>
-    producto.nombre
+  mostrarProducto = (producto: Producto | null) =>
+    producto?.nombre ?? '';
 
   onProductoToItems(producto: Producto) {
     this.producto.set(producto);

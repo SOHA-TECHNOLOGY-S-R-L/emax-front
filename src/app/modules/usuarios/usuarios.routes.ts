@@ -26,7 +26,7 @@ export const routes: Routes = [
   },
 
   {
-    path: 'edit/:id/tipo/:tipoPersonaId',
+    path: 'edit/:personaId/tipo-persona/:tipoPersonaId',
     component: AddEditUsuarioComponent,
     canActivate: [isAuthenticatedGuard],
     data: { role: 'ROLE_UPDATE_USUARIO' }

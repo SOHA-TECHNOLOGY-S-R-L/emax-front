@@ -18,9 +18,10 @@ import { ProductoService } from './../../../../services/producto.service';
 import { BreakpointObserver, Breakpoints, MediaMatcher } from '@angular/cdk/layout';
 import { Pedido } from '../../../../models/pedido';
 import { PedidoService } from '../../../../services/pedido.service';
-import { COTIZACION_VENTA, PEDIDO_COMPRA, PEDIDO_VENTA } from '../../../../constants/constantes';
+import { CLIENTE_PROVEEDOR, COTIZACION_VENTA, PEDIDO_COMPRA, PEDIDO_VENTA } from '../../../../constants/constantes';
 import { EnvioPedido } from '../../../../models/envio-pedido';
 import { environment } from '../../../../../environments/environment';
+import { TipoPersona } from '../../../../models/tipo-persona';
 
 
 @Component({
@@ -105,7 +106,7 @@ export class CarritoItemProductoComponent {
     const persona = this.personaResource.value();
     if (!persona) return true;
 
-    return !persona.tipoPersona.persona.startsWith('Empleado');
+    return persona.tipoPersonaId === CLIENTE_PROVEEDOR;
   });
 
   readonly isAutenticado = computed(() =>

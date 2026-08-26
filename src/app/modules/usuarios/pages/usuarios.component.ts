@@ -31,7 +31,7 @@ export class UsuariosComponent {
   private modalService = inject(ModalService);
   private router = inject(Router);
 
-  displayedColumns: string[] = ['id', 'nomApellRz', 'tipoPersona', 'celular', 'usuario', 'acciones'];
+  displayedColumns: string[] = ['id', 'nomApellRz', 'tipoPersona', 'celular', 'acciones'];
   //dataSource: Persona[] = [];
   usuarioSeleccionado!: Usuario;
   //pageable!: PageableResponse<Usuario>;
@@ -62,6 +62,11 @@ export class UsuariosComponent {
   readonly page = computed(() =>
     this.empleadosResource.value()?.page
   );
+
+  tipoDocumentosResource = rxResource({ stream: () => this.personaService.getTipoDocumento() });
+  tipoPersonasResource = rxResource({ stream: () => this.personaService.getTipoPersona() });
+  tipoDocumentos = computed(() => this.tipoDocumentosResource.value() ?? []);
+  tipoPersonas = computed(() => this.tipoPersonasResource.value() ?? []);
 
   constructor() { }
 
@@ -99,8 +104,16 @@ export class UsuariosComponent {
   }
 
   setUsuario(empleado: Persona): void {
-    this.usuarioService.setUsuario(empleado.usuario);
-    this.router.navigate(['/usuarios/asignar-rol-usuario']);
+    const id = empleado.usuarioId
+    if (!id) { return;}
+    this.usuarioService.getUsuarioById(id).subscribe(resp => {
+      this.usuarioService.setUsuario(resp);
+      this.router.navigate(['/usuarios/asignar-rol-usuario']);
+    })
+  }
+
+  getTipoPersona(tipoPersonaId: number) {
+    return this.tipoPersonas().find(tp => tp.id === tipoPersonaId)?.persona // Asignamos un tipo de persona por defecto (cliente)
   }
 
 
