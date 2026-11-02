@@ -1,3 +1,5 @@
+import { TipoPedidoEtiquetas } from './../../../../enums/tipo-pedido.enum';
+import { ColorDetails } from './../../../../enums/color.enum';
 import { CommonModule } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { rxResource, toSignal } from '@angular/core/rxjs-interop';
@@ -6,7 +8,6 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import moment from 'moment';
 import { map } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
-import { PEDIDO_COMPRA } from '../../../../constants/constantes';
 import { ItemPedido } from '../../../../models/item-pedido';
 import { Pedido } from '../../../../models/pedido';
 import { Producto } from '../../../../models/producto';
@@ -19,6 +20,8 @@ import { AngularMaterialModule } from '../../../compartido/angular-material.modu
 import { AutocompleteResourceComponent } from '../../../compartido/autocomplete-resource/autocomplete-resource.component';
 import { ItemPedidoComponent } from "../../components/item-pedido/item-pedido.component";
 import { Persona } from '../../../../models/persona';
+import { TipoPedidoEnum } from '../../../../enums/tipo-pedido.enum';
+import { construirPedidoRequest } from '../../../../utils/build-pedido';
 
 @Component({
   selector: 'item-producto-proveedor-tienda',
@@ -41,8 +44,9 @@ export class ItemProductoProveedorTiendaComponent {
   personaId = toSignal<number>(
     this.activatedRoute.paramMap.pipe(map((r) => Number(r.get('personaId')!))),
   );
-  coloresResource = rxResource({ stream: () => this.productoService.getColoresProducto() });
+  //coloresResource = rxResource({ stream: () => this.productoService.getColoresProducto() });
   //materialesResource = rxResource({ stream: () => this.productoService.getMaterialesProducto() });
+  readonly colorDetails = ColorDetails;
   producto = signal<Producto | null>(null);
   //envioPedido = signal<EnvioPedido | undefined>(undefined);
   serviciosEnvioResource = rxResource({ stream: () => this.productoService.getLstProductoServicioEnvio() });
@@ -55,7 +59,7 @@ export class ItemProductoProveedorTiendaComponent {
   readonly rawItems = toSignal(this.itemService.getItems(), { initialValue: [] });
   readonly items = computed(() =>
     this.itemService.buildItems(
-      this.rawItems(), undefined, this.serviciosEnvio(), environment.API_URL_VER_IMAGEN, PEDIDO_COMPRA
+      this.rawItems(), undefined, this.serviciosEnvio(), environment.API_URL_VER_IMAGEN, TipoPedidoEnum.COMPRA
     )
   );
 
@@ -63,8 +67,10 @@ export class ItemProductoProveedorTiendaComponent {
     this.itemService.calculatePrecioCostoFromItems(this.items())
   );
 
+  readonly TipoPedido = TipoPedidoEnum;
+  tipoPedidoEtiquetas = TipoPedidoEtiquetas;
   //items = signal<ItemPedido[]>([]);
-  PEDIDO_COMPRA = PEDIDO_COMPRA;
+  //COMPRA = COMPRA;
 
 
 
@@ -73,8 +79,8 @@ export class ItemProductoProveedorTiendaComponent {
   private obtenerFechaDefecto(): string {
     const now = new Date();
     now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-    //return moment(now).add(2, 'days').toISOString().slice(0, 16);
-    return moment(now).toISOString().slice(0, 16);
+    return moment(now).add(2, 'hours').toISOString().slice(0, 16);
+    //return moment(now).toISOString().slice(0, 16);
   }
 
   actualizarFecha(nuevaFecha: string) {
@@ -82,12 +88,12 @@ export class ItemProductoProveedorTiendaComponent {
   }
 
 
-  findColorById(colorId: number) {
-    const colores = this.coloresResource.value();
-    if (!colores) return null;
-    const color = colores.find((c) => c.id === colorId);
-    return color ? color.nombre : 'Sin color';
-  }
+  /*   findColorById(colorId: number) {
+      const colores = this.coloresResource.value();
+      if (!colores) return null;
+      const color = colores.find((c) => c.id === colorId);
+      return color ? color.nombre : 'Sin color';
+    } */
 
 
   buscarProductos = (term: string) =>
@@ -143,42 +149,39 @@ export class ItemProductoProveedorTiendaComponent {
   }
 
 
-/*   recibirItems(itemsPedido: ItemPedido[]) {
-    this.items.set(itemsPedido);
-  } */
+  /*   recibirItems(itemsPedido: ItemPedido[]) {
+      this.items.set(itemsPedido);
+    } */
 
   actualizarObservacion(text: string) {
     this.observaciones.set(text);
   }
 
 
-  crearPedidoTienda() {
+  crearPedidoCompra() {
 
-    if (!this.authService.isAuthenticated()) {
-      return;
-    }
+    if (!this.authService.isAuthenticated()) { return; }
 
     if (this.items().length === 0) return;
 
     const persona = new Persona();
     persona.id = this.personaId()!
 
-    //const envioPed = this.envioPedido();
     this.pedido.update(p => ({
       ...p,
       persona: persona,
       observacion: this.observaciones(),
-      //direccionEnvio: envioPed?.direccionEnvio!,
-      //celularEnvio: envioPed?.celularEnvio!,
-      //nomApellRzEnvio: envioPed?.nomApellRzEnvio!,
       adquiridoEn: this.fechaAdquirido(),
       items: [...this.items()],
-      tipoPedidoId: PEDIDO_COMPRA,
+      tipoPedido: TipoPedidoEnum.COMPRA,
     }));
-    this.pedidoService.createPedidoTienda(this.pedido())
+
+    const pedidoRequest = construirPedidoRequest(this.pedido());
+
+    this.pedidoService.createPedidoCompra(pedidoRequest)
       .subscribe(p => {
         this.itemService.setItems([]);
-        this.snackbar.success(`Pedido ${p.tipoPedido.nombre} N° ${p.id}`);
+        this.snackbar.success(`Pedido N° ${p.id}`);
         this.router.navigate(['/pedidos/listado-compras']);
       });
   }

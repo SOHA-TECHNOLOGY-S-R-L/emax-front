@@ -29,8 +29,10 @@
       }
       <div class="card-body">
         <!--         <p class="card-title"> {{producto.nombre | stringToTitleWithAccents }}</p> -->
-        <p class="card-subtitle text-muted">{{producto.descripcion}} ({{producto.codigo | uppercase }}).
-          <i>Vendidos:</i> {{producto.cantidadVendidos}}
+        <p class="card-subtitle text-muted">
+          {{producto.descripcion}} ({{producto.codigo | uppercase }}).
+<!--           {{colorDetails[producto.color!].color}}
+ -->          <i>Vendidos:</i> {{producto.cantidadVendidos}}
         </p>
         <!--         <div class="row">
           <div class="col-12 col-sm-7 text-sm-start">
@@ -43,7 +45,7 @@
       </div>
       <ul class="list-group list-group-flush">
         <li class="list-group-item"><i>Stock:</i> {{producto.cantidadStock}}, <span
-            class="precio">{{producto.precioUnitarioSelect | currency: 'PEN'}}</span></li>
+            class="precio">{{producto.precioUnitarioMasBajo | currency: 'PEN'}}</span></li>
       </ul>
       <div class="card-footer">
         <div class="d-flex justify-content-evenly">

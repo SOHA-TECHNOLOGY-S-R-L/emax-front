@@ -23,7 +23,6 @@ export class CategoriasProductoPersonaComponent implements OnInit {
   ngOnInit(): void {
     this.categoriaService.getCategoriasActivasYVisibleTienda()
       .subscribe(categorias => {
-        //console.log("Categoria", categorias)
         //this.lstCategoria = categorias.sort((a, b) => a.orden - b.orden);
         this.lstCategoria =
           categorias

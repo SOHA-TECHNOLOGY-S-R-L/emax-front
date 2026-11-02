@@ -22,9 +22,11 @@ export class Cupon {
   gastoMaximoProductos: number | null = null;
   //aplicaPersonasConPedidos: boolean = false;
   //activo!: boolean;
-  visibleEnTienda: boolean = false;
+  visibleParaCliente: boolean = false;
+  visibleParaVendedor: boolean = false;
   //colorActivo!: string;
-  colorVisibleEnTienda!: string;
+  colorVisibleParaCliente!: string;
+  colorVisibleParaVendedor!: string;
   colorExcluirProductosOferta!: string;
 
 

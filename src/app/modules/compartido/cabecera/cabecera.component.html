@@ -8,9 +8,14 @@
     </a>
   </div>
   <div class="w-100">
-    <div class="bg-dark d-none d-lg-flex align-items-center">
+    <div class="bg-dark d-lg-flex align-items-center">
+      @if (mensajesBannerString().length > 0) {
       <div class="flex-grow-1 overflow-hidden d-flex align-items-center">
-
+        <app-banner-text>
+          <span class="text-primary fw-bold">
+            🎁🎁 {{mensajesBannerString()}} 💵💵
+          </span>
+        </app-banner-text>
         <!--         <app-banner-text behavior="alternate" direction="right">
           <span class="text-primary">
             Scroll izquierda
@@ -29,8 +34,7 @@
           <span class="ms-2 text-white">
             Grafiya
           </span>
-        </app-banner-text>
- -->
+        </app-banner-text> -->
 
         <!--         <app-banner-text behavior="scroll">
           <span class="badge bg-danger">
@@ -59,23 +63,9 @@
           </mat-icon>
         </app-banner-text>
         } -->
-
-        @if (mensajesBannerString().length > 0) {
-        <app-banner-text>
-          <span class="text-primary fw-bold">
-            🎁🎁 {{mensajesBannerString()}} 💵💵
-          </span>
-          <!--
-           <span class="text-primary fw-bold">
-            💵💵coto
-          </span>
-           <span class="text-primary fw-bold">
-            🪙🪙{{mensajesBannerString()}}
-          </span> -->
-        </app-banner-text>
-        }
       </div>
-      <div class="text-right text-white ms-auto flex-shrink-0">
+      }
+      <div class="d-none d-lg-flex text-right text-white ms-auto flex-shrink-0">
         <div class="h-100 d-inline-flex align-items-center border-left border-primary py-2 px-3">
           <i class="fa-solid fa-phone-volume text-primary mr-2"></i>
           <small>+51 978663071</small>
@@ -99,5 +89,14 @@
     </div>
     <menu-cabecera (clickMenuEvent)="sideNavToggle()" />
   </div>
-
 </div>
+<!-- <div class="bg-dark d-flex flex-column align-items-top flex-lg-row justify-content-lg-between">
+  @if (mensajesBannerString().length > 0) {
+  <app-banner-text>
+    <span class="text-primary fw-bold">
+      🎁🎁 {{mensajesBannerString()}} 💵💵
+    </span>
+  </app-banner-text>
+  }
+</div>
+ -->

@@ -1,6 +1,6 @@
 export class EnvioPedido {
   formaEnvio!: string;
-  nomApellRzEnvio!: string;
+  apellNomRznSocialEnvio!: string;
   direccionEnvio?: string;
   celularEnvio!: string;
 }

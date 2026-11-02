@@ -1,20 +1,20 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { lastValueFrom, Observable, of, throwError } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { forkJoin, lastValueFrom, Observable, of, throwError } from 'rxjs';
+import { catchError, map, switchMap } from 'rxjs/operators';
 
 import { Router } from '@angular/router';
 import { environment } from '../../environments/environment';
+import { PageableParams } from '../interfaces/pageable-params';
+import { PageableResponse } from '../interfaces/pageable-response';
+import { Categoria } from '../models/categoria';
 import { MargenProducto } from '../models/margen-producto';
 import { Material } from '../models/material';
-import { PageableResponse } from '../models/pageable-response';
 import { Producto } from '../models/producto';
-import { Uso } from '../models/uso';
 import { AlertService } from './alert.service';
 import { AuthService } from './auth.service';
-import { Color } from '../models/color';
-import { Categoria } from '../models/categoria';
-import { PageableParams } from '../interfaces/pageable-params';
+import { ProductoRequestResponse } from '../interfaces/pedido-request-response';
+import { construirProductoModel } from '../utils/build-pedido';
 
 @Injectable({
   providedIn: 'root',
@@ -27,13 +27,13 @@ export class ProductoService {
     private alertService: AlertService,
   ) { }
 
-  getColoresProducto(): Observable<Color[]> {
-    return this.http.get<Color[]>(`${environment.apiUrl}/producto/colores`);
-  }
+  /*   getColoresProducto(): Observable<Color[]> {
+      return this.http.get<Color[]>(`${environment.apiUrl}/producto/colores`);
+    } */
 
-  getColorProducto(colorId: number): Observable<Color> {
-    return this.http.get<Color>(`${environment.apiUrl}/color/${colorId}`);
-  }
+  /*   getColorProducto(colorId: number): Observable<Color> {
+      return this.http.get<Color>(`${environment.apiUrl}/color/${colorId}`);
+    } */
 
   getMaterialesProducto(): Observable<Material[]> {
     return this.http.get<Material[]>(
@@ -45,9 +45,9 @@ export class ProductoService {
     return this.http.get<Material>(`${environment.apiUrl}/material/${materialId}`);
   }
 
-  getUsosInternoProducto(): Observable<Uso[]> {
-    return this.http.get<Uso[]>(`${environment.apiUrl}/producto/usos`);
-  }
+  /*   getUsosInternoProducto(): Observable<Uso[]> {
+      return this.http.get<Uso[]>(`${environment.apiUrl}/producto/usos`);
+    } */
 
   getAllProductosPageable(params: PageableParams): Observable<PageableResponse<Producto>> {
     const backendParams = {
@@ -62,7 +62,11 @@ export class ProductoService {
   }
 
   getAllProducto(): Observable<Producto[]> {
-    return this.http.get<Producto[]>(`${environment.apiUrl}/productos`);
+    return this.http.get<ProductoRequestResponse[]>(`${environment.apiUrl}/productos`)
+      .pipe(
+        map(productos => productos.map(construirProductoModel))
+
+      )
   }
 
 
@@ -79,15 +83,56 @@ export class ProductoService {
     return this.http.get<number[]>(`${environment.apiUrl}/productos/ids`);
   }
 
-  filtrarProductos(term: string): Observable<Producto[]> {
+/*   filtrarProductos(term: string): Observable<Producto[]> {
     const filtro = term?.trim();
     if (!filtro || filtro.length < 2) {
       return of([]);
     }
-    return this.http.get<Producto[]>(
-      `${environment.apiUrl}/producto/filtrar-productos/${encodeURIComponent(filtro)}`,
-    );
+    return this.http.get<ProductoRequestResponse[]>(
+      `${environment.apiUrl}/producto/filtrar-productos/${encodeURIComponent(filtro)}`)
+      .pipe(
+        map(p => p.map(construirProductoModel)
+        )
+      )
+  } */
+
+
+  filtrarProductos(term: string): Observable<Producto[]> {
+    const filtro = term?.trim();
+
+    if (!filtro || filtro.length < 2) {
+      return of([]);
+    }
+
+    return this.http
+      .get<ProductoRequestResponse[]>(
+        `${environment.apiUrl}/producto/filtrar-productos/${encodeURIComponent(filtro)}`
+      )
+      .pipe(
+        map(productos => productos.map(construirProductoModel)),
+        switchMap(productos => {
+          const productos$ = productos.map(producto => {
+            if (producto.padreId == null) {
+              // Producto sin padre: conserva su propio stock.
+              return of(producto);
+            }
+            // Producto variante: obtiene el stock del padre.
+            return this.getProducto(producto.padreId).pipe(
+              map(padre => ({
+                ...producto,
+                cantidadStock: padre.cantidadStock
+              }))
+            );
+          });
+
+          return productos$.length > 0
+            ? forkJoin(productos$)
+            : of([]);
+        })
+      );
   }
+
+
 
   createProducto(producto: Producto): Observable<Producto> {
     return this.http
@@ -149,20 +194,16 @@ export class ProductoService {
   }
 
   getProducto(id: any): Observable<Producto> {
-    return this.http
-      .get<Producto>(
-        `${environment.apiUrl}/producto/id/${id}`,
-        /*, {headers: this.agregarAuthorizationHeader()}*/
-      )
+    return this.http.get<ProductoRequestResponse>(`${environment.apiUrl}/producto/id/${id}`)
       .pipe(
-        catchError((e) => {
+        map((resp: any) => construirProductoModel(resp)),
+        /*catchError((e) => {
           if (e.status != 401 && e.error?.mensaje) {
-            // this.router.navigate(['/productos']);
             console.error(e.error.mensaje);
           }
 
           return throwError(e);
-        }),
+        }),*/
       );
   }
 
@@ -223,12 +264,9 @@ export class ProductoService {
   }
 
   getLstProductoServicioEnvio(): Observable<Producto[]> {
-    return this.http
-      .get<Producto[]>(
-        `${environment.apiUrl}/productos/servicio/envio`,
-        /*, {headers: this.agregarAuthorizationHeader()}*/
-      )
+    return this.http.get<ProductoRequestResponse[]>(`${environment.apiUrl}/productos/servicio/envio`)
       .pipe(
+        map(productos => productos.map(construirProductoModel)),
         catchError((e) => {
           if (e.status != 401 && e.error?.mensaje) {
             // this.router.navigate(['/productos']);
@@ -348,32 +386,33 @@ export class ProductoService {
       )
   }
 
-  productosPorCategoriaNombre(params: any): Observable<any> {
+  productosPorCategoriaNombre(params: any): Observable<PageableResponse<Producto>> {
     return this.http
-      .get<any>(`${environment.apiUrl}/productos/categoria/pageable`, {
+      .get<PageableResponse<ProductoRequestResponse>>(`${environment.apiUrl}/productos/categoria/pageable`, {
         params: params,
       })
-      .pipe
-      //map(res => res || []),
-      //catchError(() => of([]))
-      /*       catchError(e => {
-        if (e.error?.mensaje) {
-          this.alertService.error(e.error.mensaje, e.error.err);
-        }
-        return throwError(e);
-      }) */
-      ();
+      .pipe(
+        map(res => ({
+          ...res,
+          content: res.content.map(construirProductoModel)
+        }))
+      )
+    //map(res => res || []),
+    //catchError(() => of([]))
+    /*       catchError(e => {
+      if (e.error?.mensaje) {
+        this.alertService.error(e.error.mensaje, e.error.err);
+      }
+      return throwError(e);
+    }) */
+    //();
   }
 
-  productoCategoria(
-    productoCodigo: string,
-    categoriaNombre: string,
-  ): Observable<Producto> {
+  productoCategoria(productoCodigo: string, categoriaNombre: string,): Observable<Producto> {
     return this.http
-      .get<Producto>(
-        `${environment.apiUrl}/producto/${productoCodigo}/categoria/${categoriaNombre}`,
-      )
+      .get<ProductoRequestResponse>(`${environment.apiUrl}/producto/${productoCodigo}/categoria/${categoriaNombre}`)
       .pipe(
+        map(construirProductoModel),
         catchError((e) => {
           if (e.error?.mensaje) {
             this.alertService.error(e.error.mensaje, e.error.err);

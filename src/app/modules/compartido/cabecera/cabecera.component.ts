@@ -22,13 +22,18 @@ export class CabeceraComponent {
   private productoService = inject(ProductoService)
   public authService = inject(AuthService)
 
-  readonly cuponesActivosResource = rxResource({
+  readonly cuponesParaClienteResource = rxResource({
     stream: () => this.cuponService.getAllCuponesActivos(),
   })
 
-  readonly descripcionCuponActivo = computed(() => {
-    const cupones = this.cuponesActivosResource.value();
-    //console.log("descripcionCuponActivo", cupones)
+  readonly hayCuponesParaCliente = computed(() => {
+    const cupones = this.cuponesParaClienteResource.value();
+    if (!cupones) { return false; }
+    return cupones.some(cp => cp.visibleParaCliente === true);
+  });
+
+   readonly descripcionCuponActivo = computed(() => {
+    const cupones = this.cuponesParaClienteResource.value();
     if (!cupones?.length) { return [] }
 
     return [

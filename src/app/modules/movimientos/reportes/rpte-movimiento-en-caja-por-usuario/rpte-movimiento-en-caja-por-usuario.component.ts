@@ -83,7 +83,7 @@ export class RpteMovimientoEnCajaPorUsuarioComponent implements OnInit {
   }
 
   mostrarApellidoPersona(persona: Persona): string {
-    return persona && persona.nomApellRz ? persona.nomApellRz : '';
+    return persona && persona.apellNomRznSocial ? persona.apellNomRznSocial : '';
   }
 
   seleccionar(event: MatAutocompleteSelectedEvent): void {

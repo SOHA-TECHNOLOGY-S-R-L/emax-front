@@ -1,3 +1,4 @@
+import { ColorDetails, ColorEnum } from './../../../../enums/color.enum';
 import { CommonModule } from '@angular/common';
 import { Component, computed, effect, inject, input, output, signal } from '@angular/core';
 import { rxResource, toSignal } from '@angular/core/rxjs-interop';
@@ -10,7 +11,8 @@ import { StringToTitleWithAccents } from '../../../../pipes/StringToTitleWithAcc
 import { ItemService } from '../../../../services/item.service';
 import { ProductoService } from '../../../../services/producto.service';
 import { PrimeNgModule } from '../../../compartido/prime-ng.module';
-import { ENVIO_DEPARTAMENTO, ENVIO_DISTRITO, ENVIO_PROVINCIA, PEDIDO_COMPRA, PEDIDO_VENTA } from './../../../../constants/constantes';
+import { ENVIO_DEPARTAMENTO, ENVIO_DISTRITO, ENVIO_PROVINCIA } from './../../../../constants/constantes';
+import { TipoPedidoEnum } from '../../../../enums/tipo-pedido.enum';
 
 @Component({
   selector: 'app-item-pedido',
@@ -26,7 +28,7 @@ export class ItemPedidoComponent {
   inEnvioPedido = input<EnvioPedido | undefined>(undefined)
   envioPedido = signal<EnvioPedido | undefined>(undefined);
   inTipoPedidoId = input.required<number>()
-  coloresResource = rxResource({ stream: () => this.productoService.getColoresProducto() });
+  //coloresResource = rxResource({ stream: () => this.productoService.getColoresProducto() });
   materialesResource = rxResource({ stream: () => this.productoService.getMaterialesProducto() });
   serviciosEnvioResource = rxResource({ stream: () => this.productoService.getLstProductoServicioEnvio() });
   serviciosEnvio = computed(() => this.serviciosEnvioResource.value() ?? []);
@@ -51,8 +53,12 @@ export class ItemPedidoComponent {
     }) */
 
   //total = computed(() => this.itemService.calculateTotalFromItems(this.items()));
-  PEDIDO_VENTA = PEDIDO_VENTA
-  PEDIDO_COMPRA = PEDIDO_COMPRA
+  //PEDIDO_VENTA = TipoPedido.PEDIDO_VENTA
+  //PEDIDO_COMPRA = TipoPedido.PEDIDO_COMPRA
+  readonly TipoPedido = TipoPedidoEnum;
+  readonly colorDetails = ColorDetails;
+
+
   API_URL_VER_IMAGEN = environment.API_URL_VER_IMAGEN;
   SERVICIO_ENVIO_DISTRITO = ENVIO_DISTRITO;
   SERVICIO_ENVIO_PROVINCIA = ENVIO_PROVINCIA;
@@ -170,12 +176,12 @@ export class ItemPedidoComponent {
     }; */
 
 
-  findColorById(colorId: number) {
+/*   findColorById(colorId: number) {
     const colores = this.coloresResource.value();
     if (!colores) return null;
     const color = colores.find((c) => c.id === colorId);
     return color ? color.nombre : 'Sin color';
-  }
+  } */
 
   findMaterialById(materialId: number) {
     const materiales = this.materialesResource.value();

@@ -1,6 +1,5 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import moment from 'moment';
-import { EstadoPedido } from '../../../../models/estado-pedido';
 import { PedidoService } from '../../../../services/pedido.service';
 //--instalar file-saver, dos pasas
 // 1- npm install --save file-saver
@@ -9,11 +8,12 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import * as fileSaver from 'file-saver-es';
-import { TipoPedido } from '../../../../models/tipo-pedido';
 import { AngularMaterialModule } from '../../../compartido/angular-material.module';
 import { AutocompleteResourceComponent } from '../../../compartido/autocomplete-resource/autocomplete-resource.component';
 import { PersonaService } from '../../../../services/persona.service';
 import { Persona } from '../../../../models/persona';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { map } from 'rxjs';
 
 @Component({
   selector: 'app-rpte-pedido',
@@ -27,14 +27,15 @@ export class RptePedidoComponent implements OnInit {
   private personaService = inject(PersonaService);
   private pedidoService = inject(PedidoService);
   private fb = inject(FormBuilder);
-  private ar = inject(ActivatedRoute);
+  private activatedRoute = inject(ActivatedRoute);
 
 
   titulo!: string;
   formVenta!: FormGroup;
   filtrosReporte!: FiltrosReporte;
   //estadoPedidoLst: EstadoPedido[] = [];
-  tipoPedido!: TipoPedido;
+  //tipoPedido!: TipoPedido;
+  //readonly TipoPedido = TipoPedido;
 
   inPersona = signal<Persona | undefined>(undefined);
 
@@ -43,8 +44,8 @@ export class RptePedidoComponent implements OnInit {
   buscarPersonas = (term: string) =>
     this.personaService.filtrarPersonas(term);
 
-  mostrarPersona = (persona: Persona | null  ) =>
-    persona?.nomApellRz ?? '';
+  mostrarPersona = (persona: Persona | null) =>
+    persona?.apellNomRznSocial ?? '';
 
   personSelecToInForm(persona: Persona) {
     this.inPersona.set(persona);
@@ -58,19 +59,25 @@ export class RptePedidoComponent implements OnInit {
       this.personSelect.set(persona);
     } */
 
+  tipoPedidoId = toSignal<number>(this.activatedRoute.paramMap.pipe(map(r => Number(r.get('tipoPedidoId')))));
+
+
   constructor() { }
 
   ngOnInit(): void {
+    /*
+        this.ar.paramMap.subscribe(params => {
+          let tipoPedidoId = +params.get('tipoPedidoId')!;
 
-    this.ar.paramMap.subscribe(params => {
-      let tipoPedidoId = +params.get('tipoPedidoId')!;
-      this.pedidoService.getTipoPedido(tipoPedidoId)
-        .subscribe(tipoPedido => {
-          this.tipoPedido = tipoPedido
-          this.titulo = `Reporte de ${this.tipoPedido.nombre}`
-        }
-        );
-    });
+
+
+          this.pedidoService.getTipoPedido(tipoPedidoId)
+            .subscribe(tipoPedido => {
+              this.tipoPedido = tipoPedido
+              this.titulo = `Reporte de ${this.tipoPedido.nombre}`
+            }
+            );
+        });*/
 
     //this.cargarPagado();
     //this.cargarEstadoPedido();
@@ -94,7 +101,7 @@ export class RptePedidoComponent implements OnInit {
 
     const filtros = {
       nombre: this.titulo.replaceAll(" ", ""),
-      tipoPedido: this.tipoPedido.id,
+      tipoPedido: this.tipoPedidoId(),
       tipo: "EXCELOPENXML",
       filtros: this.filtrosReporte
     }

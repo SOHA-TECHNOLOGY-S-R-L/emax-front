@@ -1,3 +1,4 @@
+import { ColorEnum } from '../enums/color.enum';
 import { Categoria } from './categoria';
 import { EstadoProducto } from './estado-producto';
 import { MargenProducto } from './margen-producto';
@@ -34,10 +35,13 @@ export class Producto {
   //productosPromocion!:string;
   visibleEnTienda: boolean = false;
   activo: boolean = true;
-  colorId: number | undefined;
+
+  //colorId: number | undefined;
+  color!: ColorEnum | null;
+
   materialId: number | undefined;
   categoria?: Categoria;
-  usoId: number | undefined;;
+  //usoId: number | undefined;;
   estadoProducto!: EstadoProducto;
   padreId: number | undefined;
   //hijos: Producto[] = [];
@@ -49,8 +53,8 @@ export class Producto {
   colorActivo!: string;
   colorVisibleEnTienda!: string;
   //---------------------
-  valorBrutoUnitarioSelect: number = 0;
-  precioUnitarioSelect: number = 0;
+  //valorBrutoUnitarioSelect: number = 0;
+  precioUnitarioMasBajo: number = 0;
 }
 
 //

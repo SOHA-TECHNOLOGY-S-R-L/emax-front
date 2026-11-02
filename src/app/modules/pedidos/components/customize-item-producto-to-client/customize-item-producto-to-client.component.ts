@@ -1,3 +1,4 @@
+import { ColorDetails } from './../../../../enums/color.enum';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { CommonModule, UpperCasePipe } from '@angular/common';
 import {
@@ -52,7 +53,7 @@ export class CustomizeItemProductoToClientComponent {
   private formBuilder = inject(FormBuilder);
   private productoService = inject(ProductoService);
   private itemService = inject(ItemService);
-  public authService = inject(AuthService);
+  //public authService = inject(AuthService);
   private breakpointObserver = inject(BreakpointObserver);
   private snackbar = inject(SnackbarService);
 
@@ -63,19 +64,39 @@ export class CustomizeItemProductoToClientComponent {
   readonly productoPadre = rxResource({
     params: () => {
       const padreId = this.inProducto().padreId;
-      if (!padreId) return null;
+
+      if (padreId == null) {
+        return undefined;
+      }
+      //if (!padreId) return null;
       return { padreId };
     },
-    stream: ({ params }) => this.productoService.getProducto(params!.padreId),
+    stream: ({ params }) => this.productoService.getProducto(params.padreId),
   });
 
-  producto = computed<Producto>(() => {
+/*   producto = computed<Producto>(() => {
     const p = this.inProducto();
     return {
       ...p,
       cantidadStock: p.padreId
         ? this.productoPadre!.value()!.cantidadStock
         : p.cantidadStock,
+    };
+  }); */
+
+
+  producto = computed<Producto>(() => {
+    const p = this.inProducto();
+
+    if (p.padreId == null) {
+      return p;
+    }
+
+    const padre = this.productoPadre.value();
+
+    return {
+      ...p,
+      cantidadStock: padre?.cantidadStock ?? 0,
     };
   });
 
@@ -94,8 +115,8 @@ export class CustomizeItemProductoToClientComponent {
       const enRango = (inicio !== null && fin !== null) && (inicio <= hoy && fin >= hoy);
       const valor = m.valorUnitarioOferta > 0
       const hayOferta = (enRango) && valor;
-      const igvUnitarioOferta = hayOferta ? Number((m.valorUnitarioOferta * (porcentajeIgv /100)).toFixed(2)):0; //saco el 18
-      const precioUnitarioOferta = hayOferta ? Number((m.valorUnitarioOferta * ((100 + porcentajeIgv)/ 100)).toFixed(2)):0;
+      const igvUnitarioOferta = hayOferta ? Number((m.valorUnitarioOferta * (porcentajeIgv / 100)).toFixed(2)) : 0; //saco el 18
+      const precioUnitarioOferta = hayOferta ? Number((m.valorUnitarioOferta * ((100 + porcentajeIgv) / 100)).toFixed(2)) : 0;
       return {
         ...m,
         igvUnitarioOferta: igvUnitarioOferta,
@@ -105,15 +126,15 @@ export class CustomizeItemProductoToClientComponent {
     });
   });
 
-  colorProductoResource = rxResource({
-    params: () => {
-      const colorId = this.inProducto().colorId;
-      if (!colorId) return null;
-      return { colorId };
-    },
-    stream: ({ params }) =>
-      this.productoService.getColorProducto(params!.colorId),
-  });
+  /*   colorProductoResource = rxResource({
+      params: () => {
+        const colorId = this.inProducto().colorId;
+        if (!colorId) return null;
+        return { colorId };
+      },
+      stream: ({ params }) =>
+        this.productoService.getColorProducto(params!.colorId),
+    }); */
 
   materialProductoResource = rxResource({
     params: () => {
@@ -165,6 +186,7 @@ export class CustomizeItemProductoToClientComponent {
 
   formUtils = FormUtils;
   chatUtils = ChatUtils;
+  colorDetails = ColorDetails;
 
 
   //hoy = signal<Date>(new Date());
@@ -184,15 +206,15 @@ export class CustomizeItemProductoToClientComponent {
 
   constructor() { }
 
-/*   ngOnInit(): void {
-    this.idIntervalo = setInterval(() => {
-      this.hoy.set(new Date());
-    }, 1000);
-  } */
+  /*   ngOnInit(): void {
+      this.idIntervalo = setInterval(() => {
+        this.hoy.set(new Date());
+      }, 1000);
+    } */
 
-  isAuthenticated(): boolean {
-    return this.authService.isAuthenticated();
-  }
+  /*   isAuthenticated(): boolean {
+      return this.authService.isAuthenticated();
+    } */
 
   deleteItem(items: ItemPedido[], productoId: number) {
     this.itemService.setItems(
@@ -239,8 +261,8 @@ export class CustomizeItemProductoToClientComponent {
       this.item.imagenShow = 'no-imagen.png';
     } else {
       //para item siempre se muestra una imagen y no video
-      const primerElemento = mp.find((mp) =>mp.multimedia.mimeType.startsWith('image'));
-      this.item.imagenShow = primerElemento ? this.API_URL_VER_IMAGEN.concat(primerElemento.multimedia.nombre): 'no-imagen.png';
+      const primerElemento = mp.find((mp) => mp.multimedia.mimeType.startsWith('image'));
+      this.item.imagenShow = primerElemento ? this.API_URL_VER_IMAGEN.concat(primerElemento.multimedia.nombre) : 'no-imagen.png';
     }
 
     this.item.cantidad = cantidadToCarrito;
@@ -248,7 +270,7 @@ export class CustomizeItemProductoToClientComponent {
 
     if (this.itemService.existItemInItems(items, pr.id)) {
       this.itemService.setItems(
-        this.itemService.UpdateAmountItemFromExterno( items, pr.id, this.item.cantidad )
+        this.itemService.UpdateAmountItemFromExterno(items, pr.id, this.item.cantidad)
       );
       //this.itemService.saveLocalStorageItems(this.items);
     } else if (this.item.cantidad <= pr.maxCantidadPedido) {
@@ -273,9 +295,9 @@ export class CustomizeItemProductoToClientComponent {
     this.chatUtils.infoFromEmpleadoVenta(url);
   }
 
-/*   ngOnDestroy(): void {
-    if (this.idIntervalo) {
-      clearInterval(this.idIntervalo);
-    }
-  } */
+  /*   ngOnDestroy(): void {
+      if (this.idIntervalo) {
+        clearInterval(this.idIntervalo);
+      }
+    } */
 }

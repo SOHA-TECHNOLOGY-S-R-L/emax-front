@@ -36,7 +36,7 @@
           <mat-autocomplete #auto="matAutocomplete" [displayWith]="mostrarApellidoPersona"
             (optionSelected)="seleccionar($event)">
             <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
-              {{option.nomApellRz}}
+              {{option.apellNomRznSocial}}
             </mat-option>
           </mat-autocomplete>
         </mat-form-field> -->

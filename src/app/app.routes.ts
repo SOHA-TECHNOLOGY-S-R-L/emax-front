@@ -62,15 +62,12 @@ export const routes: Routes = [
           {
             path: 'productos-categoria/:nombre/item-producto-persona-online/:productoCodigo', component: ItemProductoPersonaOnlineComponent,
           },
-          /*  {
-             path: 'item-producto-persona-online/:productoId', component: ItemProductoPersonaOnlineComponent,
-           }, */
-          {
-            path: 'pedido-persona-online-finalizado/:origenPedidoId', component: PedidoPersonaOnlineFinalizadoComponent,
-          },
           /*           {
-                      path: 'pedido-persona-online-finalizado', component: PedidoPersonaOnlineFinalizadoComponent,
+                      path: 'pedido-persona-online-finalizado/:origenPedidoId', component: PedidoPersonaOnlineFinalizadoComponent,
                     }, */
+          {
+            path: 'pedido-persona-online-finalizado', component: PedidoPersonaOnlineFinalizadoComponent,
+          },
         ]
 
       },

@@ -11,6 +11,7 @@ import { AuthService } from '../../../../services/auth.service';
 import { CajaService } from '../../../../services/caja.service';
 import { UsuarioService } from '../../../../services/usuario.service';
 import { AngularMaterialModule } from '../../../compartido/angular-material.module';
+import { CajaUsuarioService } from '../../../../services/caja-usuario.service';
 
 @Component({
   selector: 'app-rpte-caja-por-usuario',
@@ -34,6 +35,7 @@ export class RpteCajaPorUsuarioComponent implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
+    private cajaUsuarioService: CajaUsuarioService,
     private cajaService: CajaService,
     private usuarioService: UsuarioService,
     private authService: AuthService
@@ -87,7 +89,7 @@ export class RpteCajaPorUsuarioComponent implements OnInit {
       filtros: this.filtrosReporte
     }
 
-    this.cajaService.ceateReporteCierreCaja(filtros)
+    this.cajaUsuarioService.ceateReporteCierreCaja(filtros)
       .subscribe(response => {
         fileSaver.saveAs(response.body!,
           this.filenameFromHeader(response.headers)) //utilidad pra qeu descargue automaticamente

@@ -7,7 +7,7 @@ import { ActivatedRoute, RouterModule } from '@angular/router';
 import { COLOR_ACTIVO, ESTADO_ACTIVO, USO_CUPON } from '../../../constants/color-estado';
 import { PageableParams } from '../../../interfaces/pageable-params';
 import { Cupon } from '../../../models/cupon';
-import { PageableResponse } from '../../../models/pageable-response';
+import { PageableResponse } from '../../../interfaces/pageable-response';
 import { AlertService } from '../../../services/alert.service';
 import { AuthService } from '../../../services/auth.service';
 import { CuponService } from '../../../services/cupon.service';
@@ -26,7 +26,7 @@ export class CuponesComponent {
   public authService = inject(AuthService);
 
 
-  displayedColumns: string[] = ['codigo', 'tipoCupon', 'usoCombinado', 'importe', 'fchHoraCaducidad', 'limiteUsoDelCupon', 'limiteUsoPorPersona', 'visibleEnTienda', 'acciones'];
+  displayedColumns: string[] = ['codigo', 'tipoCupon', 'usoCombinado', 'importe', 'fchHoraCaducidad', 'limiteUsoDelCupon', 'limiteUsoPorPersona', 'visibleParaCliente' , 'visibleParaVendedor', 'acciones'];
   //dataSource: Cupon[] = [];
   //cupones: Cupon[] = [];
   //pageable!: PageableResponse<Cupon>;
@@ -79,7 +79,8 @@ export class CuponesComponent {
       return [];
     }
     return response.content.map(cp => {
-      cp.colorVisibleEnTienda = COLOR_ACTIVO[('' + cp.visibleEnTienda) as keyof typeof COLOR_ACTIVO];
+      cp.colorVisibleParaCliente = COLOR_ACTIVO[('' + cp.visibleParaCliente) as keyof typeof COLOR_ACTIVO];
+      cp.colorVisibleParaVendedor = COLOR_ACTIVO[('' + cp.visibleParaVendedor) as keyof typeof COLOR_ACTIVO];
       return cp;
     });
 

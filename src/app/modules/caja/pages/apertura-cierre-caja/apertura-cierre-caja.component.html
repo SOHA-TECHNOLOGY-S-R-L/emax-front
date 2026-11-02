@@ -1,47 +1,26 @@
 <div class="container">
   <div class="row">
     <div class="col-12 col-sm-6">
-      @if(infoCajaUsuario()){
-      <info-caja-usuario [inCajaUsuario]=infoCajaUsuario()! />
+      @if(cajaUsuario()){
+      <info-caja-usuario [inCajaUsuario]=cajaUsuario()! />
       }
     </div>
     <div class="col-12 col-sm-6">
       <ul class="list-group my-2">
-        <li class="list-group-item active">Apertura o cierre de caja</li>
+        <li class="list-group-item active d-flex justify-content-between">
+          <span>Apertura o cierre de caja</span>
+        </li>
       </ul>
       <form [formGroup]="formCaja">
         <mat-form-field *ngIf="!cajaActiva()" class="example-full-width">
           <mat-label>Caja por asignar</mat-label>
-          <mat-select name="cajaId" formControlName="cajaId" (selectionChange)="asignarCajaUsuario($event.value)">
-            <mat-option *ngFor="let caja of cajasResource.value()" [value]="caja.id">
-              {{caja.nombre}}
+          <mat-select name="cajaId" formControlName="cajaId" (selectionChange)="seleccionarCaja($event.value)">
+            <mat-option *ngFor="let caja of cajasPorAsignarResource.value()" [value]="caja.id">
+              {{caja.nombre}} - {{caja.responsable}}
             </mat-option>
           </mat-select>
         </mat-form-field>
-        <mat-form-field *ngIf="!cajaActiva()" class="example-full-width">
-          <mat-label>Direccion/Ubicación de caja</mat-label>
-          <input matInput formControlName="direccionCaja" name="direccionCaja">
-          <div *ngIf="formCaja.get('direccionCaja')?.invalid &&
-                  (formCaja.get('direccionCaja')?.dirty ||
-                  formCaja.get('direccionCaja')?.touched)">
-            <mat-error *ngIf="formCaja.get('direccionCaja')?.errors?.['required']">
-              Dirección/Ubicación de caja es requerida
-            </mat-error>
-          </div>
-        </mat-form-field>
-        <mat-form-field *ngIf="!cajaActiva()" class="example-full-width">
-          <mat-label>Descripción</mat-label>
-          <input matInput formControlName="descripcionCaja" name="descripcionCaja">
-          <div *ngIf="formCaja.get('descripcionCaja')?.invalid &&
-                  (formCaja.get('descripcionCaja')?.dirty ||
-                  formCaja.get('descripcionCaja')?.touched)">
-            <mat-error *ngIf="formCaja.get('descripcionCaja')?.errors?.['required']">
-              Descripción es requerido
-            </mat-error>
-          </div>
-        </mat-form-field>
-
-        <mat-form-field *ngIf="cajaActiva()" appearance="fill">
+        <mat-form-field *ngIf="cajaActiva()" class="mr-2">
           <mat-label>En caja hay(conteo):</mat-label>
           <input matInput formControlName="saldoPorConteo" type="number" name="saldoPorConteo">
           <div *ngIf="formCaja.get('saldoPorConteo')?.invalid &&
@@ -52,12 +31,19 @@
             </mat-error>
           </div>
         </mat-form-field>
+        <div class="d-flex justify-content-around">
+          <launcher-sfs [inPathFacturador]="caja().pathFacturador" [inDisabledBtn]="!cajaActiva()"></launcher-sfs>
 
-        <div class="d-flex justify-content-end">
-          <button *ngIf="!cajaActiva() && authService.hasRole('ROLE_CLOSE_CJU')" (click)="abrirCaja()" mat-raised-button
-            color="primary" [disabled] = !formCaja.valid>Abrir CAJA</button>
-          <button *ngIf="cajaActiva() && authService.hasRole('ROLE_CLOSE_CJU')" (click)="cerrarCaja()" mat-raised-button
-            color="primary">Cerrar CAJA</button>
+          @if(authService.hasRole('ROLE_CLOSE_CJU')) {
+          @if(cajaActiva()){
+          <button type="button" class="btn btn-secondary" (click)="cerrarCaja()" [disabled] = "isFacturadorActive()" >Cerrar CAJA</button>
+          }
+          @if(!cajaActiva()){
+          <button type="button" class="btn btn-secondary" (click)="abrirCaja()"
+          [disabled]=!formCaja.valid>Abrir CAJA</button>
+          }
+
+          }
         </div>
       </form>
     </div>

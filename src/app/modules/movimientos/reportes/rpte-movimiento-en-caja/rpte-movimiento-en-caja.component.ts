@@ -6,7 +6,6 @@ import { ActivatedRoute, RouterModule } from '@angular/router';
 import * as fileSaver from 'file-saver-es';
 import moment from 'moment';
 import { map } from 'rxjs/operators';
-import { CLIENTE_PROVEEDOR } from '../../../../constants/constantes';
 import { Caja } from '../../../../models/caja';
 import { Persona } from '../../../../models/persona';
 import { CajaService } from '../../../../services/caja.service';
@@ -14,6 +13,7 @@ import { MovimientoService } from '../../../../services/movimiento.service';
 import { PersonaService } from '../../../../services/persona.service';
 import { UsuarioService } from '../../../../services/usuario.service';
 import { AngularMaterialModule } from '../../../compartido/angular-material.module';
+import { TipoPersonaEnum } from '../../../../enums/tipo-persona.enum';
 
 @Component({
   selector: 'app-rpte-movimiento-en-caja',
@@ -79,7 +79,7 @@ export class RpteMovimientoEnCajaComponent implements OnInit {
   }
 
   mostrarApellidoPersona(persona: Persona): string {
-    return persona && persona.nomApellRz ? persona.nomApellRz : '';
+    return persona && persona.apellNomRznSocial ? persona.apellNomRznSocial : '';
   }
 
    seleccionar(event: MatAutocompleteSelectedEvent): void {
@@ -124,7 +124,7 @@ export class RpteMovimientoEnCajaComponent implements OnInit {
   cargarUsuarios() {
 
     this.personaService.getAllPersonas().pipe(
-        map(personas => personas.filter(p => p.tipoPersonaId !== CLIENTE_PROVEEDOR))
+        map(personas => personas.filter(p => p.tipoPersona !== TipoPersonaEnum.CLIENTE_PROVEEDOR))
     ).subscribe(resp => this.personasLst = resp);
 
     // this.usuarioService.getAllUsers().subscribe(res => this.usuarioLst = res);

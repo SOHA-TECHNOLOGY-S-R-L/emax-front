@@ -5,6 +5,21 @@ import { AuthService } from "../services/auth.service";
 
 export function tokenIntercept(req: HttpRequest<any>, next: HttpHandlerFn):
   Observable<HttpEvent<any>> {
+
+  const urlsExcluidas = [
+    '/api/sfs/status',
+    '/api/sfs/start',
+    '/api/sfs/stop',
+    '/api/sfs/shutdown',
+    '/api/comprobantes/generar-archivos',
+    '/api/comprobantes/preview-pdf',
+
+  ];
+
+  if (urlsExcluidas.some(url => req.url.includes(url))) {
+    return next(req);
+  }
+
   const authService = inject(AuthService);
   let token = authService.token();
 

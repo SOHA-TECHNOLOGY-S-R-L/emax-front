@@ -30,7 +30,7 @@ export class FormEnvioPedidoComponent {
       null,
       [Validators.required, , Validators.minLength(2)]
     ],
-    nomApellRzEnvio: [
+    apellNomRznSocialEnvio: [
       null,
       [
         Validators.required,

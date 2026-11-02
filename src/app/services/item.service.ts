@@ -4,8 +4,9 @@ import { BehaviorSubject } from 'rxjs';
 import { findIndex } from 'lodash-es';
 import { Producto } from '../models/producto';
 import { EnvioPedido } from '../models/envio-pedido';
-import { PEDIDO_VENTA } from '../constants/constantes';
-
+import { TipoPedidoEnum } from '../enums/tipo-pedido.enum';
+/* import { VENTA } from '../constants/constantes';
+ */
 @Injectable({
   providedIn: 'root'
 })
@@ -220,11 +221,13 @@ export class ItemService {
       importeNetoItem = Number(((item.cantidad * valNetoItem) - descuentoPorCuponItem).toFixed(2));
       igvItem = Number((importeNetoItem * (porcentajeIgv / 100)).toFixed(2));
       //importePrecioItem = Number((importeNetoItem * ((100 + porcentajeIgv)/ 100)).toFixed(2)) ;
-      precioCostoItem = (tipoPedidoId === PEDIDO_VENTA) ? Number((importeNetoItem + igvItem).toFixed(2)) : item.precioCostoItem ;
+      precioCostoItem = (tipoPedidoId === TipoPedidoEnum.VENTA) ? Number((importeNetoItem + igvItem).toFixed(2)) : item.precioCostoItem ;
       //costoItem = Number((item.cantidad * item.costoItem).toFixed(2));
 
       return {
         ...item,
+        valorBrutoUnitarioItem: valBrutoItem,
+        precioUnitarioItem: valPrecioItem,
         importeBrutoItem: importeBrutoItem,
         descuentoPorOfertaItem: descuentoPorOfertaItem,
         descuentoPorCuponItem: descuentoPorCuponItem,
@@ -234,8 +237,8 @@ export class ItemService {
         //costoItem: costoItem,
         producto: {
           ...item.producto,
-          valorBrutoUnitarioSelect: valBrutoItem,
-          precioUnitarioSelect: valPrecioItem
+          //valorBrutoUnitarioSelect: valBrutoItem,
+          //precioUnitarioSelect: valPrecioItem
         }
       };
     });

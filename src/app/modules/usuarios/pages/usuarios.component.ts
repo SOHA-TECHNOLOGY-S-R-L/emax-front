@@ -14,6 +14,7 @@ import { PersonaService } from '../../../services/persona.service';
 import { UsuarioService } from '../../../services/usuario.service';
 import { AngularMaterialModule } from '../../compartido/angular-material.module';
 import { SearchBoxTableComponent } from './../../compartido/search-box-table/search-box-table.component';
+import { TipoPersonaEnum, TipoPersonaEtiquetas } from '../../../enums/tipo-persona.enum';
 
 
 @Component({
@@ -31,7 +32,7 @@ export class UsuariosComponent {
   private modalService = inject(ModalService);
   private router = inject(Router);
 
-  displayedColumns: string[] = ['id', 'nomApellRz', 'tipoPersona', 'celular', 'acciones'];
+  displayedColumns: string[] = ['id', 'apellNomRznSocial', 'tipoPersona', 'celular', 'acciones'];
   //dataSource: Persona[] = [];
   usuarioSeleccionado!: Usuario;
   //pageable!: PageableResponse<Usuario>;
@@ -49,24 +50,25 @@ export class UsuariosComponent {
     query: ''
   });
 
-  readonly empleadosResource = rxResource({
+
+  readonly trabajadoresResource = rxResource({
     params: () => this.params(),
     stream: ({ params }) =>
       this.personaService.getAllEmpleadosPageable(params)
   });
 
-  readonly empleados = computed(() =>
-    this.empleadosResource.value()?.content ?? []
+  readonly trabajadores = computed<Persona[]>(() =>
+    this.trabajadoresResource.value()?.content ?? []
   );
 
   readonly page = computed(() =>
-    this.empleadosResource.value()?.page
+    this.trabajadoresResource.value()?.page
   );
 
-  tipoDocumentosResource = rxResource({ stream: () => this.personaService.getTipoDocumento() });
-  tipoPersonasResource = rxResource({ stream: () => this.personaService.getTipoPersona() });
-  tipoDocumentos = computed(() => this.tipoDocumentosResource.value() ?? []);
-  tipoPersonas = computed(() => this.tipoPersonasResource.value() ?? []);
+  //tipoDocumentosResource = rxResource({ stream: () => this.personaService.getTipoDocumento() });
+  //tipoDocumentos = computed(() => this.tipoDocumentosResource.value() ?? []);
+  //tipoPersonasResource = rxResource({ stream: () => this.personaService.getTipoPersona() });
+  //tipoPersonas = computed(() => this.tipoPersonasResource.value() ?? []);
 
   constructor() { }
 
@@ -103,17 +105,22 @@ export class UsuariosComponent {
     }));
   }
 
-  setUsuario(empleado: Persona): void {
-    const id = empleado.usuarioId
-    if (!id) { return;}
+  setUsuario(trabajador: Persona): void {
+    const id = trabajador.usuarioId
+    if (!id) { return; }
     this.usuarioService.getUsuarioById(id).subscribe(resp => {
       this.usuarioService.setUsuario(resp);
       this.router.navigate(['/usuarios/asignar-rol-usuario']);
     })
   }
 
-  getTipoPersona(tipoPersonaId: number) {
-    return this.tipoPersonas().find(tp => tp.id === tipoPersonaId)?.persona // Asignamos un tipo de persona por defecto (cliente)
+  /*   getTipoPersona(tipoPersonaId: number) {
+      return this.tipoPersonas().find(tp => tp.id === tipoPersonaId)?.persona // Asignamos un tipo de persona por defecto (cliente)
+    } */
+
+  getEtiquetaTipoPersonaEnum(tipo: any): string {
+    const contrarTipo = tipo as TipoPersonaEnum;
+    return TipoPersonaEtiquetas[contrarTipo] || 'Desconocido';
   }
 
 

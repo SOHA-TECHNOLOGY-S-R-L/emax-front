@@ -9,7 +9,7 @@ export class Usuario {
   //empleado:boolean=false;
   password!: string;
   reintentos!:number;
-  //nomApellRz!: string;
+  //apellNomRznSocial!: string;
   //email!: string;
   codigoRenovacionClave!: string;
   //persona!:Persona;

@@ -1,0 +1,146 @@
+<div class="container">
+  <div class="card">
+    <form [formGroup]="formCaja" autocomplete="off">
+
+      <div class="card-header">
+        <div class="card-title">{{ titulo() }}</div>
+        <div class="ms-auto">
+
+          <button type="button" class="btn btn-primary" [routerLink]="'/cajas/listar'">
+            Cancelar
+          </button>
+
+          @if (modoEdicion()) {
+          <button type="button" class="btn btn-primary" (click)="guardarCaja()" [disabled]="formCaja.invalid">
+            Actualizar</button>
+          } @else {
+
+          <button type="button" class="btn btn-primary" (click)="guardarCaja()" [disabled]="formCaja.invalid">
+            Crear
+          </button>
+          }
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-sm">
+            <div class="row mb-2">
+              <label for="nombre" class="col-form-label col-sm-4">Nombre de caja:</label>
+              <div class="input-group col-sm">
+                <input formControlName="nombre" type="text" class="form-control" name="nombre"
+                  placeholder="Ejem. Caja 1, Caja 2, Caja Principal, Caja Sucursal 1 ">
+                @if(formUtils.isValidField(formCaja,'nombre')){
+                <div class="alert alert-danger">
+                  {{formUtils.getFieldError(formCaja,'nombre')}}
+                </div>}
+              </div>
+            </div>
+            <div class="row mb-2">
+              <label for="responsable" class="col-form-label col-sm-4">Responsable:</label>
+              <div class="input-group col-sm">
+                <input formControlName="responsable" type="text" class="form-control" name="responsable"
+                  placeholder="Nombres y apellidos completos">
+                @if(formUtils.isValidField(formCaja,'responsable')){
+                <div class="alert alert-danger">
+                  {{formUtils.getFieldError(formCaja,'responsable')}}
+                </div>}
+              </div>
+            </div>
+            <div class="row mb-2">
+              <label for="direccion" class="col-form-label col-sm-4">Dirección:</label>
+              <div class="input-group col-sm">
+                <input formControlName="direccion" type="text" class="form-control" name="direccion"
+                  placeholder="Dirección de la tienda o sucursal">
+                @if(formUtils.isValidField(formCaja,'direccion')){
+                <div class="alert alert-danger">
+                  {{formUtils.getFieldError(formCaja,'direccion')}}
+                </div>}
+              </div>
+            </div>
+
+            <div class="row mb-2">
+              <label for="boletaSerie" class="col-form-label col-sm-4">Boleta Serie:</label>
+              <div class="input-group col-sm">
+                <input formControlName="boletaSerie" type="text" class="form-control" name="boletaSerie"
+                  placeholder="Ejm. BB01">
+                @if(formUtils.isValidField(formCaja,'boletaSerie')){
+                <div class="alert alert-danger">
+                  {{formUtils.getFieldError(formCaja,'boletaSerie')}}
+                </div>}
+              </div>
+            </div>
+
+            <div class="row mb-2">
+              <label for="notaCreditoDeBoletaSerie" class="col-form-label col-sm-4">N.Crédito Bol Serie:</label>
+              <div class="input-group col-sm">
+                <input formControlName="notaCreditoDeBoletaSerie" type="text" class="form-control"
+                  name="notaCreditoDeBoletaSerie" placeholder="Ejm. BN01">
+                @if(formUtils.isValidField(formCaja,'notaCreditoDeBoletaSerie')){
+                <div class="alert alert-danger">
+                  {{formUtils.getFieldError(formCaja,'notaCreditoDeBoletaSerie')}}
+                </div>}
+              </div>
+            </div>
+
+            <div class="row mb-2">
+              <label for="facturaSerie" class="col-form-label col-sm-4">Factura Serie:</label>
+              <div class="input-group col-sm">
+                <input formControlName="facturaSerie" type="text" class="form-control" name="facturaSerie"
+                  placeholder="Ejem. FF01">
+                @if(formUtils.isValidField(formCaja,'facturaSerie')){
+                <div class="alert alert-danger">
+                  {{formUtils.getFieldError(formCaja,'facturaSerie')}}
+                </div>}
+              </div>
+            </div>
+
+
+            <div class="row mb-2">
+              <label for="notaCreditoDeFacturaSerie" class="col-form-label col-sm-4">N.Crédito Fac Serie:</label>
+              <div class="input-group col-sm">
+                <input formControlName="notaCreditoDeFacturaSerie" type="text" class="form-control"
+                  name="notaCreditoDeFacturaSerie" placeholder="Ejem. FN01">
+                @if(formUtils.isValidField(formCaja,'notaCreditoDeFacturaSerie')){
+                <div class="alert alert-danger">
+                  {{formUtils.getFieldError(formCaja,'notaCreditoDeFacturaSerie')}}
+                </div>}
+              </div>
+            </div>
+
+
+            <div class="row mb-2">
+              <label for="pathFacturador" class="col-form-label col-sm-4">Ubicación facturador SUNAT:</label>
+              <div class="input-group col-sm">
+                <input formControlName="pathFacturador" type="text" class="form-control" name="pathFacturador"
+                  placeholder="Ejm. C:\FacturadorSFS\SFS_v-2.5">
+                @if(formUtils.isValidField(formCaja,'pathFacturador')){
+                <div class="alert alert-danger">
+                  {{formUtils.getFieldError(formCaja,'pathFacturador')}}
+                </div>}
+              </div>
+            </div>
+
+
+            <div class="row mb-2">
+              <label for="numeroDocumentoFacturador" class="form-label col-sm-4">Vendedor facturador SUNAT:</label>
+              <div class="input-group col-sm">
+                <select formControlName="numeroDocumentoFacturador" name="numeroDocumentoFacturador" class="form-control">
+                  <option *ngFor="let clave of vendedores" [value]="vendedorEnCajaEtiquetas[clave].numeroDocumentoFacturador">
+                    {{ vendedorEnCajaEtiquetas[clave].razonSocial }}
+                  </option>
+                </select>
+                @if (formUtils.isValidField(formCaja, "numeroDocumentoFacturador")) {
+                <div class="alert alert-danger">
+                  {{ formUtils.getFieldError(formCaja, "numeroDocumentoFacturador") }}
+                </div>
+                }
+              </div>
+            </div>
+
+
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

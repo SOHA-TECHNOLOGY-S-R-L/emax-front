@@ -57,10 +57,10 @@ export class CuponesMantenimientoComponent {
 
   buscarPersonas = (term: string) => this.personaService.filtrarPersonas(term);
   displayPersona = (persona: Persona | null): string => {
-    return persona?.nomApellRz ?? '';
+    return persona?.apellNomRznSocial ?? '';
   };
   personaKey = (persona: Persona) => persona.id;
-  //personaLabel = (persona: Persona) => persona.nomApellRz;
+  //personaLabel = (persona: Persona) => persona.apellNomRznSocial;
 
   buscarCategorias = (term: string) => this.categoriaService.filtrarCategorias(term);
   displayCategoria = (categoria: Categoria) => categoria.nombre;
@@ -108,7 +108,8 @@ export class CuponesMantenimientoComponent {
     //usoCupon: ['INDIVIDUAL', Validators.required],
     excluirProductosOferta: [true],
     activo: [false],
-    visibleEnTienda: [false]
+    visibleParaCliente: [false],
+    visibleParaVendedor: [false]
   });
 
   constructor() {
@@ -131,15 +132,10 @@ export class CuponesMantenimientoComponent {
     stream: () => this.cuponService.getTiposDescuentoCupon(),
   });
 
-  /*   usosCuponResource = rxResource({
-      stream: () => this.cuponService.getUsosCupon(),
-    }); */
 
-
-
-  personSelecToInForm(persona: Persona) {
+  //personSelecToInForm(persona: Persona) {
     //this.inPersona.set(persona);
-  }
+  //}
 
   cargarCupon(codigo: string) {
     this.cuponService.getCuponByCodigo(codigo).subscribe((resp) => {
@@ -159,7 +155,8 @@ export class CuponesMantenimientoComponent {
         importe: resp.importe,
         gastoMinimoProductos: resp.gastoMinimoProductos,
         gastoMaximoProductos: resp.gastoMaximoProductos,
-        visibleEnTienda: resp.visibleEnTienda,
+        visibleParaCliente: resp.visibleParaCliente,
+        visibleParaVendedor: resp.visibleParaVendedor
         //activo: resp.activo,
       });
 
@@ -203,8 +200,6 @@ export class CuponesMantenimientoComponent {
           prods.filter(p => idsSetExcluidas.has(p.id)));
       });
 
-
-
     });
   }
 
@@ -225,16 +220,6 @@ export class CuponesMantenimientoComponent {
     this.cupon.set(cp);
   }
 
-  /*   changeUsoCupon(event: Event) {
-      const checkbox = event.target as HTMLInputElement;
-      this.isCombinado.set(checkbox.checked);
-      if (checkbox.checked) {
-        this.formCupon.controls['usoCupon'].setValue('INDIVIDUAL');
-      } else {
-        this.formCupon.controls['usoCupon'].setValue('COMBINADO');
-      }
-    } */
-
   changeCaducidad(event: Event) {
     const checkbox = event.target as HTMLInputElement;
     this.isCaducidad.set(checkbox.checked);
@@ -250,24 +235,6 @@ export class CuponesMantenimientoComponent {
   guardarCupon() {
     this.recuperarValForm();
     const cp = this.cupon();
-
-
-    /*     console.log(this.formCupon.errors);
-
-        Object.entries(this.formCupon.controls)
-          .forEach(([nombre, control]) => {
-
-            console.log({
-              campo: nombre,
-              valor: control.value,
-              valido: control.valid,
-              errores: control.errors
-            });
-
-          }); */
-
-    console.log("cp", cp);
-
     if (this.codigoCupon()) {
       this.cuponService.updateCupon(cp).subscribe((resp) => {
         this.alertService.success(`Cupon ha sido actualizado exitosamente`, 'Cupon de descuento',);
@@ -280,38 +247,5 @@ export class CuponesMantenimientoComponent {
       });
     }
   }
-
-  /*   openDialog(): void {
-      const dialogRef = this.dialog.open(ListMultimediaComponent, {
-        data: {
-          multimediaPrincipal: true,
-        },
-        height: 'auto',
-        disableClose: false,
-      });
-
-      dialogRef.afterClosed().subscribe((result) => {
-        let indice = 0;
-        let multimediaAsignada: MultimediaAsignada = new MultimediaAsignada();
-        let lstMultimediaAsignada: MultimediaAsignada[] = [];
-        for (const multimedia of result) {
-          multimediaAsignada.multimedia = multimedia;
-          multimediaAsignada.esPrincipal = false;
-          multimediaAsignada.visibleEnTienda = true;
-
-          if (indice === 0) {
-            multimediaAsignada.esPrincipal = true;
-          }
-          lstMultimediaAsignada = [
-            ...lstMultimediaAsignada,
-            { ...multimediaAsignada },
-          ];
-          indice++;
-        }
-        this.loadedMultimedia(lstMultimediaAsignada);
-      });
-    } */
-
-
 
 }

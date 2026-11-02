@@ -1,3 +1,4 @@
+import { EstadoMetadata, EstadoPedidoEnum, EstadoPedidoEtiquetas, getEtiquetaEstadoPedidoEnum } from './../../../../enums/estado-pedido.enum';
 import { CommonModule } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
@@ -7,7 +8,6 @@ import { Sort } from '@angular/material/sort';
 import { RouterModule } from '@angular/router';
 import moment from 'moment';
 import { EMPTY } from 'rxjs';
-import { PEDIDO_COMPRA } from '../../../../constants/constantes';
 import { COLOR_ESTADO_PEDIDO } from '../../../../constants/pedido.constants';
 import { PageableParams } from '../../../../interfaces/pageable-params';
 import { Pedido } from '../../../../models/pedido';
@@ -16,6 +16,8 @@ import { PedidoService } from '../../../../services/pedido.service';
 import { AngularMaterialModule } from '../../../compartido/angular-material.module';
 import { SearchBoxTableComponent } from '../../../compartido/search-box-table/search-box-table.component';
 import { DetallePedidoComponent } from '../../components/detalle-pedido/detalle-pedido.component';
+import { TipoPedidoEnum } from '../../../../enums/tipo-pedido.enum';
+import { SnackbarService } from '../../../../services/snackbar.service';
 
 @Component({
   selector: 'listado-compras',
@@ -29,8 +31,10 @@ export class ListadoComprasComponent {
 
   private readonly pedidoService = inject(PedidoService);
   public authService = inject(AuthService);
+  private readonly snack = inject(SnackbarService);
 
-  displayedColumns: string[] = ['id', 'nomApellRz', 'createAt', 'adquiridoEn', 'costoTotal', 'saldoPedido', 'estado', 'acciones'];
+
+  displayedColumns: string[] = ['id', 'apellNomRznSocial', 'createAt', 'adquiridoEn', 'costoTotal', 'saldoPedido', 'estado'];
   displayedColumnsExpand = [...this.displayedColumns, 'expand'];
 
   isExpansionDetailRow = (index: number, row: any) => true;
@@ -48,7 +52,7 @@ export class ListadoComprasComponent {
     params: () => this.params(),
     stream: ({ params }) => {
       if (this.authService.hasRole('ROLE_LIST_COMPRAS')) {
-        const resul = this.pedidoService.getAllPedidosPageable(params, PEDIDO_COMPRA);
+        const resul = this.pedidoService.getAllPedidosPageable(params, TipoPedidoEnum.COMPRA);
         return resul;
       }
       console.warn('Sin permisos');
@@ -57,20 +61,24 @@ export class ListadoComprasComponent {
   })
 
   loading = this.pedidosResource.isLoading;
+  estadoPedidoEnum = EstadoPedidoEnum
+  //estadoPedidoEtiquetas = EstadoPedidoEtiquetas
 
   readonly pedidos = computed(() => {
-    const response = this.pedidosResource.value();
-    if (!response) {
+    const p = this.pedidosResource.value();
+    if (!p) {
       return [];
     }
-    return response.content.map(p => {
-      p.createAt = moment(p.createAt).format('DD/MM/YYYY');
-      p.entregadoEn = p.entregadoEn ? moment(p.entregadoEn).format('DD/MM/YYYY') : '-';
-      p.adquiridoEn = p.adquiridoEn ? moment(p.adquiridoEn).format('DD/MM/YYYY') : '-';
-      p.estadoPedido.color =
-        COLOR_ESTADO_PEDIDO[('' + p.estadoPedido.id) as keyof typeof COLOR_ESTADO_PEDIDO];
-      return p;
-    });
+    return p.content.map(p => ({
+      ...p,
+      createAt: p.createAt || null,
+      entregadoEn: p.entregadoEn || null,
+      adquiridoEn: p.adquiridoEn || null,
+      isAnuladoDisabled: p.estadoPedido == EstadoPedidoEnum.ANULADO ||
+        (p.costoTotal - p.saldoPedido) != 0 ||
+        p.pagoTotal > 0 && p.movimientos.length > 0
+      //p.estadoPedido.color = COLOR_ESTADO_PEDIDO[('' + p.estadoPedido) as keyof typeof COLOR_ESTADO_PEDIDO];
+    }));
 
   });
 
@@ -116,8 +124,46 @@ export class ListadoComprasComponent {
     }));
   }
 
+  anularPedido(pedidoId: number): void {
+    this.pedidoService.getAnularPedido(pedidoId).subscribe({
+      next: (res) => {
+        if (res.data == null) {
+          this.snack.warning('No se recibió el nuevo estado del pedido.');
+          return;
+        }
+
+        this.pedidosResource.update(current => {
+          if (!current) {
+            return current;
+          }
+
+          return {
+            ...current,
+            content: current.content.map(pedido =>
+              pedido.id === pedidoId ? { ...pedido, estadoPedido: res.data! } : pedido
+            )
+          };
+        });
+
+        this.snack.success(res.message);
+      },
+      error: (err) => {
+        console.error('Error al anular el pedido:', err);
+        this.snack.error(
+          err.error?.message ?? 'No se pudo anular el pedido.'
+        );
+      }
+    });
+  }
+
   isExpanded(pedido: Pedido) {
     return this.pedido() === pedido;
+  }
+
+  //getEtiquetaEstadoPedidoEnum(estado)
+
+  getEstadoPedido(estado: any): EstadoMetadata {
+    return getEtiquetaEstadoPedidoEnum(estado)
   }
 
   toggle(pedido: Pedido) {

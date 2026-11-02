@@ -1,14 +1,19 @@
+import { AuthService } from './../../../../services/auth.service';
 import { CommonModule } from '@angular/common';
-import { Component, computed, effect, inject, input, output, signal, SimpleChanges } from '@angular/core';
+import { Component, computed, effect, inject, input, output, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { debounceTime, distinctUntilChanged, startWith } from 'rxjs/operators';
+import { TipoDocumentoIdentidadEtiquetas } from '../../../../enums/tipo-documento-identidad.enum';
 import { Persona } from '../../../../models/persona';
-import { Usuario } from '../../../../models/usuario';
 import { PersonaService } from '../../../../services/persona.service';
 import { FormUtils } from '../../../../utils/form-utils';
 import { AngularMaterialModule } from '../../../compartido/angular-material.module';
+import { TipoDocumentoIdentidadEnum } from './../../../../enums/tipo-documento-identidad.enum';
+import { TipoPersonaEnum } from '../../../../enums/tipo-persona.enum';
+import { HttpErrorResponse } from '@angular/common/http';
+import { AlertService } from '../../../../services/alert.service';
 
 @Component({
   selector: 'form-datos-persona',
@@ -20,17 +25,29 @@ import { AngularMaterialModule } from '../../../compartido/angular-material.modu
 export class FormDatosPersonaComponent {
   private fb = inject(FormBuilder);
   private personaService = inject(PersonaService);
+  private alertService = inject(AlertService);
 
   inPersona = input<Persona | undefined>();//es6to genera una señal no mutble
+  usuarioId = signal<number | undefined>(undefined);
   outPersona = output<any>();
+
+  // Convertimos el mapa en un array de objetos [{ id: 1, nombre: 'DNI' }, ...]
+  public tipoDocumentos = signal(
+    Object.keys(TipoDocumentoIdentidadEtiquetas)
+      .filter(key => !isNaN(Number(key)))
+      .map(key => {
+        const idNum = Number(key) as TipoDocumentoIdentidadEnum;
+        return {
+          id: idNum, nombre: TipoDocumentoIdentidadEtiquetas[idNum]
+        };
+      })
+  );
 
   formUtils = FormUtils;
 
-  //private isUserInteracting = false;
-
   personaForm: FormGroup = this.fb.group({
     id: [null],
-    tipoDocumentoId: [null, Validators.required],
+    tipoDocumentoIdentidad: [null, Validators.required],
     numeroDocumento: [
       '',
       [
@@ -40,12 +57,12 @@ export class FormDatosPersonaComponent {
         Validators.pattern(/^\d+$/)
       ]
     ],
-    nomApellRz: [
+    apellNomRznSocial: [
       '',
       [
         Validators.required,
         Validators.minLength(2),
-        Validators.pattern(/^[a-zA-Z0-9\s]+$/)
+        //Validators.pattern(/^[a-zA-Z0-9\s,]+$/) //Se agregó la coma aquí
       ]
     ],
     email: [
@@ -56,20 +73,25 @@ export class FormDatosPersonaComponent {
       '',
       [
         Validators.minLength(6),
-        Validators.pattern(/^\+?(\d[\s-]?){6,15}$/)
+        //Validators.pattern(/^\+?(\d[\s-]?){6,15}$/),
+        Validators.pattern(/^\+?\d{6,15}$/), //Solo números, permite un "+" opcional al inicio
+        Validators.required,
       ]
     ],
-    direccion: [
+    direccionCompleta: [
       '',
-      Validators.minLength(2)
+      [
+        Validators.minLength(2),
+        Validators.required,
+
+      ]
     ]
   });
 
-  tipoDocumentosResource = rxResource({ stream: () => this.personaService.getTipoDocumento() });
-  tipoPersonasResource = rxResource({ stream: () => this.personaService.getTipoPersona() });
-  tipoDocumentos = computed(() => this.tipoDocumentosResource.value() ?? []);
-  tipoPersonas = computed(() => this.tipoPersonasResource.value() ?? []);
-
+  //tipoPersonasResource = rxResource({ stream: () => this.personaService.getTipoPersona() });
+  //tipoPersonas = computed(() => this.tipoPersonasResource.value() ?? []);
+  //tipoDocumentosResource = rxResource({ stream: () => this.personaService.getTipoDocumento() });
+  //tipoDocumentos = computed(() => this.tipoDocumentosResource.value() ?? []);
   //newUsuario = signal(new Usuario());
 
   personaOutEffect = effect(() => {
@@ -79,9 +101,9 @@ export class FormDatosPersonaComponent {
     if (!documentos.length) return;
 
     if (!persona || !persona.id) {
-      if (this.personaForm.get('id')?.value !== null || this.personaForm.get('tipoDocumentoId')?.value !== null) {
+      if (this.personaForm.get('id')?.value !== null || this.personaForm.get('tipoDocumentoIdentidad')?.value !== null) {
         this.personaForm.reset({
-          tipoDocumentoId: null
+          tipoDocumentoIdentidad: null
         }, { emitEvent: true });
       }
       return;
@@ -90,50 +112,27 @@ export class FormDatosPersonaComponent {
     const formValues = this.personaForm.getRawValue();
     if (
       formValues.id === persona.id &&
-      formValues.tipoDocumentoId === persona.tipoDocumentoId &&
+      formValues.tipoDocumentoIdentidad === persona.tipoDocumentoIdentidad &&
       formValues.numeroDocumento === persona.numeroDocumento &&
-      formValues.nomApellRz === persona.nomApellRz &&
+      formValues.apellNomRznSocial === persona.apellNomRznSocial &&
       formValues.email === persona.email &&
       formValues.celular === persona.celular &&
-      formValues.direccion === persona.direccion
+      formValues.direccionCompleta === persona.direccionCompleta
     ) {
       return; // <-- Salimos prematuramente, rompiendo el bucle infinito
     }
 
     this.personaForm.patchValue({
       id: persona.id,
-      tipoDocumentoId: persona.tipoDocumentoId ?? null,
+      tipoDocumentoIdentidad: persona.tipoDocumentoIdentidad ?? null,
       numeroDocumento: persona.numeroDocumento,
-      nomApellRz: persona.nomApellRz,
+      apellNomRznSocial: persona.apellNomRznSocial,
       email: persona.email,
       celular: persona.celular,
-      direccion: persona.direccion
+      direccionCompleta: persona.direccionCompleta
     }, { emitEvent: true });//emite los valores del formulario la priemra ves que se carga
   });
 
-  /*   ngOnChanges(changes: SimpleChanges): void {
-      if (changes['inPersona']) {
-
-        if (this.isUserInteracting) {
-          return;
-        }
-        const persona = this.inPersona();
-
-        if (!persona || !persona.id) {
-          this.personaForm.reset({ tipoDocumentoId: null }, { emitEvent: false });
-        } else {
-          this.personaForm.patchValue({
-            id: persona.id,
-            tipoDocumentoId: persona.tipoDocumentoId ?? null,
-            numeroDocumento: persona.numeroDocumento,
-            nomApellRz: persona.nomApellRz,
-            email: persona.email,
-            celular: persona.celular,
-            direccion: persona.direccion
-          }, { emitEvent: false });
-        }
-      }
-    } */
 
   constructor() {
     // Escucha cambios en todo el formulario
@@ -144,32 +143,55 @@ export class FormDatosPersonaComponent {
     ).subscribe(() => {
       this.create();
     });
-
-
-    /*     this.personaForm.valueChanges.subscribe(() => {
-          this.isUserInteracting = true;
-          this.create();
-          this.isUserInteracting = false;
-        }); */
   }
+
+
+  clienteByTipoDocumentoIdentidadAndNumeroDocumento(): void {
+    const tipoControl = this.personaForm.get('tipoDocumentoIdentidad');
+    const numeroControl = this.personaForm.get('numeroDocumento');
+
+    const tipoDocumentoIdentidadEnum = tipoControl?.value as TipoDocumentoIdentidadEnum | null;
+    const numeroDocumento = String(numeroControl?.value ?? '').trim();
+
+    // No consultar si falta alguno de los dos campos.
+    if (tipoDocumentoIdentidadEnum == null || !numeroDocumento || numeroControl?.invalid) {
+      return;
+    }
+
+    this.personaService.clienteByTipoDocumentoIdentidadAndNumeroDocumento(tipoDocumentoIdentidadEnum, numeroDocumento)
+      .subscribe({
+        next: (persona: Persona) => {
+          if (!persona) { return; }
+
+          this.usuarioId.set(persona.usuarioId)
+
+          this.personaForm.patchValue({
+            id: persona.id ?? null,
+            tipoDocumentoIdentidad: persona.tipoDocumentoIdentidad ?? tipoDocumentoIdentidadEnum,
+            numeroDocumento: persona.numeroDocumento ?? numeroDocumento,
+            apellNomRznSocial: persona.apellNomRznSocial ?? '',
+            direccionCompleta: persona.direccionCompleta ?? '',
+            email: persona.email ?? '',
+            celular: persona.celular ?? ''
+          });
+        },
+
+        error: (error: HttpErrorResponse) => {
+          const mensaje = error.error?.message ?? 'No fue posible consultar los datos de la persona.';
+          this.alertService.error(mensaje, "Persona");
+        }
+      });
+  }
+
+
+
 
   create(): void {
     const formValid = this.personaForm.valid;
-
-/*     const usuario = {
-      ...this.newUsuario(),
-      username: this.personaForm.value.numeroDocumento,
-      noBloqueado: true,
-      activo: true,
-      reintentos: 0
-    }; */
-
     const persona: Persona = {
       ...this.personaForm.value,
-      //tipoDocumentoId: null,
-      //tipoPersona: this.tipoPersonas().find(tp => tp.id === 1)!, // Asignamos un tipo de persona por defecto (cliente)
-      tipoPersonaId: 1, // Asignamos un tipo de persona por defecto (cliente)
-      usuarioId: this.inPersona()?.usuarioId
+      tipoPersona: TipoPersonaEnum.CLIENTE_PROVEEDOR, // Asignamos un tipo de persona por defecto (cliente)
+      usuarioId: this.inPersona()?.usuarioId ?? this.usuarioId()
     };
 
     const formWithPerson = {

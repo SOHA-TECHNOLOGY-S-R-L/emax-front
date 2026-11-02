@@ -12,6 +12,7 @@ import {
 } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { find } from 'lodash-es';
 import { map } from 'rxjs';
 import { MargenProducto } from '../../../models/margen-producto';
@@ -26,8 +27,7 @@ import { AngularMaterialModule } from '../../compartido/angular-material.module'
 import { VerMultimediaAsignadaComponent } from '../../compartido/ver-multimedia-asignada/ver-multimedia-asignada.component';
 import { ListMultimediaComponent } from '../../multimedia/pages/list-multimedia/list-multimedia.component';
 import { MultimediaHttpService } from './../../../services/multimedia-http.service';
-import { MultimediaAsignadaService } from '../../../services/multimedia-asignada.service';
-import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
+import { ColorDetails, ColorEnum, getColorEnumById } from '../../../enums/color.enum';
 
 @Component({
   selector: 'app-mantenimiento-producto',
@@ -47,15 +47,11 @@ import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 export class MantenimientoProductoComponent {
   public multimediaHttpService = inject(MultimediaHttpService);
   private productoService = inject(ProductoService);
-  //private multimediaAsignadaService = inject(MultimediaAsignadaService);
   private categoriaService = inject(CategoriaService);
   private activatedRoute = inject(ActivatedRoute);
 
   readonly dialog = inject(MatDialog);
 
-  coloresResource = rxResource({
-    stream: () => this.productoService.getColoresProducto(),
-  });
 
   materialesResource = rxResource({
     stream: () => this.productoService.getMaterialesProducto(),
@@ -65,20 +61,18 @@ export class MantenimientoProductoComponent {
     stream: () => this.categoriaService.getCategoriasProducto(),
   });
 
-  usosResource = rxResource({
-    stream: () => this.productoService.getUsosInternoProducto(),
-  });
 
   productosResources = rxResource({
     stream: () => this.productoService.getAllProducto(),
   });
 
-  colores = computed(() => this.coloresResource.value() ?? []);
+  colores = Object.values(ColorEnum);
   materiales = computed(() => this.materialesResource.value() ?? []);
   categorias = computed(() => this.categoriasResource.value() ?? []);
-  usos = computed(() => this.usosResource.value() ?? []);
 
-  //multimediasAsignada = signal<MultimediaAsignada[]>([]);
+  colorDetails = ColorDetails;
+
+
   producto = signal<Producto>(new Producto());
   productoId = toSignal<number>(
     this.activatedRoute.paramMap.pipe(map((r) => Number(r.get('productoId')!))),
@@ -150,8 +144,8 @@ export class MantenimientoProductoComponent {
         visibleEnTienda: resp.visibleEnTienda,
         categoriaId: resp.categoria?.id,
         materialId: resp.materialId,
-        colorId: resp.colorId,
-        usoId: resp.usoId,
+        colorId: (resp.color == null) ? null: ColorDetails[resp.color].id,
+        //usoId: resp.usoId,
       });
 
       this.margenesGanancia.clear();
@@ -263,8 +257,8 @@ export class MantenimientoProductoComponent {
       visibleEnTienda: [pr.visibleEnTienda],
       categoriaId: [pr.categoria?.id, Validators.required],
       materialId: [pr.materialId, Validators.required],
-      colorId: [pr.colorId, Validators.required],
-      usoId: [pr.usoId, Validators.required],
+      colorId: [pr.color, Validators.required],
+      //usoId: [pr.usoId, Validators.required],
     });
 
     this.defaultMargenProducto();
@@ -333,7 +327,7 @@ export class MantenimientoProductoComponent {
       fechaInicioOferta: [null],
       fechaFinOferta: [null],
       valorUnitarioOferta: [0, [Validators.required, Validators.min(0.00), Validators.pattern(/^\d+(\.\d{1,2})?$/)]],
-      descripcionOferta:[null],
+      descripcionOferta: [null],
       //valorNetoUnitario: [{ value: 0.01, disabled: true }, [Validators.required, Validators.min(0.01)]],
       igvUnitario: [{ value: 0, disabled: true }, [Validators.required, Validators.min(0), Validators.pattern(/^\d+(\.\d{1,2})?$/)]],
       precioUnitario: [0.01, [Validators.required, Validators.min(0.01)]],
@@ -376,9 +370,11 @@ export class MantenimientoProductoComponent {
     p.gruposDe = this.formProducto.get('gruposDe')?.value;
     p.costoUnitario = this.formProducto.get('costoUnitario')?.value;
     p.porcentajeIgv = this.formProducto.get('porcentajeIgv')?.value;
-    p.colorId = +this.formProducto.get('colorId')?.value;
+
+    p.color = getColorEnumById(+this.formProducto.get('colorId')?.value);
+
     p.materialId = +this.formProducto.get('materialId')?.value;
-    p.usoId = +this.formProducto.get('usoId')?.value;
+    //p.usoId = +this.formProducto.get('usoId')?.value;
     p.categoria = find(this.categorias(), {
       id: +this.formProducto.get('categoriaId')?.value,
     });
@@ -482,12 +478,14 @@ export class MantenimientoProductoComponent {
       return;
     }
 
+    const colorId = this.formProducto.get('colorId')?.value;
+
     const newPr: any = {
       ...pr,
       padreId: pr.padreId,
-      colorId: pr.colorId,
+      color: colorId == null || colorId === '' ? null : Number(colorId),
       materialId: pr.materialId,
-      usoId: pr.usoId,
+      //usoId: pr.usoId,
       categoriaId: pr.categoria?.id,
       estadoProductoId: pr.estadoProducto?.id,
       //categoriaId: pr.categoria ? { ...pr.categoria, productos: [] } : null,

@@ -4,29 +4,32 @@ import { rxResource, toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import * as fileSaver from 'file-saver-es';
 import moment from 'moment';
-import { map, switchMap } from 'rxjs';
-import { PEDIDO_VENTA } from '../../../../constants/constantes';
+import { concatMap, of, tap } from 'rxjs';
+import { environment } from '../../../../../environments/environment';
+import { TipoPedidoEnum, TipoPedidoEtiquetas } from '../../../../enums/tipo-pedido.enum';
+import { TipoPersonaEnum } from '../../../../enums/tipo-persona.enum';
+import { ResponseController } from '../../../../interfaces/response-controller';
 import { EnvioPedido } from '../../../../models/envio-pedido';
-import { ItemPedido } from '../../../../models/item-pedido';
 import { Pedido } from '../../../../models/pedido';
 import { Persona } from '../../../../models/persona';
 import { AuthService } from '../../../../services/auth.service';
+import { CuponService } from '../../../../services/cupon.service';
+import { ItemService } from '../../../../services/item.service';
 import { PedidoService } from '../../../../services/pedido.service';
 import { PersonaService } from '../../../../services/persona.service';
 import { ProductoService } from '../../../../services/producto.service';
+import { SnackbarService } from '../../../../services/snackbar.service';
 import { UsuarioService } from '../../../../services/usuario.service';
+import { construirPedidoRequest } from '../../../../utils/build-pedido';
 import { AutocompleteResourceComponent } from '../../../compartido/autocomplete-resource/autocomplete-resource.component';
 import { PrimeNgModule } from '../../../compartido/prime-ng.module';
 import { FormDatosPersonaComponent } from '../../../personas/components/form-datos-persona/form-datos-persona.component';
 import { FormEnvioPedidoComponent } from '../form-envio-pedido/form-envio-pedido.component';
 import { ItemPedidoComponent } from "../item-pedido/item-pedido.component";
 import { PagoPedidoPersonaOnlineComponent } from '../pago-pedido-persona-online/pago-pedido-persona-online.component';
-import { AlertService } from './../../../../services/alert.service';
-import { ItemService } from '../../../../services/item.service';
-import { SnackbarService } from '../../../../services/snackbar.service';
-import { environment } from '../../../../../environments/environment';
-import { CuponService } from '../../../../services/cupon.service';
+
 
 @Component({
   selector: 'pedido-persona-online-finalizado',
@@ -46,14 +49,13 @@ export class PedidoPersonaOnlineFinalizadoComponent {
   private itemService = inject(ItemService);
   private productoService = inject(ProductoService);
   private cuponService = inject(CuponService)
-
-
-  //private alertService = inject(AlertService);
   private snackbar = inject(SnackbarService);
   private router = inject(Router);
   readonly dialog = inject(MatDialog);
-  // 4 es el tipo pedido venta online - 3 pedido de tienda
-  origenPedidoId = toSignal(this.ar.paramMap.pipe(map(params => +(params.get('origenPedidoId') ?? 4))), { initialValue: 4 });
+
+  /* origenPedidoId = toSignal(this.ar.paramMap.pipe(
+    map(params => +(params.get('origenPedidoId') ??  OrigenPedidoEnum.ONLINE ))), { initialValue: OrigenPedidoEnum.ONLINE });
+ */
   isEnvio = signal<boolean>(false);
   inPersona = signal<Persona | undefined>(undefined);
   personSelect = signal<Persona | undefined>(undefined);
@@ -63,13 +65,23 @@ export class PedidoPersonaOnlineFinalizadoComponent {
   envioPedido = signal<EnvioPedido | undefined>(undefined);
 
   serviciosEnvioResource = rxResource({ stream: () => this.productoService.getLstProductoServicioEnvio() });
+
   readonly cuponesActivosResource = rxResource({
     stream: () => this.cuponService.getAllCuponesActivos(),
   })
 
-  readonly hayCuponesActivos = computed(
-    () => (this.cuponesActivosResource.value()?.length ?? 0) > 0
-  );
+  readonly hayCuponesParaVendedor = computed(() => {
+    const cupones = this.cuponesActivosResource.value();
+    if (!cupones) { return false; }
+    return cupones.some(cp => cp.visibleParaVendedor === true);
+  });
+
+  readonly hayCuponesParaCliente = computed(() => {
+    const cupones = this.cuponesActivosResource.value();
+    if (!cupones) { return false; }
+    return cupones.some(cp => cp.visibleParaCliente === true);
+  });
+
 
   serviciosEnvio = computed(() => this.serviciosEnvioResource.value() ?? []);
   //formaEnvio = signal<string>('');
@@ -80,7 +92,7 @@ export class PedidoPersonaOnlineFinalizadoComponent {
 
   readonly items = computed(() =>
     this.itemService.buildItems(
-      this.rawItems(), this.envioPedido(), this.serviciosEnvio(), environment.API_URL_VER_IMAGEN, PEDIDO_VENTA
+      this.rawItems(), this.envioPedido(), this.serviciosEnvio(), environment.API_URL_VER_IMAGEN, TipoPedidoEnum.VENTA
     )
   );
 
@@ -105,17 +117,46 @@ export class PedidoPersonaOnlineFinalizadoComponent {
   );
   //subTotal = computed(() => this.itemService.calculateSubTotalFromItems(this.items()));
 
-  formPersonaValid: boolean = false;
-  formEnvioPedidoValid: boolean = true;
+  readonly isAutenticado = computed(() =>
+    this.authService.isAuthenticated()
+  );
 
-  private personFromOnlineEffect = effect(() => {
-    const origenPedidoId = this.origenPedidoId();
-    if (origenPedidoId === 4) {
-      this.cargarPersonaOnline();
+  readonly usuarioResource = rxResource({
+    params: () => this.authService.usuario(),
+    stream: ({ params }) => {
+      if (!params?.username) return of(null);
+      return this.usuarioService.getUsuarioByUsername(params.username);
     }
   });
 
-  PEDIDO_VENTA = PEDIDO_VENTA;
+  readonly personaResource = rxResource({
+    params: () => this.usuarioResource.value(),
+    stream: ({ params }) => {
+      if (!params?.id) return of(null);
+      return this.personaService.getPersonaByUsuarioId(params.id);
+    }
+  });
+
+  private personAuthenticateEffect = effect(() => {
+    const persona = this.personaResource.value();
+    if (!persona || !this.isCliente()) return;
+
+    this.inPersona.set(persona);
+
+  });
+
+  readonly isCliente = computed(() => {
+    const persona = this.personaResource.value();
+    if (!persona) return true;
+    return persona.tipoPersona === TipoPersonaEnum.CLIENTE_PROVEEDOR;
+  });
+
+
+  formPersonaValid: boolean = false;
+  formEnvioPedidoValid: boolean = true;
+
+  readonly tipoPedidoEnum = TipoPedidoEnum;
+  readonly tipoPedidoEtiquetas = TipoPedidoEtiquetas;
 
   constructor() { }
 
@@ -123,10 +164,9 @@ export class PedidoPersonaOnlineFinalizadoComponent {
     this.personaService.filtrarPersonas(term);
 
   mostrarPersona = (persona: Persona | null) =>
-    persona?.nomApellRz ?? '';
+    persona?.apellNomRznSocial ?? '';
 
   personSelecToInForm(persona: Persona) {
-    debugger;
     this.inPersona.set(persona);
   }
 
@@ -170,12 +210,11 @@ export class PedidoPersonaOnlineFinalizadoComponent {
     } else {
       this.envioPedido.set(undefined);
     }
-    //this.checkEnvioPedido(envioPedido);
   }
 
 
   crearPedidoTienda() {
-    if (!this.authService.isAuthenticated()) {
+    if (!this.isAutenticado()) {
       return;
     }
     const persona = this.personSelect();
@@ -183,17 +222,15 @@ export class PedidoPersonaOnlineFinalizadoComponent {
     const personaId = persona!.id
     if (personaId) {
       this.personaService.update(personaId, persona!).subscribe(result => {
-        //console.log('persona actualziada')
         this.personSelect.set(result.persona)
         this.actualizarPedido();
-        this.crearPedido();
+        this.crearPedidoVenta();
       })
     } else {
-      this.personaService.create(persona!).subscribe(result => {
-        //console.log("persona creada", persona)
+      this.personaService.createCliente(persona!).subscribe(result => {
         this.personSelect.set(result)
         this.actualizarPedido();
-        this.crearPedido();
+        this.crearPedidoVenta();
       })
     }
   }
@@ -209,24 +246,40 @@ export class PedidoPersonaOnlineFinalizadoComponent {
       observacion: this.observaciones(),
       direccionEnvio: envioPed?.direccionEnvio!,
       celularEnvio: envioPed?.celularEnvio!,
-      nomApellRzEnvio: envioPed?.nomApellRzEnvio!,
+      apellNomRznSocialEnvio: envioPed?.apellNomRznSocialEnvio!,
       entregadoEn: this.fechaEntrega(),
       items: [...this.items()],
-      tipoPedidoId: PEDIDO_VENTA,
+      tipoPedido: TipoPedidoEnum.VENTA,
     }));
   }
 
-  crearPedido() {
+  crearPedidoVenta() {
     if (!this.formEnvioPedidoValid || this.items().length === 0) return;
-    this.pedidoService.createPedidoTienda(this.pedido())
-      .subscribe(p => {
-        this.itemService.setItems([]);
-        if (this.origenPedidoId() === 4) {
-          this.openDialog(p);
-        } else {
-          this.snackbar.success(`Pedido ${p.tipoPedido.nombre} N° ${p.id}`);
+    this.pedidoService.createPedidoVenta(construirPedidoRequest(this.pedido()))
+      .subscribe({
+        next: (response) => {
+          const pedido = response.data
+          if (this.isCliente()) {
+            this.openDialog(pedido);
+          } else {
+            this.snackbar.success(`${this.tipoPedidoEtiquetas[pedido.tipoPedido]} N°: ${pedido.id}`);
+            this.itemService.setItems([]);
+            this.router.navigate(['/pedidos/listado-ventas']);
+          }
+        },
+        error: (err) => {
+          const body = err.error as
+            | ResponseController<unknown> //parecido al any la diferencia es qu te aobliga a comprobar el tipo antes de usar
+            | null;
+          let message = body?.message ?? 'Error.';
+          // Si data contiene errores de validación
+          if (Array.isArray(body?.data)) {
+            message += ': ' + body.data.join('; ');
+          }
+          this.snackbar.error(message)
+          console.error(message, err);
         }
-        this.router.navigate(['/pedidos/listado-ventas']);
+
       });
   }
 
@@ -239,53 +292,73 @@ export class PedidoPersonaOnlineFinalizadoComponent {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      this.router.navigate(['/']);
-
+      this.router.navigate(['/pedidos/listado-ventas']);
       if (result) {
-        this.snackbar.success("Pagado! Si enviaste tu pago ya estamos atendiendo tu pedido.")
+        this.snackbar.success("Si enviaste tu pago, estamos atendiendo tu pedido.")
       } else {
-        this.snackbar.warning("Pago pendiente! Si enviaste el pago puedes omitir el mensaje.")
+        this.snackbar.warning("Pago pendiente! Puedes omitir el mensaje si has pagado.")
       }
 
     });
   }
 
-  isAuthenticated(): boolean {
-    return this.authService.isAuthenticated();
-  }
+  /*   isAuthenticated(): boolean {
+      return this.authService.isAuthenticated();
+    } */
 
-  cargarPersonaOnline() {
-    if (!this.authService.isAuthenticated()) {
-      return;
-    }
+  /*   cargarPersonaOnline() {
+      if (!this.authService.isAuthenticated()) {
+        return;
+      }
 
-    const usuario = this.authService.usuario()
-    if (!usuario) { return }
+      const usuario = this.authService.usuario()
+      if (!usuario) { return }
 
-    this.usuarioService.getUsuarioByUsername(usuario.username)
-      .pipe(
-        switchMap(usr => this.personaService.getPersonaByUsuarioId(usr.id))
-      )
-      .subscribe({
-        next: (persona) => {
-          //console.log('cargarPersonaOnline-->persona para update', persona)
-          this.inPersona.set(persona);
-        },
-        error: (err) => console.error('Error en la carga:', err)
-      });
-  }
+      this.usuarioService.getUsuarioByUsername(usuario.username)
+        .pipe(
+          switchMap(usr => this.personaService.getPersonaByUsuarioId(usr.id))
+        )
+        .subscribe({
+          next: (persona) => {
+            //console.log('cargarPersonaOnline-->persona para update', persona)
+            this.inPersona.set(persona);
+          },
+          error: (err) => console.error('Error en la carga:', err)
+        });
+    } */
 
 
   aplicarCuponDescuento(input: HTMLInputElement) {
-    const codigoDescuento = input.value;
-    this.actualizarPedido();
-    this.pedidoService.aplicarDescuento(this.pedido(), codigoDescuento).subscribe(result => {
-      //this.items.set(result);
-      this.itemService.setItems(result);
+    const codigoDescuento = ((input.value) as string).trim();
 
-    })
-    //this.codigoDescuento.set(text);
-    //this.items()
+    if (!codigoDescuento) { return; }
+
+    this.actualizarPedido();
+    const pedidoRequest = construirPedidoRequest(this.pedido());
+
+    this.pedidoService.aplicarDescuento(pedidoRequest, codigoDescuento)
+      .subscribe({
+        next: (response) => {
+          this.itemService.setItems(response.data);
+          this.snackbar.success(response.message)
+        },
+        error: (err) => {
+          const body = err.error as
+            | ResponseController<unknown> //parecido al any la diferencia es qu te aobliga a comprobar el tipo antes de usar
+            | null;
+
+          let message = body?.message ?? 'Error al aplicar el cupón.';
+          // Si data contiene errores de validación
+          if (Array.isArray(body?.data)) {
+            message += ': ' + body.data.join('; ');
+          }
+
+          this.snackbar.error(message)
+          console.error(message, err);
+        }
+
+      });
+
   }
 
 }

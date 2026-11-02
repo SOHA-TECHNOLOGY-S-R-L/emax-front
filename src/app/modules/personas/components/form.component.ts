@@ -10,7 +10,6 @@ import { AuthService } from '../../../services/auth.service';
 import { PersonaService } from '../../../services/persona.service';
 import { AngularMaterialModule } from '../../compartido/angular-material.module';
 import { FormDatosPersonaComponent } from './form-datos-persona/form-datos-persona.component';
-import { CLIENTE_PROVEEDOR } from '../../../constants/constantes';
 
 @Component({
   selector: 'app-form',
@@ -26,7 +25,17 @@ export class FormComponent {
   private alertServie = inject(AlertService);
   public authService = inject(AuthService);
 
-  personaId = toSignal<number>(this.activatedRoute.paramMap.pipe(map(r => Number(r.get('personaId')))));
+  //personaId = toSignal<number>(this.activatedRoute.paramMap.pipe(map(r => Number(r.get('personaId')))));
+
+  personaId = toSignal(
+    this.activatedRoute.paramMap.pipe(
+      map(params => {
+        const id = params.get('personaId');
+        return id ? Number(id) : null;
+      })
+    ),
+    { initialValue: null }
+  );
   //persona = signal(new Persona());
   persona = signal(new Persona()); // Sigue usándose SOLO para la carga inicial (Edición / Registro)
   personaFormValue = signal<Persona | null>(null); // <-- NUEVA: Guarda el estado del formulario para enviar a la API
@@ -34,14 +43,16 @@ export class FormComponent {
   formValid = signal<boolean>(false);
 
   private personaEffect = effect(() => {
-    const personaId = this.personaId();
-    if (personaId) {
-      this.cargarPersona(personaId);
-    } else {
-      this.persona.set(new Persona());
-      this.titulo.set("Registro persona");
+    const id = this.personaId();
 
+    if (id !== null && Number.isFinite(id) && id > 0) {
+      this.titulo.set('Editar persona');
+      this.cargarPersona(id);
+      return;
     }
+
+    this.persona.set(new Persona());
+    this.titulo.set('Registro persona');
   });
 
 
@@ -63,12 +74,12 @@ export class FormComponent {
   create(): void {
     const personaAEmitir = this.personaFormValue();
     if (!personaAEmitir || !this.formValid()) return; // Validación de seguridad
-    personaAEmitir.tipoPersonaId = CLIENTE_PROVEEDOR
-    this.personaService.create(personaAEmitir)
+    //personaAEmitir.tipoPersonaId = CLIENTE_PROVEEDOR
+    this.personaService.createCliente(personaAEmitir)
       .subscribe(
         persona => {
           this.router.navigate(['/personas']);
-          this.alertServie.success(`La persona ${persona.nomApellRz} ha sido creada con éxito`, 'Nueva persona');
+          this.alertServie.success(`La persona ${persona.apellNomRznSocial} ha sido creada con éxito`, 'Nueva persona');
         },
       );
   }

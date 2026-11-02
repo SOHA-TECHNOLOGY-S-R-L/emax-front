@@ -15,11 +15,11 @@
 
                 <div class="col-sm">
                   <ul *ngIf="persona" class="list-group text-dark mb-3">
-                    <li class="list-group-item active">{{persona.nomApellRz}}</li>
+                    <li class="list-group-item active">{{persona.apellNomRznSocial}}</li>
                     <li class="list-group-item">{{persona.celular}}</li>
                     <!--                 <li class="list-group-item">{{persona.createAt | date:"fullDate"}}</li>
- -->
-                    <li class="list-group-item">{{persona.tipoDocumento.acronimo}}</li>
+
+                    <li class="list-group-item">{{persona.tipoDocumento.acronimo}}</li> -->
                   </ul>
 
                   <div class="input-group mb-3" *ngIf="authService.hasRole('ROLE_ADMIN')">
@@ -50,7 +50,7 @@
               <div class="row">
 
                 <div class="alert alert-info my-4" *ngIf="persona.pedidos.length == 0">
-                  No hay pedidos asignadas para el persona {{persona.nomApellRz}}
+                  No hay pedidos asignadas para el persona {{persona.apellNomRznSocial}}
                 </div>
 
                 <table class="table table-bordered table-striped my-4" *ngIf="persona.pedidos.length > 0">
@@ -70,8 +70,8 @@
                       <!--                   <td>{{pedido.descripcion}}</td>
  -->
                       <td>{{pedido.createAt}}</td>
-                      <td>{{pedido.precioNetoTotal}}</td>
-                      <td><button class="btn btn-primary btn-sm" type="button"
+<!--                       <td>{{pedido.precioNetoTotal}}</td>
+ -->                      <td><button class="btn btn-primary btn-sm" type="button"
                           [routerLink]="['/pedidos', pedido.id]">ver</button></td>
                       <td *ngIf="authService.hasRole('ROLE_ADMIN')"><button class="btn btn-danger btn-sm" type="button"
                           (click)="delete(pedido)">eliminar</button></td>

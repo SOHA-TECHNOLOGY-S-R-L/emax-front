@@ -7,7 +7,7 @@
           <img [src]="getImagenPrincipal(producto)" width="86" height="86"
             style="object-fit: cover; border-radius: 6px;" />
           {{ producto.nombre }}
-          <span class="text-bold-italic">Color:</span> {{ findColorById(producto.colorId) }}
+          <span class="text-bold-italic">Color:</span> {{ producto.color }}
           <span class="text-bold-italic">Cant:</span> {{ producto.cantidadStock }} unid
           <span class="text-bold-italic">Cod:</span> {{ producto.codigo }}
 

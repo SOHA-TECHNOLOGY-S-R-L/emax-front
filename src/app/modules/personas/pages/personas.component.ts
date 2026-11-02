@@ -25,7 +25,7 @@ export class PersonasComponent {
   private personaService = inject(PersonaService);
   public authService = inject(AuthService);
   //private alertService = inject(AlertService);
-  displayedColumns: string[] = ['id','nomApellRz', 'numeroDocumento', 'celular', 'acciones'];
+  displayedColumns: string[] = ['id','apellNomRznSocial', 'numeroDocumento', 'celular', 'acciones'];
 
   readonly params = signal<PageableParams>({
     pageNumber: 0,
@@ -87,13 +87,13 @@ export class PersonasComponent {
 
   delete(persona: Persona): void {
 
-/*     const dialogRef = this.alertService.decision(`¿Seguro que desea eliminar al persona ${persona.nomApellRz}?`, "Borrar persona")
+/*     const dialogRef = this.alertService.decision(`¿Seguro que desea eliminar al persona ${persona.apellNomRznSocial}?`, "Borrar persona")
     dialogRef.afterClosed().subscribe((result: boolean) => {
       if (result) {
         this.personaService.delete(persona.id).subscribe(
           () => {
             this.loadItems();
-            this.alertService.success(`Persona ${persona.nomApellRz} eliminado con éxito.`, 'Persona Eliminado!')
+            this.alertService.success(`Persona ${persona.apellNomRznSocial} eliminado con éxito.`, 'Persona Eliminado!')
           }
         )
       }

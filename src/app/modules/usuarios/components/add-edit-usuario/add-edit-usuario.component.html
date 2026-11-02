@@ -5,38 +5,36 @@
         <h6 class="card-title">{{ titulo() }}</h6>
         <div class="ms-auto">
           <button color="primary" mat-raised-button [routerLink]="'/usuarios'">Cancelar</button>
-          @if(!this.isEmpleadoEdit() && !this.isCliente() && authService.hasRole('ROLE_REGISTER_USUARIO')){
-          <button color="primary" mat-raised-button (click)='addEmpleado()'
-            [disabled]="!(personaForm.valid && isValidFormEqualsClave)">Crear empleado</button>
-          }
-          @if(this.isEmpleadoEdit() && !this.isCliente() && authService.hasRole('ROLE_UPDATE_USUARIO')){
+          @if(authService.hasRole('ROLE_UPDATE_USUARIO')){
+          @if((this.isEdit() || this.existePersona())){
           <button color="primary" mat-raised-button (click)='update()'
             [disabled]="!(personaForm.valid && isValidFormEqualsClave)">
-            Actualizar empleado
+            Actualizar trabajador
           </button>
+          } @else {
+          <button color="primary" mat-raised-button (click)='addTrabajador()'
+            [disabled]="!(personaForm.valid && isValidFormEqualsClave)">Crear trabajador</button>
           }
-          @if(!this.isEmpleadoEdit() && this.isCliente() && authService.hasRole('ROLE_UPDATE_USUARIO')){
-          <button color="primary" mat-raised-button (click)='update()'
-            [disabled]="!(personaForm.valid && isValidFormEqualsClave)">
-            Convertir a empleado
-          </button>
           }
         </div>
       </div>
       <div class="card-body d-flex flex-column">
 
         <div class="row mb-2">
-          <label for="tipoDocumentoId" class="form-label col-12"><b>Datos del usuario:</b></label>
+          <label for="tipoDocumentoIdentidad" class="form-label col-12"><b>Datos del usuario:</b></label>
           <div class="col-12">
-            <select formControlName="tipoDocumentoId" name="tipoDocumentoId" class="form-control">
-              <option value="-1">
-                -- Seleccione Tipo de documento</option>
-              <option *ngFor="let tipoDocumento of tipoDocumentosResources.value()" [value]="tipoDocumento.id">
-                {{tipoDocumento.nombre}}</option>
+            <select formControlName="tipoDocumentoIdentidad" name="tipoDocumentoIdentidad" class="form-control"
+              (change)="personaByTipoDocumentoIdentidadAndNumeroDocumento()">
+              <option [value]="-1">-- Seleccione Tipo de documento</option>
+              @for (documento of tipoDocumentos(); track documento.id) {
+              <option [value]="documento.id">
+                {{ documento.nombre }}
+              </option>
+              }
             </select>
-            @if(formUtils.isValidField(personaForm,'tipoDocumentoId')){
+            @if(formUtils.isValidField(personaForm,'tipoDocumentoIdentidad')){
             <div class="alert alert-danger">
-              {{formUtils.getFieldError(personaForm,"tipoDocumentoId")}}
+              {{formUtils.getFieldError(personaForm,"tipoDocumentoIdentidad")}}
             </div>}
           </div>
         </div>
@@ -44,7 +42,7 @@
         <div class="row mb-2">
           <div class="col-12">
             <input formControlName="numeroDocumento" type="text" class="form-control" name="numeroDocumento"
-              placeholder="Número de documento" (change)="findByNumDocumento($event)">
+              placeholder="Número de documento" (change)="personaByTipoDocumentoIdentidadAndNumeroDocumento()">
             @if(formUtils.isValidField(personaForm,'numeroDocumento')){
             <div class="alert alert-danger">
               {{formUtils.getFieldError(personaForm,"numeroDocumento")}}
@@ -54,22 +52,22 @@
 
         <div class="row mb-2">
           <div class="col-12">
-            <input formControlName="nomApellRz" type="text" class="form-control" name="nomApellRz"
+            <input formControlName="apellNomRznSocial" type="text" class="form-control" name="apellNomRznSocial"
               placeholder="Nombres y apellidos o Razón social">
-            @if(formUtils.isValidField(personaForm,'nomApellRz')){
+            @if(formUtils.isValidField(personaForm,'apellNomRznSocial')){
             <div class="alert alert-danger">
-              {{formUtils.getFieldError(personaForm,'nomApellRz')}}
+              {{formUtils.getFieldError(personaForm,'apellNomRznSocial')}}
             </div>}
           </div>
         </div>
 
         <div class="row mb-2">
           <div class="col-12">
-            <input formControlName="correo" type="email" class="form-control" name="correo"
-              placeholder="Corrreo electrónico">
-            @if(formUtils.isValidField(personaForm,'correo')){
+            <input formControlName="direccionCompleta" type="text" class="form-control" name="direccionCompleta"
+              placeholder="Dirección">
+            @if(formUtils.isValidField(personaForm,'direccionCompleta')){
             <div class="alert alert-danger">
-              {{formUtils.getFieldError(personaForm,'correo')}}
+              {{formUtils.getFieldError(personaForm,'direccionCompleta')}}
             </div>}
           </div>
         </div>
@@ -86,28 +84,29 @@
 
         <div class="row mb-2">
           <div class="col-12">
-            <input formControlName="direccion" type="text" class="form-control" name="direccion"
-              placeholder="Dirección">
-            @if(formUtils.isValidField(personaForm,'direccion')){
+            <input formControlName="correo" type="email" class="form-control" name="correo"
+              placeholder="Corrreo electrónico">
+            @if(formUtils.isValidField(personaForm,'correo')){
             <div class="alert alert-danger">
-              {{formUtils.getFieldError(personaForm,'direccion')}}
+              {{formUtils.getFieldError(personaForm,'correo')}}
             </div>}
           </div>
         </div>
 
 
 
+
         <div class="row mb-2">
           <div class="col-12">
-            <select formControlName="tipoPersonaId" name="tipoPersonaId" class="form-control">
+            <select formControlName="tipoPersona" name="tipoPersona" class="form-control">
               <option value="-1">
-                -- Seleccione Tipo de empleado</option>
-              <option *ngFor="let tPerson of tipoPersonasResources.value()" [value]="tPerson.id">
-                {{tPerson.persona}}</option>
+                -- Seleccione Tipo de trabajador</option>
+              <option *ngFor="let tPerson of tipoPersonas()" [value]="tPerson.id">
+                {{tPerson.nombre}}</option>
             </select>
-            @if(formUtils.isValidField(personaForm,'tipoPersonaId')){
+            @if(formUtils.isValidField(personaForm,'tipoPersona')){
             <div class="alert alert-danger">
-              {{formUtils.getFieldError(personaForm,"tipoPersonaId")}}
+              {{formUtils.getFieldError(personaForm,"tipoPersona")}}
             </div>}
           </div>
         </div>

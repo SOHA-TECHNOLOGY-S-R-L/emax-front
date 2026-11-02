@@ -1,17 +1,27 @@
+import { ComprobantePdfRequest } from './../../../../interfaces/comprobante-pdf-request';
+import { TipoDocumentoIdentidadEnum, TipoDocumentoIdentidadEtiquetas } from './../../../../enums/tipo-documento-identidad.enum';
 import { CommonModule } from '@angular/common';
 import { Component, computed, inject, input } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { environment } from '../../../../../environments/environment';
-import { PEDIDO_COMPRA, PEDIDO_VENTA } from '../../../../constants/constantes';
+import { TipoPedidoEnum } from '../../../../enums/tipo-pedido.enum';
 import { ItemPedido } from '../../../../models/item-pedido';
 import { Pedido } from '../../../../models/pedido';
 import { Persona } from '../../../../models/persona';
-import { PersonaService } from '../../../../services/persona.service';
 import { ProductoService } from '../../../../services/producto.service';
 import { AngularMaterialModule } from '../../../compartido/angular-material.module';
-import moment from 'moment';
+import { ColorDetails } from './../../../../enums/color.enum';
+import { EstadoPedidoEnum, EstadoPedidoEtiquetas } from '../../../../enums/estado-pedido.enum';
+import { construirPedidoRequest } from '../../../../utils/build-pedido';
+import { PedidoService } from '../../../../services/pedido.service';
+import * as fileSaver from 'file-saver-es';
+import { ComprobanteSunat } from '../../../../interfaces/comprobante-sunat';
+import { LauncherSfsService } from '../../../../services/launcher-sfs.service';
+import { FormatoImpresionEnum } from '../../../../enums/formato-impresion.enum';
+import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
+
 
 @Component({
   selector: 'app-detalle-pedido',
@@ -24,71 +34,28 @@ import moment from 'moment';
     AngularMaterialModule,
     FormsModule,
     ReactiveFormsModule,
+    NgbTooltipModule
   ],
 })
 export class DetallePedidoComponent {
 
-  //private pedidoService = inject(PedidoService);
+  private pedidoService = inject(PedidoService);
   private productoService = inject(ProductoService);
-  //private route = inject(ActivatedRoute);
+  private launcherSfsService = inject(LauncherSfsService);
   inPedido = input.required<Pedido>();
 
-/*   pedido = computed<Pedido>(() => {
-    const p = this.inPedido();
-    return {
-      ...p,
-      createAt : moment(p.createAt).format('DD/MM/YYYY'),
-      entregadoEn : p.entregadoEn ? moment(p.entregadoEn).format('DD/MM/YYYY HH:mm') : '-',
-      adquiridoEn : p.adquiridoEn ? moment(p.adquiridoEn).format('DD/MM/YYYY') : '-',
-    }
-  }) */
-
   persona = computed<Persona>(() => {
-    //const pedido = this.inPedido();
     return this.inPedido().persona!;
   })
 
-  /*     pedido = computed(() => {
-      const pedido = this.pedidoResource.value();
-      if (!pedido) return null;
-      return { ...pedido, items: [] };
-    });
-   */
-
   titulo: string = 'Pedido de venta';
   API_URL_VER_IMAGEN = environment.API_URL_VER_IMAGEN;
-
-  /*   readonly pedidoId = toSignal(
-      this.route.paramMap.pipe(map((p) => p.get('pedidoId'))),
-      { initialValue: null },
-    ); */
-
-  /*   pedidoResource = rxResource({
-      params: () => {
-        const pedidoId = this.pedidoId();
-        if (!pedidoId) return null;
-        return { pedidoId };
-      },
-      stream: ({ params }) => this.pedidoService.getPedido(+params!.pedidoId),
-    }); */
-
-  coloresResource = rxResource({
-    stream: () => this.productoService.getColoresProducto(),
-  });
+  //estadoPedidoEnum = EstadoPedidoEnum;
 
   materialesResource = rxResource({
     stream: () => this.productoService.getMaterialesProducto(),
   });
 
-  /*   personaResources = rxResource({
-      params: () => {
-        const personaId = this.inPedido().persona?.id;
-        if (!personaId) return null;
-        return { personaId };
-
-      },
-      stream: ({ params }) => this.personaService.getPersona(+params!.personaId),
-    }) */
 
   items = computed<ItemPedido[]>(() => {
     const items = this.inPedido().items as ItemPedido[];
@@ -113,18 +80,55 @@ export class DetallePedidoComponent {
     });
   });
 
-  PEDIDO_VENTA = PEDIDO_VENTA;
-  PEDIDO_COMPRA = PEDIDO_COMPRA;
+
+  comprobantes = computed<string[]>(() => {
+    const comprobantes = this.inPedido().comprobantesSunat as ComprobanteSunat[];
+    if (!comprobantes) { return []; }
+
+    return comprobantes.map((com) => {
+      return `${com.vendedorEnCaja}-${com.tipoDocumentoSunat}-${com.serie}-${com.numero}`;
+    })
+    //.join(', ');
+  });
+
+  readonly TipoPedidoEnum = TipoPedidoEnum;
+
+  colorDetails = ColorDetails
+  estadoPedidoEtiquetas = EstadoPedidoEtiquetas;
+
+  tipoDocumentoIdentidadEtiquetas = TipoDocumentoIdentidadEtiquetas;
+
 
 
   constructor() { }
 
-  findColorById(colorId: number) {
-    const colores = this.coloresResource.value();
-    if (!colores) return null;
-    const color = colores.find((c) => c.id === colorId);
-    return color ? color.nombre : 'Sin color';
+  /*   findColorById(colorId: number) {
+      const colores = this.coloresResource.value();
+      if (!colores) return null;
+      const color = colores.find((c) => c.id === colorId);
+      return color ? color.nombre : 'Sin color';
+    } */
+
+  descargarPedido() {
+    this.pedidoService.downloadOrderToPersonaInPDF(construirPedidoRequest(this.inPedido()))
+      .subscribe(p => {
+        fileSaver.saveAs(p.body!, this.pedidoService.filenameFromHeader(p.headers));
+        //this.itemService.setItems([]);
+      });
   }
+
+  descargarComprobante(nombreComprobante: string) {
+    const request: ComprobantePdfRequest = {
+      identificadorComprobante: nombreComprobante,
+      formatoImpresion: FormatoImpresionEnum.TICKET
+    }
+    this.launcherSfsService.previewComprobanteToPersonaInPDF(request)
+      .subscribe(p => {
+        fileSaver.saveAs(p.body!, this.pedidoService.filenameFromHeader(p.headers));
+        //this.itemService.setItems([]);
+      });
+  }
+
 
   findMaterialById(materialId: number) {
     const materiales = this.materialesResource.value();

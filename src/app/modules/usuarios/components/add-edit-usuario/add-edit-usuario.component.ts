@@ -1,13 +1,11 @@
-import { UsuarioService } from './../../../../services/usuario.service';
 import { CommonModule } from '@angular/common';
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { rxResource, toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { catchError, of } from 'rxjs';
+import { TipoDocumentoIdentidadEnum, TipoDocumentoIdentidadEtiquetas } from '../../../../enums/tipo-documento-identidad.enum';
 import { Persona } from '../../../../models/persona';
-import { TipoDocumento } from '../../../../models/tipo-documento';
-import { TipoPersona } from '../../../../models/tipo-persona';
 import { Usuario } from '../../../../models/usuario';
 import { AlertService } from '../../../../services/alert.service';
 import { AuthService } from '../../../../services/auth.service';
@@ -15,6 +13,9 @@ import { PersonaService } from '../../../../services/persona.service';
 import { FormUtils } from '../../../../utils/form-utils';
 import { ConfirmarClaveComponent } from '../../../auth/confirmar-clave.component';
 import { AngularMaterialModule } from '../../../compartido/angular-material.module';
+import { UsuarioService } from './../../../../services/usuario.service';
+import { TipoPersonaEnum, TipoPersonaEtiquetas } from '../../../../enums/tipo-persona.enum';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'add-edit-usuario',
@@ -42,25 +43,25 @@ export class AddEditUsuarioComponent {
   formUtils = FormUtils;
 
   personaForm = this.formBuilder.group({
-    tipoDocumentoId: [-1,
+    tipoDocumentoIdentidad: [-1,
     Validators.required
     ],
     numeroDocumento: ['',
       { validators: [Validators.required, Validators.minLength(8), Validators.maxLength(12), Validators.pattern('^\\d+$')] }
     ],
-    nomApellRz: ['',
-      { validators: [Validators.required, Validators.minLength(2), Validators.pattern('^[a-zA-Z\\s]+$')] }
+    apellNomRznSocial: ['',
+      { validators: [Validators.required, Validators.minLength(2)] }
     ],
     correo: ['',
       [Validators.required, Validators.pattern('^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$')]
     ],
-    direccion: ['',
+    direccionCompleta: ['',
       { validators: [Validators.required, Validators.minLength(5)] }
     ],
     celular: ['',
       [Validators.required, Validators.minLength(6), Validators.maxLength(14), Validators.pattern('^\\d+$')]
     ],
-    tipoPersonaId: [-1,
+    tipoPersona: [-1,
     Validators.required],
     username: ['',
       [Validators.required, Validators.minLength(8), Validators.maxLength(12)]],
@@ -76,14 +77,27 @@ export class AddEditUsuarioComponent {
 
   errores: string[] = [];
 
+  public tipoDocumentos = signal(
+    Object.keys(TipoDocumentoIdentidadEtiquetas)
+      .filter(key => !isNaN(Number(key)))
+      .map(key => {
+        const idNum = Number(key) as TipoDocumentoIdentidadEnum;
+        return {
+          id: idNum, nombre: TipoDocumentoIdentidadEtiquetas[idNum]
+        };
+      })
+  );
 
-  readonly tipoDocumentosResources = rxResource({
-    stream: () => this.personaService.getTipoDocumento()
-  });
-
-  readonly tipoPersonasResources = rxResource({
-    stream: () => this.personaService.getTipoPersona()
-  });
+  public tipoPersonas = signal(
+    Object.keys(TipoPersonaEtiquetas)
+      .filter(key => !isNaN(Number(key)))
+      .map(key => {
+        const idNum = Number(key) as TipoPersonaEnum;
+        return {
+          id: idNum, nombre: TipoPersonaEtiquetas[idNum]
+        };
+      })
+  );
 
   private params = toSignal(this.activatedRoute.paramMap);
 
@@ -114,9 +128,9 @@ export class AddEditUsuarioComponent {
     }
   });
 
-  readonly isEmpleadoEdit = computed(() => this.personaResource.value() !== null);
+  readonly isEdit = computed(() => this.personaResource.value() !== null);
 
-  readonly isCliente = signal<boolean>(false)
+  existePersona = signal<boolean>(false);
 
   readonly usuarioResource = rxResource({
     params: () => ({
@@ -135,7 +149,7 @@ export class AddEditUsuarioComponent {
   })
 
 
-  readonly titulo = computed(() => this.isEmpleadoEdit() ? 'Editar empleado' : 'Crear empleado');
+  readonly titulo = computed(() => this.isEdit() ? 'Editar trabajador' : 'Crear trabajador');
 
 
   private readonly sincronizarPersonaForm = effect(() => {
@@ -148,15 +162,16 @@ export class AddEditUsuarioComponent {
     this.persona = persona; /** * Cargamos los datos de la persona en el formulario. */
     this.usuario = usuario;
     this.personaForm.patchValue({
-      tipoDocumentoId: persona.tipoDocumentoId ?? -1,
+      tipoDocumentoIdentidad: persona.tipoDocumentoIdentidad ?? -1,
       numeroDocumento: persona.numeroDocumento ?? '',
-      nomApellRz: persona.nomApellRz ?? '',
+      apellNomRznSocial: persona.apellNomRznSocial ?? '',
       correo: persona.email ?? '',
       celular: persona.celular ?? '',
-      direccion: persona.direccion ?? '',
-      tipoPersonaId: persona.tipoPersonaId ?? -1,
+      direccionCompleta: persona.direccionCompleta ?? '',
+      tipoPersona: persona.tipoPersona ?? -1,
       username: usuario.username ?? ''
     });
+    this.personaForm.markAllAsTouched()
   });
 
 
@@ -164,13 +179,13 @@ export class AddEditUsuarioComponent {
 
   setValueControls() {
     // 1. Extraer todos los valores del formulario en una sola operación
-    const { tipoDocumentoId,
-      tipoPersonaId,
+    const { tipoDocumentoIdentidad,
+      tipoPersona,
       numeroDocumento,
-      nomApellRz,
+      apellNomRznSocial,
       correo,
       celular,
-      direccion,
+      direccionCompleta,
       username } = this.personaForm.getRawValue();
 
     const clave =
@@ -183,13 +198,13 @@ export class AddEditUsuarioComponent {
     /** * Actualizamos solamente los datos que pertenecen * a Persona. */
     this.persona = {
       ...this.persona,
-      tipoDocumentoId: tipoDocumentoId ?? undefined,
-      tipoPersonaId: tipoPersonaId ?? undefined,
+      tipoDocumentoIdentidad: (tipoDocumentoIdentidad ?? TipoDocumentoIdentidadEnum.OTRO) as TipoDocumentoIdentidadEnum,
+      tipoPersona: tipoPersona ?? undefined,
       numeroDocumento: numeroDocumento ?? '',
-      nomApellRz: nomApellRz ?? '',
+      apellNomRznSocial: apellNomRznSocial ?? '',
       email: correo ?? '',
       celular: celular ?? '',
-      direccion: direccion ?? '',
+      direccionCompleta: direccionCompleta ?? '',
       //usuario: {
       //...(this.persona.usuario ?? {}),
       username: username ?? numeroDocumento ?? '',
@@ -201,8 +216,7 @@ export class AddEditUsuarioComponent {
   };
 
 
-  addEmpleado(): void {
-
+  addTrabajador(): void {
     if (this.personaForm.invalid || !this.isValidFormEqualsClave) {
       this.personaForm.markAllAsTouched();
       return;
@@ -210,11 +224,11 @@ export class AddEditUsuarioComponent {
 
     //this.isLoading = true;
     this.setValueControls();
-    this.personaService.create(this.persona)
+    this.personaService.createTrabajador(this.persona)
       .subscribe({
         next: persona => {
           this.router.navigate(['/usuarios']);
-          this.alertService.success(`La persona ${persona.nomApellRz} ha sido creada con éxito`, 'Nueva persona');
+          this.alertService.success(`La persona ${persona.apellNomRznSocial} ha sido creada con éxito`, 'Nueva persona');
         },
         error: err => {
           this.errores = err.error?.errors ?? [];
@@ -225,41 +239,87 @@ export class AddEditUsuarioComponent {
 
   }
 
+  personaByTipoDocumentoIdentidadAndNumeroDocumento(): void {
+    const tipoControl = this.personaForm.get('tipoDocumentoIdentidad');
+    const numeroControl = this.personaForm.get('numeroDocumento');
 
-  findByNumDocumento(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    const numero = input.value.trim();
-    const tipoDocumentoId = this.personaForm.get('tipoDocumentoId')?.value;
+    const tipoDocumentoIdentidadEnum = tipoControl?.value as TipoDocumentoIdentidadEnum | null;
+    const numeroDocumento = String(numeroControl?.value ?? '').trim();
 
+    // No consultar si falta alguno de los dos campos.
+    if (tipoDocumentoIdentidadEnum == null || !numeroDocumento || numeroControl?.invalid) {
+      return;
+    }
 
-    if (!numero) { return; }
-    this.personaService.getNumeroDocumento(numero).subscribe({
-      next: resp => {
-        if (!resp) { return; } /** * No modificamos isEmpleadoEdit. * * isEmpleadoEdit pertenece al estado determinado * por la URL + personaResource. */
-        this.persona = resp; /** * Cargamos la persona encontrada * directamente en el formulario. */
-        this.usuarioService.getUsuarioById(resp.usuarioId!).subscribe(
-          resp => this.usuario = resp /** * Cargamos el usuario * directamente en el formulario. */
-        );
-        this.isCliente.set(true)
-        this.personaForm.patchValue({
-          tipoDocumentoId: resp.tipoDocumentoId ?? -1,
-          numeroDocumento: resp.numeroDocumento ?? '',
-          nomApellRz: resp.nomApellRz ?? '',
-          correo: resp.email ?? '',
-          celular: resp.celular ?? '',
-          direccion: resp.direccion ?? '',
-          tipoPersonaId: resp.tipoPersonaId ?? -1,
-          username: this.usuario?.username ?? ''
-        });
-      },
-      error: err => {
-        console.error('Error buscando persona por documento:', err);
-      },
-      complete: () => {
-        this.personaForm.get('tipoDocumentoId')?.setValue(tipoDocumentoId!);
-      }
-    });
+    this.personaService.personaByTipoDocumentoIdentidadAndNumeroDocumento(
+      tipoDocumentoIdentidadEnum, numeroDocumento).subscribe({
+        next: (persona) => {
+
+          if (!persona) { return; }
+          this.persona = persona; /** * Cargamos la persona encontrada * directamente en el formulario. */
+          this.usuarioService.getUsuarioById(persona.usuarioId!).subscribe(
+            resp => this.usuario = resp /** * Cargamos el usuario * directamente en el formulario. */
+          );
+
+          const tieneDatos = persona.tipoPersona !== null && persona.tipoDocumentoIdentidad !== null;
+          this.existePersona.set(tieneDatos);
+
+          this.personaForm.patchValue({
+            tipoDocumentoIdentidad: persona.tipoDocumentoIdentidad ?? -1,
+            numeroDocumento: persona.numeroDocumento ?? '',
+            apellNomRznSocial: persona.apellNomRznSocial ?? '',
+            correo: persona.email ?? '',
+            celular: persona.celular ?? '',
+            direccionCompleta: persona.direccionCompleta ?? '',
+            tipoPersona: persona.tipoPersona ?? -1,
+            username: this.usuario?.username ?? ''
+          });
+          this.personaForm.markAsTouched();
+        },
+
+        error: (error: HttpErrorResponse) => {
+          const mensaje = error.error?.message ?? 'No fue posible consultar los datos de la persona.';
+          this.alertService.error(mensaje, "Persona");
+        },
+        complete: () => {
+          this.personaForm.get('tipoDocumentoIdentidad')?.setValue(tipoDocumentoIdentidadEnum!);
+        }
+      });
   }
+
+
+  /*   findByNumDocumento(event: Event): void {
+      const input = event.target as HTMLInputElement;
+      const numero = input.value.trim();
+      const tipoDocumento = this.personaForm.get('tipoDocumento')?.value;
+      if (!numero) { return; }
+      this.personaService.getNumeroDocumento(numero).subscribe({
+        next: resp => {
+          if (!resp) { return; }
+          this.persona = resp;
+          this.usuarioService.getUsuarioById(resp.usuarioId!).subscribe(
+            resp => this.usuario = resp
+          );
+          this.isCliente.set(true)
+          this.personaForm.patchValue({
+            tipoDocumentoIdentidad: resp.tipoDocumentoIdentidad ?? -1,
+            numeroDocumento: resp.numeroDocumento ?? '',
+            apellNomRznSocial: resp.apellNomRznSocial ?? '',
+            correo: resp.email ?? '',
+            celular: resp.celular ?? '',
+            direccionCompleta: resp.direccionCompleta ?? '',
+            tipoPersonaId: resp.tipoPersona ?? -1,
+            username: this.usuario?.username ?? ''
+          });
+        },
+        error: err => {
+          console.error('Error buscando persona por documento:', err);
+        },
+        complete: () => {
+          this.personaForm.get('tipoDocumento')?.setValue(tipoDocumento!);
+        }
+      });
+    } */
 
   update(): void {
 

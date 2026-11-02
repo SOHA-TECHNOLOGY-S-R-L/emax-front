@@ -1,26 +1,33 @@
-import { TipoPedido } from './../../../../models/tipo-pedido';
+import { SnackbarService } from './../../../../services/snackbar.service';
 import { CommonModule } from '@angular/common';
-import { Component, computed, effect, ElementRef, inject, signal, ViewChild } from '@angular/core';
+import { Component, computed, effect, inject, signal } from '@angular/core';
 import { rxResource, toSignal } from '@angular/core/rxjs-interop';
-import { FormBuilder, FormsModule, NgForm, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import * as fileSaver from 'file-saver-es';
-import { catchError, concatMap, map, of } from 'rxjs';
-import { PEDIDO_COMPRA, PEDIDO_VENTA } from '../../../../constants/constantes';
-import { DEVOLUCION_DE_PAGO_AL_CLIENTE, EGRESO_POR_COMPRA, INGRESO_POR_DEVOLUCION_COMPRA, PAGO_CLIENTE } from '../../../../constants/movimiento-pedido.constants';
-import { CajaUsuario } from '../../../../models/caja-usuario';
-import { Movimiento } from '../../../../models/movimiento';
+import { catchError, concatMap, map, of, tap } from 'rxjs';
+import { getNameMovimientoInicialEnum, MovimientoInicialEnum } from '../../../../enums/movimiento-inicial.enum';
+import { TipoDocumentoIdentidadEnum } from '../../../../enums/tipo-documento-identidad.enum';
+import { TipoPedidoEnum, TipoPedidoEtiquetas } from '../../../../enums/tipo-pedido.enum';
+import { ResponseController } from '../../../../interfaces/response-controller';
+import { Caja } from '../../../../models/caja';
+import { Pedido } from '../../../../models/pedido';
 import { TipoMovimientoPedido } from '../../../../models/tipo-movimiento-pedido';
 import { AlertService } from '../../../../services/alert.service';
 import { AuthService } from '../../../../services/auth.service';
+import { CajaUsuarioService } from '../../../../services/caja-usuario.service';
 import { CajaService } from '../../../../services/caja.service';
+import { LauncherSfsService } from '../../../../services/launcher-sfs.service';
 import { MovimientoService } from '../../../../services/movimiento.service';
 import { PedidoService } from '../../../../services/pedido.service';
 import { UsuarioService } from '../../../../services/usuario.service';
+import { FormUtils } from '../../../../utils/form-utils';
 import { InfoCajaUsuarioComponent } from '../../../caja/components/info-caja-usuario/info-caja-usuario.component';
 import { AngularMaterialModule } from '../../../compartido/angular-material.module';
-import { FormUtils } from '../../../../utils/form-utils';
-import { SnackbarService } from '../../../../services/snackbar.service';
+import { LauncherSfsComponent } from '../../../compartido/launcher-sfs/launcher-sfs.component';
+import { ComprobantePdfRequest } from '../../../../interfaces/comprobante-pdf-request';
+import { FormatoImpresionEnum } from '../../../../enums/formato-impresion.enum';
+import { HttpErrorResponse } from '@angular/common/http';
+
 
 
 @Component({
@@ -28,12 +35,13 @@ import { SnackbarService } from '../../../../services/snackbar.service';
   templateUrl: './movimiento.component.html',
   styleUrl: './movimiento.component.css',
   standalone: true,
-  imports: [CommonModule, RouterModule, AngularMaterialModule, FormsModule, ReactiveFormsModule, InfoCajaUsuarioComponent]
+  imports: [CommonModule, RouterModule, AngularMaterialModule, FormsModule, ReactiveFormsModule, InfoCajaUsuarioComponent, LauncherSfsComponent]
 })
 export class MovimientoComponent {
   private activatedRoute = inject(ActivatedRoute);
   private pedidoService = inject(PedidoService);
-  private cajasService = inject(CajaService);
+  private cajaUsuarioService = inject(CajaUsuarioService);
+  private cajaService = inject(CajaService);
   private movimientoService = inject(MovimientoService);
   private formBuilder = inject(FormBuilder);
   private authService = inject(AuthService);
@@ -41,30 +49,31 @@ export class MovimientoComponent {
   private alertService = inject(AlertService);
   private snackbar = inject(SnackbarService);
   private router = inject(Router);
+  private launcherSfsService = inject(LauncherSfsService);
 
-
-  //titulo: string = '';
-  PEDIDO_VENTA = PEDIDO_VENTA;
-  PEDIDO_COMPRA = PEDIDO_COMPRA;
+  readonly tipoPedidoEnum = TipoPedidoEnum;
+  readonly etiquetasPedido = TipoPedidoEtiquetas;
+  readonly TipoDocumentoIdentidad = TipoDocumentoIdentidadEnum;
   formUtils = FormUtils;
 
-
-  // @ViewChild("searchPedidoText") searchText!: ElementRef;
 
   readonly pedidoIdDeRuta = toSignal(
     this.activatedRoute.paramMap.pipe(map((p) => p.get('pedidoId'))),
     { initialValue: null },
   );
 
+  caja = signal<Caja | null>(null);
+  newPedido = signal<Pedido | null>(null);
   pedidoId = signal<string>('')
   isFromPedidos = signal<boolean>(false);
+  identificadorComprobante = signal<string | null>(null)
+
 
   isFromPedidosEffect = effect(() => {
     const pedidoId = this.pedidoIdDeRuta();
 
     if (pedidoId === null || pedidoId == undefined || pedidoId.trim().length === 0) {
       this.snackbar.warning("Número de Pedido invalido");
-      //this.alertService.error("Número de Pedido invalido", "Registro de pago pedido");
       return;
     }
 
@@ -86,119 +95,72 @@ export class MovimientoComponent {
     stream: ({ params }) =>
       this.pedidoService.getPedido(params!.pedidoHowNumber).pipe(
         catchError(err => {
-          this.alertService.info(
-            `Número de pedido ${params!.pedidoHowNumber} no encontrado`,
-            "Pedido"
-          );
+          this.alertService.info(`Número de pedido ${params!.pedidoHowNumber} no encontrado`, "Pedido");
           return of(null);
         })
       ),
   });
 
-  /*   pedidoResourcesNotFound = effect(() => {
-      const pedido = this.pedidoResource.value()
-      if (!pedido) {
-        this.alertService.info(`Pedido no ese número no existe en la base de datos `, "Pedido");
-      }
-    }) */
+  personaDelPedido = computed(() => {
+    return this.pedidoResource.value()?.persona ?? null;
+  }
+  )
+
+  cajasResource = rxResource({ stream: () => this.cajaService.getAllCaja() });
+  tipoPagosResource = rxResource({ stream: () => this.movimientoService.getAllTipoPagos(), });
 
 
+  selectMovimiento = signal<string>(MovimientoInicialEnum.INGRESO)
+  MovimientoInicialEnum = MovimientoInicialEnum;
 
-  tipoMovimientosResource = rxResource({
-    stream: () => this.movimientoService.getAllTipoMovimientosPedido(),
-  });
-
-  tipoMovPedidoIngresos = computed(() => {
-    const lst = this.tipoMovimientosResource.value() ?? [];
-    return lst.filter(f => f.tipo === "I")
-  })
-
-  tipoMovPedidoEgresos = computed(() => {
-    const lst = this.tipoMovimientosResource.value() ?? [];
-    return lst.filter(f => f.tipo === "E")
-  })
-
-  tiposPedidoResource = rxResource({
-    stream: () => this.pedidoService.getAllTipoPedido(),
-  });
-
-  tipoPagosResource = rxResource({
-    stream: () => this.movimientoService.getAllTipoPagos(),
-  });
-
-
-  selectTipoMovimiento = signal<string>('I')
 
 
   defaultSelectTipoMovimientoEffect = effect(() => {
     const pedido = this.pedidoResource.value()
     if (!pedido) { return }
 
-    const tipoPedidoId = pedido.tipoPedidoId
-    if (tipoPedidoId === PEDIDO_VENTA) {
-      this.selectTipoMovimiento.set('I');
+    const tipoPedidoId = pedido.tipoPedido
+    if (tipoPedidoId === TipoPedidoEnum.VENTA) {
+      this.selectMovimiento.set(MovimientoInicialEnum.INGRESO);
     }
-    if (tipoPedidoId === PEDIDO_COMPRA) {
-      this.selectTipoMovimiento.set('E')
+    if (tipoPedidoId === TipoPedidoEnum.COMPRA) {
+      this.selectMovimiento.set(MovimientoInicialEnum.EGRESO)
     }
-  })
-
-  tituloTipoPedido = computed(() => {
-    const pedido = this.pedidoResource.value()
-    const tiposPedido = this.tiposPedidoResource.value()
-
-    if (!pedido || !tiposPedido) { return 'Registro de pago' }
-
-    const tipoPedido = tiposPedido!.find((tp) => tp.id === pedido!.tipoPedidoId);
-    return tipoPedido ? `Registro de pago por ${tipoPedido.nombre}` : 'Registro de pago';
   })
 
 
   tipoMovimientosPedidoLst = signal<TipoMovimientoPedido[]>([]);
 
   loadTipoMovimientosLstEffect = effect(() => {
-    const select = this.selectTipoMovimiento()
-
-    if (select === "I") {
-      this.tipoMovimientosPedidoLst.set([...this.tipoMovPedidoIngresos()])
-    }
-    if (select === "E") {
-      this.tipoMovimientosPedidoLst.set([...this.tipoMovPedidoEgresos()])
-    }
+    const select = this.selectMovimiento()
     this.frm.get('iMovimiento')?.setValue(select);
 
   })
 
   setInitValuesControlsFormEffect = effect(() => {
-    const select = this.selectTipoMovimiento()
+    const select = this.selectMovimiento()
     const pedido = this.pedidoResource.value()
 
     if (!pedido) { return }
 
-    let tmpi = 0
-    if (select === "I") {
-      if (pedido.tipoPedidoId === PEDIDO_VENTA) {
-        tmpi = PAGO_CLIENTE;
+    if (select === MovimientoInicialEnum.INGRESO) {
+      if (pedido.tipoPedido === TipoPedidoEnum.VENTA) {
         this.frm.get('saldoPedido')?.setValue(pedido.saldoPedido);
       }
-      if (pedido.tipoPedidoId === PEDIDO_COMPRA) {
-        tmpi = INGRESO_POR_DEVOLUCION_COMPRA;
+      if (pedido.tipoPedido === TipoPedidoEnum.COMPRA) {
         this.frm.get('flujoEfectivoTotal')?.setValue(pedido.flujoEfectivoTotal);
 
       }
     }
-    if (select === "E") {
-      if (pedido.tipoPedidoId === PEDIDO_VENTA) {
-        tmpi = DEVOLUCION_DE_PAGO_AL_CLIENTE;
+    if (select === MovimientoInicialEnum.EGRESO) {
+      if (pedido.tipoPedido === TipoPedidoEnum.VENTA) {
         this.frm.get('flujoEfectivoTotal')?.setValue(pedido.flujoEfectivoTotal);
       }
-      if (pedido.tipoPedidoId === PEDIDO_COMPRA) {
-        tmpi = EGRESO_POR_COMPRA;
+      if (pedido.tipoPedido === TipoPedidoEnum.COMPRA) {
         this.frm.get('saldoPedido')?.setValue(pedido.saldoPedido);
 
       }
     }
-    this.frm.get('tipoMovimientoPedidoId')?.setValue(tmpi);
     this.frm.get('tipoPagoId')?.setValue(0);
     this.frm.get('ingresoDinero')?.setValue(0);
     this.frm.get('egresoDinero')?.setValue(0);
@@ -221,6 +183,8 @@ export class MovimientoComponent {
 
   refreshCajaUsuario = signal(0);
   alreadyRedirected = signal(false);
+  cajaActiva = signal<boolean>(false);
+
 
   cajaUsuarioResource = rxResource({
     params: () => ({
@@ -229,7 +193,7 @@ export class MovimientoComponent {
     }),
     stream: ({ params }) => {
       if (!params?.usuario?.username) return of(null);
-      return this.cajasService.getCajaUsuarioActiveByUserName(params.usuario.username)
+      return this.cajaUsuarioService.getCajaUsuarioActiveByUserName(params.usuario.username)
         .pipe(
           catchError(() => {
             return of(null);
@@ -237,16 +201,6 @@ export class MovimientoComponent {
         );
     }
   });
-
-/*   isCajaUsuarioInactiveEffect = effect(() => {
-    const cju = this.cajaUsuarioResource.value();
-    const status = this.cajaUsuarioResource.status();
-
-    if (status === 'resolved' && !cju) {
-      this.alertService.info(`Aperturar caja para realizar movimientos en caja `, "Caja")
-      this.router.navigate(['/cajas']);
-    }
-  }); */
 
   isCajaUsuarioInactiveEffect = effect(() => {
     if (this.alreadyRedirected()) { return; }
@@ -258,14 +212,26 @@ export class MovimientoComponent {
       this.alreadyRedirected.set(true);
       this.alertService.info(`Aperturar caja para realizar movimientos`, "Caja");
       this.router.navigate(['/cajas']);
+    } else {
+      this.cajaActiva.set(cju!.activa);
+      this.seleccionarCaja(cju!.cajaId)
     }
   });
+
+  seleccionarCaja(cajaId: number) {
+    const cajas = this.cajasResource.value();
+    if (!cajas) { return; }
+
+    const caja = cajas.find(c => c.id === cajaId);
+    if (!caja) { return; }
+
+    this.caja.set(caja);
+  }
 
 
   frm = this.formBuilder.group({
     pedidoIdSearch: ['', Validators.required],
-    iMovimiento: [this.selectTipoMovimiento()],
-    tipoMovimientoPedidoId: [{ value: 0, disabled: true }],
+    iMovimiento: [this.selectMovimiento()],
     saldoPedido: [{ value: 0, disabled: true }],
     flujoEfectivoTotal: [{ value: 0, disabled: true }],
     ingresoDinero: [0, { validators: [Validators.required] }],
@@ -289,7 +255,7 @@ export class MovimientoComponent {
   );
 
   newSaldoCalculado = computed(() => {
-    const select = this.selectTipoMovimiento();
+    const select = this.selectMovimiento();
     const pedido = this.pedidoResource.value();
     let ingresoDinero = this.ingresoDinero() ?? 0;
     let egresoDinero = this.egresoDinero() ?? 0;
@@ -305,25 +271,25 @@ export class MovimientoComponent {
       ingresoDinero = 0;
       egresoDinero = 0;
     }
-    if (pedido.tipoPedidoId === PEDIDO_VENTA) {
-      if (select == 'I') {
+    if (pedido.tipoPedido === TipoPedidoEnum.VENTA) {
+      if (select == MovimientoInicialEnum.INGRESO) {
         let newSaldo = (saldoPedido - ingresoDinero)
         if (newSaldo >= 0) { saldoDinero = newSaldo; }
         if (newSaldo < 0) { saldoDinero = 0 }
       }
-      if (select == 'E') {
+      if (select == MovimientoInicialEnum.EGRESO) {
         let newSaldo = (flujoEfectivoTotal - egresoDinero)
         if (newSaldo >= 0) { saldoDinero = newSaldo; }
         if (newSaldo < 0) { saldoDinero = 0 }
       }
     }
-    if (pedido.tipoPedidoId === PEDIDO_COMPRA) {
-      if (select == 'E') {
+    if (pedido.tipoPedido === TipoPedidoEnum.COMPRA) {
+      if (select == MovimientoInicialEnum.EGRESO) {
         let newSaldo = (saldoPedido - egresoDinero)
         if (newSaldo >= 0) { saldoDinero = newSaldo; }
         if (newSaldo < 0) { saldoDinero = 0 }
       }
-      if (select == 'I') {
+      if (select == MovimientoInicialEnum.INGRESO) {
         let newSaldo = (flujoEfectivoTotal - ingresoDinero)
         if (newSaldo >= 0) { saldoDinero = newSaldo; }
         if (newSaldo < 0) { saldoDinero = 0 }
@@ -333,7 +299,7 @@ export class MovimientoComponent {
   });
 
   movimiento = computed(() => {
-    const select = this.selectTipoMovimiento();
+    const select = this.selectMovimiento();
     const pedido = this.pedidoResource.value();
     let ingresoDinero = this.ingresoDinero() ?? 0;
     let egresoDinero = this.egresoDinero() ?? 0;
@@ -341,9 +307,8 @@ export class MovimientoComponent {
 
     if (!pedido) {
       return {
-        //cajaUsuario: this.cajaUsuarioResource.value()!,
         tipoPagoId: tipoPagoId,
-        tipoMovimientoPedidoId: this.frm.controls.tipoMovimientoPedidoId.value!,
+        movimientoInicial: select as MovimientoInicialEnum,
         ingresoDinero,
         egresoDinero,
       };
@@ -358,25 +323,25 @@ export class MovimientoComponent {
       //this.alertService.info(`Ingreso de dinero no puede ser cero ni negativo `, "Caja")
       //return
     }
-    if (pedido.tipoPedidoId === PEDIDO_VENTA) {
-      if (select == 'I') {
+    if (pedido.tipoPedido === TipoPedidoEnum.VENTA) {
+      if (select == MovimientoInicialEnum.INGRESO) {
         let newSaldo = (saldoPedido - ingresoDinero)
         if (newSaldo >= 0) { egresoDinero = 0; }
         if (newSaldo < 0) { egresoDinero = newSaldo }
       }
-      if (select == 'E') {
+      if (select == MovimientoInicialEnum.EGRESO) {
         let newSaldo = (flujoEfectivoTotal - egresoDinero)
         if (newSaldo >= 0) { ingresoDinero = 0; }
         if (newSaldo < 0) { ingresoDinero = newSaldo }
       }
     }
-    if (pedido.tipoPedidoId === PEDIDO_COMPRA) {
-      if (select == 'E') {
+    if (pedido.tipoPedido === TipoPedidoEnum.COMPRA) {
+      if (select == MovimientoInicialEnum.EGRESO) {
         let newSaldo = (saldoPedido - egresoDinero)
         if (newSaldo >= 0) { ingresoDinero = 0; }
         if (newSaldo < 0) { ingresoDinero = newSaldo }
       }
-      if (select == 'I') {
+      if (select == MovimientoInicialEnum.INGRESO) {
         let newSaldo = (flujoEfectivoTotal - ingresoDinero)
         if (newSaldo >= 0) { egresoDinero = 0; }
         if (newSaldo < 0) { egresoDinero = newSaldo }
@@ -385,9 +350,8 @@ export class MovimientoComponent {
     }
 
     return {
-      //cajaUsuario: this.cajaUsuarioResource.value()!,
       tipoPagoId: tipoPagoId,
-      tipoMovimientoPedidoId: this.frm.controls.tipoMovimientoPedidoId.value!,
+      movimientoInicial: select as MovimientoInicialEnum,
       ingresoDinero,
       egresoDinero,
     };
@@ -404,50 +368,291 @@ export class MovimientoComponent {
     this.pedidoId.set(event)
   }
 
-  onSubmitForm() {
+  limpiar(tipoPedidoId: number) {
+    this.pedidoId.set('');
+    this.identificadorComprobante.set(null);
+    this.newPedido.set(null);
+    this.frm.get('pedidoIdSearch')?.setValue('');
+    if (this.isFromPedidos()) {
+      if (tipoPedidoId == TipoPedidoEnum.VENTA) {
+        this.router.navigate(['/pedidos/listado-ventas'])
+      } else {
+        this.router.navigate(['/pedidos/listado-compras']);
+      }
+    }
+  }
 
+  goToListado() {
+    //if (this.isFromPedidos()) {
+    if (this.pedidoResource.value()?.tipoPedido == TipoPedidoEnum.VENTA) {
+      this.router.navigate(['/pedidos/listado-ventas'])
+    } else {
+      this.router.navigate(['/pedidos/listado-compras']);
+    }
+    //}
+  }
+
+  regitrarMovimiento() {
     if (!this.frm.valid) { return }
     const pedido = this.pedidoResource.value()
     if (!pedido) { return }
     pedido.items = []
     pedido.movimientos = [this.movimiento()];
-    //console.log("pedido: ", pedido)
 
-    if (pedido.tipoPedidoId == PEDIDO_VENTA) {
-      this.pedidoService.createMovimiento(pedido).pipe(
-        concatMap(ped => this.pedidoService.downloadOrderToPersonaInPDF(ped))
-      ).subscribe(response => {
-        fileSaver.saveAs(response.body!,
-          this.pedidoService.filenameFromHeader(response.headers)) //utilidad pra qeu descargue automaticamente
-        if (this.isFromPedidos()) {
-          this.router.navigate(['/pedidos/listado-ventas'])
-        };
-        this.refreshCajaUsuario.update(v => v + 1);
-        this.alertService.success(`${this.tituloTipoPedido()} con exito`, "Exito");
-        this.pedidoId.set('');
-        this.frm.get('pedidoIdSearch')?.setValue('');
-      })
-    }
-    if (pedido.tipoPedidoId == PEDIDO_COMPRA) {
-      this.pedidoService.createMovimiento(pedido).subscribe(response => {
-        //this.alertService.success(`Se registró el pedido exitosamente`, "Exito");
-        if (this.isFromPedidos()) {
-          this.router.navigate(['/pedidos/listado-compras']);
-        };
-        this.refreshCajaUsuario.update(v => v + 1);
-        this.alertService.success(`${this.tituloTipoPedido()} con exito`, "Exito");
-        this.pedidoId.set('');
-        this.frm.get('pedidoIdSearch')?.setValue('');
-      })
-    }
-    //this.pedidoId.set('');
-    //this.frm.get('pedidoIdSearch')?.setValue('');
 
+    this.pedidoService.createMovimiento(pedido)
+      .pipe(
+        tap(pedido => this.newPedido.set(pedido)),
+        /* captura los errores de movimientos antes de pasar al concat
+        catchError(err => {
+          this.alertService.error(
+            err?.error?.message ?? 'Error al registrar movimiento.', 'Movimientos');
+          return EMPTY;
+        }),*/
+        concatMap(pedido =>
+          this.pedidoService.previewMovToPersonaInPDF(pedido)
+          /*.pipe(
+            Captura los errores de generar previewDpf
+            catchError(err => {
+              this.alertService.error(
+                err?.error?.message ?? 'Error al generar PDF.', 'Movimientos');
+              return EMPTY;
+            })
+          )*/
+        )
+      ).subscribe({
+        next: response => {
+          const blob = response.body;
+
+          if (!blob) {
+            this.alertService.error('No se recibió el PDF del movimiento.', 'Movimientos');
+            return;
+          }
+
+          const url = window.URL.createObjectURL(blob);
+          const ventana = window.open(url);
+
+          if (!ventana) {
+            window.URL.revokeObjectURL(url);
+
+            this.alertService.error('El navegador bloqueó la ventana emergente.', 'Movimientos');
+            return;
+          }
+
+          const intervalo = setInterval(() => {
+            try {
+              if (ventana.document.readyState === 'complete') {
+                clearInterval(intervalo);
+                ventana.focus();
+                ventana.print();
+              }
+            } catch (error) {
+              // La ventana puede tener un origen distinto
+              // al de la aplicación.
+              console.debug('Esperando que cargue el PDF', error);
+            }
+          }, 900);
+          //fileSaver.saveAs(response.body!, this.pedidoService.filenameFromHeader(response.headers));
+
+          this.refreshCajaUsuario.update(v => v + 1);
+
+          const mov = this.newPedido()?.movimientos.at(-1);
+          //const movimientoeNUM = getNameMovimientoInicialEnum(mov?.movimientoInicial)
+          //const pedidoEnum = TipoPedidoEnum[this.newPedido()?.tipoPedido!]
+          //const num = this.newPedido()!.id.toString().padStart(6, '0');
+          //console.log("movimientoeNUM", movimientoeNUM);
+          //console.log("pedidoEnum", pedidoEnum);
+          //console.log("Numero", num);
+
+
+          this.snackbar.success(`${getNameMovimientoInicialEnum(mov?.movimientoInicial)}
+          ${TipoPedidoEnum[this.newPedido()?.tipoPedido!]} PED N° ${this.newPedido()!.id.toString().padStart(6, '0')} generado`);
+
+          if (this.isInvalidToComprobante()) {
+            this.limpiar(this.newPedido()?.tipoPedido!)
+            //this.pedidoId.set('');
+            //this.frm.get('pedidoIdSearch')?.setValue('');
+          }
+        },
+
+        error: (err: HttpErrorResponse) => {
+          const message = err.error?.message ?? 'Error al aplicar movimiento.';
+          this.snackbar.error(message)
+          console.error(err);
+        }
+      });
+    //}
+    /*       if (select === MovimientoInicialEnum.EGRESO) {
+            this.pedidoService.createMovimiento(pedidoRequest).pipe(
+            ).subscribe({
+              next: (response) => {
+                this.newPedido.set(response);
+                this.refreshCajaUsuario.update(v => v + 1);
+                this.alertService.success(`${this.etiquetasPedido[pedido.tipoPedido]} con éxito`, "Éxito");
+                if (this.isInvalidToComprobante()) {
+                  this.limpiar(TipoPedidoEnum.VENTA);
+                }
+              },
+              error: (err) => {
+                console.error(err);
+              }
+            });
+          } */
+    //}
+    /*     if (pedido.tipoPedido == TipoPedidoEnum.COMPRA) {
+          this.pedidoService.createMovimiento(pedidoRequest).subscribe(response => {
+            this.refreshCajaUsuario.update(v => v + 1);
+            this.alertService.success(`${this.etiquetasPedido[pedido.tipoPedido]} con exito`, "Exito");
+            this.limpiar(TipoPedidoEnum.COMPRA)
+
+          })
+        } */
   }
 
 
+  generarComprobanteVenta() {
+    if (this.isInvalidToComprobante()) { return }
+
+    //const ubicacionCaja = this.caja()?.pathFacturador
+
+    this.pedidoService.createComprobanteVenta(this.newPedido()!).pipe(
+      concatMap(com => this.launcherSfsService.generarComprobante(com)),
+    ).subscribe({
+      next: response => {
+
+        //fileSaver.saveAs(response.body!, this.pedidoService.filenameFromHeader(response.headers));
+
+        //this.refreshCajaUsuario.update(v => v + 1);
+        //this.snackbar.success(`${this.identificadorComprobante()} encontrado`);
+        //this.newPedido.set(null);
+        this.identificadorComprobante.set(response.data)
+        this.snackbar.success(`${response.message}`);
+
+        //if (this.isInvalidToComprobante()) {
+        //  this.limpiar(this.newPedido()?.tipoPedido!);
+        //}
+      },
+
+      error: (err: HttpErrorResponse) => {
+        const message =
+          err.error?.message ??
+          'No se pudieron generar los archivos del comprobante.';
+
+        this.snackbar.error(message);
+        console.error('Error al generar archivos:', err);
+      }
+
+
+    }
+    )
+
+  }
+
+  generarComprobanteNotaCredito() {
+    if (this.isInvalidToComprobante()) { return }
+    this.pedidoService.createComprobanteNotaCredito(this.newPedido()!).pipe(
+      concatMap(com => this.launcherSfsService.generarComprobante(com))
+    ).subscribe(response => {
+      console.log("response:", response);
+      this.alertService.success(`${response.message}`, "Exito");
+      this.limpiar(this.newPedido()?.tipoPedido!)
+    })
+  }
+
+  impirmirComprobanteVenta() {
+
+    const idC = this.identificadorComprobante();
+    if (!idC) { return }
+
+    const request: ComprobantePdfRequest = {
+      identificadorComprobante: idC,
+      formatoImpresion: FormatoImpresionEnum.TICKET
+    }
+
+    this.launcherSfsService.previewComprobanteToPersonaInPDF(request).pipe(
+    ).subscribe({
+      next: response => {
+        const blob = response.body;
+        if (!blob) {
+          this.alertService.error('No se recibió el PDF del Comprobante.', 'Comprobantes');
+          return;
+        }
+
+        const url = window.URL.createObjectURL(blob);
+        const ventana = window.open(url);
+
+        if (!ventana) {
+          window.URL.revokeObjectURL(url);
+
+          this.alertService.error('El navegador bloqueó la ventana emergente.', 'Comprobantes');
+          return;
+        }
+
+        const intervalo = setInterval(() => {
+          try {
+            if (ventana.document.readyState === 'complete') {
+              clearInterval(intervalo);
+              ventana.focus();
+              ventana.print();
+            }
+          } catch (error) {
+            // La ventana puede tener un origen distinto al de la aplicación.
+            console.debug('Esperando que cargue el Comprobante PDF', error);
+          }
+        }, 900);
+        //fileSaver.saveAs(response.body!, this.pedidoService.filenameFromHeader(response.headers));
+
+        //this.refreshCajaUsuario.update(v => v + 1);
+        //this.snackbar.success(`${this.identificadorComprobante()} encontrado`);
+        //this.identificadorComprobante.set(null);
+        //this.newPedido.set(null);
+        //if (this.isInvalidToComprobante()) {
+        this.limpiar(this.newPedido()?.tipoPedido!);
+        //}
+      },
+
+      error: async (err: HttpErrorResponse) => {
+        let message = 'No se pudo generar el PDF del comprobante.';
+
+        if (err.error instanceof Blob) {
+          try {
+            const text = await err.error.text();
+            const response = JSON.parse(text);
+
+            message = response.message ?? message;
+          } catch {
+            // Si el Blob no contiene JSON válido, usamos el mensaje por defecto.
+          }
+        } else if (err.error?.message) {
+          message = err.error.message;
+        }
+
+        this.snackbar.error(message);
+        console.error(err);
+      }
+
+
+    }
+    )
+  }
+
+  public isInvalidToComprobante(): boolean {
+    const newPedido = this.newPedido()
+    const select = this.selectMovimiento();
+
+    return !this.frm.valid
+      || this.launcherSfsService.state() != 'running'
+      || newPedido == null
+      || newPedido.tipoPedido != TipoPedidoEnum.VENTA
+      || newPedido.pagoTotal <= 0
+      //|| newPedido.saldoPedido > 0
+      || (select == MovimientoInicialEnum.INGRESO && newPedido.saldoPedido > 0) // solo puede tener 1 comporbante cuando cancela todo
+      || (select == MovimientoInicialEnum.EGRESO && newPedido.saldoPedido != newPedido.precioTotal) // para devolucion el saldo
+      || (select == MovimientoInicialEnum.INGRESO && newPedido.comprobantesSunat.length > 0) // solo puede tener 1 comporbante cuando cancela todo
+      || (select == MovimientoInicialEnum.EGRESO && newPedido.comprobantesSunat.length < 1)
+      || this.personaDelPedido()?.tipoDocumentoIdentidad == TipoDocumentoIdentidadEnum.OTRO
+  }
 
 }
-
 
 

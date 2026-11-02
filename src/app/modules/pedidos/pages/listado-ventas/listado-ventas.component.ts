@@ -6,18 +6,18 @@ import { CommonModule } from '@angular/common';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PageEvent } from '@angular/material/paginator';
-import { Sort, SortDirection } from '@angular/material/sort';
+import { Sort } from '@angular/material/sort';
 import { RouterModule } from '@angular/router';
-import moment from 'moment';
 import { concatMap, EMPTY } from 'rxjs';
-import { PEDIDO_VENTA } from '../../../../constants/constantes';
-import { COLOR_ESTADO_PEDIDO } from '../../../../constants/pedido.constants';
+import { EstadoMetadata, EstadoPedidoEnum, getEtiquetaEstadoPedidoEnum } from '../../../../enums/estado-pedido.enum';
+import { TipoPedidoEnum } from '../../../../enums/tipo-pedido.enum';
+import { PageableParams } from '../../../../interfaces/pageable-params';
 import { Pedido } from '../../../../models/pedido';
 import { AuthService } from '../../../../services/auth.service';
 import { PedidoService } from '../../../../services/pedido.service';
+import { SnackbarService } from '../../../../services/snackbar.service';
 import { UsuarioService } from '../../../../services/usuario.service';
 import { AngularMaterialModule } from '../../../compartido/angular-material.module';
-import { PageableParams } from '../../../../interfaces/pageable-params';
 import { DetallePedidoComponent } from '../../components/detalle-pedido/detalle-pedido.component';
 
 @Component({
@@ -35,8 +35,9 @@ export class ListadoVentasComponent {
 
   private readonly usuarioService = inject(UsuarioService);
   private readonly personaService = inject(PersonaService);
+  private readonly snack = inject(SnackbarService);
 
-  displayedColumnsLarge: string[] = ['id', 'nomApellRz', 'createAt', 'entregadoEn', 'precioTotal', 'saldoPedido', 'username', 'estado'];
+  displayedColumnsLarge: string[] = ['id', 'apellNomRznSocial', 'createAt', 'entregadoEn', 'precioTotal', 'saldoPedido', 'username', 'estado'];
   displayedColumnsLargeExpand = [...this.displayedColumnsLarge, 'expand'];
 
   displayedColumnsShort: string[] = ['entregadoEn', 'precioTotal', 'saldoPedido'];
@@ -58,7 +59,7 @@ export class ListadoVentasComponent {
     params: () => this.params(),
     stream: ({ params }) => {
       if (this.authService.hasRole('ROLE_LIST_VENTAS')) {
-        const resul = this.pedidoService.getAllPedidosPageable(params, PEDIDO_VENTA);
+        const resul = this.pedidoService.getAllPedidosPageable(params, TipoPedidoEnum.VENTA);
         return resul;
       }
 
@@ -84,19 +85,40 @@ export class ListadoVentasComponent {
 
   readonly pedidos = computed(() => {
 
-    const response = this.pedidosResource.value();
-    if (!response) {
+    const p = this.pedidosResource.value();
+    if (!p) {
       return [];
     }
+    /*     return p.content.map(p => ({
+          ...p,
+          createAt: p.createAt
+            ? moment(p.createAt).format('DD/MM/YYYY')
+            : '-',
+          entregadoEn: p.entregadoEn
+            ? moment(p.entregadoEn).format('DD/MM/YYYY HH:mm')
+            : '-',
+          adquiridoEn: p.adquiridoEn
+            ? moment(p.adquiridoEn).format('DD/MM/YYYY')
+            : '-',
+          isAnuladoDisabled: p.estadoPedido == EstadoPedidoEnum.ANULADO ||
+            (p.precioTotal - p.saldoPedido) != 0 ||
+            p.pagoTotal > 0 &&
+            (p.movimientos.length > 0 || p.comprobantesSunat.length > 0)
+        })); */
 
-    return response.content.map(p => {
-      p.createAt = moment(p.createAt).format('DD/MM/YYYY');
-      p.entregadoEn = p.entregadoEn ? moment(p.entregadoEn).format('DD/MM/YYYY HH:mm') : '-';
-      p.adquiridoEn = p.adquiridoEn ? moment(p.adquiridoEn).format('DD/MM/YYYY') : '-';
-      p.estadoPedido.color =
-        COLOR_ESTADO_PEDIDO[('' + p.estadoPedido.id) as keyof typeof COLOR_ESTADO_PEDIDO];
-      return p;
-    });
+    return p.content.map(p => ({
+      ...p,
+      createAt: p.createAt || null,
+      entregadoEn: p.entregadoEn || null,
+      adquiridoEn: p.adquiridoEn || null,
+      isAnuladoDisabled: p.estadoPedido == EstadoPedidoEnum.ANULADO ||
+        (p.precioTotal - p.saldoPedido) != 0 ||
+        p.pagoTotal > 0 &&
+        (p.movimientos.length > 0 || p.comprobantesSunat.length > 0)
+    }));
+
+
+
 
   });
 
@@ -127,7 +149,7 @@ export class ListadoVentasComponent {
 
   sortChanged(sort: Sort) {
     const direction = sort.direction ? sort.direction : 'desc';
-    const active = sort.direction ? sort.active: 'id';
+    const active = sort.direction ? sort.active : 'id';
 
     this.params.update(params => {
       // Evitamos peticiones duplicadas si el estado del orden no cambió realmente
@@ -153,8 +175,44 @@ export class ListadoVentasComponent {
 
   }
 
+  anularPedido(pedidoId: number): void {
+    this.pedidoService.getAnularPedido(pedidoId).subscribe({
+      next: (res) => {
+        if (res.data == null) {
+          this.snack.warning('No se recibió el nuevo estado del pedido.');
+          return;
+        }
+
+        this.pedidosResource.update(current => {
+          if (!current) {
+            return current;
+          }
+
+          return {
+            ...current,
+            content: current.content.map(pedido =>
+              pedido.id === pedidoId ? { ...pedido, estadoPedido: res.data! } : pedido
+            )
+          };
+        });
+
+        this.snack.success(res.message);
+      },
+      error: (err) => {
+        console.error('Error al anular el pedido:', err);
+        this.snack.error(
+          err.error?.message ?? 'No se pudo anular el pedido.'
+        );
+      }
+    });
+  }
+
   isExpanded(pedido: Pedido) {
     return this.pedido() === pedido;
+  }
+
+  getEstadoPedido(estado: any): EstadoMetadata {
+    return getEtiquetaEstadoPedidoEnum(estado)
   }
 
   toggle(pedido: Pedido) {

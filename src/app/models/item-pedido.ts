@@ -2,8 +2,10 @@ import { Producto } from './producto';
 
 export class ItemPedido {
   producto!: Producto;
+  costoUnitarioItem: number = 0; //costo unitario de compra
+  valorBrutoUnitarioItem: number = 0; //valor bruto pra ventas
+  precioUnitarioItem: number = 0
   cantidad: number = 0;
-  costoUnitarioPorCompraItem: number = 0;
   importeBrutoItem!: number;
   descuentoPorOfertaItem!: number;
   descuentoPorCuponItem!: number;

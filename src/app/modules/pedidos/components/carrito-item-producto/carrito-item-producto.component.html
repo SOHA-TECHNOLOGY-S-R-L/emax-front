@@ -13,7 +13,7 @@
     <div class="row">
       <div class="col-3 d-flex align-items-center">
         <!--         {{item.producto.valorBrutoUnitarioMasBajoProductoShow | currency: 'PEN'}} -->
-        {{item.producto.precioUnitarioSelect | currency: 'PEN'}}
+        {{item.precioUnitarioItem| currency: 'PEN'}}
       </div>
       <div class="col-5 d-flex align-items-center">
         <input type="number" name="cantidad" class="form-control" [step]="item.producto.gruposDe"
@@ -60,10 +60,13 @@
 
   <div class="d-flex flex-wrap flex-column">
     <button (click)=" closeModal(); seguirComprando();" class="btn btn-secondary mb-1 ml-2">{{btnNombre()}}</button>
-    @if(isAutenticado() && !isCliente() && items().length > 0) {
+    @if(!isCliente() && items().length > 0) {
     <button (click)=" closeModal(); generarCotizacion();" class="btn btn-secondary mb-1 ml-2"><i
-        class="fa-solid fa-print"></i> Cotización</button>}
-    <button (click)=" closeModal(); irRealizarPedido();" class="btn btn-primary mb-1 ml-2"
+        class="fa-solid fa-print"></i> Cotización</button>
+    }
+    <button (click)=" closeModal();"
+      class="btn btn-primary mb-1 ml-2"
+      [routerLink]="['/tienda/pedido-persona-online-finalizado']"
       [disabled]="!(items().length > 0)">Realizar el pedido</button>
   </div>
 

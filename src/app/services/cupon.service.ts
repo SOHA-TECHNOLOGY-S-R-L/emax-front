@@ -6,7 +6,7 @@ import { catchError, map } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { environment } from '../../environments/environment';
 import { Cupon } from '../models/cupon';
-import { PageableResponse } from '../models/pageable-response';
+import { PageableResponse } from '../interfaces/pageable-response';
 import { TipoDescuentoCupon } from '../models/tipo-descuento-cupon';
 import { AlertService } from './alert.service';
 import { AuthService } from './auth.service';
@@ -40,6 +40,11 @@ export class CuponService {
 
   getAllCuponesActivos(): Observable<Cupon[]> {
     return this.http.get<Cupon[]>(`${environment.apiUrl}/cupon/actives`);
+  }
+
+
+  getCuponesParaClienteActivos(): Observable<Cupon[]> {
+    return this.http.get<Cupon[]>(`${environment.apiUrl}/cupon/para-cliente`);
   }
 
   /*   getAllProducto(): Observable<Producto[]> {

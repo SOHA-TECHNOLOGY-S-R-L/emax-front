@@ -1,19 +1,21 @@
-import { Component, computed, effect, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, effect, inject, signal } from '@angular/core';
 
 
 import { CommonModule } from '@angular/common';
+import { rxResource } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
+import { catchError, of, switchMap } from 'rxjs';
 import { Caja } from '../../../../models/caja';
-import { CajaUsuario } from '../../../../models/caja-usuario';
 import { AlertService } from '../../../../services/alert.service';
 import { AuthService } from '../../../../services/auth.service';
+import { CajaUsuarioService } from '../../../../services/caja-usuario.service';
 import { CajaService } from '../../../../services/caja.service';
 import { UsuarioService } from '../../../../services/usuario.service';
 import { AngularMaterialModule } from '../../../compartido/angular-material.module';
+import { LauncherSfsComponent } from "../../../compartido/launcher-sfs/launcher-sfs.component";
 import { InfoCajaUsuarioComponent } from "../../components/info-caja-usuario/info-caja-usuario.component";
-import { rxResource } from '@angular/core/rxjs-interop';
-import { catchError, of, switchMap } from 'rxjs';
+import { LauncherSfsService } from '../../../../services/launcher-sfs.service';
 
 
 @Component({
@@ -21,11 +23,13 @@ import { catchError, of, switchMap } from 'rxjs';
   templateUrl: './apertura-cierre-caja.component.html',
   styleUrls: ['./apertura-cierre-caja.component.css'],
   standalone: true,
-  imports: [CommonModule, AngularMaterialModule, RouterModule, FormsModule, ReactiveFormsModule, InfoCajaUsuarioComponent]
+  imports: [CommonModule, AngularMaterialModule, RouterModule, FormsModule, ReactiveFormsModule, InfoCajaUsuarioComponent, LauncherSfsComponent]
 })
 export class AperturaCierreCajaComponent {
 
   public authService = inject(AuthService);
+  private cajaUsuarioService = inject(CajaUsuarioService);
+  private launcherSfsService = inject(LauncherSfsService);
   private cajaService = inject(CajaService);
   private usuarioService = inject(UsuarioService);
   private alertService = inject(AlertService);
@@ -39,16 +43,10 @@ export class AperturaCierreCajaComponent {
   selectedCajaId = signal<number | null>(null);
 
   formCaja = this.fb.group({
-    direccionCaja: ['', {
-      validators: [Validators.required]
-    }],
-    descripcionCaja: ['', {
-      validators: [Validators.required]
-    }],
     saldoPorConteo: [0, {
       validators: [Validators.required]
     }],
-    cajaId: [0, { validators: [Validators.required] }],
+    cajaId: [null, { validators: [Validators.required] }],
   })
 
 
@@ -70,19 +68,19 @@ export class AperturaCierreCajaComponent {
     }
   });
 
-  selectedCajaUsuarioResource = rxResource({
-    params: () => ({ cajaId: this.selectedCajaId() }),
-    stream: ({ params }) => {
-      if (!params?.cajaId) { return of(null); }
+  /*   selectedCajaUsuarioInactiveResource = rxResource({
+      params: () => ({ cajaId: this.selectedCajaId() }),
+      stream: ({ params }) => {
+        if (!params?.cajaId) { return of(null); }
 
-      return this.cajaService.getCajaUsuarioInactiveByCajaId(params.cajaId)
-        .pipe(
-          catchError(() => {
-            return of(null);
-          })
-        );
-    }
-  });
+        return this.cajaUsuarioService.getCajaUsuarioInactiveByCajaId(params.cajaId)
+          .pipe(
+            catchError(() => {
+              return of(null);
+            })
+          );
+      }
+    }); */
 
   refreshCajaUsuario = signal(0);
 
@@ -98,7 +96,7 @@ export class AperturaCierreCajaComponent {
         return of(null);
       }
 
-      return this.cajaService.getCajaUsuarioActiveByUserName(params.usuario.username)
+      return this.cajaUsuarioService.getCajaUsuarioActiveByUserName(params.usuario.username)
         .pipe(
           catchError(() => {
             return of(null);
@@ -111,7 +109,7 @@ export class AperturaCierreCajaComponent {
             }
 
             // SI NO EXISTE -> buscar inactiva
-            return this.cajaService.getCajaUsuarioInactiveByUserName(params.usuario!.username)
+            return this.cajaUsuarioService.getCajaUsuarioInactiveByUserName(params.usuario!.username)
               .pipe(
                 catchError(() => of(null))
               );
@@ -123,25 +121,40 @@ export class AperturaCierreCajaComponent {
 
   cajaUsuario = computed(() => this.cjUsuResource.value());
 
-  infoCajaUsuario = computed(() => {
-    if (this.selectedCajaId()) {
-      return this.selectedCajaUsuarioResource.value();
-    }
-    return this.cajaUsuario();
-  });
-
+  /*   infoCajaUsuario = computed(() => {
+      if (this.selectedCajaId()) {
+        return this.selectedCajaUsuarioInactiveResource.value();
+      }
+      return this.cajaUsuario();
+    });
+   */
   isCajaActiveEffect = effect(() => {
     const cju = this.cajaUsuario();
     if (!cju) { return }
     this.cajaActiva.set(cju.activa);
+    this.seleccionarCaja(cju.cajaId)
   });
 
-  cajasResource = rxResource({ stream: () => this.cajaService.getCajasPorAsignar() });
+  cajasPorAsignarResource = rxResource({ stream: () => this.cajaService.getCajasPorAsignar() });
+
+  cajasResource = rxResource({ stream: () => this.cajaService.getAllCaja() });
+
+  protected readonly isFacturadorActive = computed(() =>
+    this.launcherSfsService.state() != 'launcher'
+  )
+
 
   constructor() { }
 
-  asignarCajaUsuario(cajaId: number) {
-    this.selectedCajaId.set(cajaId);
+  /*   asignarCajaUsuario(cajaId: number) {
+      this.selectedCajaId.set(cajaId);
+      this.seleccionarCaja(cajaId)
+
+    } */
+
+  seleccionarCaja(cajaId: number) {
+    //debugger;
+    //this.selectedCajaId.set(cajaId);
     const cajas = this.cajasResource.value();
     if (!cajas) { return; }
 
@@ -149,31 +162,26 @@ export class AperturaCierreCajaComponent {
     if (!caja) { return; }
 
     this.caja.set(caja);
-
-    this.formCaja.patchValue({
-      direccionCaja: caja.direccion,
-      descripcionCaja: caja.descripcion
-    });
   }
 
   abrirCaja() {
 
-    this.caja.update((cj) => {
-      if (!cj) return cj; // Validación por si el valor inicial es null/undefined
-      return {
-        ...cj,
-        direccion: this.formCaja.get('direccionCaja')!.value!,
-        descripcion: this.formCaja.get('descripcionCaja')!.value!
-      };
-    });
+    /*     this.caja.update((cj) => {
+          if (!cj) return cj;
+          return {
+            ...cj,
+            direccion: this.formCaja.get('direccionCaja')!.value!,
+            descripcion: this.formCaja.get('descripcionCaja')!.value!
+          };
+        }); */
 
     if (!this.formCaja.valid) { return }
-    this.cajaService.createCajaUsuario(this.caja()).subscribe(
+    this.cajaUsuarioService.createCajaUsuario(this.caja()).subscribe(
       response => {
         //this.alertService.success(`Se habrió ${this.cajaUsuario.caja.nombre}, para ${this.cajaUsuario.usuario.username} con éxito!`, "Caja",)
         this.refreshCajaUsuario.update(v => v + 1);
         this.alertService.success(`Se habrió la caja con éxito!`, "Caja",)
-        this.router.navigate(['/']);
+        //this.router.navigate(['/']);
       })
     //})
   }
@@ -184,7 +192,7 @@ export class AperturaCierreCajaComponent {
     const saldoPorConteo = this.formCaja.get('saldoPorConteo')!.value ?? 0;
     const saldoFinal = cju.saldoFinal ?? 0;
     if (saldoPorConteo == saldoFinal) {
-      this.cajaService.cerrarCajaUsuario(cju.id, saldoPorConteo).subscribe(
+      this.cajaUsuarioService.cerrarCajaUsuario(cju.id, saldoPorConteo).subscribe(
         response => {
           //this.alertService.success(`Se cerró ${this.cajaUsuario.caja.nombre}, para ${this.cajaUsuario.usuario.username} con éxito!`, "Caja")
           this.alertService.success(`Se cerró la caja con éxito!`, "Caja")
@@ -196,6 +204,8 @@ export class AperturaCierreCajaComponent {
       this.alertService.warning(`No se puede cerrar caja, existe diferencias`, "Caja")
     }
   }
+
+
 
 
 }

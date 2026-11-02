@@ -1,0 +1,88 @@
+<button type="button" [class]="buttonColor()" [disabled]="disabledButton()" (click)="ejecutarAccion()">
+  @if (loading()) {
+  <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true">
+  </span>
+  } @else {
+  <i [class]="buttonIcon()"></i>
+  }
+  {{ buttonText() }}
+</button>
+
+
+
+
+<!-- Estado -->
+<!-- <div class="mt-2">
+
+  @switch (state()) {
+
+  @case ('launcher') {
+  <small class="text-muted">
+    El Launcher del Facturador no está ejecutándose.
+  </small>
+  }
+
+  @case ('starting-launcher') {
+  <small class="text-info">
+    Iniciando el Launcher del Facturador...
+  </small>
+  }
+
+  @case ('ready') {
+  <small class="text-success">
+    Launcher disponible. El Facturador está detenido.
+  </small>
+  }
+
+  @case ('starting') {
+  <small class="text-info">
+    Iniciando el Facturador SUNAT...
+  </small>
+  }
+
+  @case ('running') {
+  <small class="text-success">
+    Facturador SUNAT ejecutándose.
+  </small>
+  }
+
+  @case ('stopping') {
+  <small class="text-warning">
+    Deteniendo el Facturador SUNAT...
+  </small>
+  }
+
+  @case ('stopped') {
+  <small class="text-muted">
+    Facturador detenido. El Launcher continúa disponible.
+  </small>
+  }
+
+  @case ('terminating') {
+  <small class="text-warning">
+    Terminando el Launcher del Facturador...
+  </small>
+  }
+
+  }
+
+</div> -->
+
+
+<!-- Información adicional devuelta por el Launcher -->
+<!--   @if (status(); as currentStatus) {
+
+  @if (currentStatus.url) {
+
+  <div class="mt-2">
+
+    <a [href]="currentStatus.url" target="_blank" rel="noopener noreferrer">
+
+      Abrir Facturador
+    </a>
+
+  </div>
+
+  }
+
+  } -->

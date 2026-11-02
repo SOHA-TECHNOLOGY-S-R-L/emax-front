@@ -4,22 +4,40 @@ import { RoleGuard } from '../../guards/role.guard';
 import { AperturaCierreCajaComponent } from './pages/apertura-cierre-caja/apertura-cierre-caja.component';
 import { RpteCajaPorUsuarioComponent } from './reportes/rpte-caja-por-usuario/rpte-caja-por-usuario.component';
 import { RpteCajaComponent } from './reportes/rpte-cierre-caja/rpte-caja.component';
+import { ListadoCajaComponent } from './pages/listado-caja/listado-caja.component';
+import { CajaMantenimientoComponent } from './pages/caja-mantenimiento/caja-mantenimiento.component';
 
 export const routes: Routes = [
-    { path: '',
-      component: AperturaCierreCajaComponent,
-      canActivate: [isAuthenticatedGuard],
-      pathMatch: 'full' },
-    { path: 'rpte-caja',
-      component: RpteCajaComponent,
-      canActivate:[isAuthenticatedGuard, RoleGuard],
-      data: { role: 'ROLE_REPORT_CJU' }
-    },
-    { path: 'rpte-caja-por-usuario',
-      component: RpteCajaPorUsuarioComponent,
-      canActivate:[isAuthenticatedGuard, RoleGuard],
-      data: { role: 'ROLE_REPORT_USUARIO_CJU' }
-    },
+  {
+    path: '',
+    component: AperturaCierreCajaComponent,
+    canActivate: [isAuthenticatedGuard],
+    pathMatch: 'full'
+  },
+  {
+    path: 'listar',
+    component: ListadoCajaComponent,
+    canActivate: [isAuthenticatedGuard],
+    data: { role: 'ROLE_LIST_CAJAS' }
+  },
+  {
+    path: 'mantenimiento',
+    component: CajaMantenimientoComponent,
+    canActivate: [isAuthenticatedGuard],
+    data: { role: 'ROLE_REGISTER_CAJA' }
+  },
+  {
+    path: 'rpte-caja',
+    component: RpteCajaComponent,
+    canActivate: [isAuthenticatedGuard, RoleGuard],
+    data: { role: 'ROLE_REPORT_CJU' }
+  },
+  {
+    path: 'rpte-caja-por-usuario',
+    component: RpteCajaPorUsuarioComponent,
+    canActivate: [isAuthenticatedGuard, RoleGuard],
+    data: { role: 'ROLE_REPORT_USUARIO_CJU' }
+  },
 
 
 ];

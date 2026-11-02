@@ -1,0 +1,131 @@
+<div class="container">
+  <div class="row">
+    <div class="col-12">
+      <mat-card>
+        <mat-card-header>
+          <div class="card-title">
+            Listado de cajas
+          </div>
+<!--           <div class="ms-auto">
+            Crear caja
+          </div> -->
+        </mat-card-header>
+        <mat-card-content>
+          <div class="example-action-buttons d-flex justify-content-end">
+            <button matButton="tonal" type="button" (click)="accordion().openAll()">
+              Expandir todo
+            </button>
+            <button matButton="tonal" type="button" (click)="accordion().closeAll()">
+              Reducir todo
+            </button>
+            <button mat-button color="primary" type="button" title="Nueva Caja" (click)="nuevaCaja()"> Nueva caja </button>
+          </div>
+
+          <mat-accordion multi>
+
+            @for (caja of cajas(); track caja.id) {
+            <mat-expansion-panel [formGroup]="formularioComprobanteCorrelativo(caja.id!)">
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  {{ caja.id }} - {{ caja.nombre }}
+                </mat-panel-title>
+                <mat-panel-description class="d-flex justify-content-between">
+                  {{ caja.responsable }} - {{ caja.direccion }}
+                  <!--                   <button type="button" matButton="tonal" title="Eliminar caja"
+                    (click)="$event.stopPropagation(); eliminarCaja(caja.id)">
+                    Eliminar
+                  </button> -->
+
+                  <button mat-icon-button color="primary" aria-label="Editar" (click)="editarCaja(caja)">
+                    <mat-icon>edit</mat-icon>
+                  </button>
+
+
+                </mat-panel-description>
+              </mat-expansion-panel-header>
+              <ul class="list-group">
+
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    Ubicación de Facturador SUNAT:
+<!--                     <i class="bi bi-question-circle-fill text-muted" ngbTooltip="Ruta del Facturador SUNAT"
+                      placement="top">
+                    </i> -->
+                  {{caja.pathFacturador}}
+                  <!--                   <input type="text" formControlName="pathFacturador" name="pathFacturador"
+                    class="form-control" /> -->
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                  <b><i>Series y correlativos de comprobantes</i></b>
+                </li>
+                <!-- ============================= -->
+                <!-- BOLETA -->
+                <!-- ============================= -->
+
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                  <span class="cabecera">
+                    Boleta:
+                    <b>{{ caja.boletaSerie }} - </b>
+                    <!--                     <i class="bi bi-question-circle-fill text-muted" ngbTooltip="Serie de Boleta" placement="top">
+                    </i> -->
+                  </span>
+                  <input style="width:175px" type="number" formControlName="boletaCorrelativo" name="boletaCorrelativo"
+                    class="form-control" min="0" step="1" />
+
+                  <span class="cabecera">
+                    N. Crédito Bol:
+                    <b>{{ caja.notaCreditoDeBoletaSerie }} - </b>
+                    <!--                     <i class="bi bi-question-circle-fill text-muted" ngbTooltip="Serie de Nota de crédito para Boleta"
+                      placement="top">
+                    </i> -->
+                  </span>
+                  <input style="width:175px" type="number" formControlName="notaCreditoDeBoletaCorrelativo"
+                    name="notaCreditoDeBoletaCorrelativo" class="form-control" min="0" step="1" />
+                </li>
+                <!-- ============================= -->
+                <!-- FACTURA -->
+                <!-- ============================= -->
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                  <span class="cabecera">
+                    Factura:
+                    <b>{{ caja.facturaSerie }} - </b>
+                    <!--                     <i class="bi bi-question-circle-fill text-muted" ngbTooltip="Serie de Factura" placement="top">
+                    </i> -->
+                  </span>
+                  <input style="width:175px" type="number" formControlName="facturaCorrelativo"
+                    name="facturaCorrelativo" class="form-control" min="0" step="1" />
+                  <span class="cabecera">
+                    N. Crédito Factura:
+                    <b>{{ caja.notaCreditoDeFacturaSerie }} - </b>
+                    <!--                     <i class="bi bi-question-circle-fill text-muted" ngbTooltip="Serie de Nota de crédito para Factura"
+                      placement="top">
+                    </i> -->
+                  </span>
+                  <input style="width:175px" type="number" formControlName="notaCreditoDeFacturaCorrelativo"
+                    name="notaCreditoDeFacturaCorrelativo" class="form-control" min="0" step="1" />
+                </li>
+
+                <!-- ============================= -->
+                <!-- PATH FACTURADOR -->
+                <!-- ============================= -->
+
+                <li class="list-group-item d-flex justify-content-end gap-2">
+                  @if (!estaEditando(caja.id!)) {
+                  <button type="button" mat-button color="primary" title="Editar" (click)="ajustarCorrelativos(caja)">
+                    Ajustar Correlativos
+                  </button>
+                  } @else {
+                  <button type="button" matButton="tonal" title="Guardar"
+                    [disabled]="formularioComprobanteCorrelativo(caja.id!).invalid" (click)="guardarCorrelativos(caja)">
+                    Guardar Correlativos
+                  </button>
+                  }
+                </li>
+              </ul>
+            </mat-expansion-panel>
+            }
+          </mat-accordion>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>

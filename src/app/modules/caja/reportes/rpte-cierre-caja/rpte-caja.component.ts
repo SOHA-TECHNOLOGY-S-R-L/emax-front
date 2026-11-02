@@ -14,7 +14,8 @@ import { CajaService } from '../../../../services/caja.service';
 import { PersonaService } from '../../../../services/persona.service';
 import { UsuarioService } from '../../../../services/usuario.service';
 import { AngularMaterialModule } from '../../../compartido/angular-material.module';
-import { CLIENTE_PROVEEDOR } from '../../../../constants/constantes';
+import { CajaUsuarioService } from '../../../../services/caja-usuario.service';
+import { TipoPersonaEnum } from '../../../../enums/tipo-persona.enum';
 
 @Component({
   selector: 'app-rpte-caja',
@@ -40,6 +41,7 @@ export class RpteCajaComponent implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
+    private cajaUsuarioService: CajaUsuarioService,
     private cajaService: CajaService,
     private personaService: PersonaService,
     private usuarioService: UsuarioService,
@@ -82,7 +84,7 @@ export class RpteCajaComponent implements OnInit {
       filtros: this.filtrosReporte
     }
 
-    this.cajaService.ceateReporteCierreCaja(filtros)
+    this.cajaUsuarioService.ceateReporteCierreCaja(filtros)
       .subscribe(response => {
         fileSaver.saveAs(response.body!,
           this.filenameFromHeader(response.headers)) //utilidad pra qeu descargue automaticamente
@@ -110,7 +112,7 @@ export class RpteCajaComponent implements OnInit {
   cargarUsuarios() {
 
     this.personaService.getAllPersonas().pipe(
-      map(personas => personas.filter(p => p.tipoPersonaId !== CLIENTE_PROVEEDOR))
+      map(personas => personas.filter(p => p.tipoPersona !== TipoPersonaEnum.CLIENTE_PROVEEDOR))
     ).subscribe(resp => this.personasLst = resp);
 
     //this.usuarioService.getAllUsers().subscribe(res => this.usuarioLst = res);

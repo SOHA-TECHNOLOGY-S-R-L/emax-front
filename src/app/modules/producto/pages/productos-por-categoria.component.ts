@@ -1,3 +1,4 @@
+import { ColorDetails } from './../../../enums/color.enum';
 import { CommonModule, UpperCasePipe } from '@angular/common';
 import {
   AfterViewInit,
@@ -12,7 +13,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { map } from 'rxjs';
+import { forkJoin, map, of, switchMap } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { COLOR_ESTADO_PRODUCTO } from '../../../constants/color-estado-producto';
 import {
@@ -21,7 +22,7 @@ import {
   SIGUIENTE_PAGINA,
   ULTIMA_PAGINA,
 } from '../../../constants/constantes';
-import { PageableResponse } from '../../../models/pageable-response';
+import { PageableResponse } from '../../../interfaces/pageable-response';
 import { Producto } from '../../../models/producto';
 import { ChatUtils } from '../../../utils/chat-utils';
 import { AngularMaterialModule } from '../../compartido/angular-material.module';
@@ -67,6 +68,8 @@ export class ProductosPorCategoriaComponent implements AfterViewInit {
   );
 
   lstProductos = signal<Producto[]>([]);
+  //producto = signal<Producto | null>(null);
+  colorDetails = ColorDetails;
 
   // ************propiedades del paginador***********
   //pageable!: PageableResponse<Producto>;
@@ -132,7 +135,7 @@ export class ProductosPorCategoriaComponent implements AfterViewInit {
     ]);
   }
 
-  cargarProductosPorCategoria(params: any) {
+  /* cargarProductosPorCategoria(params: any) {
     return this.productoService.productosPorCategoriaNombre(params)
       .subscribe((response) => {
         //       this.pageable = response;
@@ -150,16 +153,17 @@ export class ProductosPorCategoriaComponent implements AfterViewInit {
 
             let cantidadDisponible = 0;
             if (prd.padreId) {
-              const prdcto = productos.find((pr) => pr.id === prd.padreId);
-              console.log("prdcto", prdcto)
-              cantidadDisponible = prdcto?.cantidadStock ? prdcto?.cantidadStock : 0
+              console.log("padreId", prd.padreId)
+              this.cargarProducto(prd.padreId); // aqui deberia cargar
+              console.log("prdctoPadre", this.producto()) // aqui imprime null, error
+              cantidadDisponible = this.producto() ? this.producto()?.cantidadStock! : 0
             } else {
               cantidadDisponible = prd.cantidadStock
             }
             prd.cantidadStock = cantidadDisponible;
             //muestar todos los productos en formato string
             //prd.precioNetoStringShow = "S/ ".concat(prd.margenesProducto.map(m => m.precioNeto).toString().replaceAll(',', ' - '));
-            prd.precioUnitarioSelect =
+            prd.precioUnitarioMasBajo =
               prd.margenesProducto.length > 0
                 ? prd.margenesProducto.reduce((previous, current) =>
                   current.precioUnitario < previous.precioUnitario
@@ -184,20 +188,88 @@ export class ProductosPorCategoriaComponent implements AfterViewInit {
         );
       });
   }
+ */
+
+
+
+  cargarProductosPorCategoria(params: any): void {
+    this.productoService.productosPorCategoriaNombre(params).pipe(
+      switchMap((response) => {
+        this.pageable.set(response);
+        const productos = response.content as Producto[];
+
+        const productos$ = productos.map((prd) => {
+          if (prd.padreId == null) {
+            // Producto padre: conserva su propio stock.
+            return of(prd);
+          }
+
+          // Variante: consulta el producto padre y obtiene su stock.
+          return this.productoService.getProducto(prd.padreId).pipe(
+            map((padre) => ({
+              ...prd,
+              cantidadStock: padre.cantidadStock,
+            })),
+          );
+        });
+
+        // Espera a que terminen todas las peticiones.
+        return productos$.length > 0
+          ? forkJoin(productos$)
+          : of([] as Producto[]);
+      }),
+
+      map((productos) =>
+        productos.map((prd) => {
+          prd.estadoProducto.color =
+            COLOR_ESTADO_PRODUCTO[
+            ('' + prd.estadoProducto.id) as keyof typeof COLOR_ESTADO_PRODUCTO
+            ];
+
+          // El stock ya fue calculado antes de llegar aquí.
+          prd.precioUnitarioMasBajo =
+            prd.margenesProducto.length > 0
+              ? prd.margenesProducto.reduce((previous, current) =>
+                current.precioUnitario < previous.precioUnitario
+                  ? current
+                  : previous,
+              ).precioUnitario
+              : 0;
+
+          if (prd.multimediasAsignada.length > 0) {
+            const primerElemento =
+              prd.multimediasAsignada.find((m) => m.esPrincipal) ||
+              prd.multimediasAsignada[0];
+
+            prd.multimediasAsignada = [primerElemento];
+
+            prd.multimediasAsignada.forEach((mp) => {
+              mp.multimedia.urlMultimediaShow =
+                this.API_URL_VER_IMAGEN.concat(mp.multimedia.nombre);
+            });
+          }
+
+          return prd;
+        }),
+      ),
+    ).subscribe({
+      next: (productos) => {
+        this.lstProductos.set(productos);
+        //console.log('Productos con stock actualizado', productos);
+      },
+      error: (err) => {
+        console.error('Error al cargar productos por categoría', err);
+      },
+    });
+  }
+
+
 
   loadParams(pageIndex: number, pageSize: number) {
     return {
-      //active: "ID",
-      //direction: "DESC",
       pageNumber: pageIndex,
       pageSize: pageSize,
       categoriaNombre: this.categoriaActiva(),
-
-      /*       query: this.multimediaFilters.query,
-            extensiones: this.multimediaFilters.extensiones,
-            tamanio: this.multimediaFilters.tamanio,
-            ancho: this.multimediaFilters.ancho,
-            alto: this.multimediaFilters.alto, */
     };
   }
 
@@ -210,10 +282,4 @@ export class ProductosPorCategoriaComponent implements AfterViewInit {
       this.loadParams(this.pageIndex, this.pageSize),
     );
   }
-
-  /*   ngOnDestroy(): void {
-      if (this.categoriaSuscription$) {
-        this.categoriaSuscription$.unsubscribe();
-      }
-    } */
 }

@@ -50,10 +50,7 @@ export class ItemProductoPersonaOnlineComponent {
       return { codigo, categoria };
     },
     stream: ({ params }) =>
-      this.productoService.productoCategoria(
-        params!.codigo,
-        params!.categoria
-      )
+      this.productoService.productoCategoria(params!.codigo,params!.categoria)
 
   });
 

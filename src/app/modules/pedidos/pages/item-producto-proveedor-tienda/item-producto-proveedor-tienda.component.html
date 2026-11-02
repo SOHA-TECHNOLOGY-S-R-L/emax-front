@@ -7,7 +7,7 @@
           <img [src]="getImagenPrincipal(producto)" width="86" height="86"
             style="object-fit: cover; border-radius: 6px;" />
           {{ producto.nombre }}
-          <span class="text-bold-italic">Color:</span> {{ findColorById(producto.colorId) }}
+          <span class="text-bold-italic">Color:</span> {{ producto.color }}
           <span class="text-bold-italic">Cant:</span> {{ producto.cantidadStock }} unid
           <span class="text-bold-italic">Cod:</span> {{ producto.codigo }}
 
@@ -15,7 +15,7 @@
       </ng-template>
     </autocomplete-resource>
 
-    <app-item-pedido [inEnvioPedido]="undefined" [inTipoPedidoId]="PEDIDO_COMPRA" />
+    <app-item-pedido [inEnvioPedido]="undefined" [inTipoPedidoId]="TipoPedido.COMPRA" />
 
     <div class="col-12 col-md-6">
       <textarea class="form-control" name="observacion" [ngStyle]="{ resize: 'none' }" aria-label="With textarea"
@@ -51,7 +51,7 @@
     </div> -->
 
     @if(items().length > 0){
-    <button class="btn btn-dark btn-lg" (click)="crearPedidoTienda()">Finalizar COMPRA</button>
+    <button class="btn btn-dark btn-lg" (click)="crearPedidoCompra()">Finalizar COMPRA</button>
     }
   </div>
 </div>

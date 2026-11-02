@@ -17,7 +17,7 @@
           !producto().id && authService.hasRole("ROLE_REGISTER_PRODUCTO")
           ) {
           <button color="primary" mat-raised-button (click)="guardarProducto()" [disabled]="!formProducto.valid">
-            Crear
+            Crear producto
           </button>
           }
 
@@ -329,7 +329,7 @@
                   }
                 </div>
               </div>
-              <div class="row mb-2">
+              <!--               <div class="row mb-2">
                 <label for="colorId" class="form-label col-sm-5">Color:</label>
                 <div class="input-group col-sm">
                   <select formControlName="colorId" name="colorId" class="form-control">
@@ -343,8 +343,23 @@
                   </div>
                   }
                 </div>
-              </div>
+              </div> -->
               <div class="row mb-2">
+                <label for="colorId" class="form-label col-sm-5">Color:</label>
+                <div class="input-group col-sm">
+                  <select formControlName="colorId" name="colorId" class="form-control">
+                    <option *ngFor="let clave of colores" [value]="colorDetails[clave].id">
+                      {{ colorDetails[clave].color }}
+                    </option>
+                  </select>
+                  @if (formUtils.isValidField(formProducto, "colorId")) {
+                  <div class="alert alert-danger">
+                    {{ formUtils.getFieldError(formProducto, "colorId") }}
+                  </div>
+                  }
+                </div>
+              </div>
+<!--               <div class="row mb-2">
                 <label for="usoId" class="form-label col-sm-5">Uso:</label>
                 <div class="input-group col-sm">
                   <select formControlName="usoId" name="usoId" class="form-control">
@@ -358,7 +373,7 @@
                   </div>
                   }
                 </div>
-              </div>
+              </div> -->
 
               <div class="row mb-2">
                 @if (authService.hasRole("ROLE_ACTIVE_PRODUCTO")) {
@@ -552,7 +567,6 @@
                         Valor mínimo requerido
                       </div>
                       }
-
                     </li>
                     <li class="list-group-item d-flex justify-content-between align-items-center">
                       <span class="cabecera">Val Bruto(S/.):
@@ -641,8 +655,8 @@
                           </li>
                           <li class="list-group-item d-flex justify-content-between align-items-center">
                             <textarea formControlName="descripcionOferta" name="descripcionOferta" class="form-control"
-                              [ngStyle]="{ resize: 'none' }" aria-label="With textarea" placeholder="Descripción oferta (Visible en tienda)"
-                              maxlength="250" rows="2"></textarea>
+                              [ngStyle]="{ resize: 'none' }" aria-label="With textarea"
+                              placeholder="Descripción oferta (Visible en tienda)" maxlength="250" rows="2"></textarea>
                           </li>
                         </ul>
                       </mat-expansion-panel>

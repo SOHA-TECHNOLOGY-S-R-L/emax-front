@@ -16,19 +16,31 @@
           <td mat-cell *matCellDef="let element"> {{element.id}} </td>
         </ng-container>
 
-        <ng-container matColumnDef="nomApellRz">
+        <ng-container matColumnDef="apellNomRznSocial">
           <th mat-header-cell *matHeaderCellDef mat-sort-header> Proveedor </th>
-          <td mat-cell *matCellDef="let element"> {{element.persona.nomApellRz}} </td>
+          <td mat-cell *matCellDef="let element"> {{element.persona.apellNomRznSocial}} </td>
         </ng-container>
 
         <ng-container matColumnDef="createAt">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header> Fecha Creacion </th>
-          <td mat-cell *matCellDef="let element"> {{element.createAt}} </td>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Creación </th>
+          <td mat-cell *matCellDef="let element">
+            @if (element.createAt) {
+            {{ element.createAt | date: 'dd/MM/yyyy' }}
+            } @else {
+            -
+            }
+          </td>
         </ng-container>
 
         <ng-container matColumnDef="adquiridoEn">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header> Fecha compra </th>
-          <td mat-cell *matCellDef="let element"> {{element.adquiridoEn}} </td>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Adquisición </th>
+          <td mat-cell *matCellDef="let element">
+            @if (element.adquiridoEn) {
+            {{ element.adquiridoEn | date: 'dd/MM/yyyy' }}
+            } @else {
+            -
+            }
+          </td>
         </ng-container>
 
         <ng-container matColumnDef="costoTotal">
@@ -54,33 +66,51 @@
         <ng-container matColumnDef="estado">
           <th mat-header-cell *matHeaderCellDef mat-sort-header> Estado </th>
           <td mat-cell *matCellDef="let element">
-            <span class="celda-estado {{element.estadoPedido.color}}">{{element.estadoPedido.estado}} </span>
+            <!-- <span class="celda-estado {{getEstadoPedido(element.estadoPedido).hexadecimal }}"> -->
+
+            <span class="celda-estado" [style.background-color]="getEstadoPedido(element.estadoPedido).hexadecimal">
+              {{getEstadoPedido(element.estadoPedido).estado}}
+
+            </span>
+            <!-- <span class="celda-estado {{element.estadoPedido.color}}">{{element.estadoPedido.estado}} </span> -->
+
           </td>
         </ng-container>
 
-        <ng-container matColumnDef="acciones">
+        <!--         <ng-container matColumnDef="acciones">
           <th mat-header-cell *matHeaderCellDef> Acciones </th>
           <td mat-cell *matCellDef="let element">
             <div class="d-flex flex-row">
+              <button mat-icon-button color="primary" matTooltip="Ver Detalle">
+                <mat-icon>content_paste_off</mat-icon>
+              </button>
               <button *ngIf="authService.hasRole('ROLE_REGISTER_PAGO_PEDIDO')" mat-icon-button color="warn"
                 [routerLink]="['/movimientos', element.id]" matTooltip="Pagar">
                 <mat-icon>price_change</mat-icon>
               </button>
-              <!--               <button *ngIf="authService.hasRole('ROLE_VIEW_DETAILS_COMPRA')" mat-icon-button color="primary"
-                [routerLink]="['/pedidos/detalle-compra', element.id]" matTooltip="Ver Detalle">
-                <mat-icon>visibility</mat-icon>
-              </button> -->
+
             </div>
           </td>
         </ng-container>
-
-        <ng-container *ngIf="authService.hasRole('ROLE_VIEW_DETAILS_COMPRA')" matColumnDef="expand">
-          <th mat-header-cell *matHeaderCellDef aria-label="row actions">&nbsp;</th>
+ -->
+        <ng-container matColumnDef="expand">
+          <th mat-header-cell *matHeaderCellDef aria-label="row actions">Acciones</th>
           <td mat-cell *matCellDef="let element">
-            <button matIconButton aria-label="expand row" (click)="toggle(element);
+            <div class="d-flex flex-row">
+              <button mat-icon-button color="warn" matTooltip="Anular pedido" (click)="anularPedido(element.id)"
+                [disabled]="element.isAnuladoDisabled">
+                <mat-icon>content_paste_off</mat-icon>
+              </button>
+              <button *ngIf="authService.hasRole('ROLE_REGISTER_PAGO_PEDIDO')" mat-icon-button color="warn"
+                [routerLink]="['/movimientos', element.id]" matTooltip="Pagar">
+                <mat-icon>price_change</mat-icon>
+              </button>
+              <button *ngIf="authService.hasRole('ROLE_VIEW_DETAILS_COMPRA')" matIconButton aria-label="expand row"
+                (click)="toggle(element);
              $event.stopPropagation()" class="toggle-button" [class.toggle-button-expanded]="isExpanded(element)">
-              <mat-icon>keyboard_arrow_down</mat-icon>
-            </button>
+                <mat-icon>keyboard_arrow_down</mat-icon>
+              </button>
+            </div>
           </td>
         </ng-container>
 

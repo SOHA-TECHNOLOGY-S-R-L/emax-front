@@ -9,17 +9,18 @@
         <div class="card p-4">
           <form id="formCreateCuenta" #formCreateCuenta="ngForm" [formGroup]="formNewCuenta" autocomplete="off">
             <div class="row mb-2">
-              <label for="tipoDocumentoId" class="form-label col-12"><b>Datos del usuario:</b></label>
+              <label for="tipoDocumentoIdentidad" class="form-label col-12"><b>Datos del usuario:</b></label>
               <div class="col-12">
-                <select formControlName="tipoDocumentoId" name="tipoDocumentoId" class="form-control">
+                <select formControlName="tipoDocumentoIdentidad" name="tipoDocumentoIdentidad" class="form-control"
+                  (change)="personaByTipoDocumentoIdentidadAndNumeroDocumento()">
                   <option value="-1">
                     -- Seleccione Tipo de documento</option>
-                  <option *ngFor="let tipoDocumento of tipoDocumentos" [value]="tipoDocumento.id">
+                  <option *ngFor="let tipoDocumento of tipoDocumentos()" [value]="tipoDocumento.id">
                     {{tipoDocumento.nombre}}</option>
                 </select>
-                @if(formUtils.isValidField(formNewCuenta,'tipoDocumentoId')){
+                @if(formUtils.isValidField(formNewCuenta,'tipoDocumentoIdentidad')){
                 <div class="alert alert-danger">
-                  {{formUtils.getFieldError(formNewCuenta,"tipoDocumentoId")}}
+                  {{formUtils.getFieldError(formNewCuenta,"tipoDocumentoIdentidad")}}
                 </div>}
               </div>
             </div>
@@ -27,7 +28,7 @@
             <div class="row mb-2">
               <div class="col-12">
                 <input formControlName="numeroDocumento" type="text" class="form-control" name="numeroDocumento"
-                  placeholder="Número de documento" (change)="findByNumDocumento($event)">
+                  placeholder="Número de documento" (change)="personaByTipoDocumentoIdentidadAndNumeroDocumento()">
                 @if(formUtils.isValidField(formNewCuenta,'numeroDocumento')){
                 <div class="alert alert-danger">
                   {{formUtils.getFieldError(formNewCuenta,"numeroDocumento")}}
@@ -37,14 +38,36 @@
 
             <div class="row mb-2">
               <div class="col-12">
-                <input formControlName="nomApellRz" type="text" class="form-control" name="nomApellRz"
+                <input formControlName="apellNomRznSocial" type="text" class="form-control" name="apellNomRznSocial"
                   placeholder="Nombres y apellidos o Razón social">
-                @if(formUtils.isValidField(formNewCuenta,'nomApellRz')){
+                @if(formUtils.isValidField(formNewCuenta,'apellNomRznSocial')){
                 <div class="alert alert-danger">
-                  {{formUtils.getFieldError(formNewCuenta,'nomApellRz')}}
+                  {{formUtils.getFieldError(formNewCuenta,'apellNomRznSocial')}}
                 </div>}
               </div>
             </div>
+
+            <div class="row mb-2">
+              <div class="col-12">
+                <input formControlName="direccionCompleta" type="text" class="form-control" name="direccionCompleta"
+                  placeholder="Dirección">
+                @if(formUtils.isValidField(formNewCuenta,'direccionCompleta')){
+                <div class="alert alert-danger">
+                  {{formUtils.getFieldError(formNewCuenta,'direccionCompleta')}}
+                </div>}
+              </div>
+            </div>
+
+            <div class="row mb-2">
+              <div class="col-12">
+                <input formControlName="celular" type="text" class="form-control" name="celular" placeholder="Celular">
+                @if(formUtils.isValidField(formNewCuenta,'celular')){
+                <div class="alert alert-danger">
+                  {{formUtils.getFieldError(formNewCuenta,'celular')}}
+                </div>}
+              </div>
+            </div>
+
 
             <div class="row mb-2">
               <div class="col-12">
@@ -100,8 +123,8 @@
         @if(existePersona && !isPassword){
         <div class="row">
           <div class="col-12 alert alert-info">
-            Hola <b>{{persona.nomApellRz}}</b>, ya tenemos algunos datos, tu usuario de sesión es
-            <b>{{persona.numeroDocumento}}</b> colocalé una clave.
+            Hola <b>{{persona.apellNomRznSocial}}</b>,tu usuario es
+            <b>{{persona.numeroDocumento}}</b> completa los campos faltantes.
           </div>
         </div>
         }
@@ -109,7 +132,7 @@
         @if(existePersona && isPassword){
         <div class="row">
           <div class="col-12 alert alert-info">
-            <p>Hola <b>{{persona.nomApellRz}}</b> ya tienes una cuenta creada, si olvidaste tu clave has click
+            <p>Hola <b>{{persona.apellNomRznSocial}}</b> ya tienes una cuenta creada, si olvidaste tu clave has click
               aquí en <b><a [routerLink]="['/recuperar-clave']">RECUPERAR CLAVE</a></b> de lo contrario puedes <b>
                 <a [routerLink]="['/login']">INICIAR SESIÓN</a></b></p>
           </div>

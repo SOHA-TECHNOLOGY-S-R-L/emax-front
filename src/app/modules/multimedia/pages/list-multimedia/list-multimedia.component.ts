@@ -5,7 +5,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
 import { switchMap } from 'rxjs';
 import { Multimedia } from '../../../../models/multimedia';
-import { PageableResponse } from '../../../../models/pageable-response';
+import { PageableResponse } from '../../../../interfaces/pageable-response';
 import { AlertService } from '../../../../services/alert.service';
 import { MultimediaHttpService } from '../../../../services/multimedia-http.service';
 import { MultimediaService } from '../../../../services/multimedia.service';

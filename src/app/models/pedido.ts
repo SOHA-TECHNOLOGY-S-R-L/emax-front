@@ -1,8 +1,9 @@
 import { Persona } from './persona';
-import { EstadoPedido } from './estado-pedido';
 import { ItemPedido } from './item-pedido';
 import { Movimiento } from './movimiento';
-import { TipoPedido } from './tipo-pedido';
+import { TipoPedidoEnum } from '../enums/tipo-pedido.enum';
+import { ComprobanteSunat } from '../interfaces/comprobante-sunat';
+import { EstadoPedidoEnum } from '../enums/estado-pedido.enum';
 
 export class Pedido {
   id!: number;
@@ -10,14 +11,16 @@ export class Pedido {
   observacion!: string;
   items: Array<ItemPedido> = [];
   movimientos: Array<Movimiento> = [];
+  comprobantesSunat: Array<ComprobanteSunat>= []
   persona?:Persona;
   //personaId: number | undefined;
-  nomApellRzEnvio: string = '';
+  apellNomRznSocialEnvio: string = '';
   direccionEnvio: string = '';
   celularEnvio: string = '';
-  estadoPedido!: EstadoPedido;
-  //tipoPedido!:TipoPedido;
-  tipoPedidoId: number | undefined;
+  //estadoPedido!: EstadoPedido;
+  estadoPedido!: EstadoPedidoEnum | null;
+  tipoPedido!:TipoPedidoEnum;
+  //tipoPedidoId: number | undefined;
   //costoBrutoTotal: number = 0;
   //costoNetoTotal: number = 0;
   costoTotal: number = 0;
@@ -38,8 +41,9 @@ export class Pedido {
   adquiridoEn!: string;
   //aceptado:boolean = true;
   //vencido:boolean = false;
-  pagado: boolean = false;
-  devuelto: boolean = false;
+  //pagado: boolean = false;
+  //devuelto: boolean = false;
+  isAnuladoDisabled:boolean = false;
   username: string = ''
 
 

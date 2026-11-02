@@ -14,7 +14,7 @@ import { rxResource, toSignal } from '@angular/core/rxjs-interop';
 import { PersonaService } from '../../../services/persona.service';
 import { of, switchMap } from 'rxjs';
 import { Persona } from '../../../models/persona';
-import { CLIENTE_PROVEEDOR } from '../../../constants/constantes';
+import { TipoPersonaEnum } from '../../../enums/tipo-persona.enum';
 
 @Component({
   selector: 'menu-cabecera',
@@ -55,7 +55,7 @@ export class MenuCabeceraComponent {
     const persona = this.personaResource.value();
     if (!persona) return true;
 
-    return persona.tipoPersonaId === CLIENTE_PROVEEDOR;
+    return persona.tipoPersona === TipoPersonaEnum.CLIENTE_PROVEEDOR;
   });
 
   readonly isAutenticado = computed(() =>
@@ -95,7 +95,6 @@ export class MenuCabeceraComponent {
  */    });
 
     dialogRef.afterClosed().subscribe(result => {
-      //console.log('The dialog was closed');
       if (result !== undefined) {
         // this.animal.set(result);
       }

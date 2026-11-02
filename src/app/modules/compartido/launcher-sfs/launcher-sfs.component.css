@@ -1,0 +1,76 @@
+/* .snackbar-container {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  font-weight: 500;
+}
+
+.success {
+  background-color: #4caf50;
+  color: black;
+}
+
+.info {
+  background-color: #20589c;
+  color: white;
+}
+
+.warning {
+  background-color: #fff212;
+  color: black;
+}
+
+.error {
+  background-color: #f44336;
+  color: black;
+} */
+
+
+
+/* sfs-control.component.css */
+.sfs-container {
+  margin: 20px;
+/*   font-family: Arial, sans-serif;
+ */}
+
+.btn-sfs {
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px; /* Espacio entre el icono y el texto */
+  transition: background-color 0.3s ease;
+  color: white;
+}
+
+/* Estado: Apagado -> Botón verde con icono Play listo para arrancar */
+.btn-sfs.stopped {
+  background-color: #4caf50;
+}
+.btn-sfs.stopped:hover {
+  background-color: #4caf50;
+}
+
+/* Estado: Levantado -> Botón rojo con icono Stop listo para detener */
+.btn-sfs.running {
+  background-color: #f44336;
+}
+.btn-sfs.running:hover {
+  background-color: #c82333;
+}
+
+.btn-sfs:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+}
+
+.status-message {
+  margin-top: 10px;
+  font-size: 14px;
+  color: #555;
+}
+

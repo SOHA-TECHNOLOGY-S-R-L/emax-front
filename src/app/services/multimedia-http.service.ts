@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, Observable, throwError } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { PageableResponse } from '../models/pageable-response';
+import { PageableResponse } from '../interfaces/pageable-response';
 import { AlertService } from './alert.service';
 import { AuthService } from './auth.service';
 import { Multimedia } from '../models/multimedia';

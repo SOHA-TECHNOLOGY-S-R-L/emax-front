@@ -1,18 +1,18 @@
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
-import { rxResource, toSignal } from '@angular/core/rxjs-interop';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { map } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
-import { ItemPedido } from '../../../../models/item-pedido';
 import { Producto } from '../../../../models/producto';
 import { ProductoService } from '../../../../services/producto.service';
 import { AngularMaterialModule } from '../../../compartido/angular-material.module';
 import { AutocompleteResourceComponent } from '../../../compartido/autocomplete-resource/autocomplete-resource.component';
 import { CarritoItemProductoComponent } from '../../components/carrito-item-producto/carrito-item-producto.component';
 import { CustomizeItemProductoToClientComponent } from '../../components/customize-item-producto-to-client/customize-item-producto-to-client.component';
+import { ColorDetails } from './../../../../enums/color.enum';
 
 @Component({
   selector: 'item-producto-persona-tienda',
@@ -28,8 +28,9 @@ export class ItemProductoPersonaTiendaComponent {
 
   producto = signal<Producto | null>(null);
   //items = signal<ItemPedido[]>([]);
-  coloresResource = rxResource({ stream: () => this.productoService.getColoresProducto() });
+  //coloresResource = rxResource({ stream: () => this.productoService.getColoresProducto() });
   API_URL_VER_IMAGEN = environment.API_URL_VER_IMAGEN;
+  colorDetails = ColorDetails;
 
 
   /*Breakpoint	Media Query
@@ -68,12 +69,12 @@ export class ItemProductoPersonaTiendaComponent {
       : 'no-imagen.png';
   }
 
-  findColorById(colorId: number) {
+/*   findColorById(colorId: number) {
     const colores = this.coloresResource.value();
     if (!colores) return null;
     const color = colores.find((c) => c.id === colorId);
     return color ? color.nombre : 'Sin color';
-  }
+  } */
 
 
 

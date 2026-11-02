@@ -6,34 +6,37 @@
 
 <form [formGroup]="personaForm" autocomplete="off" class="d-flex flex-column">
   <div class="mb-2">
-    <select class="form-control" formControlName="tipoDocumentoId">
-      <option [ngValue]="null">---Seleccionar tipo documento ---</option>
+    <select class="form-control" formControlName="tipoDocumentoIdentidad"
+      (change)="clienteByTipoDocumentoIdentidadAndNumeroDocumento()">
+      <option [ngValue]="null" disabled selected>---Seleccionar tipo documento ---</option>
       @for (documento of tipoDocumentos(); track documento.id) {
       <option [ngValue]="documento.id">
         {{ documento.nombre }}
       </option>
       }
     </select>
-    <div *ngIf="formUtils.isValidField(personaForm,'tipoDocumentoId')" class="alert alert-danger">
-      {{ formUtils.getFieldError(personaForm,'tipoDocumentoId') }}
+    <div *ngIf="formUtils.isValidField(personaForm,'tipoDocumentoIdentidad')" class="alert alert-danger">
+      {{ formUtils.getFieldError(personaForm,'tipoDocumentoIdentidad') }}
     </div>
   </div>
   <div class="mb-2">
-    <input type="text" class="form-control" placeholder="Número documento" formControlName="numeroDocumento">
+    <input type="text" formControlName="numeroDocumento" class="form-control" placeholder="Número documento"
+      (change)="clienteByTipoDocumentoIdentidadAndNumeroDocumento()">
     <div *ngIf="formUtils.isValidField(personaForm,'numeroDocumento')" class="alert alert-danger">
       {{ formUtils.getFieldError(personaForm,'numeroDocumento') }}
     </div>
   </div>
   <div class="mb-2">
-    <input type="text" class="form-control" placeholder="Nombres y apellidos o Razon S." formControlName="nomApellRz">
-    <div *ngIf="formUtils.isValidField(personaForm,'nomApellRz')" class="alert alert-danger">
-      {{ formUtils.getFieldError(personaForm,'nomApellRz') }}
+    <input type="text" class="form-control" placeholder="Apellidos y Nombres o Razon S."
+      formControlName="apellNomRznSocial">
+    <div *ngIf="formUtils.isValidField(personaForm,'apellNomRznSocial')" class="alert alert-danger">
+      {{ formUtils.getFieldError(personaForm,'apellNomRznSocial') }}
     </div>
   </div>
   <div class="mb-2">
-    <input type="email" class="form-control" placeholder="Correo electrónico" formControlName="email">
-    <div *ngIf="formUtils.isValidField(personaForm,'email')" class="alert alert-danger">
-      {{ formUtils.getFieldError(personaForm,'email') }}
+    <input type="text" class="form-control" placeholder="Dirección" formControlName="direccionCompleta">
+    <div *ngIf="formUtils.isValidField(personaForm,'direccionCompleta')" class="alert alert-danger">
+      {{ formUtils.getFieldError(personaForm,'direccionCompleta') }}
     </div>
   </div>
   <div class="mb-2">
@@ -43,10 +46,9 @@
     </div>
   </div>
   <div class="mb-2">
-    <input type="text" class="form-control" placeholder="Dirección" formControlName="direccion">
-    <div *ngIf="formUtils.isValidField(personaForm,'direccion')" class="alert alert-danger">
-      {{ formUtils.getFieldError(personaForm,'direccion') }}
+    <input type="email" class="form-control" placeholder="Correo electrónico" formControlName="email">
+    <div *ngIf="formUtils.isValidField(personaForm,'email')" class="alert alert-danger">
+      {{ formUtils.getFieldError(personaForm,'email') }}
     </div>
   </div>
-
 </form>

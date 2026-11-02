@@ -12,18 +12,18 @@ export const ENVIO_PROVINCIA = 'envio-2';
 export const ENVIO_DEPARTAMENTO = 'envio-3';
 
 //tipo pedido
-export const PEDIDO_VENTA = 1;
+/* export const PEDIDO_VENTA = 1;
 export const PEDIDO_COMPRA = 2;
 export const COTIZACION_VENTA = 3;
-export const COTIZACION_COMPRA = 4;
+export const COTIZACION_COMPRA = 4; */
 
 //tipo persona
-export const CLIENTE_PROVEEDOR = 1;
+/* export const CLIENTE_PROVEEDOR = 1;
 export const EMPLEADO_PARA_VENTA = 2;
 export const EMPLEADO_PARA_CAJA = 3;
 export const EMPLEADO_PARA_COMPRA = 4;
 export const EMPLEADO_PARA_PRODUCTO = 5;
-export const EMPLEADO_PARA_ADMIN = 6;
+export const EMPLEADO_PARA_ADMIN = 6; */
 
 
 

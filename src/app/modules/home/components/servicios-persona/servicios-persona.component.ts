@@ -24,7 +24,6 @@ export class ServiciosPersonaComponent {
     this.productoService.servicioWithMultimediaEsPrincipal ().subscribe({
       next: (resp) => {
         this.servicios = resp;
-        //console.log("servicios", this.servicios)
       }
     });
 

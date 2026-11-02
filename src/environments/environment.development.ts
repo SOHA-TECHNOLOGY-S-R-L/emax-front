@@ -1,6 +1,7 @@
 export const environment = {
   apiLogin: `http://localhost:8080/login`,
   apiUrl: `http://localhost:8080/api`,
+  apiSfs: `http://127.0.0.1:9100/api`,//URL DEL LAUNCHER PARA FACTURADOR SUNAT SE EJECUTA EN LOCAL
   API_URL_VER_IMAGEN: `http://localhost:8080/api/multimedia/imagen/`,
 //  API_URL_WHATSAPP: `https://wa.me/+51978663071?text=`,
   URL_WHATSAPP_VENTA: `https://wa.me/+51978663071?text=`, //llamar a la url de sta manera https://wa.me/+974798814?text=${encodeUri(mensaje)}

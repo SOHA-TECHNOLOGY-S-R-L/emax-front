@@ -10,9 +10,8 @@
       </div>
     </mat-card-header>
     <mat-card-content class="mt-2">
-      <table mat-table [dataSource]="cupones()" matSort
-        (matSortChange)="sortChanged($event)" [matSortActive]="params().active" [matSortDirection]="params().direction"
-        matSortDisableClear>
+      <table mat-table [dataSource]="cupones()" matSort (matSortChange)="sortChanged($event)"
+        [matSortActive]="params().active" [matSortDirection]="params().direction" matSortDisableClear>
         <ng-container matColumnDef="codigo">
           <th mat-header-cell *matHeaderCellDef mat-sort-header> Código </th>
           <td mat-cell *matCellDef="let element"> {{element.codigo}} </td>
@@ -50,22 +49,22 @@
           <th mat-header-cell *matHeaderCellDef> # Uso persona </th>
           <td mat-cell *matCellDef="let element"> {{ element.limiteUsoPorPersona }} </td>
         </ng-container>
-        <ng-container matColumnDef="visibleEnTienda">
-          <th mat-header-cell *matHeaderCellDef> Visible </th>
+        <ng-container matColumnDef="visibleParaCliente">
+          <th mat-header-cell *matHeaderCellDef> Visible Cliente </th>
           <td mat-cell *matCellDef="let element">
-            <span class="celda-estado {{element.colorVisibleEnTienda}}">
-              {{element.visibleEnTienda + '' | i18nSelect:estadoActivo}}
+            <span class="celda-estado {{element.colorVisibleParaCliente}}">
+              {{element.visibleParaCliente + '' | i18nSelect:estadoActivo}}
             </span>
           </td>
         </ng-container>
-        <!--           <ng-container matColumnDef="activo">
-            <th mat-header-cell *matHeaderCellDef> Activo </th>
-            <td mat-cell *matCellDef="let element">
-              <span class="celda-estado {{element.colorActivo}}">
-                {{element.activo + '' | i18nSelect:estadoActivo}}
-              </span>
-            </td>
-          </ng-container> -->
+        <ng-container matColumnDef="visibleParaVendedor">
+          <th mat-header-cell *matHeaderCellDef> Visible Vendedor </th>
+          <td mat-cell *matCellDef="let element">
+            <span class="celda-estado {{element.colorVisibleParaVendedor}}">
+              {{element.visibleParaVendedor + '' | i18nSelect:estadoActivo}}
+            </span>
+          </td>
+        </ng-container>
         <ng-container matColumnDef="acciones">
           <th mat-header-cell *matHeaderCellDef> Acciones </th>
           <td mat-cell *matCellDef="let element">

@@ -19,10 +19,6 @@
             Crear
           </button>
           }
-
-          <!--         @if (producto.id && authService.hasRole('ROLE_UPDATE_PRODUCTO')) {
-        <button color="primary" mat-raised-button (click)='guardarProducto()'>Actualizar producto</button>
-        } -->
         </div>
       </mat-card-header>
       <mat-card-content>
@@ -61,9 +57,11 @@
                 <div class="form-check form-check-inline col-sm">
                   <input class="form-check-input" type="checkbox" formControlName="caducidad"
                     name="aplicaPersonasConPedidos" [checked]="isCaducidad()" (change)="changeCaducidad($event)" />
-                  <label class="form-check-label" for="aplicaPersonasConPedidos">Advertencia! Sin caducidad el cupón es para siempre.
+                  <label class="form-check-label" for="aplicaPersonasConPedidos">Advertencia! Sin caducidad el cupón es
+                    para siempre.
                     <i class="bi bi-question-circle-fill text-muted"
-                      ngbTooltip="Sin caducidad no es habitual. Quita el check si quieres confirmar esta acción." placement="top">
+                      ngbTooltip="Sin caducidad no es habitual. Quita el check si quieres confirmar esta acción."
+                      placement="top">
                     </i>
                   </label>
                   @if (
@@ -110,10 +108,7 @@
                   }
                 </div>
               </div>
-
               <hr>
-
-
               <div class="row mb-2">
                 <label for="limiteUsoDelCupon" class="col-form-label col-sm-3">Límite uso del Cupon:</label>
                 <div class="input-group col-sm">
@@ -170,11 +165,6 @@
                       [checked]="cupon().usoCombinado" />
                     <label class="form-check-label" for="usoCombinado">El cupón se utiliza en combinación con otros
                       cupones.</label>
-                    <!--                     @if (formUtils.isValidField(formCupon, "usoCupon")) {
-                    <div class="alert alert-danger">
-                      {{ formUtils.getFieldError(formCupon, "usoCupon") }}
-                    </div>
-                    } -->
                   </div>
                 </div>
                 <hr>
@@ -236,23 +226,6 @@
                     </chips-autocomplete-resource>
                   </div>
                 </div>
-                <!--                 <div class="row mb-2">
-                  <label for="aplicaPersonasConPedidos" class="col-form-label col-sm-4">Personas incluidas:</label>
-                  <div class="form-check form-check-inline col-sm">
-                    <input class="form-check-input" type="checkbox" formControlName="aplicaPersonasConPedidos"
-                      name="aplicaPersonasConPedidos" [checked]="cupon().aplicaPersonasConPedidos" />
-                    <label class="form-check-label" for="aplicaPersonasConPedidos">El cupón se aplica a todas las
-                      personas con
-                      pedidos</label>
-                    @if (
-                    formUtils.isValidField(formCupon, "aplicaPersonasConPedidos")
-                    ) {
-                    <div class="alert alert-danger">
-                      {{formUtils.getFieldError(formCupon,"aplicaPersonasConPedidos")}}
-                    </div>
-                    }
-                  </div>
-                </div> -->
                 <hr>
                 <div class="row mb-2">
                   <label for="tipoDescuentoCupon" class="form-label col-sm-3">Tipo de Cupon:</label>
@@ -317,20 +290,25 @@
                     }
                   </div>
                 </div>
-                <!--              <div class="row mb-2">
-                  <label for="gastoMaximoProductos" class="col-form-label col-sm-3"></label>
-                  <div class="col-sm">
-                    <p>No especifique Gasto Máximo si no quiere colocar un limite de gasto al cupón</p>
-                  </div>
-                </div> -->
                 <hr>
-                <label for="visibleEnTienda" class="form-label col-sm-4">Visible en tienda:</label>
+                <label for="visibleParaCliente" class="form-label col-sm-4">Visible para Cliente:</label>
                 <div class="form-check form-switch col-sm">
-                  <input class="form-check-input" type="checkbox" formControlName="visibleEnTienda"
-                    name="visibleEnTienda" [checked]="cupon().visibleEnTienda" />
-                  @if (formUtils.isValidField(formCupon, "visibleEnTienda")) {
+                  <input class="form-check-input" type="checkbox" formControlName="visibleParaCliente"
+                    name="visibleParaCliente" [checked]="cupon().visibleParaCliente" />
+                  @if (formUtils.isValidField(formCupon, "visibleParaCliente")) {
                   <div class="alert alert-danger">
-                    {{ formUtils.getFieldError(formCupon, "visibleEnTienda") }}
+                    {{ formUtils.getFieldError(formCupon, "visibleParaCliente") }}
+                  </div>
+                  }
+                </div>
+
+                <label for="visibleParaVendedor" class="form-label col-sm-4">Visible para Vendedor:</label>
+                <div class="form-check form-switch col-sm">
+                  <input class="form-check-input" type="checkbox" formControlName="visibleParaVendedor"
+                    name="visibleParaVendedor" [checked]="cupon().visibleParaVendedor" />
+                  @if (formUtils.isValidField(formCupon, "visibleParaVendedor")) {
+                  <div class="alert alert-danger">
+                    {{ formUtils.getFieldError(formCupon, "visibleParaVendedor") }}
                   </div>
                   }
                 </div>

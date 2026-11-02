@@ -6,7 +6,6 @@ import { Categoria } from '../../../models/categoria';
 import { Color } from '../../../models/color';
 import { Material } from '../../../models/material';
 import { Producto } from '../../../models/producto';
-import { Uso } from '../../../models/uso';
 import { AlertService } from '../../../services/alert.service';
 import { AuthService } from '../../../services/auth.service';
 import { ProductoService } from '../../../services/producto.service';
@@ -26,7 +25,7 @@ export class FormProductoComponent implements OnInit, AfterViewInit {
   colores: Color[] = [];
   materiales: Material[] = [];
   categorias: Categoria[] = [];
-  usos: Uso[] = [];
+  //usos: Uso[] = [];
   titulo: string = "Crear Producto";
   errores: string[] = [];
   private imagenSeleccionada!: File;
@@ -77,10 +76,10 @@ export class FormProductoComponent implements OnInit, AfterViewInit {
   }
 
   cargarDatosAuxiliares(): void {
-    this.productoService.getColoresProducto().subscribe(resp => this.colores = resp);
+    //this.productoService.getColoresProducto().subscribe(resp => this.colores = resp);
     this.productoService.getMaterialesProducto().subscribe(resp => this.materiales = resp);
     this.CategoriaService.getCategoriasProducto().subscribe(resp => this.categorias = resp);
-    this.productoService.getUsosInternoProducto().subscribe(resp => this.usos = resp);
+    //this.productoService.getUsosInternoProducto().subscribe(resp => this.usos = resp);
   }
 
 

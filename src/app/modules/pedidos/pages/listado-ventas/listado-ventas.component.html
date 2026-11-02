@@ -1,155 +1,160 @@
 <div class="container">
-<!--   <mat-card class="card">
-     <mat-card-header class="card-header"> -->
-      <h4>Listado ventas</h4>
-<!--     </mat-card-header>
-    <mat-card-content class="mt-2"> -->
-      @if (pedidos().length > 0) {
-      @if (authService.hasRole('ROLE_SEARCH_VENTA')) {
-      <search-box-table (searchEvent)="searchEvent($event)"></search-box-table>
-      }
-      @if (authService.hasRole('ROLE_LIST_VENTAS')) {
-      <table mat-table [dataSource]="pedidos()" multiTemplateDataRows matSort (matSortChange)="sortChanged($event)"
-        [matSortActive]="params().active" [matSortDirection]="params().direction" matSortDisableClear>
+  <h4>Listado ventas</h4>
+  @if (pedidos().length > 0) {
+  @if (authService.hasRole('ROLE_SEARCH_VENTA')) {
+  <search-box-table (searchEvent)="searchEvent($event)"></search-box-table>
+  }
+  @if (authService.hasRole('ROLE_LIST_VENTAS')) {
+  <table mat-table [dataSource]="pedidos()" multiTemplateDataRows matSort (matSortChange)="sortChanged($event)"
+    [matSortActive]="params().active" [matSortDirection]="params().direction" matSortDisableClear>
 
-        <ng-container matColumnDef="id">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header> Id </th>
-          <td mat-cell *matCellDef="let element"> {{element.id}} </td>
-        </ng-container>
-        <ng-container matColumnDef="nomApellRz">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header> Persona </th>
-          <td mat-cell *matCellDef="let element"> {{element.persona.nomApellRz}} </td>
-        </ng-container>
-        <ng-container matColumnDef="createAt">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header> Fch Creación </th>
-          <td mat-cell *matCellDef="let element"> {{element.createAt }} </td>
-        </ng-container>
-        <ng-container matColumnDef="entregadoEn">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header> Fch Entrega </th>
-          <td mat-cell *matCellDef="let element"> {{element.entregadoEn }} </td>
-        </ng-container>
-        <ng-container matColumnDef="precioTotal">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Precio</th>
-          <td mat-cell *matCellDef="let element"> {{element.precioTotal | currency: 'PEN'}} </td>
-        </ng-container>
-        <ng-container matColumnDef="saldoPedido">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Saldo</th>
-          <td mat-cell *matCellDef="let element"> {{element.saldoPedido | currency: 'PEN'}} </td>
-        </ng-container>
-        <ng-container matColumnDef="username">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header> Usuario </th>
-          <td mat-cell *matCellDef="let element"> {{element.username}}</td>
-        </ng-container>
-        <ng-container matColumnDef="estado">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header> Estado </th>
-          <td mat-cell *matCellDef="let element">
-            <span class="celda-estado {{element.estadoPedido.color}}">{{element.estadoPedido.estado}} </span>
-          </td>
-        </ng-container>
-        <!--         <ng-container matColumnDef="acciones">
-          <th mat-header-cell *matHeaderCellDef> Acciones </th>
-          <td mat-cell *matCellDef="let element">
-             <div class="d-flex flex-row">
-              <button *ngIf="authService.hasRole('ROLE_REGISTER_PAGO_PEDIDO')" mat-icon-button color="warn"
-                [routerLink]="['/movimientos', element.id]" matTooltip="Pagar">
-                <mat-icon>price_change</mat-icon>
-              </button>
-             </div>
-           </td>
-        </ng-container> -->
+    <ng-container matColumnDef="id">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Id </th>
+      <td mat-cell *matCellDef="let element"> {{element.id}} </td>
+    </ng-container>
+    <ng-container matColumnDef="apellNomRznSocial">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Persona </th>
+      <td mat-cell *matCellDef="let element"> {{element.persona.apellNomRznSocial}} </td>
+    </ng-container>
+    <ng-container matColumnDef="createAt">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Fch Creación </th>
+      <td mat-cell *matCellDef="let element">
+        @if (element.createAt) {
+        {{ element.createAt | date: 'dd/MM/yyyy' }}
+        } @else {
+        -
+        }
 
-        <ng-container matColumnDef="expand">
-          <th mat-header-cell *matHeaderCellDef aria-label="row actions">Acciones</th>
-          <td mat-cell *matCellDef="let element">
-            <div class="d-flex flex-row">
-              <button *ngIf="authService.hasRole('ROLE_REGISTER_PAGO_PEDIDO')" mat-icon-button color="warn"
-                [routerLink]="['/movimientos', element.id]" matTooltip="Pagar">
-                <mat-icon>price_change</mat-icon>
-              </button>
-              <button *ngIf="authService.hasRole('ROLE_VIEW_DETAILS_VENTA')" matIconButton aria-label="expand row"
-                (click)="toggle(element);
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="entregadoEn">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Fch Entrega </th>
+      <td mat-cell *matCellDef="let element">
+        @if (element.entregadoEn) {
+        {{ element.entregadoEn | date: 'dd/MM/yyyy HH:mm' }}
+        } @else {
+        -
+        }
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="precioTotal">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Precio</th>
+      <td mat-cell *matCellDef="let element"> {{element.precioTotal | currency: 'PEN'}} </td>
+    </ng-container>
+    <ng-container matColumnDef="saldoPedido">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Saldo</th>
+      <td mat-cell *matCellDef="let element"> {{element.saldoPedido | currency: 'PEN'}} </td>
+    </ng-container>
+    <ng-container matColumnDef="username">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Usuario </th>
+      <td mat-cell *matCellDef="let element"> {{element.username}}</td>
+    </ng-container>
+    <ng-container matColumnDef="estado">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Estado </th>
+      <td mat-cell *matCellDef="let element">
+        <span class="celda-estado" [style.background-color]="getEstadoPedido(element.estadoPedido).hexadecimal">
+          {{getEstadoPedido(element.estadoPedido).estado}}
+        </span>
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="expand">
+      <th mat-header-cell *matHeaderCellDef aria-label="row actions">Acciones</th>
+      <td mat-cell *matCellDef="let element">
+        <div class="d-flex flex-row">
+          <button mat-icon-button color="warn" matTooltip="Anular pedido" (click)="anularPedido(element.id)"
+            [disabled]="element.isAnuladoDisabled">
+            <mat-icon>content_paste_off</mat-icon>
+          </button>
+          <button *ngIf="authService.hasRole('ROLE_REGISTER_PAGO_PEDIDO')" mat-icon-button color="primary"
+            [routerLink]="['/movimientos', element.id]" matTooltip="Pagar">
+            <mat-icon>price_change</mat-icon>
+          </button>
+          <button *ngIf="authService.hasRole('ROLE_VIEW_DETAILS_VENTA')" matIconButton aria-label="expand row" (click)="toggle(element);
              $event.stopPropagation()" class="toggle-button" [class.toggle-button-expanded]="isExpanded(element)">
-                <mat-icon>keyboard_arrow_down</mat-icon>
-              </button>
-            </div>
-          </td>
-        </ng-container>
+            <mat-icon>keyboard_arrow_down</mat-icon>
+          </button>
+        </div>
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="expandedDetail">
+      <td mat-cell *matCellDef="let element" [attr.colspan]="displayedColumnsLargeExpand.length">
+        <div class="element-detail-wrapper" [class.element-detail-wrapper-expanded]="isExpanded(element)">
+          <div class="element-detail">
+            <app-detalle-pedido [inPedido]="element" />
+          </div>
+        </div>
+      </td>
+    </ng-container>
 
-        <ng-container matColumnDef="expandedDetail">
-          <td mat-cell *matCellDef="let element" [attr.colspan]="displayedColumnsLargeExpand.length">
-            <div class="element-detail-wrapper" [class.element-detail-wrapper-expanded]="isExpanded(element)">
-              <div class="element-detail">
-                <app-detalle-pedido [inPedido]="element" />
-              </div>
-            </div>
-          </td>
-        </ng-container>
+    <tr mat-header-row *matHeaderRowDef="displayedColumnsLargeExpand"></tr>
+    <tr mat-row *matRowDef="let element; columns: displayedColumnsLargeExpand;" class="element-row"
+      [class.expanded-row]="isExpanded(element)" (click)="toggle(element)">
+    </tr>
+    <tr mat-row *matRowDef="let row; columns: ['expandedDetail']; when: isExpansionDetailRow" class="detail-row">
+    </tr>
 
-        <tr mat-header-row *matHeaderRowDef="displayedColumnsLargeExpand"></tr>
-        <tr mat-row *matRowDef="let element; columns: displayedColumnsLargeExpand;" class="element-row"
-          [class.expanded-row]="isExpanded(element)" (click)="toggle(element)">
-        </tr>
-        <tr mat-row *matRowDef="let row; columns: ['expandedDetail']; when: isExpansionDetailRow" class="detail-row">
-        </tr>
+  </table>
+  }
 
-      </table>
-      }
+  @else if (authService.hasRole('ROLE_LIST_MY_ORDERS')) {
 
-      @else if (authService.hasRole('ROLE_LIST_MY_ORDERS')) {
+  <table mat-table [dataSource]="pedidos()" multiTemplateDataRows matSort (matSortChange)="sortChanged($event)"
+    [matSortActive]="params().active" [matSortDirection]="params().direction" matSortDisableClear>
+    <ng-container matColumnDef="entregadoEn">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Entrega </th>
+      <td mat-cell *matCellDef="let element">
+        @if (element.entregadoEn) {
+        {{ element.entregadoEn | date: 'dd/MM/yyyy HH:mm' }}
+        } @else {
+        -
+        }
+      </td>
+    </ng-container>
 
-      <table mat-table [dataSource]="pedidos()" multiTemplateDataRows matSort (matSortChange)="sortChanged($event)"
-        [matSortActive]="params().active" [matSortDirection]="params().direction" matSortDisableClear>
-        <ng-container matColumnDef="entregadoEn">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header> Entrega </th>
-          <td mat-cell *matCellDef="let element"> {{element.entregadoEn}} </td>
-        </ng-container>
+    <ng-container matColumnDef="precioTotal">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Precio</th>
+      <td mat-cell *matCellDef="let element"> {{element.precioTotal | currency: 'PEN'}} </td>
+    </ng-container>
 
-        <ng-container matColumnDef="precioTotal">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Precio</th>
-          <td mat-cell *matCellDef="let element"> {{element.precioTotal | currency: 'PEN'}} </td>
-        </ng-container>
+    <ng-container matColumnDef="saldoPedido">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Saldo</th>
+      <td mat-cell *matCellDef="let element"> {{element.saldoPedido | currency: 'PEN'}} </td>
+    </ng-container>
 
-        <ng-container matColumnDef="saldoPedido">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Saldo</th>
-          <td mat-cell *matCellDef="let element"> {{element.saldoPedido | currency: 'PEN'}} </td>
-        </ng-container>
-
-        <ng-container *ngIf="authService.hasRole('ROLE_VIEW_DETAILS_VENTA')" matColumnDef="expand">
-          <th mat-header-cell *matHeaderCellDef aria-label="row actions">Acciones</th>
-          <td mat-cell *matCellDef="let element">
-              <button matIconButton aria-label="expand row" (click)="toggle(element);
+    <ng-container matColumnDef="expand">
+      <th mat-header-cell *matHeaderCellDef aria-label="row actions">Acciones</th>
+      <td mat-cell *matCellDef="let element">
+        <button *ngIf="authService.hasRole('ROLE_VIEW_DETAILS_VENTA')" matIconButton aria-label="expand row" (click)="toggle(element);
              $event.stopPropagation()" class="toggle-button" [class.toggle-button-expanded]="isExpanded(element)">
-                <mat-icon>keyboard_arrow_down</mat-icon>
-              </button>
-          </td>
-        </ng-container>
+          <mat-icon>keyboard_arrow_down</mat-icon>
+        </button>
+      </td>
+    </ng-container>
 
-        <ng-container matColumnDef="expandedDetail">
-          <td mat-cell *matCellDef="let element" [attr.colspan]="displayedColumnsShortExpand.length">
-            <div class="element-detail-wrapper" [class.element-detail-wrapper-expanded]="isExpanded(element)">
-              <div class="element-detail">
-                <app-detalle-pedido [inPedido]="element" />
-              </div>
-            </div>
-          </td>
-        </ng-container>
-        <tr mat-header-row *matHeaderRowDef="displayedColumnsShortExpand"></tr>
-        <tr mat-row *matRowDef="let element; columns: displayedColumnsShortExpand;" class="element-row"
-          [class.expanded-row]="isExpanded(element)" (click)="toggle(element)">
-        </tr>
-        <tr mat-row *matRowDef="let row; columns: ['expandedDetail']; when: isExpansionDetailRow" class="detail-row">
-        </tr>
-      </table>
-      }
-      <mat-paginator [length]="page()?.totalElements ?? 0" [pageIndex]="page()?.number ?? 0"
-        [pageSizeOptions]="[10, 20, 40, 60]" [pageSize]="page()?.size ?? 10" (page)="pageChanged($event)"
-        showFirstLastButtons class="table-paginator">
-      </mat-paginator>
-      } @else {
-      <div class="alert alert-info mt-3">
-        No hay registros en la base de datos.
-      </div>
-      }
-<!--    </mat-card-content>
-   </mat-card> -->
- </div>
+    <ng-container matColumnDef="expandedDetail">
+      <td mat-cell *matCellDef="let element" [attr.colspan]="displayedColumnsShortExpand.length">
+        <div class="element-detail-wrapper" [class.element-detail-wrapper-expanded]="isExpanded(element)">
+          <div class="element-detail">
+            <app-detalle-pedido [inPedido]="element" />
+          </div>
+        </div>
+      </td>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="displayedColumnsShortExpand"></tr>
+    <tr mat-row *matRowDef="let element; columns: displayedColumnsShortExpand;" class="element-row"
+      [class.expanded-row]="isExpanded(element)" (click)="toggle(element)">
+    </tr>
+    <tr mat-row *matRowDef="let row; columns: ['expandedDetail']; when: isExpansionDetailRow" class="detail-row">
+    </tr>
+  </table>
+  }
+  <mat-paginator [length]="page()?.totalElements ?? 0" [pageIndex]="page()?.number ?? 0"
+    [pageSizeOptions]="[10, 20, 40, 60]" [pageSize]="page()?.size ?? 10" (page)="pageChanged($event)"
+    showFirstLastButtons class="table-paginator">
+  </mat-paginator>
+  } @else {
+  <div class="alert alert-info mt-3">
+    No hay registros que mostrar.
+  </div>
+  }
+</div>

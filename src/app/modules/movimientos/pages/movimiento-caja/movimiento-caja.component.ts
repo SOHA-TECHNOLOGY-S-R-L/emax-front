@@ -12,6 +12,8 @@ import { MovimientoService } from '../../../../services/movimiento.service';
 import { FormUtils } from '../../../../utils/form-utils';
 import { InfoCajaUsuarioComponent } from '../../../caja/components/info-caja-usuario/info-caja-usuario.component';
 import { AngularMaterialModule } from '../../../compartido/angular-material.module';
+import { CajaUsuarioService } from '../../../../services/caja-usuario.service';
+import { LauncherSfsService } from '../../../../services/launcher-sfs.service';
 
 @Component({
   selector: 'app-movimiento-caja',
@@ -23,7 +25,7 @@ import { AngularMaterialModule } from '../../../compartido/angular-material.modu
 })
 export class MovimientoCajaComponent {
 
-  private cajasService = inject(CajaService);
+  private cajaUsuarioService = inject(CajaUsuarioService);
   private movimientoService = inject(MovimientoService);
   private authService = inject(AuthService);
   private alertService = inject(AlertService);
@@ -82,7 +84,7 @@ export class MovimientoCajaComponent {
     }),
     stream: ({ params }) => {
       if (!params?.usuario?.username) return of(null);
-      return this.cajasService.getCajaUsuarioActiveByUserName(params.usuario.username)
+      return this.cajaUsuarioService.getCajaUsuarioActiveByUserName(params.usuario.username)
         .pipe(
           catchError(() => {
             return of(null);
@@ -192,7 +194,20 @@ export class MovimientoCajaComponent {
 
 
   onSubmitForm() {
-    //console.log("this.movimiento()", this.movimiento())
+    this.movimientoService.createMovimientoCaja(this.movimiento()).subscribe({
+
+      next: () => {
+        this.refreshCajaUsuario.update(v => v + 1);
+        this.selectTipoMovimiento.set('I');
+        this.frm.get('iMovimiento')!.setValue('I')
+        this.resetForm();
+        this.alertService.info(`Movimiento registrado con éxito!`, "Movimiento");
+      }
+    })
+  }
+
+
+  onSubmitConComprobante() {
     this.movimientoService.createMovimientoCaja(this.movimiento()).subscribe({
 
       next: () => {

@@ -20,7 +20,6 @@ export class MenuAppComponent {
   usuario = computed(() => {
     const isAutenticado = this.authService.isAuthenticated()
     if (!isAutenticado) { return }
-    //console.log(this.authService.usuario())
     return this.authService.usuario()
   })
 

@@ -1,27 +1,27 @@
+import { BreakpointObserver } from '@angular/cdk/layout';
 import { CommonModule } from '@angular/common';
-import { Component, computed, EventEmitter, inject, input, Output, output, Signal, signal } from '@angular/core';
+import { Component, computed, inject, output, Signal, signal } from '@angular/core';
 import { rxResource, toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
 import { Router, RouterModule } from '@angular/router';
 import { map, of, Subscription } from 'rxjs';
+import { environment } from '../../../../../environments/environment';
+import { TipoPedidoEnum } from '../../../../enums/tipo-pedido.enum';
+import { TipoPersonaEnum } from '../../../../enums/tipo-persona.enum';
+import { EnvioPedido } from '../../../../models/envio-pedido';
 import { ItemPedido } from '../../../../models/item-pedido';
+import { Pedido } from '../../../../models/pedido';
 import { StringToTitleWithAccents } from '../../../../pipes/StringToTitleWithAccents.pipe';
 import { AlertService } from '../../../../services/alert.service';
 import { AuthService } from '../../../../services/auth.service';
 import { ItemService } from '../../../../services/item.service';
 import { MultimediaHttpService } from '../../../../services/multimedia-http.service';
+import { PedidoService } from '../../../../services/pedido.service';
 import { PersonaService } from '../../../../services/persona.service';
 import { UsuarioService } from '../../../../services/usuario.service';
+import { construirPedidoRequest } from '../../../../utils/build-pedido';
 import { PrimeNgModule } from '../../../compartido/prime-ng.module';
 import { ProductoService } from './../../../../services/producto.service';
-import { BreakpointObserver, Breakpoints, MediaMatcher } from '@angular/cdk/layout';
-import { Pedido } from '../../../../models/pedido';
-import { PedidoService } from '../../../../services/pedido.service';
-import { CLIENTE_PROVEEDOR, COTIZACION_VENTA, PEDIDO_COMPRA, PEDIDO_VENTA } from '../../../../constants/constantes';
-import { EnvioPedido } from '../../../../models/envio-pedido';
-import { environment } from '../../../../../environments/environment';
-import { TipoPersona } from '../../../../models/tipo-persona';
 
 
 @Component({
@@ -56,15 +56,9 @@ export class CarritoItemProductoComponent {
 
   readonly items = computed(() =>
     this.itemService.buildItems(
-      this.rawItems(), this.envioPedido(), this.serviciosEnvio(), environment.API_URL_VER_IMAGEN, PEDIDO_VENTA
+      this.rawItems(), this.envioPedido(), this.serviciosEnvio(), environment.API_URL_VER_IMAGEN, TipoPedidoEnum.VENTA
     )
   );
-
-/*   readonly lstItemPedido = computed<ItemPedido[]>(() => {
-    const items = this.itemService.importeDeMargenCantidad([...this.items()])
-    return items
-  }
-  ); */
 
   readonly totalImporteBruto = computed(() =>
     this.itemService.calculateImporteBrutoFromItems(this.items())
@@ -84,6 +78,10 @@ export class CarritoItemProductoComponent {
 
   readonly totalPrecio = computed(() =>
     this.itemService.calculatePrecioCostoFromItems(this.items())
+  );
+
+  readonly isAutenticado = computed(() =>
+    this.authService.isAuthenticated()
   );
 
   readonly usuarioResource = rxResource({
@@ -106,21 +104,19 @@ export class CarritoItemProductoComponent {
     const persona = this.personaResource.value();
     if (!persona) return true;
 
-    return persona.tipoPersonaId === CLIENTE_PROVEEDOR;
+    return persona.tipoPersona === TipoPersonaEnum.CLIENTE_PROVEEDOR;
   });
 
-  readonly isAutenticado = computed(() =>
-    this.authService.isAuthenticated()
-  );
+
 
   btnNombre = computed(() => {
-    if (!this.isAutenticado() || this.isCliente()) {
+    if (/*!this.isAutenticado() ||*/ this.isCliente()) {
       return 'Seguir comprando';
     }
     return 'Buscar productos';
   })
 
-  tipoPedidoCotizacionVentaResource = rxResource({ stream: () => this.pedidoService.getTipoPedido(COTIZACION_VENTA) });
+  //tipoPedidoCotizacionVentaResource = rxResource({ stream: () => this.pedidoService.getTipoPedido(TipoPedido.COTIZACION_VENTA) });
 
 
   item!: ItemPedido;
@@ -153,32 +149,23 @@ export class CarritoItemProductoComponent {
     this.itemService.setItems(nuevosItems);
   }
 
-  irRealizarPedido() {
-    //this.router.navigate(['/tienda/pedido-persona-online-finalizado', this.tipoPedidoId()]);
-
-    // 3-ORIGEN EN TIENDA -->
-    // 4-ORIGEN EN online -->
+/*   irRealizarPedido() {
     if (!this.isAutenticado() || this.isCliente()) {
-      this.router.navigate(['/tienda/pedido-persona-online-finalizado', 4]);
-
-      // this.router.navigate(['/tienda/productos-categoria', 'tienda']);
+      this.router.navigate(['/tienda/pedido-persona-online-finalizado', OrigenPedidoEnum.ONLINE]);
       return;
     }
-
-    this.router.navigate(['/tienda/pedido-persona-online-finalizado', 3]);
-
-    /*     if (this.authService.hasRole('ROLE_REGISTER_VENTA')) {
-          this.router.navigate(['pedidos/item-producto-persona-tienda']);
-        } else {
-          this.alertService.info("Usuario sin permisos para venta al cliente", "Ir a tienda")
-        } */
-
-  }
+    this.router.navigate(['/tienda/pedido-persona-online-finalizado', OrigenPedidoEnum.TIENDA_FISICA]);
+  } */
 
 
 
   seguirComprando() {
-    if (!this.isAutenticado() || this.isCliente()) {
+/*     if (!this.isAutenticado() || this.isCliente()) {
+      this.router.navigate(['/tienda/productos-categoria', 'tienda']);
+      return;
+    } */
+
+    if (this.isCliente()) {
       this.router.navigate(['/tienda/productos-categoria', 'tienda']);
       return;
     }
@@ -208,10 +195,11 @@ export class CarritoItemProductoComponent {
       //precioBrutoTotal: this.subTotal(),
       descuentoPorOfertaTotal: this.totalImporteOfertaDescuento(),
       precioTotal: this.totalPrecio(),
-      tipoPedido: this.tipoPedidoCotizacionVentaResource.value()!
+      tipoPedido: TipoPedidoEnum.COTIZACION_VENTA
     }));
 
-    this.pedidoService.downloadOrderToPersonaInPDF(this.cotizacion())
+
+    this.pedidoService.downloadOrderToPersonaInPDF(construirPedidoRequest(this.cotizacion()))
       .subscribe(response => {
 
         const blob = response.body;

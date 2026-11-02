@@ -1,19 +1,10 @@
-import { CajaUsuario } from "./caja-usuario";
-import { Pedido } from "./pedido";
-import { TipoMovimientoPedido } from "./tipo-movimiento-pedido";
-import { TipoPago } from "./tipo-pago";
+import { MovimientoInicialEnum } from '../enums/movimiento-inicial.enum';
 
 
 export class Movimiento {
-  //id!:number;
-  //pedido!: Pedido;
-	//cajaUsuario!: CajaUsuario;
+  //id!: number;
   tipoPagoId!:number;
-  tipoMovimientoPedidoId!: number;
-  //tipoPago!: TipoPago;
-  //tipoMovimientoPedido!: TipoMovimientoPedido;
+  movimientoInicial!: MovimientoInicialEnum;
   ingresoDinero:number=0;
   egresoDinero:number=0;
-  //saldoDinero!:number;
-
 }

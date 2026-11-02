@@ -35,7 +35,7 @@
         <mat-form-field>
           <mat-label>Usuarios</mat-label>
           <mat-select matNativeControl formControlName="usuariosId" multiple>
-            <mat-option *ngFor="let persona of personasLst" value={{persona.usuarioId}}>{{persona.nomApellRz}}</mat-option>
+            <mat-option *ngFor="let persona of personasLst" value={{persona.usuarioId}}>{{persona.apellNomRznSocial}}</mat-option>
           </mat-select>
         </mat-form-field>
 <!--         <mat-form-field>
@@ -44,7 +44,7 @@
           <mat-autocomplete #auto="matAutocomplete" [displayWith]="mostrarApellidoPersona"
             (optionSelected)="seleccionar($event)">
             <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
-              {{option.nomApellRz}}
+              {{option.apellNomRznSocial}}
             </mat-option>
           </mat-autocomplete>
         </mat-form-field> -->

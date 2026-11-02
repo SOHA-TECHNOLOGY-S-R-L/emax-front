@@ -9,34 +9,35 @@
         <li class="list-group-item active">Información de movimiento</li>
       </ul>
       <div class="d-flex flex-row justify-content-center">
-        <ng-container *ngIf="pedidoResource.value()!.tipoPedidoId==PEDIDO_VENTA">
-          <div *ngIf="selectTipoMovimiento()=='I'" style="margin-right: 5px;">
-            <mat-card>
-              <mat-card-header>
-                <mat-card-title>SALDO NETO</mat-card-title>
-              </mat-card-header>
-              <mat-card-content>
-                <!--                 <p class="black">{{pedidoResource.value()!.saldoPedido| currency: 'PEN'}}</p>
+
+        @if (pedidoResource.value()?.tipoPedido==tipoPedidoEnum.VENTA) {
+        <div *ngIf="selectMovimiento()==MovimientoInicialEnum.INGRESO" style="margin-right: 5px;">
+          <mat-card>
+            <mat-card-header>
+              <mat-card-title>SALDO NETO</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <!--                 <p class="black">{{pedidoResource.value()!.saldoPedido| currency: 'PEN'}}</p>
  -->
-                <p class="black">{{newSaldoCalculado() | currency: 'PEN'}}</p>
-              </mat-card-content>
-            </mat-card>
-          </div>
-          <div *ngIf="selectTipoMovimiento()=='E'" style="margin-right: 5px;">
-            <mat-card>
-              <mat-card-header>
-                <mat-card-title>FLUJO EFECTIVO</mat-card-title>
-              </mat-card-header>
-              <mat-card-content>
-                <!--                 <p class="black">{{pedidoResource.value()!.flujoEfectivoTotal| currency: 'PEN'}}</p>
+              <p class="black">{{newSaldoCalculado() | currency: 'PEN'}}</p>
+            </mat-card-content>
+          </mat-card>
+        </div>
+        <div *ngIf="selectMovimiento()==MovimientoInicialEnum.EGRESO" style="margin-right: 5px;">
+          <mat-card>
+            <mat-card-header>
+              <mat-card-title>FLUJO EFECTIVO</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <!--                 <p class="black">{{pedidoResource.value()!.flujoEfectivoTotal| currency: 'PEN'}}</p>
  -->
-                <p class="black">{{newSaldoCalculado() | currency: 'PEN'}}</p>
-              </mat-card-content>
-            </mat-card>
-          </div>
-        </ng-container>
-        <ng-container *ngIf="pedidoResource.value()!.tipoPedidoId==PEDIDO_COMPRA">
-          <div *ngIf="selectTipoMovimiento()=='E'" style="margin-right: 5px;">
+              <p class="black">{{newSaldoCalculado() | currency: 'PEN'}}</p>
+            </mat-card-content>
+          </mat-card>
+        </div>
+        }
+        <ng-container *ngIf="pedidoResource.value()!.tipoPedido==tipoPedidoEnum.COMPRA">
+          <div *ngIf="selectMovimiento()==MovimientoInicialEnum.EGRESO" style="margin-right: 5px;">
             <mat-card>
               <mat-card-header>
                 <mat-card-title>SALDO NETO</mat-card-title>
@@ -49,7 +50,7 @@
               </mat-card-content>
             </mat-card>
           </div>
-          <div *ngIf="selectTipoMovimiento()=='I'" style="margin-right: 5px;">
+          <div *ngIf="selectMovimiento()==MovimientoInicialEnum.INGRESO" style="margin-right: 5px;">
             <mat-card>
               <mat-card-header>
                 <mat-card-title>FLUJO EFECTIVO</mat-card-title>
@@ -87,10 +88,11 @@
       }
     </div>
     <div class="col-12 col-sm-6">
-      <form [formGroup]="frm" (ngSubmit)="onSubmitForm()">
+      <form [formGroup]="frm">
         <ul class="list-group my-2">
           <li class="list-group-item active">
-            <b>{{tituloTipoPedido()}}</b></li>
+            <b>{{ etiquetasPedido[pedidoResource.value()?.tipoPedido!] }}</b>
+          </li>
         </ul>
         <ng-container>
           <mat-form-field>
@@ -101,11 +103,11 @@
         </ng-container>
         @if(pedidoResource.value()) {
         <mat-radio-group class="example-full-width" name="iMovimiento" formControlName="iMovimiento"
-          (change)="selectTipoMovimiento.set($event.value)">
+          (change)="selectMovimiento.set($event.value)">
           <mat-radio-button value="I">Ingreso</mat-radio-button>
           <mat-radio-button value="E">Egreso</mat-radio-button>
         </mat-radio-group>
-        <mat-form-field class="example-full-width">
+        <!--         <mat-form-field class="example-full-width">
           <mat-label>Tipo movimiento</mat-label>
           <mat-select name="tipoMovimientoPedidoId" formControlName="tipoMovimientoPedidoId">
             <mat-option *ngFor="let tipoMovimientoPedido of tipoMovimientosPedidoLst()"
@@ -113,29 +115,29 @@
               {{tipoMovimientoPedido.movimiento}}
             </mat-option>
           </mat-select>
-        </mat-form-field>
-        <ng-container *ngIf="pedidoResource.value()!.tipoPedidoId==PEDIDO_VENTA">
-          <mat-form-field *ngIf="this.selectTipoMovimiento()=='I'">
+        </mat-form-field> -->
+        <ng-container *ngIf="pedidoResource.value()!.tipoPedido==tipoPedidoEnum.VENTA">
+          <mat-form-field *ngIf="this.selectMovimiento()==MovimientoInicialEnum.INGRESO">
             <mat-label>SALDO NETO</mat-label>
             <input matInput type="text" name="saldoPedido" formControlName="saldoPedido">
           </mat-form-field>
-          <mat-form-field *ngIf="this.selectTipoMovimiento()=='E'">
+          <mat-form-field *ngIf="this.selectMovimiento()==MovimientoInicialEnum.EGRESO">
             <mat-label>FLUJO EFECTIVO</mat-label>
             <input matInput type="text" name="flujoEfectivoTotal" formControlName="flujoEfectivoTotal">
           </mat-form-field>
         </ng-container>
-        <ng-container *ngIf="pedidoResource.value()!.tipoPedidoId==PEDIDO_COMPRA">
-          <mat-form-field *ngIf="this.selectTipoMovimiento()=='E'">
+        <ng-container *ngIf="pedidoResource.value()!.tipoPedido==tipoPedidoEnum.COMPRA">
+          <mat-form-field *ngIf="this.selectMovimiento()==MovimientoInicialEnum.EGRESO">
             <mat-label>SALDO NETO</mat-label>
             <input matInput type="text" name="saldoPedido" formControlName="saldoPedido">
           </mat-form-field>
-          <mat-form-field *ngIf="this.selectTipoMovimiento()=='I'">
+          <mat-form-field *ngIf="this.selectMovimiento()==MovimientoInicialEnum.INGRESO">
             <mat-label>FLUJO EFECTIVO</mat-label>
             <input matInput type="text" name="flujoEfectivoTotal" formControlName="flujoEfectivoTotal">
           </mat-form-field>
         </ng-container>
-        <ng-container *ngIf="pedidoResource.value()!.persona!.id">
-          <mat-form-field *ngIf="this.selectTipoMovimiento()=='I'">
+        <ng-container *ngIf="personaDelPedido()!.id">
+          <mat-form-field *ngIf="this.selectMovimiento()==MovimientoInicialEnum.INGRESO">
             <mat-label>INGRESO DINERO</mat-label>
             <input matInput type="number" name="ingresoDinero" formControlName="ingresoDinero">
             @if (formUtils.isValidField(frm, "ingresoDinero")) {
@@ -144,7 +146,7 @@
             </mat-error>
             }
           </mat-form-field>
-          <mat-form-field *ngIf="this.selectTipoMovimiento()=='E'">
+          <mat-form-field *ngIf="this.selectMovimiento()==MovimientoInicialEnum.EGRESO">
             <mat-label>EGRESO DINERO</mat-label>
             <input matInput type="number" name="egresoDinero" formControlName="egresoDinero">
             @if (formUtils.isValidField(frm, "egresoDinero")) {
@@ -170,12 +172,40 @@
         </mat-form-field>
 
 
-        <div class="d-flex justify-content-end">
-          <button type="submit" color="primary" mat-raised-button cdkFocusInitial [disabled]="!frm.valid">
+        <div class="d-flex justify-content-around">
+
+          <launcher-sfs [inPathFacturador]="caja()?.pathFacturador" [inDisabledBtn]="!cajaActiva()"></launcher-sfs>
+
+          <button type="button" class="btn btn-secondary" (click)="goToListado()" [disabled]="!this.isFromPedidos()"> Ir
+            a listado</button>
+
+          @if(this.newPedido() == null ){
+          <button type="button" class="btn btn-secondary" (click)="regitrarMovimiento()" [disabled]="!frm.valid">
+            <i class="fa-solid fa-money-check-dollar"></i>
             Registrar movimiento</button>
-          <!--           <button color="primary" mat-raised-button [routerLink]="['/pedidos']">
-            Cancelar
-          </button> -->
+          }
+
+          @if(this.selectMovimiento()=='I' && this.newPedido() != null){
+            @if(!this.identificadorComprobante()){
+            <button type="button" class="btn btn-warning" (click)="generarComprobanteVenta()"
+              [disabled]="isInvalidToComprobante()">Generar Comprobante</button>
+            } @else {
+            <button type="button" class="btn btn-success" (click)="impirmirComprobanteVenta()"
+              [disabled]="isInvalidToComprobante()">
+              <i class="fa-solid fa-print"></i>
+              Imprimir Comprobante</button>
+            }
+          }
+
+
+
+          @if(this.selectMovimiento()=='E' && this.newPedido() != null ){
+          <button type="button" class="btn btn-secondary" (click)="generarComprobanteNotaCredito()"
+            [disabled]="isInvalidToComprobante()">
+            Generar Nota de crédito </button>
+          }
+
+
         </div>
         }
 

@@ -5,15 +5,15 @@
         <th>Eliminar</th>
         <th>Imagen</th>
         <th>Producto</th>
-        @if(inTipoPedidoId() === PEDIDO_VENTA) {<th>Val Unit</th>}
-<!--         @if(inTipoPedidoId() === PEDIDO_COMPRA) {<th>Costo U</th>}
+        @if(inTipoPedidoId() === TipoPedido.VENTA) {<th>Val Unit</th>}
+<!--         @if(inTipoPedidoId() === COMPRA) {<th>Costo U</th>}
  -->        <th>Cantidad</th>
-        @if(inTipoPedidoId() === PEDIDO_VENTA) {<th>Importe</th>}
-        @if(inTipoPedidoId() === PEDIDO_VENTA) {<th>Desc</th>}
-        @if(inTipoPedidoId() === PEDIDO_VENTA) {<th>IGV</th>}
-        @if(inTipoPedidoId() === PEDIDO_VENTA) {<th>Imp Venta</th>}
+        @if(inTipoPedidoId() === TipoPedido.VENTA) {<th>Importe</th>}
+        @if(inTipoPedidoId() === TipoPedido.VENTA) {<th>Desc</th>}
+        @if(inTipoPedidoId() === TipoPedido.VENTA) {<th>IGV</th>}
+        @if(inTipoPedidoId() === TipoPedido.VENTA) {<th>Imp Venta</th>}
 
-        @if(inTipoPedidoId() === PEDIDO_COMPRA) {<th>Imp Compra</th>}
+        @if(inTipoPedidoId() === TipoPedido.COMPRA) {<th>Imp Compra</th>}
       </tr>
     </thead>
     <tbody>
@@ -32,7 +32,7 @@
           @if(!inEnvioPedido()){
           <ul>
             <li><b>Medidas: </b>{{item.producto.medidas}}
-              <b>Color: </b>{{ findColorById( item.producto.colorId! ) }}
+              <b>Color: </b>{{  colorDetails[item.producto.color!].color }}
             </li>
             <li><b>Material: </b>{{ findMaterialById( item.producto.materialId! ) }}
               <b>Peso: </b>{{item.producto.peso}}
@@ -40,29 +40,29 @@
           </ul>
           }
         </td>
-        @if(inTipoPedidoId() === PEDIDO_VENTA) {<td>{{item.producto.valorBrutoUnitarioSelect| currency:'PEN'}}</td>}
-        <!-- @if(inTipoPedidoId() === PEDIDO_COMPRA) {<td>{{item.producto.costoUnitario | currency:'PEN'}}</td>} -->
+        @if(inTipoPedidoId() === TipoPedido.VENTA) {<td>{{item.valorBrutoUnitarioItem| currency:'PEN'}}</td>}
+        <!-- @if(inTipoPedidoId() === COMPRA) {<td>{{item.producto.costoUnitario | currency:'PEN'}}</td>} -->
         <td>
-          @if(inTipoPedidoId() === PEDIDO_VENTA) {
+          @if(inTipoPedidoId() === TipoPedido.VENTA) {
           <input style="width:80px" type="number" name="cantidad" aria-describedby="cantidad"
             [step]="item.producto.gruposDe" [min]="item.producto.minCantidadPedido"
             [max]="item.producto.maxCantidadPedido" [value]="item.cantidad"
             (input)="actualizarCantidad(item.producto.id, $event); " (keydown.enter)="$event.preventDefault()" />
           }
-          @if(inTipoPedidoId() === PEDIDO_COMPRA) {
+          @if(inTipoPedidoId() === TipoPedido.COMPRA) {
           <input style="width:80px" type="number" name="cantidad" aria-describedby="cantidad" min="1"
             [value]="item.cantidad" (input)="actualizarCantidad(item.producto.id, $event); " (keydown.enter)="$event.preventDefault()"/>
           }
         </td>
 
 
-        @if(inTipoPedidoId() === PEDIDO_VENTA) {<td>{{item.importeBrutoItem| currency:'PEN'}}</td>}
-        @if(inTipoPedidoId() === PEDIDO_VENTA) {<td>{{(item.descuentoPorOfertaItem + item.descuentoPorCuponItem)|
+        @if(inTipoPedidoId() === TipoPedido.VENTA) {<td>{{item.importeBrutoItem| currency:'PEN'}}</td>}
+        @if(inTipoPedidoId() === TipoPedido.VENTA) {<td>{{(item.descuentoPorOfertaItem + item.descuentoPorCuponItem)|
           currency:'PEN'}}</td>}
-        @if(inTipoPedidoId() === PEDIDO_VENTA) {<td>{{item.igvItem| currency:'PEN'}}</td>}
+        @if(inTipoPedidoId() === TipoPedido.VENTA) {<td>{{item.igvItem| currency:'PEN'}}</td>}
 
-        @if(inTipoPedidoId() === PEDIDO_VENTA) {<td>{{item.precioCostoItem| currency:'PEN'}}</td>}
-        @if(inTipoPedidoId() === PEDIDO_COMPRA) {
+        @if(inTipoPedidoId() === TipoPedido.VENTA) {<td>{{item.precioCostoItem| currency:'PEN'}}</td>}
+        @if(inTipoPedidoId() === TipoPedido.COMPRA) {
         <td>
           <input style="width:80px" type="number" name="precioCostoItem" min="0.01" [value]="item.precioCostoItem"
             (input)="actualizarPrecioCostoItem(item.producto.id, $event); "
@@ -94,13 +94,13 @@
       <li class="list-group-item d-flex justify-content-between align-items-start">
         <div class="me-auto">
           <span class="cabecera">Cantidad:</span>
-          @if(inTipoPedidoId() === PEDIDO_VENTA) {
+          @if(inTipoPedidoId() === TipoPedido.VENTA) {
           <input style="width:80px" type="number" name="cantidad" aria-describedby="cantidad"
             [step]="item.producto.gruposDe" [min]="item.producto.minCantidadPedido"
             [max]="item.producto.maxCantidadPedido" [value]="item.cantidad"
             (input)="actualizarCantidad(item.producto.id, $event); " (keydown.enter)="$event.preventDefault()" />
           }
-          @if(inTipoPedidoId() === PEDIDO_COMPRA) {
+          @if(inTipoPedidoId() === TipoPedido.COMPRA) {
           <input style="width:80px" type="number" name="cantidad" aria-describedby="cantidad" min="1"
             [value]="item.cantidad" (input)="actualizarCantidad(item.producto.id, $event); " (keydown.enter)="$event.preventDefault()" />
           }
@@ -109,16 +109,16 @@
       <li class="list-group-item d-flex justify-content-between align-items-start">
         <div class="me-auto">
           <span class="cabecera">Precio: </span>
-          @if(inTipoPedidoId() === PEDIDO_VENTA) { {{item.producto.precioUnitarioSelect| currency:'PEN'}} }
-          <!-- @if(inTipoPedidoId() === PEDIDO_COMPRA) { {{item.producto.costoUnitario| currency:'PEN'}} } -->
+          @if(inTipoPedidoId() === TipoPedido.VENTA) { {{item.precioUnitarioItem| currency:'PEN'}} }
+          <!-- @if(inTipoPedidoId() === COMPRA) { {{item.producto.costoUnitario| currency:'PEN'}} } -->
           <br>
         </div>
       </li>
       <li class="list-group-item d-flex justify-content-between align-items-start">
         <div class="me-auto">
           <span class="cabecera">Subtotal: </span>
-          @if(inTipoPedidoId() === PEDIDO_VENTA) { {{item.precioCostoItem| currency:'PEN'}} }
-          @if(inTipoPedidoId() === PEDIDO_COMPRA) {
+          @if(inTipoPedidoId() === TipoPedido.VENTA) { {{item.precioCostoItem| currency:'PEN'}} }
+          @if(inTipoPedidoId() === TipoPedido.COMPRA) {
           <input style="width:80px" type="number" name="precioCostoItem" min="0.01" [value]="item.precioCostoItem"
             (input)="actualizarPrecioCostoItem(item.producto.id, $event); "
             (keydown.enter)="$event.preventDefault()" />
@@ -128,7 +128,7 @@
     </ul>
   </div>
   }
-  <!--   @if(inTipoPedidoId() === PEDIDO_VENTA) {
+  <!--   @if(inTipoPedidoId() === VENTA) {
   <div class="col">
     <ul class="list-group my-1">
       <li class="list-group-item d-flex justify-content-between align-items-start">
