@@ -8,13 +8,7 @@ import { Component } from '@angular/core';
 })
 export class UbicanosClienteComponent {
 
-/*   private pedidoService = inject(PedidoService);
-  pedido = new Pedido(); */
-
-  constructor() {
-/*     this.pedido = { ...this.pedidoService.pedido };
-    console.log(this.pedido); */
-  }
+  constructor() {}
 
 
 }

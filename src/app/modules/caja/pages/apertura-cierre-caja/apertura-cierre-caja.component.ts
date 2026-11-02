@@ -11,11 +11,11 @@ import { AlertService } from '../../../../services/alert.service';
 import { AuthService } from '../../../../services/auth.service';
 import { CajaUsuarioService } from '../../../../services/caja-usuario.service';
 import { CajaService } from '../../../../services/caja.service';
+import { LauncherSfsService } from '../../../../services/launcher-sfs.service';
 import { UsuarioService } from '../../../../services/usuario.service';
 import { AngularMaterialModule } from '../../../compartido/angular-material.module';
 import { LauncherSfsComponent } from "../../../compartido/launcher-sfs/launcher-sfs.component";
 import { InfoCajaUsuarioComponent } from "../../components/info-caja-usuario/info-caja-usuario.component";
-import { LauncherSfsService } from '../../../../services/launcher-sfs.service';
 
 
 @Component({
@@ -146,14 +146,7 @@ export class AperturaCierreCajaComponent {
 
   constructor() { }
 
-  /*   asignarCajaUsuario(cajaId: number) {
-      this.selectedCajaId.set(cajaId);
-      this.seleccionarCaja(cajaId)
-
-    } */
-
   seleccionarCaja(cajaId: number) {
-    //debugger;
     //this.selectedCajaId.set(cajaId);
     const cajas = this.cajasResource.value();
     if (!cajas) { return; }
@@ -166,14 +159,6 @@ export class AperturaCierreCajaComponent {
 
   abrirCaja() {
 
-    /*     this.caja.update((cj) => {
-          if (!cj) return cj;
-          return {
-            ...cj,
-            direccion: this.formCaja.get('direccionCaja')!.value!,
-            descripcion: this.formCaja.get('descripcionCaja')!.value!
-          };
-        }); */
 
     if (!this.formCaja.valid) { return }
     this.cajaUsuarioService.createCajaUsuario(this.caja()).subscribe(

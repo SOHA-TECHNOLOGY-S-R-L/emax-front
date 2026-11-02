@@ -52,8 +52,6 @@ export class AuthService {
 
     this._usuario.set(user);
 
-        //console.log("payload", user)
-
     if (this.isBrowser) {
       sessionStorage.setItem('usuario', JSON.stringify(user));
     }

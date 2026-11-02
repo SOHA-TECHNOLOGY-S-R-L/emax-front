@@ -6,6 +6,7 @@ import { ActivatedRoute, RouterModule } from '@angular/router';
 import * as fileSaver from 'file-saver-es';
 import moment from 'moment';
 import { map } from 'rxjs/operators';
+import { TipoPersonaEnum } from '../../../../enums/tipo-persona.enum';
 import { Caja } from '../../../../models/caja';
 import { Persona } from '../../../../models/persona';
 import { CajaService } from '../../../../services/caja.service';
@@ -13,27 +14,24 @@ import { MovimientoService } from '../../../../services/movimiento.service';
 import { PersonaService } from '../../../../services/persona.service';
 import { UsuarioService } from '../../../../services/usuario.service';
 import { AngularMaterialModule } from '../../../compartido/angular-material.module';
-import { TipoPersonaEnum } from '../../../../enums/tipo-persona.enum';
 
 @Component({
   selector: 'app-rpte-movimiento-en-caja',
   templateUrl: './rpte-movimiento-en-caja.component.html',
   styleUrl: './rpte-movimiento-en-caja.component.css',
   standalone: true,
-  imports: [CommonModule, AngularMaterialModule , RouterModule, FormsModule, ReactiveFormsModule ]
+  imports: [CommonModule, AngularMaterialModule, RouterModule, FormsModule, ReactiveFormsModule]
 })
 export class RpteMovimientoEnCajaComponent implements OnInit {
   titulo!: string;
   formMov!: FormGroup;
   filtrosReporte!: FiltrosReporte;
-    personasLst: Persona[] = [];
+  personasLst: Persona[] = [];
 
-  //usuarioLst: Usuario[] = [];
   cajaLst: Caja[] = []
   caja!: Caja;
 
-  //autocompleteControl = new FormControl();
-  //&filteredOptions!: Observable<Persona[]>;
+
 
   constructor(
     private formBuilder: FormBuilder,
@@ -65,28 +63,8 @@ export class RpteMovimientoEnCajaComponent implements OnInit {
 
     this.createForm();
 
-/*     this.filteredOptions = this.autocompleteControl.valueChanges
-      .pipe(
-        map(value => typeof value === 'string' ? value : value.apellNomRz),
-        switchMap(value => value ? this._filter(value) : [])
-      ); */
-
-  }
-/*
-  private _filter(value: string): Observable<Persona[]> {
-    const filterValue = value.toLowerCase();
-    return this.personaService.filtrarPersonas(filterValue);
   }
 
-  mostrarApellidoPersona(persona: Persona): string {
-    return persona && persona.apellNomRznSocial ? persona.apellNomRznSocial : '';
-  }
-
-   seleccionar(event: MatAutocompleteSelectedEvent): void {
-    let persona = event.option.value as Persona;
-    //console.log(persona);
-    this.filtrosReporte.persona_id = [persona.id]
-  } */
 
   generarReporte() {
     this.filtrosReporte.fecha_transaccion1 = [moment(this.formMov.get("fchTimeDesde")?.value).format("YYYY-MM-DD HH:mm")];
@@ -124,7 +102,7 @@ export class RpteMovimientoEnCajaComponent implements OnInit {
   cargarUsuarios() {
 
     this.personaService.getAllPersonas().pipe(
-        map(personas => personas.filter(p => p.tipoPersona !== TipoPersonaEnum.CLIENTE_PROVEEDOR))
+      map(personas => personas.filter(p => p.tipoPersona !== TipoPersonaEnum.CLIENTE_PROVEEDOR))
     ).subscribe(resp => this.personasLst = resp);
 
     // this.usuarioService.getAllUsers().subscribe(res => this.usuarioLst = res);
@@ -137,7 +115,7 @@ export class RpteMovimientoEnCajaComponent implements OnInit {
         fchTimeHasta: [this.filtrosReporte.fecha_transaccion2[0]],
         cajasId: [this.filtrosReporte.caja_id[0]],
         usuariosId: [this.filtrosReporte.usuario_id[0]],
-       // cleintesId: [this.filtrosReporte.persona_id[0]]
+        // cleintesId: [this.filtrosReporte.persona_id[0]]
       }
     )
   }

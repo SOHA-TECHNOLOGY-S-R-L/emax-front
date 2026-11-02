@@ -40,7 +40,6 @@ export class CategoriasProductoPersonaComponent implements OnInit {
               }
               return cat;
             })
-        //console.log("this.lstCategoria", this.lstCategoria)
       })
   }
 }

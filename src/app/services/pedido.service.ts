@@ -232,7 +232,6 @@ export class PedidoService {
   }
 
   aplicarDescuento(pedido: PedidoRequestResponse, codigoCupon: string): Observable<ResponseController<ItemPedido[]>> {
-    debugger;
     return this.http.post<ResponseController<ItemRequestResponse[]>>(
       `${environment.apiUrl}/pedidos/aplicar-cupon/${codigoCupon}`, pedido)
       .pipe(

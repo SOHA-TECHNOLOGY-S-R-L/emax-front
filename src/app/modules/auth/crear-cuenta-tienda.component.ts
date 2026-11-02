@@ -225,33 +225,6 @@ export class CrearCuentaTiendaComponent {
 
   }
 
-
-  /*   findByNumDocumento(event: any) {
-      const numero = event.target.value;
-      const tipoDocumento = this.formNewCuenta.get('tipoDocumento')?.value;
-      this.personaService.getNumeroDocumento(numero).subscribe(resp => {
-        if (resp != null) {
-          this.existePersona = true;
-          this.persona = resp;
-          this.frmDefault.tipoDocumentoIdentidad = resp.tipoDocumentoIdentidad;
-          this.frmDefault.numeroDocumento = resp.numeroDocumento;
-          this.frmDefault.apellNomRznSocial = resp.apellNomRznSocial;
-          this.frmDefault.correo = resp.email;
-          this.formNewCuenta.get('tipoDocumento')?.setValue(tipoDocumento);
-          this.usuarioService.getUsuarioById(resp.usuarioId!).subscribe(resp => {
-            this.isPassword = !!resp.password;
-          })
-          this.createForm();
-        }
-
-      }, err => {
-        console.log("Entro")
-      }, () => {
-        //this.formNewCuenta.get('numeroDocumento')?.setValue(numero);
-      })
-
-    } */
-
   resetForm() {
     this.formNewCuenta.reset();
   }
