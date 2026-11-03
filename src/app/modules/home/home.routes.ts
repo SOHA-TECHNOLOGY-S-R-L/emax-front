@@ -3,6 +3,7 @@ import { UbicanosClienteComponent } from './pages/ubicanos-cliente/ubicanos-clie
 import { HomeComponent } from './pages/home.component';
 import { NosotrosComponent } from './pages/nosotros/nosotros.component';
 import { ProductosClienteComponent } from './pages/productos-cliente/productos-cliente.component';
+import { TrabajaConNosotrosComponent } from './pages/trabaja-con-nosotros/trabaja-con-nosotros.component';
 
 export const routes: Routes = [
   {
@@ -13,6 +14,7 @@ export const routes: Routes = [
   { path: 'nosotros', component: NosotrosComponent },
   { path: 'productos-cliente', component: ProductosClienteComponent },
   { path: 'ubicanos-cliente', component: UbicanosClienteComponent },
+  { path: 'trabaja-con-nosotros', component: TrabajaConNosotrosComponent },
 ];
 
 /* @NgModule({
